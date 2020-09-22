@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="6f461d8d-9feb-4d04-90e5-8153609e5527" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeStyleSettingsInfer">
+    <option name="done" value="true" />
+  </component>
+  <component name="ComposerSettings">
+    <execution>
+      <executable />
+    </execution>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="localRepository" value="D:\respository" />
+        <option name="mavenHome" value="D:/software/apache-maven-3.6.1" />
+        <option name="userSettingsFile" value="C:\Users\Administrator\.m2\settings.xml" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="1" />
+  </component>
+  <component name="ProjectId" id="1hr8Rai97XQzcoidsIyUKdyYIrj" />
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="fileTemplates" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="SbtLocalSettings">
+    <option name="projectSyncType">
+      <map>
+        <entry key="D:/vova-bd/vova-bd-offline" value="PREVIEW" />
+        <entry key="D:/vova-workspace/recall-master" value="PREVIEW" />
+        <entry key="D:/vova-workspace/vova-bd-offline" value="PREVIEW" />
+        <entry key="D:/vova-workspace/vova-bi" value="PREVIEW" />
+        <entry key="D:/vova-workspace/vova-spark" value="PREVIEW" />
+        <entry key="D:/workspace/akka-grpc-quickstart-scala" value="PREVIEW" />
+        <entry key="D:/workspace/artemis-ml" value="PREVIEW" />
+        <entry key="D:/workspace/artemis-spark" value="PREVIEW" />
+        <entry key="D:/workspace/artemis-vo" value="PREVIEW" />
+        <entry key="D:/workspace/rec-streaming" value="PREVIEW" />
+        <entry key="D:/workspace/rec-training" value="PREVIEW" />
+        <entry key="D:/workspace/recall" value="PREVIEW" />
+        <entry key="D:/workspace/recall-master" value="PREVIEW" />
+        <entry key="D:/workspace/vova-data" value="PREVIEW" />
+        <entry key="D:/workspace/vova-snowplow" value="PREVIEW" />
+      </map>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="6f461d8d-9feb-4d04-90e5-8153609e5527" name="Default Changelist" comment="" />
+      <created>1600757842831</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1600757842831</updated>
+      <workItem from="1600757844252" duration="4011000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
