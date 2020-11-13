@@ -2,9 +2,503 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6f461d8d-9feb-4d04-90e5-8153609e5527" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dim/dim_category/1" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dim/dim_category/dim_category.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dim/dim_category/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dim/dim_category/test.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dim/dim_currency/dim_currency.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dim/dim_currency/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dim/dim_goods/dim_goods.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dim/dim_goods/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dim/dim_language/dim_language.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dim/dim_language/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dim/dim_region/dim_region.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dim/dim_region/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dim/dim_user_agent/dim_user_agent.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dim/dim_user_agent/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dim/dim_virtual_goods/dim_virtual_goods.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dim/dim_virtual_goods/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dim/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_app_retention_activity_report/checkin.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_app_retention_activity_report/checkin_acc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_app_retention_activity_report/play.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_app_retention_activity_report/register.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_app_retention_activity_report/retention.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_app_retention_activity_report/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_app_retention_activity_report/visit_source.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_app_user_coupon_report/dwb_fd_app_user_coupon_order.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_app_user_coupon_report/dwb_fd_app_user_coupon_order_report.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_app_user_coupon_report/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_banner_ctr_report/dwb_fd_banner_ctr_report.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_banner_ctr_report/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_common_ctr_report/detail_run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_common_ctr_report/dwb_fd_common_ctr.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_common_ctr_report/dwb_fd_common_ctr_report.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_common_ctr_report/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_country_order_report/dwb_fd_country_order_report.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_country_order_report/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_ecommerce_conversion_report/dwb_fd_ecommerce_conversion_report.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_ecommerce_conversion_report/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_goods_add_test_channel_info_report/dwb_fd_goods_add_test_channel_info.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_goods_add_test_channel_info_report/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_last_7_days_goods_report/dwb_fd_last_7_days_goods_report.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_last_7_days_goods_report/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_main_process_report/dwb_fd_main_process_report.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_main_process_report/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_module_conversion_report/.dwb_fd_common_module_interact.hql.swp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_module_conversion_report/dwb_fd_common_module_interact.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_module_conversion_report/dwb_fd_module_order_interact_report.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_module_conversion_report/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_newsletter_report/dwb_fd_newsletter_order.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_newsletter_report/dwb_fd_newsletter_send.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_newsletter_report/dwb_fd_newsletter_snowplow.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_newsletter_report/order_run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_newsletter_report/send_run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_newsletter_report/sp_run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_order_attribute_report/add_run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_order_attribute_report/click_impr_run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_order_attribute_report/dwb_fd_order_attribution_report.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_order_attribute_report/list_type_run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_order_attribute_report/order_run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_order_attribute_report/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_order_attribute_report/tmp_fd_snowplow_add.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_order_attribute_report/tmp_fd_snowplow_click_impr.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_order_attribute_report/tmp_fd_snowplow_order.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_order_attribute_report/tmp_order_attribute_to_list_type.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_order_coupon_report/dwb_fd_order_coupon.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_order_coupon_report/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_order_goods_report/dwb_order_goods_report.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_page_data_report/dwb_fd_page_data_report.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_place_selection_report/dwb_fd_place_selection_report.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_place_selection_report/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_prc_abtest_funnel_report/dwb_fd_rpt_prc_abtest_funnel.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_prc_abtest_funnel_report/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_real_time_report/dwb_fd_real_time_gmv_orders_report.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_real_time_report/dwb_fd_real_time_session_report.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_real_time_report/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_real_time_report/run1.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_repurchase_report/dwb_fd_repurchase_report.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_repurchase_report/dwd_fd_user_window_buy.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_repurchase_report/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_rpt_ecommerce_funnel_report/dwb_fd_rpt_ecommerce_funnel_report.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_rpt_ecommerce_funnel_report/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_user_retention_report/dwb_fd_user_retention_report.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwb/dwb_fd_user_retention_report/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwd/dwd_fd_goods_add_info/dwd_fd_goods_add_info.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwd/dwd_fd_goods_add_info/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwd/dwd_fd_order_channel_analytics/dwd_fd_order_channel_analytics.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwd/dwd_fd_order_channel_analytics/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwd/dwd_fd_order_goods/dwd_fd_order_goods.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwd/dwd_fd_order_goods/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwd/dwd_fd_order_info/dwd_fd_order_info.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/dwd/dwd_fd_order_info/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_competing_website_info/dmc_competing_website_info_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_competing_website_info/dmc_competing_website_info_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_competing_website_info/dmc_competing_website_info_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_competing_website_info/dmc_competing_website_info_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_competing_website_info/tmp_dmc_competing_website_info.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_competing_website_tort/dmc_competing_website_tort_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_competing_website_tort/dmc_competing_website_tort_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_competing_website_tort/dmc_competing_website_tort_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_competing_website_tort/dmc_competing_website_tort_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_competing_website_tort/tmp_dmc_competing_website_tort.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_goods/dmc_goods_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_goods/dmc_goods_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_goods/dmc_goods_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_goods/dmc_goods_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_goods/tmp_dmc_goods.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_goods_project/dmc_goods_project_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_goods_project/dmc_goods_project_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_goods_project/dmc_goods_project_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_goods_project/dmc_goods_project_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_goods_project/tmp_dmc_goods_project.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_party/dmc_party_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_party/dmc_party_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_party/dmc_party_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_party/dmc_party_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_party/tmp_dmc_party.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_sheIf_goods/dmc_sheIf_goods_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_sheIf_goods/dmc_sheIf_goods_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_sheIf_goods/dmc_sheIf_goods_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_sheIf_goods/dmc_sheIf_goods_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_sheIf_goods/tmp_dmc_sheIf_goods.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_sheIf_goods_org/dmc_sheIf_goods_org_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_sheIf_goods_org/dmc_sheIf_goods_org_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_sheIf_goods_org/dmc_sheIf_goods_org_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_sheIf_goods_org/dmc_sheIf_goods_org_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/dmc_sheIf_goods_org/tmp_dmc_sheIf_goods_org.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/dmc/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/ecs_goods/ecs_goods_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/ecs_goods/ecs_goods_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/ecs_goods/ecs_goods_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/ecs_goods/ecs_goods_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/ecs_goods/tmp_ecs_goods.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/ecs_order_goods/ecs_order_goods_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/ecs_order_goods/ecs_order_goods_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/ecs_order_goods/ecs_order_goods_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/ecs_order_goods/ecs_order_goods_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/ecs_order_goods/tmp_ecs_order_goods.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/ecs_order_info/ecs_order_info_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/ecs_order_info/ecs_order_info_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/ecs_order_info/ecs_order_info_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/ecs_order_info/ecs_order_info_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/ecs_order_info/tmp_ecs_order_info.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/ecs_region/ecs_region_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/ecs_region/ecs_region_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/ecs_region/ecs_region_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/ecs_region/ecs_region_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/ecs_region/tmp_ecs_region.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/fd_sku_backups/fd_sku_backups_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/fd_sku_backups/fd_sku_backups_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/fd_sku_backups/fd_sku_backups_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/fd_sku_backups/fd_sku_backups_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/fd_sku_backups/tmp_fd_sku_backups.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/fd_stock_ecs_order_sale_bak_detail/fd_stock_ecs_order_sale_bak_detail_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/fd_stock_ecs_order_sale_bak_detail/fd_stock_ecs_order_sale_bak_detail_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/fd_stock_ecs_order_sale_bak_detail/fd_stock_ecs_order_sale_bak_detail_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/fd_stock_ecs_order_sale_bak_detail/fd_stock_ecs_order_sale_bak_detail_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/fd_stock_ecs_order_sale_bak_detail/tmp_fd_stock_ecs_order_sale_bak_detail.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/fd_stock_goods_config/fd_stock_goods_config_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/fd_stock_goods_config/fd_stock_goods_config_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/fd_stock_goods_config/fd_stock_goods_config_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/fd_stock_goods_config/fd_stock_goods_config_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/fd_stock_goods_config/tmp_fd_stock_goods_config.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/order_attribute/order_attribute_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/order_attribute/order_attribute_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/order_attribute/order_attribute_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/order_attribute/order_attribute_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/order_attribute/tmp_order_attribute.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/ecshop/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/currency_conversion/currency_conversion_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/currency_conversion/currency_conversion_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/currency_conversion/currency_conversion_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/currency_conversion/currency_conversion_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/currency_conversion/tmp_currency_conversion.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/dispatch_list/dispatch_list_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/dispatch_list/dispatch_list_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/dispatch_list/dispatch_list_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/dispatch_list/dispatch_list_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/dispatch_list/tmp_dispatch_list.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/goods_purchase_price/goods_purchase_price_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/goods_purchase_price/goods_purchase_price_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/goods_purchase_price/goods_purchase_price_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/goods_purchase_price/goods_purchase_price_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/goods_purchase_price/tmp_goods_purchase_price.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/inventory_item/inventory_item_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/inventory_item/inventory_item_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/inventory_item/inventory_item_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/inventory_item/inventory_item_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/inventory_item/tmp_inventory_item.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/inventory_item_detail/inventory_item_detail_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/inventory_item_detail/inventory_item_detail_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/inventory_item_detail/inventory_item_detail_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/inventory_item_detail/inventory_item_detail_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/inventory_item_detail/tmp_inventory_item_detail.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/inventory_summary/inventory_summary_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/inventory_summary/inventory_summary_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/inventory_summary/inventory_summary_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/inventory_summary/inventory_summary_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/inventory_summary/tmp_inventory_summary.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/order_inv_reserved/order_inv_reserved_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/order_inv_reserved/order_inv_reserved_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/order_inv_reserved/order_inv_reserved_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/order_inv_reserved/order_inv_reserved_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/order_inv_reserved/tmp_order_inv_reserved.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/order_inv_reserved_detail/order_inv_reserved_detail_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/order_inv_reserved_detail/order_inv_reserved_detail_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/order_inv_reserved_detail/order_inv_reserved_detail_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/order_inv_reserved_detail/order_inv_reserved_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/order_inv_reserved_detail/tmp_order_inv_reserved_detail.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/order_inv_reserverd_inventory_mapping/order_inv_reserverd_inventory_mapping_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/order_inv_reserverd_inventory_mapping/order_inv_reserverd_inventory_mapping_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/order_inv_reserverd_inventory_mapping/order_inv_reserverd_inventory_mapping_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/order_inv_reserverd_inventory_mapping/order_inv_reserverd_inventory_mapping_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/order_inv_reserverd_inventory_mapping/tmp_order_inv_reserverd_inventory_mapping.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/party/party_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/party/party_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/party/party_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/party/party_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/party/tmp_party.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/party_config/party_config_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/party_config/party_config_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/party_config/party_config_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/party_config/party_config_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/party_config/tmp_party_config.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/refund/5d" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/refund/refund_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/refund/refund_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/refund/refund_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/refund/refund_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/refund/tmp_refund.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/romeo/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_extension/order_extension_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_extension/order_extension_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_extension/order_extension_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_extension/order_extension_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_extension/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_extension/tmp_order_extension.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_goods/order_goods_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_goods/order_goods_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_goods/order_goods_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_goods/order_goods_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_goods/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_goods/tmp_order_goods.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_info/order_info_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_info/order_info_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_info/order_info_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_info/order_info_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_info/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_info/tmp_order_info.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_info_hour/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_marketing_data/order_marketing_data_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_marketing_data/order_marketing_data_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_marketing_data/order_marketing_data_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_marketing_data/order_marketing_data_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_marketing_data/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/order_marketing_data/tmp_order_marketing_data.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/binlog_table/vbridal/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/ad_pause_history/ad_pause_history_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/ad_pause_history/ad_pause_history_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/ad_pause_history/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/app_event_log_message_push/app_event_log_message_push_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/app_event_log_message_push/app_event_log_message_push_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/app_event_log_message_push/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/app_install_record/app_install_record_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/app_install_record/app_install_record_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/app_install_record/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/app_message_info/.attach_pid2878" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/app_message_info/app_message_info_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/app_message_info/app_message_info_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/app_message_info/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/campaign_adgroup_mapping/campaign_adgroup_mapping_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/campaign_adgroup_mapping/campaign_adgroup_mapping_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/campaign_adgroup_mapping/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/category/category_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/category/category_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/category/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/currency/currency_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/currency/currency_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/currency/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/email_subscribe/email_subscribe_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/email_subscribe/email_subscribe_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/email_subscribe/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/email_unsubscribe/email_unsubscribe_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/email_unsubscribe/email_unsubscribe_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/email_unsubscribe/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods/goods_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods/goods_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_preorder_plan/goods_preorder_plan_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_preorder_plan/goods_preorder_plan_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_preorder_plan/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_price_adjust_log/goods_price_adjust_log_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_price_adjust_log/goods_price_adjust_log_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_price_adjust_log/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_price_adjust_record/goods_price_adjust_record_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_price_adjust_record/goods_price_adjust_record_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_price_adjust_record/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_purchase_price/goods_purchase_price_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_purchase_price/goods_purchase_price_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_purchase_price/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_test_goods/goods_test_goods_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_test_goods/goods_test_goods_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_test_goods/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_test_goods_log/goods_test_goods_log_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_test_goods_log/goods_test_goods_log_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_test_goods_log/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_test_pipeline/goods_test_pipeline_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_test_pipeline/goods_test_pipeline_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_test_pipeline/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_test_preorder_result/goods_test_preorder_result_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_test_preorder_result/goods_test_preorder_result_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_test_preorder_result/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_test_reports_last/goods_test_reports_last_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_test_reports_last/goods_test_reports_last_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/goods_test_reports_last/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/languages/languages_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/languages/languages_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/languages/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/newsletters/newsletters_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/newsletters/newsletters_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/newsletters/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/ok_coupon/ok_coupon_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/ok_coupon/ok_coupon_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/ok_coupon/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/ok_coupon_config/ok_coupon_config_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/ok_coupon_config/ok_coupon_config_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/ok_coupon_config/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/points/points_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/points/points_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/points/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/prc_snowplow_all_event/prc_snowplow_all_event.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/prc_snowplow_all_event/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/project_goods_history/project_goods_history_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/project_goods_history/project_goods_history_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/project_goods_history/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/region/region_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/region/region_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/region/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/region_area/region_area_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/region_area/region_area_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/region_area/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/risk_country_user_log/risk_country_user_log_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/risk_country_user_log/risk_country_user_log_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/risk_country_user_log/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/route/route_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/route/route_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/route/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/style/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/style/style_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/style/style_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/turntable_record_v2/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/turntable_record_v2/turntable_record_v2_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/turntable_record_v2/turntable_record_v2_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/user_agent_analysis/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/user_agent_analysis/user_agent_analysis_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/user_agent_analysis/user_agent_analysis_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/user_check_in/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/user_check_in/user_check_in_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/user_check_in/user_check_in_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/user_check_in_log/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/user_check_in_log/user_check_in_log_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/user_check_in_log/user_check_in_log_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/user_duid/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/user_duid/user_duid_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/user_duid/user_duid_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/users/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/users/users_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/users/users_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/vbridal/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/virtual_goods/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/virtual_goods/virtual_goods_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/full_table/virtual_goods/virtual_goods_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/ads_adgroup_daily_flat_report/ads_adgroup_daily_flat_report_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/ads_adgroup_daily_flat_report/ads_adgroup_daily_flat_report_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/ads_adgroup_daily_flat_report/ads_adgroup_daily_flat_report_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/ads_adgroup_daily_flat_report/ads_adgroup_daily_flat_report_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/ads_adgroup_daily_flat_report/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/app_message_push/app_message_push_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/app_message_push/app_message_push_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/app_message_push/app_message_push_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/app_message_push/app_message_push_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/app_message_push/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/feed_shopping_performance_report/feed_shopping_performance_report_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/feed_shopping_performance_report/feed_shopping_performance_report_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/feed_shopping_performance_report/feed_shopping_performance_report_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/feed_shopping_performance_report/feed_shopping_performance_report_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/feed_shopping_performance_report/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/feed_tag_log/feed_tag_log_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/feed_tag_log/feed_tag_log_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/feed_tag_log/feed_tag_log_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/feed_tag_log/feed_tag_log_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/feed_tag_log/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/goods_display_order_artemis_country/goods_display_order_artemis_country_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/goods_display_order_artemis_country/goods_display_order_artemis_country_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/goods_display_order_artemis_country/goods_display_order_artemis_country_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/goods_display_order_artemis_country/goods_display_order_artemis_country_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/goods_display_order_artemis_country/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/goods_project/goods_project_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/goods_project/goods_project_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/goods_project/goods_project_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/goods_project/goods_project_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/goods_project/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/order_analytics/order_analytics_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/order_analytics/order_analytics_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/order_analytics/order_analytics_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/order_analytics/order_analytics_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/order_analytics/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/order_status_change_history/order_status_change_history_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/order_status_change_history/order_status_change_history_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/order_status_change_history/order_status_change_history_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/order_status_change_history/order_status_change_history_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/order_status_change_history/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/order_status_change_history_hour/order_status_change_history_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/order_status_change_history_hour/order_status_change_history_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/order_status_change_history_hour/order_status_change_history_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/order_status_change_history_hour/order_status_change_history_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/order_status_change_history_hour/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/user_agent_analysis/create_table.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/user_agent_analysis/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/user_agent_analysis/test.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/user_agent_analysis/user_agent_analysis_arc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/user_agent_analysis/user_agent_analysis_arc_full.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/user_agent_analysis/user_agent_analysis_inc.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/user_agent_analysis/user_agent_analysis_snapshot.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/user_agent_analysis_hour/.attach_pid19926" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/inc_table/user_agent_analysis_hour/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/snowplow/fd_snowplow_all_event/ods_fd_snowplow_all_event.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/snowplow/fd_snowplow_all_event/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/snowplow/fd_snowplow_all_event/tmp_fd_snowplow_all_event.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/snowplow/fd_snowplow_ecommerce_event/ods_fd_snowplow_ecommerce_event.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/snowplow/fd_snowplow_ecommerce_event/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/snowplow/fd_snowplow_element_event/ods_fd_snowplow_element_event.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/snowplow/fd_snowplow_element_event/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/snowplow/fd_snowplow_goods_event/ods_fd_snowplow_goods_event.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/snowplow/fd_snowplow_goods_event/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/snowplow/fd_snowplow_view_event/ods_fd_snowplow_view_event.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/snowplow/fd_snowplow_view_event/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/snowplow/prc_snowplow_all_event/ods_fd_prc_snowplow_all_event.hql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/ods/snowplow/prc_snowplow_all_event/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/.test.sh.swp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/artemis/ad_pause_history/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/artemis/ads_adgroup_daily_flat_report/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/artemis/campaign_adgroup_mapping/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/artemis/feed_shopping_performance_report/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/artemis/feed_tag_log/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/artemis/order_analytics/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/artemis/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/common/fd_db_config.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/dmc/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/ecshop/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/romeo/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/app_event_log_message_push/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/app_install_record/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/app_message_info/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/app_message_push/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/category/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/currency/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/email_subscribe/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/email_unsubscribe/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/goods/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/goods_display_order_artemis_country/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/goods_preorder_plan/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/goods_price_adjust_log/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/goods_price_adjust_record/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/goods_project/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/goods_purchase_price/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/goods_test_goods/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/goods_test_goods_log/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/goods_test_pipeline/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/goods_test_preorder_result/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/goods_test_reports_last/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/languages/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/newsletters/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/ok_coupon/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/ok_coupon_config/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/order_extension/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/order_goods/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/order_info/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/order_marketing_data/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/order_status_change_history/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/points/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/project_goods_history/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/region/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/region_area/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/risk_country_user_log/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/style/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/turntable_record_v2/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/user_agent_analysis/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/user_check_in/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/user_check_in_log/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/user_duid/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/users/run.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fd/tmp/vbridal/virtual_goods/run.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/judge_check.sh" beforeDir="false" afterPath="$PROJECT_DIR$/common/judge_check.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/sync.sh" beforeDir="false" afterPath="$PROJECT_DIR$/common/sync.sh" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -25,7 +519,7 @@
     <option name="generalSettings">
       <MavenGeneralSettings>
         <option name="localRepository" value="D:\respository" />
-        <option name="mavenHome" value="D:/software/apache-maven-3.6.1" />
+        <option name="mavenHome" value="$PROJECT_DIR$/../../software/apache-maven-3.6.1" />
         <option name="userSettingsFile" value="C:\Users\Administrator\.m2\settings.xml" />
       </MavenGeneralSettings>
     </option>
@@ -34,7 +528,12 @@
     <option name="version" value="1" />
   </component>
   <component name="ProjectId" id="1hr8Rai97XQzcoidsIyUKdyYIrj" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -42,38 +541,8 @@
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="fileTemplates" />
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
-  <component name="SbtLocalSettings">
-    <option name="projectSyncType">
-      <map>
-        <entry key="D:/vova-bd/vova-bd-offline" value="PREVIEW" />
-        <entry key="D:/vova-workspace/recall-master" value="PREVIEW" />
-        <entry key="D:/vova-workspace/vova-bd-offline" value="PREVIEW" />
-        <entry key="D:/vova-workspace/vova-bi" value="PREVIEW" />
-        <entry key="D:/vova-workspace/vova-spark" value="PREVIEW" />
-        <entry key="D:/workspace/akka-grpc-quickstart-scala" value="PREVIEW" />
-        <entry key="D:/workspace/artemis-ml" value="PREVIEW" />
-        <entry key="D:/workspace/artemis-spark" value="PREVIEW" />
-        <entry key="D:/workspace/artemis-vo" value="PREVIEW" />
-        <entry key="D:/workspace/rec-streaming" value="PREVIEW" />
-        <entry key="D:/workspace/rec-training" value="PREVIEW" />
-        <entry key="D:/workspace/recall" value="PREVIEW" />
-        <entry key="D:/workspace/recall-master" value="PREVIEW" />
-        <entry key="D:/workspace/vova-data" value="PREVIEW" />
-        <entry key="D:/workspace/vova-snowplow" value="PREVIEW" />
-      </map>
-    </option>
+  <component name="SshConsoleOptionsProvider">
+    <option name="myEncoding" value="UTF-8" />
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -85,12 +554,16 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1600757842831</updated>
-      <workItem from="1600757844252" duration="4011000" />
+      <workItem from="1600757844252" duration="4379000" />
+      <workItem from="1604738123675" duration="1221000" />
+      <workItem from="1604889149464" duration="1224000" />
+      <workItem from="1605172359635" duration="1910000" />
+      <workItem from="1605174800437" duration="7060000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
+    <option name="version" value="2" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -102,5 +575,12 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="591" y="188" width="738" height="736" key="find.popup" timestamp="1605236530206">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="591" y="188" width="738" height="736" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1605236530206" />
   </component>
 </project>

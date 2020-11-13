@@ -1,0 +1,105 @@
+CREATE TABLE IF NOT EXISTS ods_fd_romeo.ods_fd_romeo_inventory_item_inc (
+    -- maxwell event data
+    event_id STRING,
+    event_table STRING,
+    event_type STRING,
+    event_commit BOOLEAN,
+    event_date BIGINT,
+    -- now data
+    inventory_item_id           string,
+    serial_number               bigint,
+    status_id                   string,
+    inventory_item_acct_type_id string,
+    inventory_item_type_id      string,
+    facility_id                 bigint,
+    container_id                string,
+    quantity_on_hand_total      bigint,
+    available_to_promise        bigint,
+    available_to_promise_total  bigint,
+    quantity_on_hand            bigint,
+    product_id                  bigint,
+    created_stamp               bigint,
+    last_updated_stamp          bigint,
+    last_updated_tx_stamp       bigint,
+    created_tx_stamp            bigint,
+    comments                    string,
+    currency_uom_id             bigint,
+    uom_id                      bigint,
+    owner_party_id              bigint,
+    location_seq_id             bigint,
+    party_id                    bigint,
+    datetime_received           bigint,
+    datetime_manufactured       bigint,
+    expire_date                 bigint,
+    lot_id                      bigint,
+    bin_number                  bigint,
+    soft_identifier             bigint,
+    activation_number           bigint,
+    activation_valid_thru       string,
+    provider_id                 bigint comment '采购订单供应商id',
+    unit_cost                   decimal(15, 6) comment '商品采购单价',
+    root_inventory_item_id      string,
+    parent_inventory_item_id    string,
+    currency                    string
+) COMMENT '来自kafka erp订单每日增量数据'
+PARTITIONED BY (dt STRING,hour STRING)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
+STORED AS PARQUETFILE
+TBLPROPERTIES ("parquet.compress" = "SNAPPY")
+;
+
+set hive.exec.dynamic.partition.mode=nonstrict;
+INSERT overwrite table ods_fd_romeo.ods_fd_romeo_inventory_item_inc  PARTITION (dt='${hiveconf:dt}',hour)
+select 
+    o_raw.xid AS event_id,
+    o_raw.`table` AS event_table,
+    o_raw.type AS event_type,
+    cast(o_raw.`commit` AS BOOLEAN) AS event_commit
+    cast(o_raw.ts AS BIGINT) AS event_date,
+    o_raw.inventory_item_id,
+    o_raw.serial_number,
+    o_raw.status_id,
+    o_raw.inventory_item_acct_type_id,
+    o_raw.inventory_item_type_id,
+    o_raw.facility_id,
+    o_raw.container_id,
+    o_raw.quantity_on_hand_total,
+    o_raw.available_to_promise,
+    o_raw.available_to_promise_total,
+    o_raw.quantity_on_hand,
+    o_raw.product_id,
+    if(o_raw.created_stamp != "0000-00-00 00:00:00" or o_raw.created_stamp is not null,
+        unix_timestamp(to_utc_timestamp(o_raw.created_stamp, "Asia/Shanghai"), "yyyy-MM-dd HH:mm:ss"), 0)         AS created_stamp,
+    if(o_raw.last_updated_stamp != "0000-00-00 00:00:00" or o_raw.last_updated_stamp is not null,
+        unix_timestamp(to_utc_timestamp(o_raw.last_updated_stamp, "Asia/Shanghai"), "yyyy-MM-dd HH:mm:ss"), 0)    AS last_updated_stamp,
+    if(o_raw.last_updated_tx_stamp != "0000-00-00 00:00:00" or o_raw.last_updated_tx_stamp is not null,
+        unix_timestamp(to_utc_timestamp(o_raw.last_updated_tx_stamp, "Asia/Shanghai"), "yyyy-MM-dd HH:mm:ss"), 0) AS last_updated_tx_stamp,
+    if(o_raw.created_tx_stamp != "0000-00-00 00:00:00" or o_raw.created_tx_stamp is not null,
+        unix_timestamp(to_utc_timestamp(o_raw.created_tx_stamp, "Asia/Shanghai"), "yyyy-MM-dd HH:mm:ss"), 0)      AS created_tx_stamp,
+    o_raw.comments,
+    o_raw.currency_uom_id,
+    o_raw.uom_id,
+    o_raw.owner_party_id,
+    o_raw.location_seq_id,
+    o_raw.party_id,
+    if(o_raw.datetime_received != "0000-00-00 00:00:00" or o_raw.datetime_received is not null,
+        unix_timestamp(to_utc_timestamp(o_raw.datetime_received, "Asia/Shanghai"), "yyyy-MM-dd HH:mm:ss"), 0)     AS datetime_received,
+    if(o_raw.datetime_manufactured != "0000-00-00 00:00:00" or o_raw.datetime_manufactured is not null,
+        unix_timestamp(to_utc_timestamp(o_raw.datetime_manufactured, "Asia/Shanghai"), "yyyy-MM-dd HH:mm:ss"), 0) AS datetime_manufactured,
+    if(o_raw.expire_date != "0000-00-00 00:00:00" or o_raw.expire_date is not null,
+        unix_timestamp(to_utc_timestamp(o_raw.expire_date, "Asia/Shanghai"), "yyyy-MM-dd HH:mm:ss"), 0)           AS expire_date,
+    o_raw.lot_id,
+    o_raw.bin_number,
+    o_raw.soft_identifier,
+    o_raw.activation_number,
+    o_raw.activation_valid_thru,
+    o_raw.provider_id,
+    o_raw.unit_cost,
+    o_raw.root_inventory_item_id,
+    o_raw.parent_inventory_item_id,
+    o_raw.currency,
+    hour as hour
+from tmp.tmp_fd_romeo_inventory_item
+LATERAL VIEW json_tuple(value, 'kafka_table', 'kafka_ts', 'kafka_commit', 'kafka_xid','kafka_type' , 'kafka_old' , 'inventory_item_id', 'serial_number', 'status_id', 'inventory_item_acct_type_id', 'inventory_item_type_id', 'facility_id', 'container_id', 'quantity_on_hand_total', 'available_to_promise', 'available_to_promise_total', 'quantity_on_hand', 'product_id', 'created_stamp', 'last_updated_stamp', 'last_updated_tx_stamp', 'created_tx_stamp', 'comments', 'currency_uom_id', 'uom_id', 'owner_party_id', 'location_seq_id', 'party_id', 'datetime_received', 'datetime_manufactured', 'expire_date', 'lot_id', 'bin_number', 'soft_identifier', 'activation_number', 'activation_valid_thru', 'provider_id', 'unit_cost', 'root_inventory_item_id', 'parent_inventory_item_id', 'currency') o_raw
+AS `table`, ts, `commit`, xid, type, old, inventory_item_id, serial_number, status_id, inventory_item_acct_type_id, inventory_item_type_id, facility_id, container_id, quantity_on_hand_total, available_to_promise, available_to_promise_total, quantity_on_hand, product_id, created_stamp, last_updated_stamp, last_updated_tx_stamp, created_tx_stamp, comments, currency_uom_id, uom_id, owner_party_id, location_seq_id, party_id, datetime_received, datetime_manufactured, expire_date, lot_id, bin_number, soft_identifier, activation_number, activation_valid_thru, provider_id, unit_cost, root_inventory_item_id, parent_inventory_item_id, currency
+where dt = '${hiveconf:dt}';

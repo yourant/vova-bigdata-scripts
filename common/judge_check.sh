@@ -15,7 +15,7 @@ resp=`curl -s -H "Content-Type:application/json" -X POST -d '{
     "date":"'${exec_date}'",
     "jobName":"'${exec_job}'",
     "flowName":"'${flow_name}'"
-}' http://192.168.73.80:8188/job/judgeJobStatus`
+}' http://10.108.11.8:8188/job/judgeJobStatus`
 code=`echo $resp |jq '.code'`
 echo "$resp"
 if [[ "0" == "$code" ]];then

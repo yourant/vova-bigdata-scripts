@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS ods_fd_dmc.ods_fd_dmc_competing_website_tort (
+    `id` bigint comment '',
+    `created_at` bigint comment '',
+    `updated_at` bigint comment '',
+    `site_id` bigint comment '网站名称',
+    `risk_level`  string comment '风控等级：H_DANGER：一级,M_DANGER：二级,L_DANGER：三级,DANGER：四级,L_SECURE：五级,SECURE：六级,H_SECURE：七级',
+    `tort_status` string comment '状态：NEW新建，ENABLED启用，DISABLED弃用'
+) COMMENT 'erp 增量同步ddmc_competing_website_tort'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
+STORED AS PARQUETFILE
+TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+
+set hive.support.quoted.identifiers=None;
+INSERT overwrite table ods_fd_dmc.ods_fd_dmc_competing_website_tort
+select `(dt)?+.+` from ods_fd_dmc.ods_fd_dmc_competing_website_tort_arc where dt = '${hiveconf:dt}';

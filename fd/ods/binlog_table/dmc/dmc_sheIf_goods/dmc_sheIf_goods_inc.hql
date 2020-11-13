@@ -1,0 +1,91 @@
+CREATE TABLE IF NOT EXISTS ods_fd_dmc.ods_fd_dmc_sheIf_goods_inc (
+    -- maxwell event data
+    `event_id` STRING,
+    `event_table` STRING,
+    `event_type` STRING,
+    `event_commit` BOOLEAN,
+    `event_date` BIGINT,
+    -- now data 
+    `id` bigint comment '',
+    `goods_sn` string comment '商品编号',
+    `extend_goods_id` bigint comment 'editor生成的goods_id(网站id)',
+    `status` string comment '0:未上架 1：等待上架：2：已上架',
+    `up_sheIf_time` bigint comment '上架时间',
+    `supplier_image_url` string comment '供应商图片',
+    `modify_image_url` string comment '修图',
+    `cat_id` bigint comment '品类id',
+    `pg_id` bigint comment '找款providerGoods表主键id',
+    `supplier_goods_sn` string comment '供应商品产品编号',
+    `purchase_price` string comment '采购价 精确到分',
+    `market_price` string comment '市场价',
+    `weight` string comment '重量',
+    `note` string comment '上架备注',
+    `exception` string comment '定时上架异常原因',
+    `source_type` string comment 'FT:运营 TS：测试 MZ：贸宗',
+    `fill_in` string comment 'Y：填资料 N：未填资料',
+    `source_desc` string comment '来源描述',
+    `source_link` string comment '来源链接',
+    `source_name` string comment '来源名称',
+    `risk_level` string comment '风控等级：H_DANGER：一级,M_DANGER：二级,L_DANGER：三级,DANGER：四级,L_SECURE：五级,SECURE：六级',
+    `is_tort` string comment '是否侵权 N :未侵权 Y：已侵权',
+    `test_location` string comment '测试坑位',
+    `is_sort` string comment '是否排序 Y:已排序 N：未排序',
+    `supplier_remark` string comment '供应商备注',
+    `updated_at` bigint comment '',
+    `created_at` bigint comment '',
+    `deleted_at` bigint comment '',
+    `find_consignor` string comment '选款人',
+    `is_modify_image` bigint comment '是否已修图 0：否 1：是',
+    `submit_time` bigint comment '贸综提交时间',
+    `task_time` bigint comment '找款任务开始时间'
+) COMMENT '上架商品对应组织'
+PARTITIONED BY (dt STRING,hour STRING)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
+STORED AS PARQUETFILE
+TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+
+set hive.exec.dynamic.partition.mode=nonstrict;
+INSERT overwrite table ods_fd_dmc.ods_fd_dmc_sheIf_goods_inc  PARTITION (dt='${hiveconf:dt}',hour)
+select 
+    o_raw.xid AS event_id,
+    o_raw.`table` AS event_table,
+    o_raw.type AS event_type,
+    cast(o_raw.`commit` AS BOOLEAN) AS event_commit,
+    cast(o_raw.ts AS BIGINT) AS event_date,
+    o_raw.id,
+    o_raw.goods_sn,
+    o_raw.extend_goods_id,
+    o_raw.status,
+    if(o_raw.up_sheIf_time != '0000-00-00 00:00:00', unix_timestamp(o_raw.up_sheIf_time, "yyyy-MM-dd HH:mm:ss"), 0) AS up_sheIf_time,
+    o_raw.supplier_image_url,
+    o_raw.modify_image_url,
+    o_raw.cat_id,
+    o_raw.pg_id,
+    o_raw.supplier_goods_sn,
+    o_raw.purchase_price,
+    o_raw.market_price,
+    o_raw.weight,
+    o_raw.note,
+    o_raw.exception,
+    o_raw.source_type,
+    o_raw.fill_in,
+    o_raw.source_desc,
+    o_raw.source_link,
+    o_raw.source_name,
+    o_raw.risk_level,
+    o_raw.is_tort,
+    o_raw.test_location,
+    o_raw.is_sort,
+    o_raw.supplier_remark,
+    if(o_raw.updated_at != '0000-00-00 00:00:00', unix_timestamp(o_raw.updated_at, "yyyy-MM-dd HH:mm:ss"), 0) AS updated_at,
+    if(o_raw.created_at != '0000-00-00 00:00:00', unix_timestamp(o_raw.created_at, "yyyy-MM-dd HH:mm:ss"), 0) AS created_at,
+    if(o_raw.deleted_at != '0000-00-00 00:00:00', unix_timestamp(o_raw.deleted_at, "yyyy-MM-dd HH:mm:ss"), 0) AS deleted_at,
+    o_raw.find_consignor,
+    o_raw.is_modify_image,
+    if(o_raw.submit_time != '0000-00-00 00:00:00', unix_timestamp(o_raw.submit_time, "yyyy-MM-dd HH:mm:ss"), 0) AS submit_time,
+    if(o_raw.task_time != '0000-00-00 00:00:00', unix_timestamp(o_raw.task_time, "yyyy-MM-dd HH:mm:ss"), 0) AS task_time,
+    hour as hour
+from tmp.tmp_fd_dmc_sheIf_goods
+LATERAL VIEW json_tuple(value, 'kafka_table', 'kafka_ts', 'kafka_commit', 'kafka_xid','kafka_type' , 'kafka_old' , 'id', 'goods_sn', 'extend_goods_id', 'status', 'up_sheIf_time', 'supplier_image_url', 'modify_image_url', 'cat_id', 'pg_id', 'supplier_goods_sn', 'purchase_price', 'market_price', 'weight', 'note', 'exception', 'source_type', 'fill_in', 'source_desc', 'source_link', 'source_name', 'risk_level', 'is_tort', 'test_location', 'is_sort', 'supplier_remark', 'updated_at', 'created_at', 'deleted_at', 'find_consignor', 'is_modify_image', 'submit_time', 'task_time') o_raw
+AS `table`, ts, `commit`, xid, type, old, id, goods_sn, extend_goods_id, status, up_sheIf_time, supplier_image_url, modify_image_url, cat_id, pg_id, supplier_goods_sn, purchase_price, market_price, weight, note, exception, source_type, fill_in, source_desc, source_link, source_name, risk_level, is_tort, test_location, is_sort, supplier_remark, updated_at, created_at, deleted_at, find_consignor, is_modify_image, submit_time, task_time
+where dt = '${hiveconf:dt}';
