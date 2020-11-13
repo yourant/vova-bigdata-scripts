@@ -6,13 +6,12 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_app_message_push_inc
 `user_id` bigint COMMENT '用户id',
 `event_type` bigint COMMENT '推送用户群组id',
 `init_time` bigint COMMENT '记录插入时间',
-`push_result` int COMMENT '发送结果标识',
+`push_result` bigint COMMENT '发送结果标识',
 `push_time` bigint COMMENT '推送时间'
 ) COMMENT 'app message 推送信息log表'
 PARTITIONED BY (dt STRING ) 
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 
 INSERT OVERWRITE TABLE ods_fd_vb.ods_fd_app_message_push_inc PARTITION (dt='${hiveconf:dt}')

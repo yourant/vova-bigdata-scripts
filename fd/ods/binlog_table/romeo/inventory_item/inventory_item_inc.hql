@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_romeo.ods_fd_romeo_inventory_item_inc (
     activation_number           bigint,
     activation_valid_thru       string,
     provider_id                 bigint comment '采购订单供应商id',
-    unit_cost                   decimal(15, 6) comment '商品采购单价',
+    unit_cost                   decimal(15, 4) comment '商品采购单价',
     root_inventory_item_id      string,
     parent_inventory_item_id    string,
     currency                    string
@@ -45,7 +45,6 @@ CREATE TABLE IF NOT EXISTS ods_fd_romeo.ods_fd_romeo_inventory_item_inc (
 PARTITIONED BY (dt STRING,hour STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY")
 ;
 
 set hive.exec.dynamic.partition.mode=nonstrict;

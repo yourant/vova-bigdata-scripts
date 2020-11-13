@@ -36,7 +36,6 @@ CREATE TABLE IF NOT EXISTS ods_fd_romeo.ods_fd_romeo_inventory_item_detail (
 PARTITIONED BY (dt STRING,hour STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY")
 ;
 
 set hive.exec.dynamic.partition.mode=nonstrict;

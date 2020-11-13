@@ -10,8 +10,7 @@ CREATE TABLE IF NOT EXISTS  `dim.dim_fd_currency`(
   `continent` string COMMENT '州')
 COMMENT '货币维度'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 insert overwrite table dim.dim_fd_currency
 select currency_id,

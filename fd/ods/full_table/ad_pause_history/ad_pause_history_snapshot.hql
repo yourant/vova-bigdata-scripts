@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_ad_pause_history
 (
     `id` bigint COMMENT '',
-    `ads_site_code` int COMMENT '',
+    `ads_site_code` bigint COMMENT '',
     `channel` string COMMENT '',
     `ad_id` string COMMENT '',
     `status` string COMMENT '',
@@ -9,9 +9,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_ad_pause_history
     `date` string COMMENT ''
  )comment ''
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-LOCATION '/ods_fd_ad_pause_history'
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 
 set hive.support.quoted.identifiers=None;

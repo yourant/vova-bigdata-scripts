@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_romeo.ods_fd_romeo_dispatch_list (
     goods_sn                string,
     provider_id             bigint,
     goods_name              string,
-    price                   decimal(10,2) comment '工单价格',
+    price                   decimal(15, 4) comment '工单价格',
     order_goods_id          bigint,
     due_date                bigint,
     shipping_date           bigint,
@@ -29,8 +29,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_romeo.ods_fd_romeo_dispatch_list (
     external_cat_id         bigint comment '网站分类id'
 ) COMMENT '来自对应arc表的数据'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_romeo.ods_fd_romeo_dispatch_list

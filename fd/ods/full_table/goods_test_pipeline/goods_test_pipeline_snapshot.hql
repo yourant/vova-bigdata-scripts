@@ -9,8 +9,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_goods_test_pipeline
     update_time string comment '更新时间'
 ) comment ''
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-    STORED AS PARQUETFILE
-    TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+    STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_vb.ods_fd_goods_test_pipeline

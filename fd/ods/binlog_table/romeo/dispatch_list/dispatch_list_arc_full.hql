@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_romeo.ods_fd_romeo_dispatch_list_arc (
     goods_sn                string,
     provider_id             bigint,
     goods_name              string,
-    price                   decimal(10,2) comment '工单价格',
+    price                   decimal(15, 4) comment '工单价格',
     order_goods_id          bigint,
     due_date                bigint,
     shipping_date           bigint,
@@ -31,7 +31,6 @@ CREATE TABLE IF NOT EXISTS ods_fd_romeo.ods_fd_romeo_dispatch_list_arc (
 PARTITIONED BY (dt STRING,hour STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY")
 ;
 
 

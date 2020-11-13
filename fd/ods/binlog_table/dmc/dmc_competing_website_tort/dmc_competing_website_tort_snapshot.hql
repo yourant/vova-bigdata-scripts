@@ -7,8 +7,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_dmc.ods_fd_dmc_competing_website_tort (
     `tort_status` string comment '状态：NEW新建，ENABLED启用，DISABLED弃用'
 ) COMMENT 'erp 增量同步ddmc_competing_website_tort'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_dmc.ods_fd_dmc_competing_website_tort

@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_romeo.ods_fd_romeo_party_arc (
     `status` string,
     `party_id` bigint,
     `parent_party_id` bigint,
-    `is_leaf` char(1),
+    `is_leaf` string,
     `short_name` string,
     `short_party_name` string COMMENT 'short_name字段用来生成uniq_sku, jjshouse的值为空，故添加此字段，所有组织都需要有short name',
     `fc_id` bigint COMMENT '仓库id'
@@ -17,7 +17,6 @@ CREATE TABLE IF NOT EXISTS ods_fd_romeo.ods_fd_romeo_party_arc (
 PARTITIONED BY (dt STRING,hour STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY")
 ;
 
 

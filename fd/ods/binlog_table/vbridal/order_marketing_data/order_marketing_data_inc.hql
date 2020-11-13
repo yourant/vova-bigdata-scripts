@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_order_marketing_data_inc
     event_commit BOOLEAN,
     event_date BIGINT,
 -- now data
-    id INT,
-    order_id INT,
+    id BIGINT,
+    order_id BIGINT,
     sp_session_id STRING COMMENT 'artemis session_id',
     created_time STRING COMMENT '创建时间',
     last_update_time BIGINT COMMENT '最后更新时间'
@@ -16,7 +16,6 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_order_marketing_data_inc
 PARTITIONED BY (dt STRING,hour STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY")
 ;
 
 

@@ -1,15 +1,14 @@
 CREATE TABLE IF NOT EXISTS ods_fd_ecshop.ods_fd_ecs_region_arc (
-    region_id int,
-	parent_id int,
-	region_name string,
-	region_type tinyint,
-	region_cn_name string,
-	region_code string
+    region_id bigint,
+    parent_id bigint,
+    region_name string,
+    region_type bigint,
+    region_cn_name string,
+    region_code string
 ) COMMENT '来自kafka erp订单每日增量数据'
 PARTITIONED BY (dt STRING,hour STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY")
 ;
 
 

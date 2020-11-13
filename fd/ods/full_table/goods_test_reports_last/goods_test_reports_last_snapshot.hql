@@ -8,29 +8,28 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_goods_test_reports_last
     virtual_goods_id      bigint comment '商品虚拟id',
     goods_id              bigint comment '商品真实id',
     platform              string comment '测款平台',
-    cat_id                int comment '',
+    cat_id                bigint comment '',
     country               string comment '测款国家',
     impressions           bigint comment 'impressions',
-    users                 int comment '',
-    orders                int comment ' ',
-    clicks                int comment ' ',
-    cart                  int comment ' ',
-    view_cart             int comment ' ',
-    ctr                   float comment ' ',
-    rate                  int comment ' ',
-    cr                    int comment ' ',
-    cat_rate              float comment ' ',
-    impressions_threshold int comment ' ',
-    cr_threshold          float comment ' ',
-    ctr_threshold         float comment ' ',
-    order_threshold       int comment ' ',
+    users                 bigint comment '用户',
+    orders                bigint comment ' ',
+    clicks                bigint comment ' ',
+    cart                  bigint comment ' ',
+    view_cart             bigint comment ' ',
+    ctr                   decimal(15, 4) comment ' ',
+    rate                  bigint comment ' ',
+    cr                    bigint comment ' ',
+    cat_rate              decimal(15, 4) comment ' ',
+    impressions_threshold bigint comment ' ',
+    cr_threshold          decimal(15, 4) comment ' ',
+    ctr_threshold         decimal(15, 4) comment ' ',
+    order_threshold       bigint comment ' ',
     enter_time            bigint comment '入队时间',
     update_time           bigint comment '最后更新时间',
     test_count            bigint comment '测款次数'
 ) comment '最后商品测试报告'
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-    STORED AS PARQUETFILE
-    TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+    STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_vb.ods_fd_goods_test_reports_last

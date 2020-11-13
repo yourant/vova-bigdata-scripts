@@ -15,20 +15,19 @@ CREATE TABLE IF NOT EXISTS ods_fd_dmc.ods_fd_dmc_goods_project_inc (
     `on_sale_time` string comment '上架时间',
     `on_sale_staff` string comment '上架人',
     `off_sale_time` string comment '下架时间',
-    `shop_price` decimal(10,2) comment '商品价格，按项目分',
-    `market_price` decimal(10,2),
+    `shop_price` decimal(15, 4) comment '商品价格，按项目分',
+    `market_price`decimal(15, 4),
     `is_tort` string comment '是否侵权 N :未侵权 Y：已侵权',
     `risk_level` string comment '风控等级：h_danger：一级,m_danger：二级,l_danger：三级,danger：四级,l_secure：五级,secure：六级',
-    `is_on_sale` tinyint,
-    `is_delete` tinyint,
-    `is_display` tinyint,
+    `is_on_sale` bigint,
+    `is_delete` bigint,
+    `is_display` bigint,
     `virtual_goods_id` string comment '虚拟id',
     `goods_selector` string comment '选款人'
 ) COMMENT '商品组织信息表'
 PARTITIONED BY (dt STRING,hour STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 set hive.exec.dynamic.partition.mode=nonstrict;
 INSERT overwrite table ods_fd_dmc.ods_fd_dmc_goods_project_inc  PARTITION (dt='${hiveconf:dt}',hour)

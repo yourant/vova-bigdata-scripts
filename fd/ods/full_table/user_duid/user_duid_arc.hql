@@ -8,8 +8,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_user_duid_arc
  )comment '用户id和打点id'
 PARTITIONED BY (dt STRING ) 
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 INSERT overwrite table ods_fd_vb.ods_fd_user_duid_arc PARTITION (dt='${hiveconf:dt}')
 select  

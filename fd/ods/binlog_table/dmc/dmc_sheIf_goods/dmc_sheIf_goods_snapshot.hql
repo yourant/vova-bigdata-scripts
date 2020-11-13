@@ -33,8 +33,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_dmc.ods_fd_dmc_sheIf_goods (
     `task_time` bigint comment '找款任务开始时间'
 ) COMMENT '上架商品对应组织'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_dmc.ods_fd_dmc_sheIf_goods

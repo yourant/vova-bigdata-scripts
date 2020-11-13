@@ -8,8 +8,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_dmc.ods_fd_dmc_competing_website_tort_arc (
 ) COMMENT 'erp 增量同步dmc_competing_website_tort'
 PARTITIONED BY (dt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 
 set hive.exec.dynamic.partition.mode=nonstrict;

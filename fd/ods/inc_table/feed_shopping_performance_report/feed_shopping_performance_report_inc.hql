@@ -1,21 +1,20 @@
 CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_feed_shopping_performance_report_inc (
     `fspr_id` bigint  COMMENT 'auto increase feed_shopping_performance_report id',
     `project` string COMMENT 'project name',
-    `goods_id` int  COMMENT 'real goods id',
+    `goods_id` bigint  COMMENT 'real goods id',
     `country` string COMMENT 'country code 2 digit',
     `language` string COMMENT 'language code 2 digit',
     `platform` string COMMENT 'campaign_name contains MB or not',
-    `clicks` int ,
-    `impressions` int ,
-    `conversions` double,
-    `ctr` double,
-    `conversion_rate` double,
+    `clicks` bigint ,
+    `impressions` bigint ,
+    `conversions` decimal(15, 4),
+    `ctr` decimal(15, 4),
+    `conversion_rate` decimal(15, 4),
     `insert_date` string 
 ) COMMENT ''
 PARTITIONED BY (dt STRING )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 
 INSERT OVERWRITE TABLE ods_fd_vb.ods_fd_feed_shopping_performance_report_inc PARTITION (dt='${hiveconf:dt}')

@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_user_agent_analysis (
 `user_agent_id` bigint COMMENT '自增id',
-`is_app` int COMMENT '是否是app',
+`is_app` bigint COMMENT '是否是app',
 `device_type` string COMMENT '设备类型',
 `os_type` string COMMENT '操作系统类型',
 `version` string COMMENT 'app版本号',
@@ -16,8 +16,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_user_agent_analysis (
 `ga_id` string COMMENT 'Google Advertising ID'
 ) COMMENT 'app message 推送信息log表'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_vb.ods_fd_user_agent_analysis

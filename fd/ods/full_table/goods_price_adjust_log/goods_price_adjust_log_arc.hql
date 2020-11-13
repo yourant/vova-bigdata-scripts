@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_goods_price_adjust_log_arc
 (
-  id int COMMENT '主键'
+  id bigint COMMENT '主键'
   ,worker string COMMENT '操作人'
-  ,act_id int COMMENT '调价申请主键'
+  ,act_id bigint COMMENT '调价申请主键'
   ,act_table string COMMENT '操作表'
   ,act_content string COMMENT '操作内容'
   ,note string COMMENT '备注'
@@ -10,8 +10,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_goods_price_adjust_log_arc
  )comment '申请调价核价操作历史表'
 PARTITIONED BY (dt STRING ) 
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 
 INSERT overwrite table ods_fd_vb.ods_fd_goods_price_adjust_log_arc PARTITION (dt='${hiveconf:dt}')

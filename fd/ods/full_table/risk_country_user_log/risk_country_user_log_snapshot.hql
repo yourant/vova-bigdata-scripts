@@ -10,8 +10,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_risk_country_user_log(
         `create_time` string COMMENT '创建时间')
         COMMENT 'vbridal库屏蔽用户记录'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 
 set hive.support.quoted.identifiers=None;

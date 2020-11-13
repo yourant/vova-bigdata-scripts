@@ -14,8 +14,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_ecshop.ods_fd_ecs_fd_sku_backups_inc (
 ) COMMENT 'fd相关组织所有有销量或者有库存的sku备份'
 PARTITIONED BY (dt STRING,hour STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 set hive.exec.dynamic.partition.mode=nonstrict;
 INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_fd_sku_backups_inc  PARTITION (dt='${hiveconf:dt}',hour)

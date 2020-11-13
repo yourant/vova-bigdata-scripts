@@ -7,8 +7,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_user_duid
     `last_update_time` bigint COMMENT ''
  )comment '用户id和打点id'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 
 set hive.support.quoted.identifiers=None;

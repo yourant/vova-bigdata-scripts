@@ -10,22 +10,21 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_app_event_log_message_push_arc(
 	`platform` string COMMENT '平台',
 	`app_version` string COMMENT 'app version',
 	`idfa` string COMMENT 'idfa',
-        `idfv` string COMMENT 'idfv',
-        `imei` string COMMENT 'imei',
-       `android_id` string COMMENT 'android_id',
-        `ip` string COMMENT 'ip',
-        `uid` bigint COMMENT 'uid',
-       `language` string COMMENT '语言',
-      `country` string COMMENT '国家',
-       `currency` string COMMENT '货币',
-       `extra` string COMMENT '',
-       `system` string COMMENT '',
-       `bundle_id` string COMMENT ''
+    `idfv` string COMMENT 'idfv',
+    `imei` string COMMENT 'imei',
+    `android_id` string COMMENT 'android_id',
+    `ip` string COMMENT 'ip',
+    `uid` bigint COMMENT 'uid',
+    `language` string COMMENT '语言',
+    `country` string COMMENT '国家',
+    `currency` string COMMENT '货币',
+    `extra` string COMMENT '',
+    `system` string COMMENT '',
+    `bundle_id` string COMMENT ''
 ) COMMENT 'app message 推送信息表'
 PARTITIONED BY (dt STRING )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 
 INSERT overwrite table ods_fd_vb.ods_fd_app_event_log_message_push_arc PARTITION (dt='${hiveconf:dt}')

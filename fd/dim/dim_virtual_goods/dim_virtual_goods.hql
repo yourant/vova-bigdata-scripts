@@ -4,8 +4,7 @@ CREATE TABLE IF NOT EXISTS dim.dim_fd_virtual_goods(
   `project_name` string COMMENT '组织'
  )comment '虚拟商品id 商品id'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 INSERT overwrite table dim.dim_fd_virtual_goods
 select  

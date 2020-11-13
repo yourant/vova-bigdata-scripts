@@ -8,11 +8,10 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_turntable_record_v2(
 `activity_name` string COMMENT '活动名',
 `prize_name` string COMMENT '奖品name',
 `coupon_code` string COMMENT '',
-  `points` bigint COMMENT '奖励积分')
+`points` bigint COMMENT '奖励积分')
 COMMENT '数据库同步过来的用户签到表'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 
 set hive.support.quoted.identifiers=None;

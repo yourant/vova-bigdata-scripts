@@ -8,8 +8,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_dmc.ods_fd_dmc_party (
     `platform` string comment '组织所属平台：fam, shopify等'
 ) COMMENT '组织表'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_dmc.ods_fd_dmc_party

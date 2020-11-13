@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_order_marketing_data_arc
 (
-    id INT,
-    order_id INT,
+    id BIGINT,
+    order_id BIGINT,
     sp_session_id STRING COMMENT 'artemis session_id',
     created_time STRING COMMENT '创建时间',
     last_update_time BIGINT COMMENT '最后更新时间'
@@ -9,7 +9,6 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_order_marketing_data_arc
 PARTITIONED BY (dt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY")
 ;
 
 set hive.exec.dynamic.partition.mode=nonstrict;

@@ -1,26 +1,25 @@
 CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_category_arc
 (
-  `cat_id` int,
+  `cat_id` bigint,
   `cat_name` string,
   `cat_goods_name` string,
-  `depth` int,
+  `depth` bigint,
   `keywords` string,
   `cat_desc` string,
-  `parent_id` int,
-  `sort_order` int,
-  `is_show` TINYINT,
-  `party_id` int,
+  `parent_id` bigint,
+  `sort_order` bigint,
+  `is_show` bigint,
+  `party_id` bigint,
   `config` string,
-  `erp_cat_id` int,
-  `erp_top_cat_id` int,
-  `pk_cat_id` int,
-  `is_accessory` TINYINT,
+  `erp_cat_id` bigint,
+  `erp_top_cat_id` bigint,
+  `pk_cat_id` bigint,
+  `is_accessory` bigint,
   `last_update_time` string
  )comment '商品类目信息'
 PARTITIONED BY (dt STRING ) 
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 INSERT overwrite table ods_fd_vb.ods_fd_category_arc PARTITION (dt='${hiveconf:dt}')
 select  

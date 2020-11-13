@@ -18,8 +18,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_goods_preorder_plan
     reason                     string comment '商品测款理由',
     is_into_group              bigint comment '是否进入预售组'
 ) comment '从vbridal同步过来的测款计划表'
-    STORED AS PARQUETFILE
-    TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+    STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_vb.ods_fd_goods_preorder_plan

@@ -6,8 +6,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_erp.dmc_competing_website_info (
     `note` string comment '备注'
 ) COMMENT 'erp 增量同步dmc_competing_website_info'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_erp.dmc_competing_website_info

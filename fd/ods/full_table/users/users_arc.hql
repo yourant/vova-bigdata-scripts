@@ -13,17 +13,17 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_users_arc
   `reg_time` string COMMENT '注册时间',
   `last_time` string COMMENT '',
   `last_ip` string COMMENT '',
-  `visit_count` int COMMENT '',
-  `points` int COMMENT '',
-  `user_rank` tinyint COMMENT '等级',
-  `is_special` tinyint COMMENT '',
+  `visit_count` bigint COMMENT '',
+  `points` bigint COMMENT '',
+  `user_rank` bigint COMMENT '等级',
+  `is_special` bigint COMMENT '',
   `salt` string COMMENT '',
   `user_realname` string COMMENT '用户真实姓名',
   `user_mobile` string COMMENT '手机',
-  `country` int COMMENT '国家',
-  `province` int COMMENT '省',
-  `city` int COMMENT '城市',
-  `district` int COMMENT '地区',
+  `country` bigint COMMENT '国家',
+  `province` bigint COMMENT '省',
+  `city` bigint COMMENT '城市',
+  `district` bigint COMMENT '地区',
   `zipcode` string COMMENT '邮编',
   `user_address` string COMMENT '联系地址',
   `track_id` string COMMENT '',
@@ -31,21 +31,20 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_users_arc
   `reg_province` bigint COMMENT '注册来源地',
   `reg_recommender` string COMMENT '注册推荐人',
   `user_tel` string COMMENT '用户联系方式',
-  `email_valid` tinyint COMMENT '是否邮箱验证',
+  `email_valid` bigint COMMENT '是否邮箱验证',
   `email_validate_point_id` bigint COMMENT '通过邮箱验证获得积分',
-  `unsubscribe` tinyint COMMENT '是否取消订阅',
-  `is_delete` tinyint COMMENT '是否删除',
-  `language_id` int COMMENT '语言id',
+  `unsubscribe` bigint COMMENT '是否取消订阅',
+  `is_delete` bigint COMMENT '是否删除',
+  `language_id` bigint COMMENT '语言id',
   `reg_site_name` string COMMENT '注册网站',
   `reg_site_host` string COMMENT '注册域名',
   `reg_page` string COMMENT '注册页面',
   `open_id` string COMMENT '第三方平台id',
-  `app_push_number` int COMMENT '推送'
+  `app_push_number` bigint COMMENT '推送'
   )COMMENT '用户信息表'
 PARTITIONED BY (dt STRING ) 
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 INSERT overwrite table ods_fd_vb.ods_fd_users_arc PARTITION (dt='${hiveconf:dt}')
 select  

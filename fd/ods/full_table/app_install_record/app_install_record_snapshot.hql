@@ -10,8 +10,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_app_install_record(
         `lang_code` string COMMENT '语言'
         ) COMMENT 'app安装记录表'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 
 set hive.support.quoted.identifiers=None;

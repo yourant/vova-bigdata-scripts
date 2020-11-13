@@ -6,8 +6,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_ecshop.ods_fd_ecs_fd_sku_backups (
     `size` string COMMENT 'sku尺码'
 ) COMMENT 'fd相关组织所有有销量或者有库存的sku备份'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_fd_sku_backups

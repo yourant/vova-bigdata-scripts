@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_user_agent_analysis_arc (
 `user_agent_id` bigint COMMENT '自增id',
-`is_app` int COMMENT '是否是app',
+`is_app` bigint COMMENT '是否是app',
 `device_type` string COMMENT '设备类型',
 `os_type` string COMMENT '操作系统类型',
 `version` string COMMENT 'app版本号',
@@ -17,8 +17,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_user_agent_analysis_arc (
 ) COMMENT 'user agent分析表'
 PARTITIONED BY (dt STRING ) 
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 INSERT overwrite table ods_fd_vb.ods_fd_user_agent_analysis_arc PARTITION (dt='${hiveconf:dt}')
 select user_agent_id, is_app, device_type, os_type, version, device_id, uuid, project_name, device_name, browser, idfa, idfv, imei, android_id, ga_id

@@ -11,8 +11,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_risk_country_user_log_arc(
         COMMENT 'vbridal库屏蔽用户记录'
 PARTITIONED BY (dt STRING )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 
 INSERT overwrite table ods_fd_vb.ods_fd_risk_country_user_log_arc PARTITION (dt='${hiveconf:dt}')

@@ -13,8 +13,7 @@ CREATE TABLE IF NOT EXISTS dim.dim_fd_category (
 `is_leaf` int COMMENT '是否是叶子节点'
 ) COMMENT 'category维度表'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 insert overwrite table dim.dim_fd_category
 SELECT

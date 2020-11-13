@@ -11,12 +11,11 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_project_goods_history_arc(
         `modify_time` string COMMENT '修改时间', 
         `memo` string COMMENT '修改描述', 
         `oper_type` string, 
-        `parent_id` int)
+        `parent_id` bigint)
 COMMENT '各组织商品信息变更表'
 PARTITIONED BY (dt STRING )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 
 INSERT overwrite table ods_fd_vb.ods_fd_project_goods_history_arc PARTITION (dt='${hiveconf:dt}')

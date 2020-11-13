@@ -5,8 +5,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_ecshop.ods_fd_ecs_order_attribute (
     attr_value string COMMENT '扩展值'
 ) COMMENT '来自对应arc表的数据'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_order_attribute

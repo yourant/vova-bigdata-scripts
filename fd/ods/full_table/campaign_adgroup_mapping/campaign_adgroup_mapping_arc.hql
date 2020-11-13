@@ -8,13 +8,12 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_campaign_adgroup_mapping_arc
     `adgroup_category` string COMMENT '',
     `ads_site_code` string COMMENT '',
     `campaign_country` string COMMENT '',
-    `is_rem` int COMMENT '',
+    `is_rem` bigint COMMENT '',
     `campaign_channel` string COMMENT ''
  )comment 'artemis库同步的'
 PARTITIONED BY (dt STRING )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 
 INSERT overwrite table ods_fd_vb.ods_fd_campaign_adgroup_mapping_arc PARTITION (dt='${hiveconf:dt}')

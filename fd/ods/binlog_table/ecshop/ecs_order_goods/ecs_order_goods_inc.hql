@@ -12,17 +12,17 @@ CREATE TABLE IF NOT EXISTS ods_fd_ecshop.ods_fd_ecs_order_goods_inc (
     goods_name              string,
     goods_sn                string,
     goods_number            bigint,
-    market_price            decimal(10, 2),
-    goods_price             decimal(16, 6),
+    market_price            decimal(15, 4),
+    goods_price             decimal(15, 4),
     goods_attr              string,
     send_number             bigint,
-    is_real                 tinyint,
+    is_real                 bigint,
     extension_code          string,
     parent_id               bigint,
     is_gift                 bigint,
-    goods_status            tinyint,
-    action_amt              decimal(10, 2),
-    action_reason_cat       tinyint,
+    goods_status            bigint,
+    action_amt              decimal(15, 4),
+    action_reason_cat       bigint,
     action_note             string,
     carrier_bill_id         bigint,
     provider_id             bigint,
@@ -35,13 +35,12 @@ CREATE TABLE IF NOT EXISTS ods_fd_ecshop.ods_fd_ecs_order_goods_inc (
     style_id                bigint,
     customized              string,
     status_id               string comment '商品新旧状态',
-    added_fee               decimal(10, 4) comment '税率',
+    added_fee               decimal(15, 4) comment '税率',
     external_order_goods_id bigint comment '网站order_goods_id'
 ) COMMENT '来自kafka erp表每日增量数据'
 PARTITIONED BY (dt STRING,hour STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY")
 ;
 
 set hive.exec.dynamic.partition.mode=nonstrict;

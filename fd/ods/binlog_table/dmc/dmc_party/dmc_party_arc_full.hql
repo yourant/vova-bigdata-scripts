@@ -9,8 +9,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_dmc.ods_fd_dmc_party_arc (
 ) COMMENT '组织表'
 PARTITIONED BY (dt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 
 set hive.exec.dynamic.partition.mode=nonstrict;

@@ -20,8 +20,7 @@ CREATE TABLE IF NOT EXISTS `dim.dim_fd_region`(
 )
 COMMENT '地区信息维表'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 INSERT overwrite table dim.dim_fd_region
 select s.region_id,

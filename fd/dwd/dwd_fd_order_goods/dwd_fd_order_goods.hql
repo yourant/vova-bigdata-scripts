@@ -91,8 +91,7 @@ CREATE TABLE IF NOT EXISTS dwd.dwd_fd_order_goods (
 ) COMMENT '订单商品事实表'
 PARTITIONED BY (dt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 INSERT overwrite table dwd.dwd_fd_order_goods PARTITION (dt='${hiveconf:dt}')
 select 

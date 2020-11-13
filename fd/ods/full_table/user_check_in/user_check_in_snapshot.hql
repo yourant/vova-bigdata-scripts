@@ -1,15 +1,14 @@
 CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_user_check_in
 (
-    `id`         int COMMENT '',
-    `user_id`    int COMMENT '',
-    `count`      int COMMENT '',
+    `id`         bigint COMMENT '',
+    `user_id`    bigint COMMENT '',
+    `count`      bigint COMMENT '',
     `last_date`  string COMMENT '',
-    `per_count`  int COMMENT '',
-    `full_count` int COMMENT ''
+    `per_count`  bigint COMMENT '',
+    `full_count` bigint COMMENT ''
 ) comment '用户签到'
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-    STORED AS PARQUETFILE
-    TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+    STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_vb.ods_fd_user_check_in

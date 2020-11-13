@@ -15,8 +15,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_romeo.ods_fd_romeo_order_inv_reserved_detail (
     last_updated_stamp           bigint
 ) COMMENT '来自对应arc表的数据'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_romeo.ods_fd_romeo_order_inv_reserved_detail

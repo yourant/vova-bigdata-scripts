@@ -41,8 +41,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_dmc.ods_fd_dmc_sheIf_goods_inc (
 ) COMMENT '上架商品对应组织'
 PARTITIONED BY (dt STRING,hour STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 set hive.exec.dynamic.partition.mode=nonstrict;
 INSERT overwrite table ods_fd_dmc.ods_fd_dmc_sheIf_goods_inc  PARTITION (dt='${hiveconf:dt}',hour)

@@ -12,8 +12,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_turntable_record_v2_arc(
 COMMENT '数据库同步过来的用户签到表'
 PARTITIONED BY (dt STRING )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 
 INSERT overwrite table ods_fd_vb.ods_fd_turntable_record_v2_arc PARTITION (dt='${hiveconf:dt}')

@@ -5,16 +5,15 @@ CREATE TABLE IF NOT EXISTS ods_fd_romeo.ods_fd_romeo_currency_conversion_arc (
 	last_update_tx_stamp bigint,
 	created_tx_stamp bigint,
 	currency_conversion_date bigint,
-	currency_conversion_rate decimal(19, 4),
+	currency_conversion_rate decimal(15, 4),
 	created_user_by_login string,
 	from_currency_code string,
 	to_currency_code string,
-	cancellation_flag char(1)
+	cancellation_flag string
 ) COMMENT '来自kafka erp订单每日增量数据'
 PARTITIONED BY (dt STRING,hour STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY")
 ;
 
 

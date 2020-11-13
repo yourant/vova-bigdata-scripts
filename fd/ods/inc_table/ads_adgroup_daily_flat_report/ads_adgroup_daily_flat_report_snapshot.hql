@@ -10,16 +10,15 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_ads_adgroup_daily_flat_report (
     country string,
     ga_channel string,
     channel string,
-    cost double,
-    gmv double,
+    cost decimal(15, 4),
+    gmv decimal(15, 4),
     `date` string,
-    clicks int,
-    impressions int,
-    average_position double
+    clicks bigint,
+    impressions bigint,
+    average_position decimal(15, 4)
 ) COMMENT 'erp 增量同步过来的ad report表'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_vb.ods_fd_ads_adgroup_daily_flat_report

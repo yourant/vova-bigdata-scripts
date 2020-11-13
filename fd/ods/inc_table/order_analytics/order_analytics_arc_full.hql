@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS  `ods_fd_vb.ods_fd_order_analytics_arc`(
   `oa_id` bigint COMMENT '自增id',
-  `order_id` int COMMENT '订单id',
+  `order_id` bigint COMMENT '订单id',
   `source` string COMMENT '来源',
   `keyword` string COMMENT '关键词',
   `landing_page` string COMMENT '着陆页',
@@ -38,8 +38,7 @@ CREATE TABLE IF NOT EXISTS  `ods_fd_vb.ods_fd_order_analytics_arc`(
   )COMMENT 'artemis库同步的order_analytics表'
 PARTITIONED BY (dt STRING ) 
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 
 INSERT overwrite table ods_fd_vb.ods_fd_order_analytics_arc PARTITION (dt='${hiveconf:dt}')

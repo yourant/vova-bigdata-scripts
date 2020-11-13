@@ -73,8 +73,7 @@ CREATE TABLE IF NOT EXISTS `dwd.dwd_fd_order_channel_analytics`(
 COMMENT '订单渠道分析基础表'
 PARTITIONED BY (dt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUET
-TBLPROPERTIES ("parquet.compress"="SNAPPY");
+STORED AS PARQUET;
 
 
 INSERT OVERWRITE table  dwd.dwd_fd_order_channel_analytics PARTITION (dt='${hiveconf:dt}')

@@ -36,8 +36,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_dmc.ods_fd_dmc_goods (
 	site_id bigint comment '竞品网站ID'
 ) COMMENT 'dmc商品表'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_dmc.ods_fd_dmc_goods

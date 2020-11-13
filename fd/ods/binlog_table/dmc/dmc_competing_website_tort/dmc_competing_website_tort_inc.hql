@@ -15,8 +15,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_dmc.ods_fd_dmc_competing_website_tort_inc (
 ) COMMENT 'erp 增量同步dmc_competing_website_tort'
 PARTITIONED BY (dt STRING,hour STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-TBLPROPERTIES ("parquet.compress" = "SNAPPY");
+STORED AS PARQUETFILE;
 
 set hive.exec.dynamic.partition.mode=nonstrict;
 INSERT overwrite table ods_fd_dmc.ods_fd_dmc_competing_website_tort_inc  PARTITION (dt='${hiveconf:dt}',hour)

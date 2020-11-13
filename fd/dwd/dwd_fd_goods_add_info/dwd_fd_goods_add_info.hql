@@ -14,8 +14,7 @@ CREATE TABLE IF NOT EXISTS `dwd.dwd_fd_goods_add_info`(
 COMMENT '打点数据中add和view事件生成的关于商品的中间表'
 PARTITIONED BY (dt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUET
-TBLPROPERTIES ("parquet.compress"="SNAPPY");
+STORED AS PARQUET;
 
 INSERT overwrite table dwd.dwd_fd_goods_add_info PARTITION (dt='${hiveconf:dt}')
 select
