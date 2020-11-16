@@ -54,7 +54,7 @@ nodes:
       - name: goods_display_order_artemis_country
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=goods_display_order_artemis_country --mapers=20 --partition_num=10 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=goods_display_order_artemis_country --mapers=10 --partition_num=2 --period_type=day
         dependsOn:
           - fd_dw_orders_init_flow_start
       
