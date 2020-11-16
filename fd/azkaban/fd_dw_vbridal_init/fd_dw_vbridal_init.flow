@@ -19,56 +19,56 @@ nodes:
       - name: order_extension
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name order_extension -mapers 60 -partition_num 60 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=order_extension --mapers=80 --partition_num=40 --period_type=day
         dependsOn:
           - fd_dw_orders_init_flow_start
         
       - name: order_goods
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name order_goods -mapers 60 -partition_num 60 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=order_goods --mapers=80 --partition_num=35 --period_type=day
         dependsOn:
           - fd_dw_orders_init_flow_start
 
       - name: order_info
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name order_info -mapers 50 -partition_num 50 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=order_info --mapers=60 --partition_num=40 --period_type=day
         dependsOn:
           - fd_dw_orders_init_flow_start
       
       - name: order_marketing_data
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name order_marketing_data -mapers 40 -partition_num 40 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=order_marketing_data --mapers=20 --partition_num=10 --period_type=day
         dependsOn:
           - fd_dw_orders_init_flow_start
       
       - name: order_status_change_history
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name order_status_change_history -mapers 60 -partition_num 60 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=order_status_change_history --mapers=40 --partition_num=20 --period_type=day
         dependsOn:
           - fd_dw_orders_init_flow_start
       
       - name: goods_display_order_artemis_country
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name goods_display_order_artemis_country -mapers 20 -partition_num 20 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=goods_display_order_artemis_country --mapers=20 --partition_num=10 --period_type=day
         dependsOn:
           - fd_dw_orders_init_flow_start
       
       - name: goods_project
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name goods_project -mapers 4 -partition_num 10 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=goods_project --mapers=4 --partition_num=2 --period_type=day
         dependsOn:
           - fd_dw_orders_init_flow_start
       
       - name: users
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name users -mapers 4 -partition_num 4 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=users --mapers=4 --partition_num=2 --period_type=day
         dependsOn:
           - fd_dw_orders_init_flow_start
 
@@ -86,63 +86,63 @@ nodes:
       - name: category
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name category  -mapers 1 -partition_num 1 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=category  --mapers=1 --partition_num=1 --period_type=day
         dependsOn:
           - fd_dw_dim_init_flow_start
       
       - name: currency
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name currency -mapers 1 -partition_num 1 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=currency --mapers=1 --partition_num=1 --period_type=day
         dependsOn:
           - fd_dw_dim_init_flow_start
 
       - name: languages
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name languages -mapers 1 -partition_num 1 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=languages --mapers=1 --partition_num=1 --period_type=day
         dependsOn:
           - fd_dw_dim_init_flow_start
       
       - name: region
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name region -mapers 1 -partition_num 1 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=region --mapers=1 --partition_num=1 --period_type=day
         dependsOn:
           - fd_dw_dim_init_flow_start
 
       - name: region_area
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name region_area -mapers 1 -partition_num 1 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=region_area --mapers=1 --partition_num=1 --period_type=day
         dependsOn:
           - fd_dw_dim_init_flow_start
 
       - name: goods
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name goods -mapers 2 -partition_num 2 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=goods --mapers=4 --partition_num=2 --period_type=day
         dependsOn:
           - fd_dw_dim_init_flow_start
       
       - name: virtual_goods
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name virtual_goods -mapers 4 -partition_num 4 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=virtual_goods --mapers=4 --partition_num=2 --period_type=day
         dependsOn:
           - fd_dw_dim_init_flow_start
       
       - name: user_agent_analysis
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name user_agent_analysis -mapers 10 -partition_num 10 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=user_agent_analysis --mapers=15 --partition_num=6 --period_type=day
         dependsOn:
           - fd_dw_dim_init_flow_start
       
       - name: user_duid
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name user_duid -mapers 10 -partition_num 10 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=user_duid --mapers=10 --partition_num=2 --period_type=day
         dependsOn:
           - fd_dw_dim_init_flow_start
 
@@ -160,42 +160,42 @@ nodes:
       - name: ok_coupon
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name ok_coupon -mapers 6 -partition_num 6 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=ok_coupon --mapers=12 --partition_num=2 --period_type=day
         dependsOn:
           - fd_dw_init_flow_one_start
 
       - name: ok_coupon_config
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name ok_coupon_config -mapers 4 -partition_num 4 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=ok_coupon_config --mapers=4 --partition_num=1 --period_type=day
         dependsOn:
           - fd_dw_init_flow_one_start
       
       - name: points
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name points -mapers 6 -partition_num 6 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=points --mapers=6 --partition_num=1 --period_type=day
         dependsOn:
           - fd_dw_init_flow_one_start
       
       - name: email_unsubscribe
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name email_unsubscribe -mapers 6 -partition_num 6 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=email_unsubscribe --mapers=6 --partition_num=2 --period_type=day
         dependsOn:
           - fd_dw_init_flow_one_start
 
       - name: newsletters
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name newsletters -mapers 8 -partition_num 8 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=newsletters --mapers=8 --partition_num=2 --period_type=day
         dependsOn:
           - fd_dw_init_flow_one_start
 
       - name: email_subscribe
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name email_subscribe -mapers 8 -partition_num 8 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=email_subscribe --mapers=8 --partition_num=2 --period_type=day
         dependsOn:
           - fd_dw_init_flow_one_start
 
@@ -213,28 +213,28 @@ nodes:
       - name: app_event_log_message_push
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name app_event_log_message_push -mapers 8 -partition_num 8 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=app_event_log_message_push --mapers=8 --partition_num=3 --period_type=day
         dependsOn:
           - fd_dw_init_flow_two_start
 
       - name: app_install_record
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name app_install_record -mapers 10 -partition_num 10 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=app_install_record --mapers=60 --partition_num=20 --period_type=day
         dependsOn:
           - fd_dw_init_flow_two_start
         
       - name: app_message_info
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name app_message_info -mapers 10 -partition_num 10 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=app_message_info --mapers=10 --partition_num=2 --period_type=day
         dependsOn:
           - fd_dw_init_flow_two_start
 
       - name: app_message_push
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name app_message_push -mapers 8 -partition_num 8 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=app_message_push --mapers=8 --partition_num=2 --period_type=day
         dependsOn:
           - fd_dw_init_flow_two_start
 
@@ -252,63 +252,63 @@ nodes:
       - name: goods_test_goods
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name goods_test_goods -mapers 6 -partition_num 6 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=goods_test_goods --mapers=6 --partition_num=1 --period_type=day
         dependsOn:
           - fd_dw_init_flow_three_start
 
       - name: goods_test_goods_log
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name goods_test_goods_log -mapers 6 -partition_num 6 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=goods_test_goods_log --mapers=6 --partition_num=2 --period_type=day
         dependsOn:
           - fd_dw_init_flow_three_start
 
       - name: goods_test_pipeline
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name goods_test_pipeline -mapers 6 -partition_num 6 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=goods_test_pipeline --mapers=6 --partition_num=2 --period_type=day
         dependsOn:
           - fd_dw_init_flow_three_start
 
       - name: goods_test_preorder_result
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name goods_test_preorder_result -mapers 6 -partition_num 6 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=goods_test_preorder_result --mapers=6 --partition_num=1 --period_type=day
         dependsOn:
           - fd_dw_init_flow_three_start
         
       - name: goods_test_reports_last
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name goods_test_reports_last -mapers 6 -partition_num 6 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=goods_test_reports_last --mapers=6 --partition_num=1 --period_type=day
         dependsOn:
           - fd_dw_init_flow_three_start
       
       - name: goods_preorder_plan
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name goods_preorder_plan -mapers 6 -partition_num 6 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=goods_preorder_plan --mapers=6 --partition_num=1 --period_type=day
         dependsOn:
           - fd_dw_init_flow_three_start
 
       - name: goods_price_adjust_log
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name goods_price_adjust_log -mapers 8 -partition_num 8 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=goods_price_adjust_log --mapers=8 --partition_num=1 --period_type=day
         dependsOn:
           - fd_dw_init_flow_three_start
         
       - name: goods_price_adjust_record
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name goods_price_adjust_record -mapers 8 -partition_num 8 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=goods_price_adjust_record --mapers=8 --partition_num=1 --period_type=day
         dependsOn:
           - fd_dw_init_flow_three_start
 
       - name: goods_purchase_price
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name goods_purchase_price -mapers 8 -partition_num 8 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=goods_purchase_price --mapers=8 --partition_num=1 --period_type=day
         dependsOn:
           - fd_dw_init_flow_three_start
 
@@ -326,42 +326,42 @@ nodes:
       - name: style
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name style -mapers 4 -partition_num 4 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=style --mapers=4 --partition_num=1 --period_type=day
         dependsOn:
           - fd_dw_init_flow_four_start
 
       - name: turntable_record_v2
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name turntable_record_v2 -mapers 6 -partition_num 6 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=turntable_record_v2 --mapers=6 --partition_num=1 --period_type=day
         dependsOn:
           - fd_dw_init_flow_four_start
 
       - name: user_check_in
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name user_check_in -mapers 6 -partition_num 6 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=user_check_in --mapers=6 --partition_num=2 --period_type=day
         dependsOn:
           - fd_dw_init_flow_four_start
 
       - name: user_check_in_log
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name user_check_in_log -mapers 8 -partition_num 8 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=user_check_in_log --mapers=4 --partition_num=2 --period_type=day
         dependsOn:
           - fd_dw_init_flow_four_start
       
       - name: risk_country_user_log
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name risk_country_user_log -mapers 8  -partition_num 8 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=risk_country_user_log --mapers=4  --partition_num=1 --period_type=day
         dependsOn:
           - fd_dw_init_flow_four_start
       
       - name: project_goods_history
         type: command
         config:
-          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type INIT -table_name project_goods_history -mapers 4  -partition_num 4 -period_type day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=project_goods_history --mapers=4  --partition_num=4 --period_type=day
         dependsOn:
           - fd_dw_init_flow_four_start
 
