@@ -47,7 +47,7 @@ nodes:
       - name: ods_fd_vb_goods_display_order_artemis_country
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCTIME --inc_column=last_update_time --table_name=goods_display_order_artemis_country --mapers=8 --partition_num=2 --primary_key=goods_id --period_type=day 
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCTIME --inc_column=last_update_time --table_name=goods_display_order_artemis_country  --partition_num=2  --period_type=day
         dependsOn:
           - fd_ods_goods_flow_start
 
@@ -61,14 +61,14 @@ nodes:
       - name: ods_fd_vb_project_goods_history
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=project_goods_history --partition_num=4 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=project_goods_history --partition_num=1 --period_type=day
         dependsOn:
           - fd_ods_goods_flow_start
 
       - name: ods_fd_vb_goods_preorder_plan
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_preorder_plan --mapers=6 --partition_num=1 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_preorder_plan --partition_num=1 --period_type=day
         dependsOn:
           - fd_ods_goods_flow_start
 
@@ -82,7 +82,7 @@ nodes:
       - name: ods_fd_vb_goods_price_adjust_record
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_price_adjust_record --mapers=8 --partition_num=1 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_price_adjust_record --partition_num=1 --period_type=day
         dependsOn:
           - fd_ods_goods_flow_start
       
@@ -96,14 +96,14 @@ nodes:
       - name: ods_fd_vb_goods_test_goods_log
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_test_goods_log --partition_num=2 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_test_goods_log --partition_num=1 --period_type=day
         dependsOn:
           - fd_ods_goods_flow_start
 
       - name: ods_fd_vb_goods_test_pipeline
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_test_pipeline --partition_num=2 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_test_pipeline --partition_num=1 --period_type=day
         dependsOn:
           - fd_ods_goods_flow_start
 
@@ -135,7 +135,7 @@ nodes:
       - name: ods_fd_vb_app_message_push
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCTIME --inc_column=push_time --table_name=app_message_push --mapers=8 --partition_num=4 --primary_key=id --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCTIME --inc_column=push_time --table_name=app_message_push --mapers=8 --partition_num=4  --period_type=day
         dependsOn:
           - fd_ods_app_flow_start
 
@@ -149,7 +149,7 @@ nodes:
       - name: ods_fd_vb_app_install_record
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCID --inc_column=id --table_name=app_install_record  --partition_num=1 --primary_key=id --period_type=day 
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCID --inc_column=id --table_name=app_install_record  --partition_num=4  --period_type=day
         dependsOn:
           - fd_ods_app_flow_start
 
@@ -174,7 +174,7 @@ nodes:
       - name: ods_fd_vb_ok_coupon
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=ok_coupon --mapers=12 --partition_num=2 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=ok_coupon  --partition_num=4 --period_type=day
         dependsOn:
           - fd_ods_order_flow_start
       
@@ -188,14 +188,14 @@ nodes:
       - name: ods_fd_vb_order_status_change_history
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCTIME --inc_column=create_time --table_name=order_status_change_history --mapers=8 --partition_num=4 --primary_key=id --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCTIME --inc_column=create_time --table_name=order_status_change_history  --partition_num=1  --period_type=day
         dependsOn:
           - fd_ods_order_flow_start
       
       - name: ods_fd_vb_languages
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=languages --mapers=12 --partition_num=2 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=languages --partition_num=1 --period_type=day
         dependsOn:
           - fd_ods_order_flow_start
       
@@ -213,7 +213,7 @@ nodes:
       - name: ods_fd_vb_user_agent_analysis
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCID --inc_column=user_agent_id --table_name=user_agent_analysis --mapers=15 --partition_num=6 --primary_key=user_agent_id --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCID --inc_column=user_agent_id --table_name=user_agent_analysis --partition_num=4  --period_type=day
         dependsOn:
           - fd_ods_user_flow_start
 
@@ -248,14 +248,14 @@ nodes:
       - name: ods_fd_vb_user_duid
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=user_duid --mapers=10 --partition_num=3 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCTIME --inc_column=last_update_time --table_name=user_duid  --partition_num=10 --period_type=day
         dependsOn:
           - fd_ods_user_flow_start
       
       - name: ods_fd_vb_users
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=users --mapers=60 --partition_num=40 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=users --mapers=10 --partition_num=20 --period_type=day
         dependsOn:
           - fd_ods_user_flow_start
       
@@ -280,21 +280,21 @@ nodes:
       - name: ods_fd_vb_newsletters
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=newsletters --mapers=8 --partition_num=2 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=newsletters  --partition_num=1 --period_type=day
         dependsOn:
           - fd_ods_newsletter_flow_start
 
       - name: ods_fd_vb_email_unsubscribe
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=email_unsubscribe --mapers=6 --partition_num=2 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=email_unsubscribe  --partition_num=1 --period_type=day
         dependsOn:
           - fd_ods_newsletter_flow_start
 
       - name: ods_fd_vb_email_subscribe
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=email_subscribe --mapers=8 --partition_num=2 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=email_subscribe  --partition_num=2 --period_type=day
         dependsOn:
           - fd_ods_newsletter_flow_start
       
