@@ -19,21 +19,21 @@ nodes:
       - name: order_extension
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=order_extension --mapers=80 --partition_num=40 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=order_extension --mapers=80 --partition_num=15 --period_type=day
         dependsOn:
           - fd_dw_orders_init_flow_start
         
       - name: order_goods
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=order_goods --mapers=80 --partition_num=35 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=order_goods --mapers=80 --partition_num=18 --period_type=day
         dependsOn:
           - fd_dw_orders_init_flow_start
 
       - name: order_info
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=order_info --mapers=60 --partition_num=40 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=order_info --mapers=60 --partition_num=20 --period_type=day
         dependsOn:
           - fd_dw_orders_init_flow_start
       
@@ -61,7 +61,7 @@ nodes:
       - name: goods_project
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=goods_project --mapers=4 --partition_num=2 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=goods_project --mapers=4 --partition_num=2 --period_type=day --split_id=goods_id
         dependsOn:
           - fd_dw_orders_init_flow_start
       
@@ -160,7 +160,7 @@ nodes:
       - name: ok_coupon
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=ok_coupon --mapers=12 --partition_num=2 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=ok_coupon --mapers=30 --partition_num=20 --period_type=day
         dependsOn:
           - fd_dw_init_flow_one_start
 
