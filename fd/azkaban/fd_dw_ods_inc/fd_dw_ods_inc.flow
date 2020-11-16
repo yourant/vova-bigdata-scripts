@@ -1,6 +1,6 @@
 ---
 config:
-  failure.emails: yunling@i9i8.com
+  failure.emails: htgao@i9i8.com
   retries: 5
   retry.backoff: 300000
 
@@ -23,7 +23,7 @@ nodes:
         dependsOn:
           - fd_dw_vbridal_inc_flow_start
 
-      - name: ods_app_message_push
+      - name: ods_app_message_pushs
         type: command
         config:
           command: sh /mnt/vova-bigdata-scripts/fd/ods/inc_table/app_message_push/run.sh ${dt}

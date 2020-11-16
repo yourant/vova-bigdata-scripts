@@ -30,6 +30,13 @@ nodes:
         dependsOn:
           - fd_ods_goods_flow_start
       
+      - name: ods_fd_vb_category
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=category --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_ods_goods_flow_start
+      
       - name: ods_fd_vb_goods_project
         type: command
         config:
@@ -182,6 +189,13 @@ nodes:
         type: command
         config:
           command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCTIME --inc_column=create_time --table_name=order_status_change_history --mapers=8 --partition_num=4 --primary_key=id --period_type=day
+        dependsOn:
+          - fd_ods_order_flow_start
+      
+      - name: ods_fd_vb_languages
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=languages --mapers=12 --partition_num=2 --period_type=day
         dependsOn:
           - fd_ods_order_flow_start
       
