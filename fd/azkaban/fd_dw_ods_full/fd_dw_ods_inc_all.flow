@@ -1,0 +1,306 @@
+---
+config:
+  failure.emails: yunling@i9i8.com
+  retries: 10
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_dw_ods_vb_start
+    type: noop
+  
+  - name: fd_dw_ods_goods_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_ods_goods_flow_start
+        type: noop
+
+      - name: ods_fd_vb_goods_project
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCTIME --inc_column=last_update_time --table_name=goods_project --mapers=4 --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_dw_ods_goods_flow_start
+
+      - name: ods_fd_vb_goods_display_order_artemis_country
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCTIME --inc_column=last_update_time --table_name=goods_display_order_artemis_country --mapers=8 --partition_num=2 --period_type=day
+        dependsOn:
+          - fd_dw_ods_goods_flow_start
+
+      - name: ods_fd_vb_goods_test_reports_last
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_test_reports_last --mapers=6 --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_dw_ods_goods_flow_start
+      
+      - name: ods_fd_vb_project_goods_history
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=project_goods_history --mapers=4  --partition_num=4 --period_type=day
+        dependsOn:
+          - fd_dw_ods_goods_flow_start
+
+      - name: ods_fd_vb_goods_preorder_plan
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_preorder_plan --mapers=6 --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_dw_ods_goods_flow_start
+
+      - name: ods_fd_vb_goods_price_adjust_log
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_price_adjust_log --mapers=8 --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_dw_ods_goods_flow_start
+
+      - name: ods_fd_vb_goods_price_adjust_record
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_price_adjust_record --mapers=8 --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_dw_ods_goods_flow_start
+      
+      - name: ods_fd_vb_goods_test_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_test_goods --mapers=6 --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_dw_ods_goods_flow_start
+
+      - name: ods_fd_vb_goods_test_goods_log
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_test_goods_log --mapers=6 --partition_num=2 --period_type=day
+        dependsOn:
+          - fd_dw_ods_goods_flow_start
+
+      - name: ods_fd_vb_goods_test_pipeline
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_test_pipeline --mapers=6 --partition_num=2 --period_type=day
+        dependsOn:
+          - fd_dw_ods_goods_flow_start
+
+      - name: ods_fd_vb_goods_test_preorder_result
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_test_preorder_result --mapers=6 --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_dw_ods_goods_flow_start
+      
+      - name: ods_fd_vb_goods_purchase_price
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_purchase_price --mapers=8 --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_dw_ods_goods_flow_start
+
+    dependsOn:
+      - fd_dw_ods_start
+
+  - name: fd_dw_ods_app_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_ods_app_flow_start
+        type: noop
+
+      - name: ods_fd_vb_app_message_push
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCTIME --inc_column=push_time --table_name=app_message_push --mapers=8 --partition_num=4 --period_type=day
+        dependsOn:
+          - fd_dw_ods_app_flow_start
+
+      - name: ods_fd_vb_app_event_log_message_push
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=app_event_log_message_push --mapers=8 --partition_num=3 --period_type=day
+        dependsOn:
+          - fd_dw_ods_app_flow_start
+
+      - name: ods_fd_vb_app_install_record
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=app_install_record --mapers=60 --partition_num=20 --period_type=day
+        dependsOn:
+          - fd_dw_ods_app_flow_start
+
+      - name: ods_fd_vb_app_message_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=app_message_info --mapers=10 --partition_num=2 --period_type=day
+        dependsOn:
+          - fd_dw_ods_app_flow_start
+      
+    dependsOn:
+      - fd_dw_ods_start
+  
+  - name: fd_dw_ods_order_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_ods_order_flow_start
+        type: noop
+
+      - name: ods_fd_vb_ok_coupon
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=ok_coupon --mapers=12 --partition_num=2 --period_type=day
+        dependsOn:
+          - fd_dw_ods_order_flow_start
+      
+      - name: ods_fd_vb_ok_coupon_config
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=ok_coupon_config --mapers=4 --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_dw_ods_order_flow_start
+      
+      - name: ods_fd_vb_order_status_change_history
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCTIME --inc_column=create_time --table_name=order_status_change_history --mapers=8 --partition_num=4 --period_type=day
+        dependsOn:
+          - fd_dw_ods_order_flow_start
+      
+    dependsOn:
+      - fd_dw_ods_start
+
+  - name: fd_dw_ods_user_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_ods_user_flow_start
+        type: noop
+
+      - name: ods_fd_vb_user_agent_analysis
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCID --inc_column=user_agent_id --table_name=user_agent_analysis --mapers=15 --partition_num=6 --period_type=day
+        dependsOn:
+          - fd_dw_ods_user_flow_start
+
+      - name: ods_fd_vb_style
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=style --mapers=4 --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_dw_ods_user_flow_start
+
+      - name: ods_fd_vb_turntable_record_v2
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=turntable_record_v2 --mapers=6 --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_dw_ods_user_flow_start
+
+      - name: ods_fd_vb_user_check_in
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=user_check_in --mapers=6 --partition_num=2 --period_type=day
+        dependsOn:
+          - fd_dw_ods_user_flow_start
+
+      - name: ods_fd_vb_user_check_in_log
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=user_check_in_log --mapers=4 --partition_num=2 --period_type=day
+        dependsOn:
+          - fd_dw_ods_user_flow_start
+      
+      - name: ods_fd_vb_user_duid
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=user_duid --mapers=10 --partition_num=3 --period_type=day
+        dependsOn:
+          - fd_dw_ods_user_flow_start
+      
+      - name: ods_fd_vb_users
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=users --mapers=60 --partition_num=40 --period_type=day
+        dependsOn:
+          - fd_dw_ods_user_flow_start
+      
+      - name: ods_fd_vb_risk_country_user_log
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=risk_country_user_log --mapers=4  --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_dw_ods_user_flow_start
+
+    dependsOn:
+      - fd_dw_ods_start
+
+  - name: fd_dw_ods_newsletter_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_ods_newsletter_flow_start
+        type: noop
+
+      - name: ods_fd_vb_newsletters
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=newsletters --mapers=8 --partition_num=2 --period_type=day
+        dependsOn:
+          - fd_dw_ods_newsletter_flow_start
+
+      - name: ods_fd_vb_email_unsubscribe
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=email_unsubscribe --mapers=6 --partition_num=2 --period_type=day
+        dependsOn:
+          - fd_dw_ods_newsletter_flow_start
+
+      - name: ods_fd_vb_email_subscribe
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=email_subscribe --mapers=8 --partition_num=2 --period_type=day
+        dependsOn:
+          - fd_dw_ods_newsletter_flow_start
+      
+      - name: ods_fd_vb_points
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=points --mapers=6 --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_dw_ods_newsletter_flow_start
+      
+      - name: ods_fd_vb_region_area
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=region_area --mapers=1 --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_dw_ods_newsletter_flow_start
+      
+      - name: ods_fd_vb_region
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=region --mapers=1 --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_dw_ods_newsletter_flow_start
+
+    dependsOn:
+      - fd_dw_ods_start
+
+  - name: fd_dw_ods_vb_end
+    type: noop
+    dependsOn:
+      - fd_dw_ods_goods_flow
+      - fd_dw_ods_app_flow
+      - fd_dw_ods_order_flow
+      - fd_dw_ods_user_flow
+      - fd_dw_ods_newsletter_flow
+      
+
