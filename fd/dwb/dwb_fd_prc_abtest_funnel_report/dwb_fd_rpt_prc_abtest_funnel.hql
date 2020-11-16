@@ -16,9 +16,9 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_fd_prc_abtest_funnel_report
     purchase_session_id        string,
     checkout_page_session_id   string,
     order_id                   bigint,
-    goods_amount               decimal(10, 2) comment '商品美元价格总和',
-    bonus                      decimal(10, 2) comment '订单折扣美元价格,负数',
-    shipping_fee               decimal(10, 2) comment '订单运费美元价格',
+    goods_amount               DECIMAL(15, 4) comment '商品美元价格总和',
+    bonus                      DECIMAL(15, 4) comment '订单折扣美元价格,负数',
+    shipping_fee               DECIMAL(15, 4) comment '订单运费美元价格',
     abtest_name                string,
     abtest_version             string
 )
@@ -115,8 +115,7 @@ from (
         where dt = '${hiveconf:dt}'
         and date_format(from_utc_timestamp(cast(pay_time * 1000 as timestamp), 'PRC'), 'yyyy-MM-dd') = '${hiveconf:dt}'
         and pay_status = 2
-        and email not like '%i9i8.com'
-        and email not like '%tetx.com'
+        and email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
     )oi
     left join (select order_id,ext_value from ods_fd_vb.ods_fd_order_extension where ext_name = 'abtestInfo') oe on oi.order_id = oe.order_id
     

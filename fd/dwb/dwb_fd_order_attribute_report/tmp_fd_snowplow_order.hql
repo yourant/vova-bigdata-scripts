@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS tmp.tmp_fd_snowplow_order (
 `domain_userid` string COMMENT '打点 设备id',
 `order_id` string COMMENT '订单id',
 `pay_status` string COMMENT '支付状态',
-`order_amount` decimal(10,2) COMMENT '订单金额包含运费'
+`order_amount` decimal(15,4) COMMENT '订单金额包含运费'
 ) COMMENT '打点数据和订单数据相关'
 PARTITIONED BY (`dt` string)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
@@ -60,8 +60,7 @@ from(
         select user_id,order_id
          from ods_fd_vb.ods_fd_order_info
          where  date(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss')) = '${hiveconf:dt}'
-         and email not like '%i9i8.com'
-         and email not like '%tetx.com'
+         and email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
          group by user_id,order_id
 
     ) ogi
@@ -104,8 +103,7 @@ from(
             where (date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${hiveconf:dt}'
 		or date(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss')) = '${hiveconf:dt}')
             and pay_status = 2
-            and email not like '%i9i8.com'
-            and email not like '%tetx.com'
+            and email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
 
         ) ogi
         LEFT JOIN (

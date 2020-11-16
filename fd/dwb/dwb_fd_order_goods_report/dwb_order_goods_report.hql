@@ -21,5 +21,4 @@ select
     date(from_unixtime(pay_time)) as pay_time
 from dwd.dwd_fd_order_goods
 where  dt in (select max(dt)  from dwd.dwd_fd_order_goods) and pay_status = 2 
-and email not like '%@tetx.com' 
-and email not like '%@i9i8.com';
+and email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com";

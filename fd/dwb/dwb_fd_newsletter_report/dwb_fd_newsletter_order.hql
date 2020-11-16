@@ -10,8 +10,8 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_fd_newsletter_order_report (
 `goods_id` string COMMENT '商品id',
 `virtual_goods_id` string COMMENT '商品虚拟id',
 `cat_name` string COMMENT '商品类别名',
-`goods_number` int COMMENT '商品销售量',
-`shop_price`  decimal(10,2) COMMENT '商品销售总价'
+`goods_number` bigint COMMENT '商品销售量',
+`shop_price`  decimal(15,4) COMMENT '商品销售总价'
 ) COMMENT 'Newsltter 订单报表'
 PARTITIONED BY (dt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'

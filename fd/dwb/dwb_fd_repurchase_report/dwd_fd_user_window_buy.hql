@@ -1,12 +1,12 @@
 USE dwd;
 
 CREATE TABLE IF NOT EXISTS dwd.dwd_fd_user_window_buy (
-    order_window INT COMMENT '订单下单时间窗口，年*12+月'
+    order_window bigint COMMENT '订单下单时间窗口，年*12+月'
     ,email STRING COMMENT '用户邮箱地址'
     ,platform STRING COMMENT '用户访问平台类型（web or mob）'
     ,device_type STRING COMMENT '用户设备类型'
     ,window_sig STRING COMMENT '用户最早下单时间'
-    ,order_amount DECIMAL(10, 2) COMMENT '订单总价格，商品总价+折扣+运费'
+    ,order_amount DECIMAL(15, 4) COMMENT '订单总价格，商品总价+折扣+运费'
     ,country_code STRING COMMENT '国家缩写'
     ,project_name  STRING COMMENT '网站组织名'
 ) COMMENT '计算近半年每个用户每月购买习惯相关数据表'

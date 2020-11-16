@@ -1,0 +1,80 @@
+---
+config:
+  failure.emails: yunling@i9i8.com
+  retries: 5
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_dw_ods_blg_start
+    type: noop
+
+  - name: fd_dw_ods_blg_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_ods_blg_flow_start
+        type: noop
+
+      - name: judge_order_extension
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh order_extension ${dt}
+        dependsOn:
+          - fd_dw_ods_blg_flow_start
+
+      - name: ods_order_extension
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/run.sh order_extension ${dt}
+        dependsOn:
+          - judge_order_extension
+
+      - name: judge_order_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh order_goods ${dt}
+        dependsOn:
+          - fd_dw_ods_blg_flow_start
+
+      - name: ods_order_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/run.sh order_goods ${dt}
+        dependsOn:
+          - judge_order_goods
+        
+      - name: judge_order_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh order_info ${dt}
+        dependsOn:
+          - fd_dw_ods_blg_flow_start
+
+      - name: ods_order_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/run.sh order_info ${dt}
+        dependsOn:
+          - judge_order_info
+
+      - name: judge_order_marketing_data
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh order_marketing_data ${dt}
+        dependsOn:
+          - fd_dw_ods_blg_flow_start
+
+      - name: ods_order_marketing_data
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/run.sh order_marketing_data ${dt}
+        dependsOn:
+          - judge_order_marketing_data
+    dependsOn:
+      - fd_dw_ods_blg_start
+
+  - name: fd_dw_ods_blg_end
+    type: noop
+    dependsOn:
+      - fd_dw_ods_blg_flow

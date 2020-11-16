@@ -1,0 +1,149 @@
+---
+config:
+  failure.emails: yunling@i9i8.com
+  retries: 5
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_dw_ods_inc_start
+    type: noop
+
+  - name: fd_dw_vbridal_inc_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_vbridal_inc_flow_start
+        type: noop
+
+      - name: judge_app_message_push
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh app_message_push ${dt}
+        dependsOn:
+          - fd_dw_vbridal_inc_flow_start
+
+      - name: ods_app_message_push
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/inc_table/app_message_push/run.sh ${dt}
+        dependsOn:
+          - judge_app_message_push
+
+      - name: judge_user_agent_analysis
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh user_agent_analysis ${dt}
+        dependsOn:
+          - fd_dw_vbridal_inc_flow_start
+
+      - name: ods_user_agent_analysis
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/inc_table/user_agent_analysis/run.sh ${dt}
+        dependsOn:
+          - judge_user_agent_analysis
+
+      - name: judge_goods_project
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh goods_project ${dt}
+        dependsOn:
+          - fd_dw_vbridal_inc_flow_start
+
+      - name: ods_goods_project
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/inc_table/goods_project/run.sh ${dt}
+        dependsOn:
+          - judge_goods_project
+      
+      - name: judge_goods_display_order_artemis_country
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh goods_display_order_artemis_country ${dt}
+        dependsOn:
+          - fd_dw_vbridal_inc_flow_start
+
+      - name: ods_goods_display_order_artemis_country
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/inc_table/goods_display_order_artemis_country/run.sh ${dt}
+        dependsOn:
+          - judge_goods_display_order_artemis_country
+
+      - name: judge_order_status_change_history
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh order_status_change_history ${dt}
+        dependsOn:
+          - fd_dw_vbridal_inc_flow_start
+
+      - name: ods_order_status_change_history
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/inc_table/order_status_change_history/run.sh ${dt}
+        dependsOn:
+          - judge_order_status_change_history
+
+    dependsOn:
+      - fd_dw_ods_inc_start
+
+  - name: fd_dw_artemis_blg_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_artemis_inc_flow_start
+        type: noop
+
+      - name: judge_feed_shopping_performance_report
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh feed_shopping_performance_report ${dt}
+        dependsOn:
+          - fd_dw_artemis_inc_flow_start
+
+      - name: ods_feed_shopping_performance_report
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/inc_table/feed_shopping_performance_report/run.sh ${dt}
+        dependsOn:
+          - judge_feed_shopping_performance_report
+      
+      - name: judge_feed_tag_log
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh feed_tag_log ${dt}
+        dependsOn:
+          - fd_dw_artemis_inc_flow_start
+
+      - name: ods_feed_tag_log
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/inc_table/feed_tag_log/run.sh ${dt}
+        dependsOn:
+          - judge_feed_tag_log
+
+      - name: judge_order_analytics
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh order_analytics ${dt}
+        dependsOn:
+          - fd_dw_artemis_inc_flow_start
+
+      - name: ods_order_analytics
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/inc_table/order_analytics/run.sh ${dt}
+        dependsOn:
+          - judge_order_analytics
+
+    dependsOn:
+      - fd_dw_ods_inc_start
+
+  - name: fd_dw_ods_inc_end
+    type: noop
+    dependsOn:
+      - fd_dw_vbridal_inc_flow
+      - fd_dw_artemis_blg_flow

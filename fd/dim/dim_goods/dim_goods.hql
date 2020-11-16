@@ -1,29 +1,27 @@
 CREATE TABLE IF NOT EXISTS dim.dim_fd_goods
 (
     project_name     string comment '数据平台',
-    goods_id         BIGINT COMMENT '商品ID',
-    virtual_goods_id BIGINT COMMENT '商品虚拟ID',
-    cp_goods_id      BIGINT COMMENT '克隆商品ID',
-    brand_id         BIGINT COMMENT '侵权商品',
+    goods_id         bigint COMMENT '商品ID',
+    virtual_goods_id bigint COMMENT '商品虚拟ID',
+    cp_goods_id      bigint COMMENT '克隆商品ID',
+    brand_id         bigint COMMENT '侵权商品',
     goods_sn         string COMMENT '商品所属sn',
     goods_name       string COMMENT '商品名称',
     goods_desc       string COMMENT '商品描述',
-    sale_status      string comment '销售状态',
     keywords         string COMMENT '关键词',
     add_time         timestamp COMMENT '添加时间',
-    is_on_sale       BIGINT COMMENT '真实是否在售,1:已上架，0：已下架',
-    is_complete      BIGINT comment '编辑是否完成',
-    is_new           BIGINT COMMENT '是否是新品',
-    cat_id           BIGINT COMMENT '商品类目ID',
+    is_complete      bigint comment '编辑是否完成',
+    is_new           bigint COMMENT '是否是新品',
+    cat_id           bigint COMMENT '商品类目ID',
     cat_name         string COMMENT '商品类目名',
-    first_cat_id     BIGINT COMMENT '商品一级类目',
+    first_cat_id     bigint COMMENT '商品一级类目',
     first_cat_name   string COMMENT '商品一级类目',
-    second_cat_id    BIGINT COMMENT '商品二级类目',
+    second_cat_id    bigint COMMENT '商品二级类目',
     second_cat_name  string COMMENT '商品二级类目',
-    third_cat_id     BIGINT COMMENT '商品三级类目',
+    third_cat_id     bigint COMMENT '商品三级类目',
     third_cat_name   string COMMENT '商品三级类目',
-    shop_price       DECIMAL(14, 4) comment '商品价格',
-    goods_weight     DECIMAL(14, 4) comment '商品重量'
+    shop_price       DECIMAL(15, 4) comment '商品价格',
+    goods_weight     DECIMAL(15, 4) comment '商品重量'
 ) COMMENT '商品维度'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
@@ -38,10 +36,8 @@ select
   t1.goods_sn as goods_sn,
   t1.goods_name as goods_name,
   t1.goods_desc as goods_desc,
-  t1.sale_status as sale_status,
   t1.keywords as keywords,
   t1.add_time as add_time,
-  t1.is_on_sale as is_on_sale,
   t1.is_complete as is_complete,
   t1.is_new as is_new,
   t1.cat_id as cat_id,
@@ -56,7 +52,9 @@ select
   t1.goods_weight as goods_weight
 from (
 	select
-		goods_id,cp_goods_id,brand_id,goods_sn,goods_name,goods_desc,sale_status,keywords,add_time,is_on_sale,is_complete,is_new,cat_id,shop_price,goods_weight
+		goods_id,cp_goods_id,brand_id,goods_sn,goods_name,goods_desc,keywords,add_time,
+		is_on_sale,
+		is_delete,is_display,is_complete,is_new,cat_id,shop_price,goods_weight
 	from ods_fd_vb.ods_fd_goods
 	) t1
 LEFT JOIN dim.dim_fd_category t2 on t1.cat_id = t2.cat_id

@@ -11,9 +11,9 @@ CREATE TABLE IF NOT EXISTS `dwb.dwb_fd_rpt_main_process`(
   `checkout_option_sessions` bigint COMMENT '用来计算下单总会话',
   `purchase_sessions` bigint COMMENT '用来计算完成订单总会话',
   `orders` bigint COMMENT '订单号',
-  `goods_amount` decimal(16,6) COMMENT '订单商品金额',
-  `bonus` decimal(16,6) COMMENT '订单折扣',
-  `shipping_fee` decimal(16,6) COMMENT '订单运费')
+  `goods_amount` decimal(15,4) COMMENT '订单商品金额',
+  `bonus` decimal(15,4) COMMENT '订单折扣',
+  `shipping_fee` decimal(15,4) COMMENT '订单运费')
 COMMENT '主流程数据表'
 PARTITIONED BY (
   `dt` string)
@@ -135,12 +135,7 @@ from (
                         and pay_status = 2
                         and project_name is not NULL
                         and length(project_name) > 2
-                        and oi.email not like '%%@tetx.com%%'
-                        and oi.email not like '%%@i9i8.com%%'
-                        and oi.email not like '%%@qq.com%%'
-                        and oi.email not like '%%@163.com%%'
-                        and oi.email not like '%%@jjshouse.com%%'
-                        and oi.email not like '%%@jenjenhouse.com%%'
+                        and oi.email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
 
                   ) oi
                   left join (select order_id,sp_session_id from ods_fd_vb.ods_fd_order_marketing_data group by order_id,sp_session_id) om on om.order_id = oi.order_id

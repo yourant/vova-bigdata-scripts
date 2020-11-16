@@ -1,0 +1,81 @@
+---
+config:
+  failure.emails: yunling@i9i8.com
+  retries: 5
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_dw_artemis_init_start
+    type: noop
+
+  - name: fd_dw_artemis_feed_init_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_artemis_feed_init_flow_start
+        type: noop
+      
+      - name: feed_shopping_performance_report
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/artemis/run.sh feed_shopping_performance_report 4
+        dependsOn:
+          - fd_dw_artemis_feed_init_flow_start
+      
+      - name: ads_adgroup_daily_flat_report
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/artemis/run.sh ads_adgroup_daily_flat_report 6
+        dependsOn:
+          - fd_dw_artemis_feed_init_flow_start
+
+      - name: feed_tag_log
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/artemis/feed_tag_log/run.sh
+        dependsOn:
+          - fd_dw_artemis_feed_init_flow_start
+      
+      - name: ad_pause_history
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/artemis/run.sh ad_pause_history 2
+        dependsOn:
+          - fd_dw_artemis_feed_init_flow_start
+
+    dependsOn:
+      - fd_dw_artemis_init_start
+
+  - name: fd_dw_artemis_order_init_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_artemis_order_init_flow_start
+        type: noop
+          
+      - name: order_analytics
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/artemis/run.sh order_analytics 10
+        dependsOn:
+          - fd_dw_artemis_order_init_flow_start
+      
+      - name: campaign_adgroup_mapping
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/artemis/run.sh campaign_adgroup_mapping 1
+        dependsOn:
+          - fd_dw_artemis_order_init_flow_start
+
+    dependsOn:
+      - fd_dw_artemis_init_start
+
+  - name: fd_dw_artemis_init_end
+    type: noop
+    dependsOn:
+      - fd_dw_artemis_feed_init_flow
+      - fd_dw_artemis_order_init_flow
+
+

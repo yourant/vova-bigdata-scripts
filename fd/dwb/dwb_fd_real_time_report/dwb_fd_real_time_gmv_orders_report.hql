@@ -92,7 +92,7 @@ left join  ods_fd_vb.ods_fd_user_agent_analysis uaa on oi.user_agent_id=uaa.user
 left join dim.dim_fd_region r on r.region_id = oi.country
 where (date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) >= date_add('${hiveconf:dt}' ,-1)
 or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) >= date_add('${hiveconf:dt}',-1)) and pay_status=2 
-and  email not like '%%@tetx.com'   and email not like '%%@i9i8.com'
+and  email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
 )tab1
 )tab2
 group by paid_time, project, platform, country;
@@ -160,7 +160,7 @@ left join   ods_fd_vb.ods_fd_user_agent_analysis  uaa on oi.user_agent_id=uaa.us
 left join dim.dim_fd_region r on r.region_id = oi.country
 where (date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) >= date_add('${hiveconf:dt}' ,-1)
 or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) >= date_add('${hiveconf:dt}',-1)) and pay_status=2
-and  email not like '%%@tetx.com'   and email not like '%%@i9i8.com'
+and  email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
 )tab1
 )tab2
 group by paid_time, project, platform, country;

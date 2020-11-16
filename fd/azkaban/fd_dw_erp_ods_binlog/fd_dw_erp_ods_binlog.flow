@@ -1,0 +1,427 @@
+---
+config:
+  failure.emails: yunling@i9i8.com
+  retries: 5
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_dw_erp_ods_inc_start
+    type: noop
+
+  - name: fd_dw_erp_ecshop_inc_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_erp_ecshop_inc_flow_start
+        type: noop
+
+      - name: judge_ecs_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ecs_goods ${dt}
+        dependsOn:
+          - fd_dw_erp_ecshop_inc_flow_start
+
+      - name: ods_ecs_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop/run.sh ecs_goods ${dt}
+        dependsOn:
+          - judge_ecs_goods
+      
+      - name: judge_ecs_order_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ecs_order_goods ${dt}
+        dependsOn:
+          - fd_dw_erp_ecshop_inc_flow_start
+
+      - name: ods_ecs_order_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop/run.sh ecs_order_goods ${dt}
+        dependsOn:
+          - judge_ecs_order_goods
+      
+      - name: judge_ecs_order_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ecs_order_info ${dt}
+        dependsOn:
+          - fd_dw_erp_ecshop_inc_flow_start
+
+      - name: ods_ecs_order_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop/run.sh ecs_order_info ${dt}
+        dependsOn:
+          - judge_ecs_order_info
+      
+      - name: judge_ecs_region
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ecs_region ${dt}
+        dependsOn:
+          - fd_dw_erp_ecshop_inc_flow_start
+
+      - name: ods_ecs_region
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop/run.sh ecs_region ${dt}
+        dependsOn:
+          - judge_ecs_region
+      
+      - name: judge_ecs_fd_sku_backups
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ecs_fd_sku_backups ${dt}
+        dependsOn:
+          - fd_dw_erp_ecshop_inc_flow_start
+
+      - name: ods_ecs_fd_sku_backups
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop/run.sh fd_sku_backups ${dt}
+        dependsOn:
+          - judge_ecs_fd_sku_backups
+      
+      - name: judge_ecs_fd_stock_ecs_order_sale_bak_detail
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ecs_fd_stock_ecs_order_sale_bak_detail ${dt}
+        dependsOn:
+          - fd_dw_erp_ecshop_inc_flow_start
+
+      - name: ods_ecs_fd_stock_ecs_order_sale_bak_detail
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop/run.sh fd_stock_ecs_order_sale_bak_detail ${dt}
+        dependsOn:
+          - judge_ecs_fd_stock_ecs_order_sale_bak_detail
+      
+      - name: judge_ecs_fd_stock_goods_config
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ecs_fd_stock_goods_config ${dt}
+        dependsOn:
+          - fd_dw_erp_ecshop_inc_flow_start
+
+      - name: ods_ecs_fd_stock_goods_config
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop/run.sh fd_stock_goods_config ${dt}
+        dependsOn:
+          - judge_ecs_fd_stock_goods_config
+      
+      - name: judge_ecs_order_attribute
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ecs_order_attribute ${dt}
+        dependsOn:
+          - fd_dw_erp_ecshop_inc_flow_start
+
+      - name: ods_ecs_order_attribute
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop/run.sh order_attribute ${dt}
+        dependsOn:
+          - judge_ecs_order_attribute
+
+    dependsOn:
+      - fd_dw_erp_ods_inc_start
+  
+  - name: fd_dw_erp_dmc_inc_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_erp_dmc_inc_flow_start
+        type: noop
+
+      - name: judge_dmc_sheIf_goods_org
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dmc_sheIf_goods_org ${dt}
+        dependsOn:
+          - fd_dw_erp_dmc_inc_flow_start
+
+      - name: ods_dmc_sheIf_goods_org
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/dmc/run.sh dmc_sheIf_goods_org ${dt}
+        dependsOn:
+          - judge_dmc_sheIf_goods_org
+      
+      - name: judge_dmc_sheIf_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dmc_sheIf_goods ${dt}
+        dependsOn:
+          - fd_dw_erp_dmc_inc_flow_start
+
+      - name: ods_dmc_sheIf_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/dmc/run.sh dmc_sheIf_goods ${dt}
+        dependsOn:
+          - judge_dmc_sheIf_goods
+      
+      - name: judge_dmc_party
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dmc_party ${dt}
+        dependsOn:
+          - fd_dw_erp_dmc_inc_flow_start
+
+      - name: ods_dmc_party
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/dmc/run.sh dmc_party ${dt}
+        dependsOn:
+          - judge_dmc_party
+      
+      - name: judge_dmc_goods_project
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dmc_goods_project ${dt}
+        dependsOn:
+          - fd_dw_erp_dmc_inc_flow_start
+
+      - name: ods_dmc_goods_project
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/dmc/run.sh dmc_goods_project ${dt}
+        dependsOn:
+          - judge_dmc_goods_project
+      
+      - name: judge_dmc_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dmc_goods ${dt}
+        dependsOn:
+          - fd_dw_erp_dmc_inc_flow_start
+
+      - name: ods_dmc_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/dmc/run.sh dmc_goods ${dt}
+        dependsOn:
+          - judge_dmc_goods
+      
+      - name: judge_dmc_competing_website_tort
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dmc_competing_website_tort ${dt}
+        dependsOn:
+          - fd_dw_erp_dmc_inc_flow_start
+
+      - name: ods_dmc_competing_website_tort
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/dmc/run.sh dmc_competing_website_tort ${dt}
+        dependsOn:
+          - judge_dmc_competing_website_tort
+      
+      - name: judge_dmc_competing_website_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dmc_competing_website_info ${dt}
+        dependsOn:
+          - fd_dw_erp_dmc_inc_flow_start
+
+      - name: ods_dmc_competing_website_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/dmc/run.sh dmc_competing_website_info ${dt}
+        dependsOn:
+          - judge_dmc_competing_website_info
+
+    dependsOn:
+      - fd_dw_erp_ods_inc_start
+
+  - name: fd_dw_erp_romeo_inc_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_erp_romeo_inc_flow_start
+        type: noop
+
+      - name: judge_romeo_currency_conversion
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh romeo_currency_conversion ${dt}
+        dependsOn:
+          - fd_dw_erp_romeo_inc_flow_start
+
+      - name: ods_romeo_currency_conversion
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/romeo/run.sh currency_conversion ${dt}
+        dependsOn:
+          - judge_romeo_currency_conversion
+      
+      - name: judge_romeo_dispatch_list
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh romeo_dispatch_list ${dt}
+        dependsOn:
+          - fd_dw_erp_romeo_inc_flow_start
+
+      - name: ods_romeo_dispatch_list
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/romeo/run.sh dispatch_list ${dt}
+        dependsOn:
+          - judge_romeo_dispatch_list
+      
+      - name: judge_romeo_goods_purchase_price
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh romeo_goods_purchase_price ${dt}
+        dependsOn:
+          - fd_dw_erp_romeo_inc_flow_start
+
+      - name: ods_romeo_goods_purchase_price
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/romeo/run.sh goods_purchase_price ${dt}
+        dependsOn:
+          - judge_romeo_goods_purchase_price
+      
+      - name: judge_romeo_inventory_item
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh romeo_inventory_item ${dt}
+        dependsOn:
+          - fd_dw_erp_romeo_inc_flow_start
+
+      - name: ods_romeo_inventory_item
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/romeo/run.sh inventory_item ${dt}
+        dependsOn:
+          - judge_romeo_inventory_item
+      
+      - name: judge_romeo_inventory_item_detail
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh romeo_inventory_item_detail ${dt}
+        dependsOn:
+          - fd_dw_erp_romeo_inc_flow_start
+
+      - name: ods_romeo_inventory_item_detail
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/romeo/run.sh inventory_item_detail ${dt}
+        dependsOn:
+          - judge_romeo_inventory_item_detail
+      
+      - name: judge_romeo_inventory_summary
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh romeo_inventory_summary ${dt}
+        dependsOn:
+          - fd_dw_erp_romeo_inc_flow_start
+
+      - name: ods_romeo_inventory_summary
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/romeo/run.sh inventory_summary ${dt}
+        dependsOn:
+          - judge_romeo_inventory_summary
+      
+      - name: judge_romeo_order_inv_reserved
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh romeo_order_inv_reserved ${dt}
+        dependsOn:
+          - fd_dw_erp_romeo_inc_flow_start
+
+      - name: ods_romeo_order_inv_reserved
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/romeo/run.sh order_inv_reserved ${dt}
+        dependsOn:
+          - judge_romeo_order_inv_reserved
+
+      - name: judge_romeo_order_inv_reserved_detail
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh romeo_order_inv_reserved_detail ${dt}
+        dependsOn:
+          - fd_dw_erp_romeo_inc_flow_start
+
+      - name: ods_romeo_order_inv_reserved_detail
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/romeo/run.sh order_inv_reserved_detail ${dt}
+        dependsOn:
+          - judge_romeo_order_inv_reserved_detail
+      
+      - name: judge_romeo_order_inv_reserverd_inventory_mapping
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh romeo_order_inv_reserverd_inventory_mapping ${dt}
+        dependsOn:
+          - fd_dw_erp_romeo_inc_flow_start
+
+      - name: ods_romeo_order_inv_reserverd_inventory_mapping
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/romeo/run.sh order_inv_reserverd_inventory_mapping ${dt}
+        dependsOn:
+          - judge_romeo_order_inv_reserverd_inventory_mapping
+      
+      - name: judge_romeo_party
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh romeo_party ${dt}
+        dependsOn:
+          - fd_dw_erp_romeo_inc_flow_start
+
+      - name: ods_romeo_party
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/romeo/run.sh party ${dt}
+        dependsOn:
+          - judge_romeo_party
+      
+      - name: judge_romeo_party_config
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh romeo_party_config ${dt}
+        dependsOn:
+          - fd_dw_erp_romeo_inc_flow_start
+
+      - name: ods_romeo_party_config
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/romeo/run.sh party_config ${dt}
+        dependsOn:
+          - judge_romeo_party_config
+      
+      - name: judge_romeo_refund
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh romeo_refund ${dt}
+        dependsOn:
+          - fd_dw_erp_romeo_inc_flow_start
+
+      - name: ods_romeo_refund
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/romeo/run.sh refund ${dt}
+        dependsOn:
+          - judge_romeo_refund
+
+    dependsOn:
+      - fd_dw_erp_ods_inc_start
+
+  - name: fd_dw_erp_ods_inc_end
+    type: noop
+    dependsOn:
+      - fd_dw_erp_ecshop_inc_flow
+      - fd_dw_erp_romeo_inc_flow
+      - fd_dw_erp_dmc_inc_flow

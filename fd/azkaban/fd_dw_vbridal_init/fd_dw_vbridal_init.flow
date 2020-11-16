@@ -1,0 +1,379 @@
+---
+config:
+  failure.emails: yunling@i9i8.com
+  retries: 5
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_dw_vbridal_init_start
+    type: noop
+
+  - name: fd_dw_orders_init_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_orders_init_flow_start
+        type: noop
+
+      - name: order_extension
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name order_extension -period_type day
+        dependsOn:
+          - fd_dw_orders_init_flow_start
+        
+      - name: order_goods
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name order_goods -period_type day
+        dependsOn:
+          - fd_dw_orders_init_flow_start
+
+      - name: order_info
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name order_info -period_type day
+        dependsOn:
+          - fd_dw_orders_init_flow_start
+      
+      - name: order_marketing_data
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name order_marketing_data -period_type day
+        dependsOn:
+          - fd_dw_orders_init_flow_start
+      
+      - name: order_status_change_history
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name order_status_change_history -period_type day
+        dependsOn:
+          - fd_dw_orders_init_flow_start
+      
+      - name: goods_display_order_artemis_country
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name goods_display_order_artemis_country -period_type day
+        dependsOn:
+          - fd_dw_orders_init_flow_start
+      
+      - name: goods_project
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name goods_project -period_type day
+        dependsOn:
+          - fd_dw_orders_init_flow_start
+      
+      - name: users
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name users -period_type day
+        dependsOn:
+          - fd_dw_orders_init_flow_start
+
+    dependsOn:
+      - fd_dw_vbridal_init_start
+
+  - name: fd_dw_dim_init_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_dim_init_flow_start
+        type: noop
+
+      - name: category
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name category -period_type day
+        dependsOn:
+          - fd_dw_dim_init_flow_start
+      
+      - name: currency
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name currency -period_type day
+        dependsOn:
+          - fd_dw_dim_init_flow_start
+
+      - name: languages
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name languages -period_type day
+        dependsOn:
+          - fd_dw_dim_init_flow_start
+      
+      - name: region
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name region -period_type day
+        dependsOn:
+          - fd_dw_dim_init_flow_start
+
+      - name: region_area
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name region_area -period_type day
+        dependsOn:
+          - fd_dw_dim_init_flow_start
+
+      - name: goods
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name goods -period_type day
+        dependsOn:
+          - fd_dw_dim_init_flow_start
+      
+      - name: virtual_goods
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name virtual_goods -period_type day
+        dependsOn:
+          - fd_dw_dim_init_flow_start
+      
+      - name: user_agent_analysis
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name user_agent_analysis -period_type day
+        dependsOn:
+          - fd_dw_dim_init_flow_start
+      
+      - name: user_duid
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name user_duid -period_type day
+        dependsOn:
+          - fd_dw_dim_init_flow_start
+
+    dependsOn:
+      - fd_dw_orders_init_flow
+
+  - name: fd_dw_init_flow_one
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_init_flow_one_start
+        type: noop
+        
+      - name: ok_coupon
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name ok_coupon -period_type day
+        dependsOn:
+          - fd_dw_init_flow_one_start
+
+      - name: ok_coupon_config
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name ok_coupon_config -period_type day
+        dependsOn:
+          - fd_dw_init_flow_one_start
+      
+      - name: points
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name points -period_type day
+        dependsOn:
+          - fd_dw_init_flow_one_start
+      
+      - name: email_unsubscribe
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name email_unsubscribe -period_type day
+        dependsOn:
+          - fd_dw_init_flow_one_start
+
+      - name: newsletters
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name newsletters -period_type day
+        dependsOn:
+          - fd_dw_init_flow_one_start
+
+      - name: email_subscribe
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name email_subscribe -period_type day
+        dependsOn:
+          - fd_dw_init_flow_one_start
+
+    dependsOn:
+      - fd_dw_dim_init_flow
+
+  - name: fd_dw_init_flow_two
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_init_flow_two_start
+        type: noop
+
+      - name: app_event_log_message_push
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name app_event_log_message_push -period_type day
+        dependsOn:
+          - fd_dw_init_flow_two_start
+
+      - name: app_install_record
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name app_install_record -period_type day
+        dependsOn:
+          - fd_dw_init_flow_two_start
+        
+      - name: app_message_info
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name app_message_info -period_type day
+        dependsOn:
+          - fd_dw_init_flow_two_start
+
+      - name: app_message_push
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name app_message_push -period_type day
+        dependsOn:
+          - fd_dw_init_flow_two_start
+
+    dependsOn:
+      - fd_dw_dim_init_flow
+
+  - name: fd_dw_init_flow_three
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_init_flow_three_start
+        type: noop
+
+      - name: goods_test_goods
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name goods_test_goods -period_type day
+        dependsOn:
+          - fd_dw_init_flow_three_start
+
+      - name: goods_test_goods_log
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name goods_test_goods_log -period_type day
+        dependsOn:
+          - fd_dw_init_flow_three_start
+
+      - name: goods_test_pipeline
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name goods_test_pipeline -period_type day
+        dependsOn:
+          - fd_dw_init_flow_three_start
+
+      - name: goods_test_preorder_result
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name goods_test_preorder_result -period_type day
+        dependsOn:
+          - fd_dw_init_flow_three_start
+        
+      - name: goods_test_reports_last
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name goods_test_reports_last -period_type day
+        dependsOn:
+          - fd_dw_init_flow_three_start
+      
+      - name: goods_preorder_plan
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name goods_preorder_plan -period_type day
+        dependsOn:
+          - fd_dw_init_flow_three_start
+
+      - name: goods_price_adjust_log
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name goods_price_adjust_log -period_type day
+        dependsOn:
+          - fd_dw_init_flow_three_start
+        
+      - name: goods_price_adjust_record
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name goods_price_adjust_record -period_type day
+        dependsOn:
+          - fd_dw_init_flow_three_start
+
+      - name: goods_purchase_price
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name goods_purchase_price -period_type day
+        dependsOn:
+          - fd_dw_init_flow_three_start
+
+    dependsOn:
+      - fd_dw_dim_init_flow
+
+  - name: fd_dw_init_flow_four
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_init_flow_four_start
+        type: noop
+
+      - name: style
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name style -period_type day
+        dependsOn:
+          - fd_dw_init_flow_four_start
+
+      - name: turntable_record_v2
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name turntable_record_v2 -period_type day
+        dependsOn:
+          - fd_dw_init_flow_four_start
+
+      - name: user_check_in
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name user_check_in -period_type day
+        dependsOn:
+          - fd_dw_init_flow_four_start
+
+      - name: user_check_in_log
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name user_check_in_log -period_type day
+        dependsOn:
+          - fd_dw_init_flow_four_start
+      
+      - name: risk_country_user_log
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name risk_country_user_log -period_type day
+        dependsOn:
+          - fd_dw_init_flow_four_start
+      
+      - name: project_goods_history
+        type: command
+        config:
+          command: sh /vova-bigdata-scripts/common/sqoop_import_themis.sh -db_code vb -etl_type ALL -table_name project_goods_history -period_type day
+        dependsOn:
+          - fd_dw_init_flow_four_start
+
+    dependsOn:
+      - fd_dw_dim_init_flow
+
+  - name: fd_dw_vbridal_init_end
+    type: noop
+    dependsOn:
+      - fd_dw_init_flow_one
+      - fd_dw_init_flow_two
+      - fd_dw_init_flow_three
+      - fd_dw_init_flow_four
+
+

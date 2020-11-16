@@ -1,0 +1,509 @@
+---
+config:
+  failure.emails: yunling@i9i8.com
+  retries: 10
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_dw_ods_full_start
+    type: noop
+
+  - name: fd_dw_ods_full_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_ods_full_flow_start
+        type: noop
+
+      - name: judge_ok_coupon
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ok_coupon ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start
+
+      - name: ods_ok_coupon
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh ok_coupon ${dt}
+        dependsOn:
+          - judge_ok_coupon
+      
+      - name: judge_campaign_adgroup_mapping
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh campaign_adgroup_mapping ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start
+
+      - name: ods_campaign_adgroup_mapping
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh campaign_adgroup_mapping ${dt}
+        dependsOn:
+          - judge_campaign_adgroup_mapping
+      
+      - name: judge_ad_pause_history
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ad_pause_history ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start
+
+      - name: ods_ad_pause_history
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh ad_pause_history ${dt}
+        dependsOn:
+          - judge_ad_pause_history
+
+      - name: judge_ok_coupon_config
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ok_coupon_config ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start
+
+      - name: ods_ok_coupon_config
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh ok_coupon_config ${dt}
+        dependsOn:
+          - judge_ok_coupon_config 
+   
+    dependsOn:
+      - fd_dw_ods_full_start
+
+  - name: fd_dw_ods_full_flow2
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_ods_full_flow_start2
+        type: noop
+
+      - name: judge_app_event_log_message_push
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh app_event_log_message_push ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start2
+
+      - name: ods_app_event_log_message_push
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh app_event_log_message_push ${dt}
+        dependsOn:
+          - judge_app_event_log_message_push
+
+      - name: judge_app_install_record
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh app_install_record ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start2
+
+      - name: ods_app_install_record
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh app_install_record ${dt}
+        dependsOn:
+          - judge_app_install_record
+
+      - name: judge_app_message_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh app_message_info ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start2
+
+      - name: ods_app_message_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh app_message_info ${dt}
+        dependsOn:
+          - judge_app_message_info
+
+      - name: judge_goods_purchase_price
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh goods_purchase_price ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start2
+
+      - name: ods_goods_purchase_price
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh goods_purchase_price ${dt}
+        dependsOn:
+          - judge_goods_purchase_price
+    dependsOn:
+      - fd_dw_ods_full_start
+
+  - name: fd_dw_ods_full_flow3
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_ods_full_flow_start3
+        type: noop
+
+      - name: judge_goods_test_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh goods_test_goods ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start3
+
+      - name: ods_goods_test_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh goods_test_goods ${dt}
+        dependsOn:
+          - judge_goods_test_goods
+
+      - name: judge_goods_test_goods_log
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh goods_test_goods_log ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start3
+
+      - name: ods_goods_test_goods_log
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh goods_test_goods_log ${dt}
+        dependsOn:
+          - judge_goods_test_goods_log
+
+      - name: judge_goods_test_pipeline
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh goods_test_pipeline ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start3
+
+      - name: ods_goods_test_pipeline
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh goods_test_pipeline ${dt}
+        dependsOn:
+          - judge_goods_test_pipeline
+
+      - name: judge_goods_test_preorder_result
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh goods_test_preorder_result ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start3
+
+      - name: ods_goods_test_preorder_result
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh goods_test_preorder_result ${dt}
+        dependsOn:
+          - judge_goods_test_preorder_result
+    dependsOn:
+      - fd_dw_ods_full_start
+
+  - name: fd_dw_ods_full_flow4
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_ods_full_flow_start4
+        type: noop
+
+      - name: judge_style
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh style ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start4
+
+      - name: ods_style
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh style ${dt}
+        dependsOn:
+          - judge_style
+
+      - name: judge_turntable_record_v2
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh turntable_record_v2 ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start4
+
+      - name: ods_turntable_record_v2
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh turntable_record_v2 ${dt}
+        dependsOn:
+          - judge_turntable_record_v2
+
+      - name: judge_user_check_in
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh user_check_in ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start4
+
+      - name: ods_user_check_in
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh user_check_in ${dt}
+        dependsOn:
+          - judge_user_check_in
+
+      - name: judge_user_check_in_log
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh user_check_in_log ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start4
+
+      - name: ods_user_check_in_log
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh user_check_in_log ${dt}
+        dependsOn:
+          - judge_user_check_in_log
+    dependsOn:
+      - fd_dw_ods_full_start
+
+  - name: fd_dw_ods_full_flow5
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_ods_full_flow_start5
+        type: noop
+
+      - name: judge_email_unsubscribe
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh email_unsubscribe ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start5
+
+      - name: ods_email_unsubscribe
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh email_unsubscribe ${dt}
+        dependsOn:
+          - judge_email_unsubscribe
+
+      - name: judge_region_area
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh region_area ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start5
+
+      - name: ods_region_area
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh region_area ${dt}
+        dependsOn:
+          - judge_region_area
+
+      - name: judge_newsletters
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh newsletters ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start5
+
+      - name: ods_newsletters
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh newsletters ${dt}
+        dependsOn:
+          - judge_newsletters
+    dependsOn:
+      - fd_dw_ods_full_start
+
+  - name: fd_dw_ods_full_flow6
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_ods_full_flow_start6
+        type: noop
+
+      - name: judge_email_subscribe
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh email_subscribe ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start6
+
+      - name: ods_email_subscribe
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh email_subscribe ${dt}
+        dependsOn:
+          - judge_email_subscribe
+
+      - name: judge_user_duid
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh user_duid ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start6
+
+      - name: ods_user_duid
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh user_duid ${dt}
+        dependsOn:
+          - judge_user_duid
+
+      - name: judge_users
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh users ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start6
+
+      - name: ods_users
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh users ${dt}
+        dependsOn:
+          - judge_users
+    dependsOn:
+      - fd_dw_ods_full_start
+
+  - name: fd_dw_ods_full_flow7
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_ods_full_flow_start7
+        type: noop
+
+      - name: judge_goods_test_reports_last
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh goods_test_reports_last ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start7
+
+      - name: ods_goods_test_reports_last
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh goods_test_reports_last ${dt}
+        dependsOn:
+          - judge_goods_test_reports_last
+
+      - name: judge_points
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh points ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start7
+
+      - name: ods_points
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh points ${dt}
+        dependsOn:
+          - judge_points
+
+      - name: judge_project_goods_history
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh project_goods_history ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start7
+
+      - name: ods_project_goods_history
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh project_goods_history ${dt}
+        dependsOn:
+          - judge_project_goods_history
+
+      - name: judge_risk_country_user_log
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh risk_country_user_log ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start7
+
+      - name: ods_risk_country_user_log
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh risk_country_user_log ${dt}
+        dependsOn:
+          - judge_risk_country_user_log
+    dependsOn:
+      - fd_dw_ods_full_start
+
+  - name: fd_dw_ods_full_flow8
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_ods_full_flow_start8
+        type: noop
+
+      - name: judge_goods_preorder_plan
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh goods_preorder_plan ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start8
+
+      - name: ods_goods_preorder_plan
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh goods_preorder_plan ${dt}
+        dependsOn:
+          - judge_goods_preorder_plan
+
+      - name: judge_goods_price_adjust_log
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh goods_price_adjust_log ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start8
+
+      - name: ods_goods_price_adjust_log
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh goods_price_adjust_log ${dt}
+        dependsOn:
+          - judge_goods_price_adjust_log
+
+      - name: judge_goods_price_adjust_record
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh goods_price_adjust_record ${dt}
+        dependsOn:
+          - fd_dw_ods_full_flow_start8
+
+      - name: ods_goods_price_adjust_record
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/vbridal/run.sh goods_price_adjust_record ${dt}
+        dependsOn:
+          - judge_goods_price_adjust_record
+    dependsOn:
+      - fd_dw_ods_full_start
+
+  - name: fd_dw_ods_full_end
+    type: noop
+    dependsOn:
+      - fd_dw_ods_full_flow
+      - fd_dw_ods_full_flow2
+      - fd_dw_ods_full_flow3
+      - fd_dw_ods_full_flow4
+      - fd_dw_ods_full_flow5
+      - fd_dw_ods_full_flow6
+      - fd_dw_ods_full_flow7
+      - fd_dw_ods_full_flow8
+

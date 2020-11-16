@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_fd_newsletter_snowplow_report (
 `goods_impression_domain_userid` string COMMENT 'goods_impression_domain_userid',
 `order_domain_userid` string COMMENT 'order_domain_userid',
 `order_id` string COMMENT '订单id',
-`goods_amount` decimal(16, 2) COMMENT '销售金额'
+`goods_amount` decimal(15, 4) COMMENT '销售金额'
 ) COMMENT 'Newsltter 打点数据'
 PARTITIONED BY (dt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'

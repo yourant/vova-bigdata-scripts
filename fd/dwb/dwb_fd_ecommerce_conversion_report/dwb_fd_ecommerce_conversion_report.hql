@@ -78,8 +78,7 @@ left JOIN
   date_format(from_utc_timestamp(from_unixtime(order_time), 'PRC'), 'yyyy-MM-dd') = '${hiveconf:dt}' or 
   date_format(from_utc_timestamp(from_unixtime(event_date), 'PRC'), 'yyyy-MM-dd') = '${hiveconf:dt}')
   and pay_status=2   
-  and email not like '%i9i8.com'
-  and email not like '%tetx.com'
+  and email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
   )oi
   left join (select order_id,sp_session_id from ods_fd_vb.ods_fd_order_marketing_data group by order_id,sp_session_id) om on om.order_id = oi.order_id
   left join (select session_id,collect_set(ga_channel)[0] as ga_channel from dwd.dwd_fd_session_channel where ga_channel is not  null and  dt between date_add('${hiveconf:dt}',-3) and date_add('${hiveconf:dt}',1)   group by session_id)sc on om.sp_session_id=sc.session_id

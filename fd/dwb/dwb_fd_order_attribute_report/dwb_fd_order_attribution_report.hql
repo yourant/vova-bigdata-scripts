@@ -5,14 +5,14 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_fd_order_attribution_report (
 `page_code` string COMMENT 'page_code',
 `list_type` string COMMENT 'list_type',
 `goods_impression_cnt` BIGINT COMMENT '曝光数',
-`goods_click_cnt` BIGINT COMMENT '点击数',
-`goods_impression_uv_cnt` BIGINT COMMENT '曝光UV',
-`goods_click_uv_cnt` BIGINT COMMENT '点击UV',
-`goods_add_uv_cnt` BIGINT COMMENT '加购成功UV',
-`total_order_cnt` BIGINT COMMENT '订单数量',
-`total_success_order_cnt` BIGINT COMMENT '支付成功订单数',
-`total_order_user_uv_cnt` BIGINT COMMENT '支付成功订单的用户',
-`gmv` decimal(10,2) COMMENT 'gmv'
+`goods_click_cnt` bigint COMMENT '点击数',
+`goods_impression_uv_cnt` bigint COMMENT '曝光UV',
+`goods_click_uv_cnt` bigint COMMENT '点击UV',
+`goods_add_uv_cnt` bigint COMMENT '加购成功UV',
+`total_order_cnt` bigint COMMENT '订单数量',
+`total_success_order_cnt` bigint COMMENT '支付成功订单数',
+`total_order_user_uv_cnt` bigint COMMENT '支付成功订单的用户',
+`gmv` decimal(15,4) COMMENT 'gmv'
 ) COMMENT '订单归因指标数据'
 PARTITIONED BY (`dt` string)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'

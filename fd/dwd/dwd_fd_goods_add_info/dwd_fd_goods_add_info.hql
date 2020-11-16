@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS `dwd.dwd_fd_goods_add_info`(
   `session_id` string COMMENT 'session id',
-  `virtual_goods_id` int COMMENT '虚拟商品id',
-  `goods_id` int COMMENT '商品id',
-  `cat_id` int COMMENT '品类id',
+  `virtual_goods_id` bigint COMMENT '虚拟商品id',
+  `goods_id` bigint COMMENT '商品id',
+  `cat_id` bigint COMMENT '品类id',
   `cat_name` string COMMENT '品类',
   `platform_type` string COMMENT '平台类型',
   `platform` string COMMENT '平台',

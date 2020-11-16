@@ -13,10 +13,10 @@ CREATE TABLE if not exists dwb.dwb_fd_place_selection_report (
   `sales_order` bigint COMMENT '商品销售件数',
   `clicks` bigint COMMENT '页面点击数',
   `users` bigint COMMENT '访问用户数',
-  `ctr` double COMMENT 'ctr',
-  `cr` double COMMENT 'cr',
-  `country_cat_platform_top` int COMMENT '国家+品类+设备粒度cr排名',
-  `cat_platform_top` int COMMENT '品类+设备粒度cr排名'
+  `ctr` DECIMAL(15, 4) COMMENT 'ctr',
+  `cr` DECIMAL(15, 4) COMMENT 'cr',
+  `country_cat_platform_top` bigint COMMENT '国家+品类+设备粒度cr排名',
+  `cat_platform_top` bigint COMMENT '品类+设备粒度cr排名'
 
 ) COMMENT'投放选款报表'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'

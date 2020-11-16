@@ -1,0 +1,240 @@
+---
+config:
+  failure.emails: yunling@i9i8.com
+  retries: 5
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_dw_erp_init_start
+    type: noop
+
+  - name: fd_dw_erp_ecshop_init_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_erp_ecshop_init_flow_start
+        type: noop
+      
+      - name: ecs_fd_sku_backups
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/ecshop/run.sh fd_sku_backups 3
+        dependsOn:
+          - fd_dw_erp_ecshop_init_flow_start
+      
+      - name: ecs_fd_stock_ecs_order_sale_bak_detail
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/ecshop/run.sh fd_stock_ecs_order_sale_bak_detail 2
+        dependsOn:
+          - fd_dw_erp_ecshop_init_flow_start
+      
+      - name: ecs_fd_stock_goods_config
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/ecshop/run.sh fd_stock_goods_config 2
+        dependsOn:
+          - fd_dw_erp_ecshop_init_flow_start
+      
+      - name: ecs_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/ecshop/run.sh ecs_goods 6
+        dependsOn:
+          - fd_dw_erp_ecshop_init_flow_start
+      
+      - name: ecs_order_attribute
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/ecshop/run.sh order_attribute 16
+        dependsOn:
+          - fd_dw_erp_ecshop_init_flow_start
+      
+      - name: ecs_order_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/ecshop/run.sh ecs_order_goods 16
+        dependsOn:
+          - fd_dw_erp_ecshop_init_flow_start
+      
+      - name: ecs_order_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/ecshop/run.sh ecs_order_info 12
+        dependsOn:
+          - fd_dw_erp_ecshop_init_flow_start
+      
+      - name: ecs_region
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/ecshop/run.sh ecs_region 2
+        dependsOn:
+          - fd_dw_erp_ecshop_init_flow_start
+
+    dependsOn:
+      - fd_dw_erp_init_start
+
+  - name: fd_dw_erp_romeo_init_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_erp_romeo_init_flow_start
+        type: noop
+          
+      - name: romeo_currency_conversion
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/artemis/run.sh currency_conversion 2
+        dependsOn:
+          - fd_dw_erp_romeo_init_flow_start
+      
+      - name: romeo_dispatch_list
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/artemis/run.sh dispatch_list 8
+        dependsOn:
+          - fd_dw_erp_romeo_init_flow_start
+      
+      - name: romeo_goods_purchase_price
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/artemis/run.sh goods_purchase_price 3
+        dependsOn:
+          - fd_dw_erp_romeo_init_flow_start
+      
+      - name: romeo_inventory_item
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/artemis/run.sh inventory_item 3
+        dependsOn:
+          - fd_dw_erp_romeo_init_flow_start
+      
+      - name: romeo_inventory_item_detail
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/artemis/run.sh inventory_item_detail 3
+        dependsOn:
+          - fd_dw_erp_romeo_init_flow_start
+      
+      - name: romeo_inventory_summary
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/artemis/run.sh inventory_summary 3
+        dependsOn:
+          - fd_dw_erp_romeo_init_flow_start
+
+      - name: romeo_order_inv_reserved_detail
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/artemis/run.sh order_inv_reserved_detail 10
+        dependsOn:
+          - fd_dw_erp_romeo_init_flow_start
+      
+      - name: romeo_order_inv_reserved
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/artemis/run.sh order_inv_reserved 6
+        dependsOn:
+          - fd_dw_erp_romeo_init_flow_start
+      
+      - name: romeo_order_inv_reserverd_inventory_mapping
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/artemis/run.sh order_inv_reserverd_inventory_mapping 10
+        dependsOn:
+          - fd_dw_erp_romeo_init_flow_start
+
+      - name: romeo_party_config
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/artemis/run.sh party_config 1
+        dependsOn:
+          - fd_dw_erp_romeo_init_flow_start
+
+      - name: romeo_party
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/artemis/run.sh party 1
+        dependsOn:
+          - fd_dw_erp_romeo_init_flow_start
+      
+      - name: romeo_refund
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/artemis/run.sh refund 4
+        dependsOn:
+          - fd_dw_erp_romeo_init_flow_start
+
+    dependsOn:
+      - fd_dw_erp_init_start
+
+  - name: fd_dw_erp_dmc_init_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_erp_dmc_init_flow_start
+        type: noop
+      
+      - name: dmc_sheIf_goods_org
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/dmc/run.sh fd_sku_dmc_sheIf_goods_orgbackups 2
+        dependsOn:
+          - fd_dw_erp_dmc_init_flow_start
+      
+      - name: dmc_sheIf_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/dmc/run.sh dmc_sheIf_goods 2
+        dependsOn:
+          - fd_dw_erp_dmc_init_flow_start
+      
+      - name: dmc_party
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/dmc/run.sh dmc_party 2
+        dependsOn:
+          - fd_dw_erp_dmc_init_flow_start
+      
+      - name: dmc_goods_project
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/dmc/run.sh dmc_goods_project 4
+        dependsOn:
+          - fd_dw_erp_dmc_init_flow_start
+      
+      - name: dmc_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/dmc/run.sh dmc_goods 4
+        dependsOn:
+          - fd_dw_erp_dmc_init_flow_start
+      
+      - name: dmc_competing_website_tort
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/dmc/run.sh dmc_competing_website_tort 2
+        dependsOn:
+          - fd_dw_erp_dmc_init_flow_start
+      
+      - name: dmc_competing_website_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/tmp/dmc/run.sh dmc_competing_website_info 2
+        dependsOn:
+          - fd_dw_erp_dmc_init_flow_start
+
+    dependsOn:
+      - fd_dw_erp_init_start
+
+  - name: fd_dw_erp_init_end
+    type: noop
+    dependsOn:
+      - fd_dw_erp_ecshop_init_flow
+      - fd_dw_erp_romeo_init_flow
+      - fd_dw_erp_dmc_init_flow
+
+

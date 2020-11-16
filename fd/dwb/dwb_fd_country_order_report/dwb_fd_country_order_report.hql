@@ -5,12 +5,12 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_fd_country_order_report
     country_code     string COMMENT '国家',
     pay_status       string COMMENT '支付状态',
     orders           bigint COMMENT '订单数',
-    order_amount_free  DECIMAL(10, 2) COMMENT 'order_amount_free',
-    order_amount       DECIMAL(10, 2) COMMENT 'order_amount',
-    users              int COMMENT '用户数',
-    customer_price_free   DECIMAL(10, 2) comment 'customer_price_free',
-    customer_price      DECIMAL(10, 2) COMMENT 'customer_price',
-    shipping_free       DECIMAL(10, 2) COMMENT 'shipping_free'
+    order_amount_free  DECIMAL(15, 4) COMMENT 'order_amount_free',
+    order_amount       DECIMAL(15, 4) COMMENT 'order_amount',
+    users              bigint COMMENT '用户数',
+    customer_price_free   DECIMAL(15, 4) comment 'customer_price_free',
+    customer_price      DECIMAL(15, 4) COMMENT 'customer_price',
+    shipping_free       DECIMAL(15, 4) COMMENT 'shipping_free'
 ) COMMENT '国家订单相关金额报表'
 PARTITIONED BY (dt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
@@ -56,12 +56,7 @@ from (
     from dwd.dwd_fd_order_info oi 
     where dt = '${hiveconf:dt}'
     and (date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:dt}' or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:dt}')
-    and oi.email not like '%%@tetx.com%%'
-    and oi.email not like '%%@i9i8.com%%'
-    and oi.email not like '%%@qq.com%%'
-    and oi.email not like '%%@163.com%%'
-    and oi.email not like '%%@jjshouse.com%%'
-    and oi.email not like '%%@jenjenhouse.com%%'
+    and oi.email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
 )tab1
 group by 
         tab1.project_name,

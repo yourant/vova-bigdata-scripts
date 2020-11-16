@@ -17,9 +17,9 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_fd_rpt_ecommerce_funnel_report
     purchase_session_id        STRING comment '用来计算完成订单总会话',
 
     order_id                   BIGINT comment '订单号',
-    goods_amount               decimal(16, 6) comment '订单商品金额',
-    bonus                      decimal(16, 6) comment '订单折扣',
-    shipping_fee               decimal(16, 6) comment '订单运费'
+    goods_amount               decimal(15, 4) comment '订单商品金额',
+    bonus                      decimal(15, 4) comment '订单折扣',
+    shipping_fee               decimal(15, 4) comment '订单运费'
 ) comment '网站转化漏斗报表'
 PARTITIONED BY (dt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
@@ -57,8 +57,7 @@ from (
           or date(from_unixtime(event_date,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:dt}'
           )
      and pay_status = 2
-     and email not like '%i9i8.com'
-     and email not like '%tetx.com'
+     and email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
 
 ) oi
 left join (select order_id,sp_session_id from ods_fd_vb.ods_fd_order_marketing_data group by order_id,sp_session_id) om on om.order_id = oi.order_id
