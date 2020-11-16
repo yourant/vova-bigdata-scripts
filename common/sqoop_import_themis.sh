@@ -13,6 +13,7 @@ inc_column=""
 mapers=3
 pt=$(date -d "-1 day" +%Y-%m-%d)
 primary_key=""
+split_id=""
 etl_type="INIT"
 table=""
 inc_column="last_update_time"
@@ -111,6 +112,11 @@ url=$(echo $resp | jq '.url'| sed $'s/\"//g')
 user=$(echo $resp | jq '.user'| sed $'s/\"//g')
 pwd=$(echo $resp | jq '.pwd'| sed $'s/\"//g')
 hiveDb=$(echo $resp | jq '.hiveDb'| sed $'s/\"//g')
+
+if [ "$split_id" = "" ];then
+  split_id=$primary_key
+fi
+
 #9 删除临时目录为后面做准备
 #note:sqoop先将数据导入到HDFS的临时目录,然后再将导入到HDFS的数据迁移到Hive仓库,第一步默认的临时目录是hdfs:///tmp/sqoop/themis/vova_order_info_inc
 tmp_path=s3://bigdata-offline/tmp/sqoop/${hiveDb}/${table_name}
@@ -136,7 +142,8 @@ if [[ "$etl_type" == "ALL" || "INIT" == "$etl_type" ]]; then
     --target-dir $tmp_path \
     --fetch-size 10000 \
     --query "select ${hiveColumns} from ${table_name} where \$CONDITIONS" \
-    --split-by ${primary_key} -m ${mapers}
+    --boundary-query "select min($split_id),max($split_id) from ${table_name}" \
+    --split-by ${split_id} -m ${mapers}
 fi
 
 if [ $? -ne 0 ]; then
@@ -162,7 +169,7 @@ if [ "$etl_type" == "INCTIME" ]; then
     --target-dir $tmp_path \
     --fetch-size 10000 \
     --query "select ${hiveColumns} from ${table_name} where ${inc_column} >= '${pt}' and \$CONDITIONS" \
-    --split-by ${primary_key} -m ${mapers}
+    --split-by ${split_id} -m ${mapers}
 fi
 
 if [ $? -ne 0 ]; then
@@ -189,7 +196,7 @@ if [ "$etl_type" == "INCTIMENOMERGE" ]; then
     --target-dir $tmp_path \
     --fetch-size 10000 \
     --query "select ${hiveColumns} from ${table_name} where ${inc_column} >= '${pt} 00:00:00' and ${inc_column} <= '${pt} 23:59:59'  and \$CONDITIONS" \
-    --split-by ${primary_key} -m ${mapers}
+    --split-by ${split_id} -m ${mapers}
 fi
 
 if [ $? -ne 0 ]; then
@@ -230,7 +237,7 @@ if [ "$etl_type" == "INCID" ]; then
     --fetch-size 10000 \
     --target-dir $tmp_path \
     --query "select ${hiveColumns} from ${table_name} where ${inc_column}  > ${idValue} and \$CONDITIONS" \
-    --split-by ${primary_key} -m ${mapers}
+    --split-by ${split_id} -m ${mapers}
 fi
 
 if [ $? -ne 0 ]; then
