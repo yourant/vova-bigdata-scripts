@@ -53,11 +53,11 @@ CREATE TABLE IF NOT EXISTS dwd.dwd_fd_order_info (
     language_code string COMMENT '语言code',
     order_currency_code string COMMENT '货币单位'
 ) COMMENT '订单事实表数据'
-PARTITIONED BY (dt string)
+PARTITIONED BY (pt string)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
-INSERT overwrite table dwd.dwd_fd_order_info PARTITION (dt='${hiveconf:dt}')
+INSERT overwrite table dwd.dwd_fd_order_info PARTITION (pt='${hiveconf:pt}')
 select 
     ud.sp_duid,
     oi.order_id,

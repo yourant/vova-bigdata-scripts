@@ -27,9 +27,8 @@ echo $dt_last
 echo $dt_format
 echo $dt_format_last
 
-flume_path="s3a://vova-bd-test/flume/fd/vbridal"
+flume_path="s3://bigdata-offline/warehouse/pdb/fd/vbridal"
 shell_path="/mnt/vova-bigdata-scripts/fd/ods/binlog_table"
-s3_path="s3://vova-bd-test/warehouse_test/ods/fd/ods_fd_vb"
 table_name="order_marketing_data"
 
 #将flume收集的数据存到tmp表中

@@ -1,6 +1,6 @@
 ---
 config:
-  failure.emails: yunling@i9i8.com
+  failure.emails: htgao@i9i8.com
   retries: 10
   retry.backoff: 300000
 
@@ -199,6 +199,34 @@ nodes:
         dependsOn:
           - fd_ods_order_flow_start
       
+      - name: ods_fd_atm_ads_adgroup_daily_flat_report
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=atm --etl_type=INCTIME --inc_column=date --table_name=ads_adgroup_daily_flat_report  --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_ods_order_flow_start
+      
+      - name: ods_fd_atm_feed_shopping_performance_report
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=atm --etl_type=INCTIME --inc_column=last_update_time --table_name=feed_shopping_performance_report  --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_ods_order_flow_start
+      
+      - name: ods_fd_atm_feed_tag_log
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=atm --etl_type=INCTIME --inc_column=last_update_time --table_name=feed_tag_log  --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_ods_order_flow_start
+      
+      - name: ods_fd_atm_order_analytics
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=atm --etl_type=INCTIME --inc_column=last_update_time --table_name=order_analytics  --partition_num=2 --period_type=day
+        dependsOn:
+          - fd_ods_order_flow_start
+      
     dependsOn:
       - fd_ods_vb_start
 
@@ -330,5 +358,3 @@ nodes:
       - fd_ods_order_flow
       - fd_ods_user_flow
       - fd_ods_newsletter_flow
-      
-
