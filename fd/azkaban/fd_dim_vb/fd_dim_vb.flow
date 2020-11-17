@@ -19,14 +19,14 @@ nodes:
       - name: judge_ods_fd_vb_category
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_category ${dt}
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_category
         dependsOn:
           - category_start
 
       - name: fd_dim_category
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_category ${dt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_category
         dependsOn:
           - judge_ods_fd_vb_category
 
@@ -44,14 +44,14 @@ nodes:
       - name: judge_ods_fd_vb_currency
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_currency ${dt}
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_currency
         dependsOn:
           - currency_start
 
       - name: fd_dim_currency
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_currency ${dt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_currency
         dependsOn:
           - judge_ods_fd_vb_currency
 
@@ -69,28 +69,28 @@ nodes:
       - name: judge_ods_fd_vb_goods
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_goods ${dt}
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_goods
         dependsOn:
           - goods_start
 
       - name: judge_dim_category
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_category ${dt}
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_category
         dependsOn:
           - judge_ods_fd_vb_goods
 
       - name: judge_dim_virtual_goods
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_virtual_goods ${dt}
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_virtual_goods
         dependsOn:
           - judge_goods
 
       - name: fd_dim_goods
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_goods ${dt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_goods
         dependsOn:
           - judge_dim_category
           - judge_dim_virtual_goods
@@ -109,14 +109,14 @@ nodes:
       - name: judge_ods_fd_vb_languages
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_languages ${dt}
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_languages
         dependsOn:
           - languages_start
 
       - name: fd_dim_language
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_language ${dt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_language
         dependsOn:
           - judge_ods_fd_vb_languages
 
@@ -134,14 +134,14 @@ nodes:
       - name: judge_ods_fd_vb_region
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_region ${dt}
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_region
         dependsOn:
           - region_start
 
       - name: fd_dim_region
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_region ${dt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_region
         dependsOn:
           - judge_ods_fd_vb_region
           
@@ -159,14 +159,14 @@ nodes:
       - name: judge_ods_fd_vb_user_agent_analysis
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_user_agent_analysis ${dt}
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_user_agent_analysis
         dependsOn:
           - user_agent_analysis_start
 
       - name: fd_dim_user_agent
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_user_agent ${dt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_user_agent
         dependsOn:
           - judge_ods_fd_vb_user_agent_analysis
           
@@ -184,14 +184,14 @@ nodes:
       - name: judge_ods_fd_vb_virtual_goods
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_virtual_goods ${dt}
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_virtual_goods
         dependsOn:
           - virtual_goods_start
 
       - name: fd_dim_virtual_goods
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_virtual_goods ${dt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_virtual_goods
         dependsOn:
           - judge_ods_fd_vb_virtual_goods
 
