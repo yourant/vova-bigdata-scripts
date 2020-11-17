@@ -43,6 +43,13 @@ nodes:
           command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=INIT --table_name=order_analytics --mapers=10 --partition_num=4 --period_type=day
         dependsOn:
           - fd_dw_artemis_init_flow_start
+      
+      - name: campaign_adgroup_mapping
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=INIT --table_name=campaign_adgroup_mapping --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_dw_artemis_init_flow_start
 
     dependsOn:
       - fd_dw_vbridal_init_start

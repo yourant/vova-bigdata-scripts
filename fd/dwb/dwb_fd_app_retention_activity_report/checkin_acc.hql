@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `dwb.dwb_fd_app_retention_activity_report`(
   `user_new_first_success_coupon_order_id` string COMMENT '新用户使用coupon支付成功首单总数')
 COMMENT '用户留存，签到，大转盘和用户注册相关数据，数据来源业务表以及打点数据'
 PARTITIONED BY (
-  `dt` string,
+  `pt` string,
   `classify` string)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS ORC
@@ -62,7 +62,7 @@ TBLPROPERTIES ("orc.compress"="SNAPPY");
 
 
 set mapred.reduce.tasks=1;
-insert overwrite table dwb.dwb_fd_app_retention_activity_report partition (dt='${hiveconf:dt}',classify='checkin_acc')
+insert overwrite table dwb.dwb_fd_app_retention_activity_report partition (pt='${hiveconf:pt}',classify='checkin_acc')
 select
     t2.project as project,
     t2.platform_type as platform_type,
@@ -98,7 +98,7 @@ from (
     t0.per_count,
     date(TO_UTC_TIMESTAMP(t0.last_date, 'America/Los_Angeles')) as last_date
   from ods_fd_vb.ods_fd_user_check_in t0
-  where date(TO_UTC_TIMESTAMP(t0.last_date, 'America/Los_Angeles')) = '${hiveconf:dt}'
+  where date(TO_UTC_TIMESTAMP(t0.last_date, 'America/Los_Angeles')) = '${hiveconf:pt}'
 ) t1
 left join(
   select t0.user_id,t0.project,t0.platform_type
