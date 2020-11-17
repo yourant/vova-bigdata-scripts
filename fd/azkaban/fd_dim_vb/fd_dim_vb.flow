@@ -1,0 +1,210 @@
+---
+config:
+  failure.emails: htgao@i9i8.com
+  retries: 8
+  retry.backoff: 180000
+
+nodes:
+  - name: fd_dim_vb_start
+    type: noop
+
+  - name: fd_vb_category
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: category_start
+        type: noop
+
+      - name: judge_ods_fd_vb_category
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_category ${dt}
+        dependsOn:
+          - category_start
+
+      - name: fd_dim_category
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_category ${dt}
+        dependsOn:
+          - judge_ods_fd_vb_category
+
+    dependsOn:
+      - fd_dim_vb_start
+
+  - name: fd_vb_currency
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: currency_start
+        type: noop
+
+      - name: judge_ods_fd_vb_currency
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_currency ${dt}
+        dependsOn:
+          - currency_start
+
+      - name: fd_dim_currency
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_currency ${dt}
+        dependsOn:
+          - judge_ods_fd_vb_currency
+
+    dependsOn:
+      - fd_dim_vb_start
+
+  - name: fd_vb_goods
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: goods_start
+        type: noop
+
+      - name: judge_ods_fd_vb_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_goods ${dt}
+        dependsOn:
+          - goods_start
+
+      - name: judge_dim_category
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_category ${dt}
+        dependsOn:
+          - judge_ods_fd_vb_goods
+
+      - name: judge_dim_virtual_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_virtual_goods ${dt}
+        dependsOn:
+          - judge_goods
+
+      - name: fd_dim_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_goods ${dt}
+        dependsOn:
+          - judge_dim_category
+          - judge_dim_virtual_goods
+
+    dependsOn:
+      - fd_dim_vb_start
+
+  - name: fd_vb_languages
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: languages_start
+        type: noop
+
+      - name: judge_ods_fd_vb_languages
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_languages ${dt}
+        dependsOn:
+          - languages_start
+
+      - name: fd_dim_language
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_language ${dt}
+        dependsOn:
+          - judge_ods_fd_vb_languages
+
+    dependsOn:
+      - fd_dim_vb_start
+
+  - name: fd_vb_region
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: region_start
+        type: noop
+
+      - name: judge_ods_fd_vb_region
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_region ${dt}
+        dependsOn:
+          - region_start
+
+      - name: fd_dim_region
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_region ${dt}
+        dependsOn:
+          - judge_ods_fd_vb_region
+          
+    dependsOn:
+      - fd_dim_vb_start
+
+  - name: fd_vb_user_agent_analysis
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: user_agent_analysis_start
+        type: noop
+
+      - name: judge_ods_fd_vb_user_agent_analysis
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_user_agent_analysis ${dt}
+        dependsOn:
+          - user_agent_analysis_start
+
+      - name: fd_dim_user_agent
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_user_agent ${dt}
+        dependsOn:
+          - judge_ods_fd_vb_user_agent_analysis
+          
+    dependsOn:
+      - fd_dim_vb_start
+
+  - name: fd_vb_virtual_goods
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: virtual_goods_start
+        type: noop
+
+      - name: judge_ods_fd_vb_virtual_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_virtual_goods ${dt}
+        dependsOn:
+          - virtual_goods_start
+
+      - name: fd_dim_virtual_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_virtual_goods ${dt}
+        dependsOn:
+          - judge_ods_fd_vb_virtual_goods
+
+    dependsOn:
+      - fd_dim_vb_start 
+
+  - name: fd_dim_vb_end
+    type: noop
+    dependsOn:
+      - fd_vb_category
+      - fd_vb_currency
+      - fd_vb_goods
+      - fd_vb_languages
+      - fd_vb_region
+      - fd_vb_user_agent_analysis
+      - fd_vb_virtual_goods
