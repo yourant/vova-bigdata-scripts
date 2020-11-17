@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_ads_adgroup_daily_flat_report (
+CREATE TABLE IF NOT EXISTS ods_fd_ar.ods_fd_ads_adgroup_daily_flat_report (
     adfr_id bigint,
     account_name string,
     campaign_id string,
@@ -21,5 +21,5 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
-INSERT overwrite table ods_fd_vb.ods_fd_ads_adgroup_daily_flat_report
-select `(dt)?+.+` from ods_fd_vb.ods_fd_ads_adgroup_daily_flat_report_arc where dt = '${hiveconf:dt}';
+INSERT overwrite table ods_fd_ar.ods_fd_ads_adgroup_daily_flat_report
+select `(dt)?+.+` from ods_fd_ar.ods_fd_ads_adgroup_daily_flat_report_arc where dt = '${hiveconf:dt}';

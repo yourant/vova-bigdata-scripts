@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS  `ods_fd_vb.ods_fd_order_analytics`(
+CREATE TABLE IF NOT EXISTS  `ods_fd_ar.ods_fd_order_analytics`(
   `oa_id` bigint COMMENT '自增id',
   `order_id` bigint COMMENT '订单id',
   `source` string COMMENT '来源',
@@ -40,5 +40,5 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
-INSERT overwrite table ods_fd_vb.ods_fd_order_analytics
-select `(dt)?+.+` from ods_fd_vb.ods_fd_order_analytics_arc where dt = '${hiveconf:dt}';
+INSERT overwrite table ods_fd_ar.ods_fd_order_analytics
+select `(dt)?+.+` from ods_fd_ar.ods_fd_order_analytics_arc where dt = '${hiveconf:dt}';

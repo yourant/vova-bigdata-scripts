@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_feed_shopping_performance_report_inc (
+CREATE TABLE IF NOT EXISTS ods_fd_ar.ods_fd_feed_shopping_performance_report_inc (
     `fspr_id` bigint  COMMENT 'auto increase feed_shopping_performance_report id',
     `project` string COMMENT 'project name',
     `goods_id` bigint  COMMENT 'real goods id',
@@ -17,7 +17,7 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 
-INSERT OVERWRITE TABLE ods_fd_vb.ods_fd_feed_shopping_performance_report_inc PARTITION (dt='${hiveconf:dt}')
+INSERT OVERWRITE TABLE ods_fd_ar.ods_fd_feed_shopping_performance_report_inc PARTITION (dt='${hiveconf:dt}')
 select
     fspr_id,
     project,

@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_feed_shopping_performance_report (
+CREATE TABLE IF NOT EXISTS ods_fd_ar.ods_fd_feed_shopping_performance_report (
     `fspr_id` bigint  COMMENT 'auto increase feed_shopping_performance_report id',
     `project` string COMMENT 'project name',
     `goods_id` bigint  COMMENT 'real goods id',
@@ -16,5 +16,5 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
-INSERT overwrite table ods_fd_vb.ods_fd_feed_shopping_performance_report
-select `(dt)?+.+` from ods_fd_vb.ods_fd_feed_shopping_performance_report_arc where dt = '${hiveconf:dt}';
+INSERT overwrite table ods_fd_ar.ods_fd_feed_shopping_performance_report
+select `(dt)?+.+` from ods_fd_ar.ods_fd_feed_shopping_performance_report_arc where dt = '${hiveconf:dt}';

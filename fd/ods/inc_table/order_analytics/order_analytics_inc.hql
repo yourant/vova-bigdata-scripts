@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS  `ods_fd_vb.ods_fd_order_analytics_inc`(
+CREATE TABLE IF NOT EXISTS  `ods_fd_ar.ods_fd_order_analytics_inc`(
   `oa_id` bigint COMMENT '自增id',
   `order_id` bigint COMMENT '订单id',
   `source` string COMMENT '来源',
@@ -41,7 +41,7 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 
-INSERT OVERWRITE TABLE ods_fd_vb.ods_fd_order_analytics_inc PARTITION (dt='${hiveconf:dt}')
+INSERT OVERWRITE TABLE ods_fd_ar.ods_fd_order_analytics_inc PARTITION (dt='${hiveconf:dt}')
 select
         oa_id,
         order_id,

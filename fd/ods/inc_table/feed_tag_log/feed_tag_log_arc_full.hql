@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_feed_tag_log_arc (
+CREATE TABLE IF NOT EXISTS ods_fd_ar.ods_fd_feed_tag_log_arc (
     `feed_name` string COMMENT 'feed full name',
     `goods_id` bigint COMMENT 'real goods_id strat with 5',
     `log_date` string COMMENT 'log date when insert yyyy-MM-dd ',
@@ -20,7 +20,7 @@ PARTITIONED BY (dt STRING )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
-INSERT overwrite table ods_fd_vb.ods_fd_feed_tag_log_arc PARTITION (dt='${hiveconf:dt}')
+INSERT overwrite table ods_fd_ar.ods_fd_feed_tag_log_arc PARTITION (dt='${hiveconf:dt}')
 select 
             feed_name,
             goods_id,
@@ -99,6 +99,6 @@ from (
             custom_label_3,
             custom_label_4,
             last_update_time
-        from ods_fd_vb.ods_fd_feed_tag_log_inc where dt = '${hiveconf:dt}'
+        from ods_fd_ar.ods_fd_feed_tag_log_inc where dt = '${hiveconf:dt}'
     )inc
 ) arc where arc.rank =1;
