@@ -53,7 +53,7 @@ hive_mappers="8"
 #增量字段
 inc_column="date"
 #主键
-primary_key="id"
+primary_key="adfr_id"
 
 ##增量同步数据库表
 sqoop import \

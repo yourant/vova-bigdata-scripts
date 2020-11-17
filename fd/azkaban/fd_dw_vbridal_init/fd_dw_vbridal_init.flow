@@ -7,6 +7,45 @@ config:
 nodes:
   - name: fd_dw_vbridal_init_start
     type: noop
+  
+  - name: fd_dw_artemis_init_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dw_artemis_init_flow_start
+        type: noop
+
+      - name: ads_adgroup_daily_flat_report
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=atm --etl_type=INIT --table_name=ads_adgroup_daily_flat_report --mapers=8 --partition_num=4 --period_type=day
+        dependsOn:
+          - fd_dw_artemis_init_flow_start
+      
+      - name: feed_shopping_performance_report
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=atm --etl_type=INIT --table_name=feed_shopping_performance_report --mapers=10 --partition_num=8 --period_type=day
+        dependsOn:
+          - fd_dw_artemis_init_flow_start
+      
+      - name: feed_tag_log
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=atm --etl_type=INIT --table_name=feed_tag_log --mapers=10 --partition_num=16 --period_type=day
+        dependsOn:
+          - fd_dw_artemis_init_flow_start
+      
+      - name: order_analytics
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=atm --etl_type=INIT --table_name=order_analytics --mapers=120 --partition_num=100 --period_type=day
+        dependsOn:
+          - fd_dw_artemis_init_flow_start
+
+    dependsOn:
+      - fd_dw_vbridal_init_start
 
   - name: fd_dw_orders_init_flow
     type: flow

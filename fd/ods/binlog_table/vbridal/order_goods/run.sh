@@ -27,9 +27,8 @@ echo $dt_last
 echo $dt_format
 echo $dt_format_last
 
-flume_path="s3a://vova-bd-test/flume/fd/vbridal"
+flume_path="s3://bigdata-offline/warehouse/pdb/fd/vbridal"
 shell_path="/mnt/vova-bigdata-scripts/fd/ods/binlog_table"
-s3_path="s3://vova-bd-test/warehouse_test/ods/fd/ods_fd_vb"
 table_name="order_goods"
 
 #将flume收集的数据存到tmp表中
@@ -51,10 +50,10 @@ fi
 echo "step2: ${table_name}_inc table is finished !"
 
 #这一步为了初始化订单表，将全量数据放到arc表中
-hive -hiveconf dt=$dt -hiveconf s3_path=$s3_path -f ${shell_path}/${table_name}/${table_name}_arc_full.hql
+#hive -hiveconf dt=$dt -hiveconf s3_path=$s3_path -f ${shell_path}/${table_name}/${table_name}_arc_full.hql
 
 #arc最终表
-#hive -hiveconf dt=$dt -hiveconf dt_last=$dt_last  -hiveconf s3_path=$s3_path -f ${shell_path}/${table_name}/${table_name}_arc.hql
+hive -hiveconf dt=$dt -hiveconf dt_last=$dt_last  -hiveconf s3_path=$s3_path -f ${shell_path}/${table_name}/${table_name}_arc.hql
 
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then

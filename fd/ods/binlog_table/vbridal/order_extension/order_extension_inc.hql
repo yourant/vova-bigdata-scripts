@@ -14,13 +14,13 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_order_extension_inc
     is_delete bigint,
     last_update_time bigint COMMENT '最后更新时间'
 ) COMMENT 'kafka同步过来的数据库订单扩展表'
-PARTITIONED BY (dt STRING,hour STRING)
+PARTITIONED BY (pt STRING,hour STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE
 ;
 
 set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite TABLE ods_fd_vb.ods_fd_order_extension_inc PARTITION (dt = '${hiveconf:dt}', hour)
+INSERT overwrite TABLE ods_fd_vb.ods_fd_order_extension_inc PARTITION (pt = '${hiveconf:pt}', hour)
 SELECT  o_raw.xid AS event_id,
         o_raw.`table` AS event_table,
         o_raw.type AS event_type,
@@ -36,4 +36,4 @@ SELECT  o_raw.xid AS event_id,
 FROM    tmp.tmp_fd_order_extension
 LATERAL VIEW json_tuple(value, 'kafka_table', 'kafka_ts', 'kafka_commit', 'kafka_xid','kafka_type', 'kafka_old','id', 'order_id', 'ext_name', 'ext_value', 'is_delete', 'last_update_time') o_raw
 AS `table`, ts, `commit`, xid, type, old, id, order_id, ext_name, ext_value, is_delete, last_update_time
-WHERE dt='${hiveconf:dt}';
+WHERE pt='${hiveconf:pt}';

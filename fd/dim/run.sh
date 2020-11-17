@@ -22,10 +22,10 @@ elif [[ $# -eq 1 ]]; then
 	fi
 
 	table_name=$1
-	dt=`date -d "-1 days" +%Y-%m-%d`
-        dt_last=`date -d "-2 days" +%Y-%m-%d`
-        dt_format=`date -d "-1 days" +%Y%m%d`
-        dt_format_last=`date -d "-2 days" +%Y%m%d`
+	pt=`date -d "-1 days" +%Y-%m-%d`
+  pt_last=`date -d "-2 days" +%Y-%m-%d`
+  pt_format=`date -d "-1 days" +%Y%m%d`
+  pt_format_last=`date -d "-2 days" +%Y%m%d`
 
 
 elif [[ $# -eq 2 ]]; then
@@ -49,22 +49,22 @@ elif [[ $# -eq 2 ]]; then
 	exit
 	fi
 
-	dt=$2
-	dt_last=`date -d "$2 -1 days" +%Y-%m-%d`
-	dt_format=`date -d "$2" +%Y%m%d`
-	dt_format_last=`date -d "$2 -1 days" +%Y%m%d`
+	pt=$2
+	pt_last=`date -d "$2 -1 days" +%Y-%m-%d`
+	pt_format=`date -d "$2" +%Y%m%d`
+	pt_format_last=`date -d "$2 -1 days" +%Y%m%d`
 
 fi
 
 #hive sql中使用的变量
 echo $table_name
-echo $dt
-echo $dt_last
-echo $dt_format
-echo $dt_format_last
+echo $pt
+echo $pt_last
+echo $pt_format
+echo $pt_format_last
 
 #脚本路径
 shell_path="/mnt/vova-bigdata-scripts/fd/dim"
 
 #将dim层维表
-hive -hiveconf dt=$dt -f ${shell_path}/${table_name}/${table_name}.hql
+hive -hiveconf pt=$pt -f ${shell_path}/${table_name}/${table_name}.hql

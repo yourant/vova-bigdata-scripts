@@ -71,11 +71,11 @@ CREATE TABLE IF NOT EXISTS dwd.dwd_fd_order_goods (
     first_cat_name   string COMMENT '商品一级类目',
     goods_weight     decimal(15, 4) comment '商品重量'
 ) COMMENT '订单商品事实表'
-PARTITIONED BY (dt string)
+PARTITIONED BY (pt string)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
-INSERT overwrite table dwd.dwd_fd_order_goods PARTITION (dt='${hiveconf:dt}')
+INSERT overwrite table dwd.dwd_fd_order_goods PARTITION (pt='${hiveconf:pt}')
 select 
     ud.sp_duid,
     og.rec_id,

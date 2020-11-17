@@ -50,7 +50,7 @@ shell_path="/mnt/vova-bigdata-scripts/fd/ods/inc_table/${db_table_name}"
 #map task并发
 hive_mappers="4"
 #增量字段
-inc_column="insert_date"
+inc_column="last_update_time"
 #主键
 primary_key="fspr_id"
 
