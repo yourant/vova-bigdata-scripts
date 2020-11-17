@@ -58,5 +58,5 @@ from (
 	from ods_fd_vb.ods_fd_goods
 	) t1
 LEFT JOIN dim.dim_fd_category t2 on t1.cat_id = t2.cat_id
-LEFT JOIN (select project_name,virtual_goods_id,goods_id from ods_fd_vb.ods_fd_virtual_goods ) t3 on t1.goods_id = t3.goods_id
+LEFT JOIN ods_fd_vb.ods_fd_virtual_goods t3 on t1.goods_id = t3.goods_id
 ;

@@ -1,8 +1,8 @@
 ---
 config:
   failure.emails: htgao@i9i8.com
-  retries: 8
-  retry.backoff: 180000
+  retries: 3
+  retry.backoff: 100000
 
 nodes:
   - name: fd_dim_vb_start
@@ -72,6 +72,13 @@ nodes:
           command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_goods
         dependsOn:
           - goods_start
+      
+      - name: judge_ods_fd_vb_virtual_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_virtual_goods
+        dependsOn:
+          - goods_start
 
       - name: judge_dim_category
         type: command
@@ -80,20 +87,13 @@ nodes:
         dependsOn:
           - judge_ods_fd_vb_goods
 
-      - name: judge_dim_virtual_goods
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_virtual_goods
-        dependsOn:
-          - judge_goods
-
       - name: fd_dim_goods
         type: command
         config:
           command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_goods
         dependsOn:
           - judge_dim_category
-          - judge_dim_virtual_goods
+          - judge_ods_fd_vb_virtual_goods
 
     dependsOn:
       - fd_dim_vb_start
@@ -173,30 +173,6 @@ nodes:
     dependsOn:
       - fd_dim_vb_start
 
-  - name: fd_vb_virtual_goods
-    type: flow
-    config:
-      prop: value
-    nodes:
-      - name: virtual_goods_start
-        type: noop
-
-      - name: judge_ods_fd_vb_virtual_goods
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_virtual_goods
-        dependsOn:
-          - virtual_goods_start
-
-      - name: fd_dim_virtual_goods
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_virtual_goods
-        dependsOn:
-          - judge_ods_fd_vb_virtual_goods
-
-    dependsOn:
-      - fd_dim_vb_start 
 
   - name: fd_dim_vb_end
     type: noop
@@ -207,4 +183,3 @@ nodes:
       - fd_vb_languages
       - fd_vb_region
       - fd_vb_user_agent_analysis
-      - fd_vb_virtual_goods
