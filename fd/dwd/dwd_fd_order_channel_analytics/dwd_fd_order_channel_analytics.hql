@@ -119,4 +119,4 @@ FROM (
     select  order_id, order_sn, event_date, user_id, user_agent_id, is_app, platform_type, device_type, order_time, pay_status, pay_time, country, country_code, language_id, language_code, order_currency_id, order_currency_code, party_id, project_name, goods_id, goods_name, goods_sn, goods_sku, cat_id, cat_name, goods_number, market_price, shop_price, bonus, version, virtual_goods_id, integral, email, coupon_code
     from dwd.dwd_fd_order_goods where pt = '${hiveconf:pt}'
 ) ogi
-LEFT JOIN ods_fd_vb.ods_fd_order_analytics ooa ON ooa.order_id = ogi.order_id;
+LEFT JOIN ods_fd_ar.ods_fd_order_analytics ooa ON ooa.order_id = ogi.order_id;

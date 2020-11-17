@@ -20,7 +20,7 @@ STORED AS PARQUETFILE
 
 
 set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite TABLE ods_fd_vb.ods_fd_order_marketing_data_inc PARTITION (pt='${hiveconf:pt}',hour)
+INSERT overwrite TABLE ods_fd_vb.ods_fd_order_marketing_data_inc PARTITION (pt,hour)
 SELECT  o_raw.xid AS event_id,
         o_raw.`table` AS event_table,
         o_raw.type AS event_type,
@@ -31,8 +31,9 @@ SELECT  o_raw.xid AS event_id,
         o_raw.sp_session_id AS sp_session_id,
         o_raw.created_time AS created_time,
         cast(unix_timestamp(o_raw.last_update_time, 'yyyy-MM-dd HH:mm:ss') as BIGINT) AS last_update_time,
-        hour as hour
+        pt,
+        hour
 FROM    tmp.tmp_fd_order_marketing_data
 LATERAL VIEW json_tuple(value, 'kafka_table', 'kafka_ts', 'kafka_commit', 'kafka_xid','kafka_type', 'kafka_old', 'id', 'order_id', 'sp_session_id', 'created_time', 'last_update_time') o_raw
 AS `table`, ts, `commit`, xid, type, old, id, order_id, sp_session_id, created_time, last_update_time
-WHERE pt = '${hiveconf:pt}';
+WHERE pt >= '${hiveconf:pt}';

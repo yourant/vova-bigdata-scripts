@@ -1,0 +1,61 @@
+---
+config:
+  failure.emails: htgao@i9i8.com
+  retries: 5
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_ods_vb_blg_start
+    type: noop
+
+  - name: fd_ods_vb_blg_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_ods_vb_blg_flow_start
+        type: noop
+
+      - name: ods_fd_vb_order_extension
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/run.sh order_extension
+        dependsOn:
+          - fd_ods_vb_blg_flow_start
+
+      - name: ods_fd_vb_order_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/run.sh order_goods
+        dependsOn:
+          - fd_ods_vb_blg_flow_start
+
+      - name: ods_fd_vb_order_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/run.sh order_info
+        dependsOn:
+          - fd_ods_vb_blg_flow_start
+
+      - name: ods_fd_vb_order_marketing_data
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/run.sh order_marketing_data
+        dependsOn:
+          - fd_ods_vb_blg_flow_start
+      
+      - name: ods_fd_vb_order_status_change_history
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/run.sh order_status_change_history
+        dependsOn:
+          - fd_ods_vb_blg_flow_start
+      
+
+    dependsOn:
+      - fd_ods_vb_blg_start
+
+  - name: fd_ods_vb_blg_end
+    type: noop
+    dependsOn:
+      - fd_dw_ods_blg_flow

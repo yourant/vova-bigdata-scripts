@@ -67,7 +67,7 @@ left join (
                 t0.order_id as order_id,
                 t1.region_code as region_code,
                 Row_Number() OVER (partition by oa_id ORDER BY t0.last_update_time desc) rank
-            from (select oa_id,order_sn,country,campaign,order_id,ga_channel,last_update_time from ods_fd_vb.ods_fd_order_analytics) t0
+            from (select oa_id,order_sn,country,campaign,order_id,ga_channel,last_update_time from ods_fd_ar.ods_fd_order_analytics) t0
             left join dim.dim_fd_region t1 on t1.region_name_en = t0.country
             where (split(t0.campaign, '_')[0] = 'NewsLetter' or t0.ga_channel = 'EDM')
             and substr(t0.campaign,12) !=''

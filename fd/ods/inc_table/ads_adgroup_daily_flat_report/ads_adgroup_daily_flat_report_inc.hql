@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_ads_adgroup_daily_flat_report_inc (
+CREATE TABLE IF NOT EXISTS ods_fd_ar.ods_fd_ads_adgroup_daily_flat_report_inc (
     adfr_id bigint,
 	account_name string,
 	campaign_id string,
@@ -22,7 +22,7 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 
-INSERT OVERWRITE TABLE ods_fd_vb.ods_fd_ads_adgroup_daily_flat_report_inc PARTITION (dt='${hiveconf:dt}')
+INSERT OVERWRITE TABLE ods_fd_ar.ods_fd_ads_adgroup_daily_flat_report_inc PARTITION (dt='${hiveconf:dt}')
 select
         adfr_id,
         account_name,
