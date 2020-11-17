@@ -13,13 +13,13 @@ STORED AS PARQUETFILE
 
 set hive.exec.dynamic.partition.mode=nonstrict;
 INSERT overwrite table ods_fd_vb.ods_fd_order_status_change_history_arc PARTITION (pt='${hiveconf:pt}')
-select id, order_sn, field_name, old_value, new_value, create_time,dt
+select id, order_sn, field_name, old_value, new_value, create_time
 from (
         select dt, id, order_sn, field_name, old_value, new_value, create_time,
         row_number () OVER (PARTITION BY id ORDER BY dt DESC) AS rank
     from (
             select
-            '2020-01-01' as dt,
+            dt,
             id,
             order_id,
             ext_name,
