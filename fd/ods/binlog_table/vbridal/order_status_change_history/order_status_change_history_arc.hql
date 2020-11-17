@@ -1,43 +1,47 @@
 CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_order_status_change_history_arc (
-`id` bigint COMMENT '自增id',
-`order_sn` string COMMENT '订单号',
-`field_name` string COMMENT '字段名',
-`old_value` bigint COMMENT '旧值',
-`new_value` bigint COMMENT '新值',
-`create_time` string COMMENT '发生时间'
-) COMMENT '订单状态变更记录'
-PARTITIONED BY (pt STRING )
+    id INT,
+    order_sn STRING,
+    field_name STRING,
+    old_value BIGINT,
+    new_value BIGINT,
+    create_time BIGINT COMMENT '最后更新时间'
+) COMMENT 'kafka同步过来的数据库订单状态变化表'
+PARTITIONED BY (pt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE;
+STORED AS PARQUETFILE
+;
 
+set hive.exec.dynamic.partition.mode=nonstrict;
 INSERT overwrite table ods_fd_vb.ods_fd_order_status_change_history_arc PARTITION (pt='${hiveconf:pt}')
-select id, order_sn, field_name, old_value, new_value, create_time
+select id, order_sn, field_name, old_value, new_value, create_time,dt
 from (
-    select id, order_sn, field_name, old_value, new_value, create_time, 
-        row_number () OVER (PARTITION BY id ORDER BY pt DESC) AS rank
-    from(
-        select 
-            pt,
+        select dt, id, order_sn, field_name, old_value, new_value, create_time,
+        row_number () OVER (PARTITION BY id ORDER BY dt DESC) AS rank
+    from (
+            select
+            '2020-01-01' as dt,
             id,
-            order_sn,
-            field_name,
-            old_value,
-            new_value,
-            create_time
-        from ods_fd_vb.ods_fd_order_status_change_history_arc 
-        where pt = '${hiveconf:pt_last}'
+            order_id,
+            ext_name,
+            ext_value,
+            is_delete,
+            cast(unix_timestamp(last_update_time, 'yyyy-MM-dd HH:mm:ss') as BIGINT) AS last_update_time
+        from ods_fd_vb.ods_fd_order_status_change_history_arc where pt='${hiveconf:pt_last}'
 
         UNION
+        select dt, id, order_sn, field_name, old_value, new_value, create_time
+        from(
+            select
+                dt,
+                id,
+                order_sn,
+                field_name,
+                old_value,
+                new_value,
+                create_time,
+                row_number () OVER (PARTITION BY id ORDER BY event_id DESC) AS rank
+            from ods_fd_vb.ods_fd_order_status_change_history_inc where pt >= '${hiveconf:pt}'
+        )inc where inc.rank = 1
+    )arc
 
-        select 
-            pt,
-            id,
-            order_sn,
-            field_name,
-            old_value,
-            new_value,
-            create_time
-        from ods_fd_vb.ods_fd_order_status_change_history_inc
-        where pt >= '${hiveconf:pt}'
-    )inc
-) arc where arc.rank =1;
+) tab where tab.rank = 1;

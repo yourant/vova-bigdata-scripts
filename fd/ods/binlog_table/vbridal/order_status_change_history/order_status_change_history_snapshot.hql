@@ -1,15 +1,17 @@
-CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_order_status_change_history (
-`id` bigint COMMENT '自增id',
-`order_sn` string COMMENT '订单号',
-`field_name` string COMMENT '字段名',
-`old_value` bigint COMMENT '旧值',
-`new_value` bigint COMMENT '新值',
-`create_time` string COMMENT '发生时间'
-) COMMENT '订单状态变更记录'
+CREATE EXTERNAL TABLE IF NOT EXISTS ods_fd_vb.ods_fd_order_status_change_history(
+    id INT,
+    order_sn STRING,
+    field_name STRING,
+    old_value BIGINT,
+    new_value BIGINT,
+    create_time BIGINT COMMENT '最后更新时间'
+) COMMENT 'kafka同步过来的数据库订单状态变化表'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE;
+STORED AS PARQUETFILE
+;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_vb.ods_fd_order_status_change_history
-select `(pt)?+.+` from ods_fd_vb.ods_fd_order_status_change_history_arc
-where pt >= '${hiveconf:pt}';
+select `(dt)?+.+` from ods_fd_vb.ods_fd_order_status_change_history_arc
+where pt >= '${hiveconf:pt}'
+;
