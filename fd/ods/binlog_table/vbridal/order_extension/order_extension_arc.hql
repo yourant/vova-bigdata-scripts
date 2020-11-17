@@ -32,7 +32,7 @@ from (
         select pt, id, order_id, ext_name, ext_value, is_delete, last_update_time
         from(
             select 
-                '${hive_conf:pt}' as pt,
+                pt,
                 id,
                 order_id,
                 ext_name,
@@ -40,7 +40,7 @@ from (
                 is_delete,
                 last_update_time,
                 row_number () OVER (PARTITION BY id ORDER BY event_id DESC) AS rank
-            from ods_fd_vb.ods_fd_order_extension_inc where pt = '${hiveconf:pt}'
+            from ods_fd_vb.ods_fd_order_extension_inc where pt >= '${hiveconf:pt}'
         )inc where inc.rank = 1
     )arc
 
