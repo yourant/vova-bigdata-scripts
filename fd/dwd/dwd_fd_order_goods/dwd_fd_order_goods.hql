@@ -1,10 +1,10 @@
 CREATE TABLE IF NOT EXISTS dwd.dwd_fd_order_goods (
     sp_duid STRING COMMENT '来自打点数据',
-    rec_id bigint,
+    rec_id bigint COMMENT '订单商品表主键',
     order_id bigint COMMENT '订单id',
-    goods_style_id bigint COMMENT '@see goods_style.goods_style_id',
-    sku string COMMENT '@see gods_style.sku',
-    sku_id bigint COMMENT '@see goods_sku.sku_id',
+    goods_style_id bigint COMMENT '商品样式id',
+    sku string COMMENT 'sku',
+    sku_id bigint COMMENT 'sku_id',
     goods_id bigint COMMENT '商品id',
     goods_name string COMMENT '商品名',
     goods_sn string COMMENT '商品sn',
@@ -14,27 +14,27 @@ CREATE TABLE IF NOT EXISTS dwd.dwd_fd_order_goods (
     shop_price decimal(15, 4) COMMENT '商品售价',
     shop_price_exchange decimal(15, 4) COMMENT '价格转换后的数额',
     shop_price_amount_exchange decimal(15, 4) COMMENT '总额的转换后数值',
-    coupon_goods_id bigint,
+    coupon_goods_id bigint COMMENT '',
     goods_price_original decimal(15, 4) COMMENT '商品未添加任何附加费的价格',
-    party_id bigint,
+    party_id bigint COMMENT '',
     order_sn string COMMENT '订单sn',
     user_id bigint COMMENT '用户id',
     order_time_original timestamp COMMENT '转化之前的值',
     order_time bigint COMMENT '转化之后的订单时间',
     order_status bigint COMMENT '订单状态',
-    shipping_status bigint,
+    shipping_status bigint COMMENT '物流状态',
     pay_status bigint COMMENT '支付状态',
-    consignee string,
+    consignee string COMMENT '',
     gender string COMMENT '性别',
     country bigint COMMENT '国家id',
     email string COMMENT '邮箱',
-    goods_amount decimal(15, 4),
+    goods_amount decimal(15, 4) COMMENT '商品金额',
     goods_amount_exchange decimal(15, 4) COMMENT '商品转换后的数额',
     shipping_fee decimal(15, 4) COMMENT '运费',
     integral bigint COMMENT '已经抵用欧币',
-    integral_money decimal(15, 4),
+    integral_money decimal(15, 4) COMMENT '积分',
     bonus decimal(15, 4) COMMENT '优惠费用，负值',
-    bonus_exchange decimal(15, 4),
+    bonus_exchange decimal(15, 4) COMMENT '',
     order_amount decimal(15, 4) COMMENT '订单金额',
     base_currency_id bigint COMMENT '币种ID',
     order_currency_id bigint COMMENT '生成订单时用户选择的币种',
@@ -70,11 +70,10 @@ CREATE TABLE IF NOT EXISTS dwd.dwd_fd_order_goods (
     first_cat_name   string COMMENT '商品一级类目',
     goods_weight     decimal(15, 4) comment '商品重量'
 ) COMMENT '订单商品事实表'
-PARTITIONED BY (pt string)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
-INSERT overwrite table dwd.dwd_fd_order_goods PARTITION (pt='${hiveconf:pt}')
+INSERT overwrite table dwd.dwd_fd_order_goods
 select 
     ud.sp_duid,
     og.rec_id,

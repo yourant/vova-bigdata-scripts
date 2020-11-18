@@ -29,9 +29,7 @@ nodes:
           - fd_dwd_vb_goods_flow_start
 
       - name: judge_fd_ods_vb_blg_end
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fd_ods_vb_blg_end ${dt}
+        type: noop
         dependsOn:
           - fd_dwd_vb_goods_flow_start
       
