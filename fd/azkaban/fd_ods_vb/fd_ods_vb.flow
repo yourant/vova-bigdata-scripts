@@ -250,7 +250,7 @@ nodes:
       prop: value
     nodes:
       - name: fd_ods_user_flow_start
-        type: noo
+        type: noop
 
       - name: ods_fd_vb_style
         type: command
