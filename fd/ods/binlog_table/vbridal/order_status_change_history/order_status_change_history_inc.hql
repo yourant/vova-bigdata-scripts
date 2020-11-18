@@ -12,8 +12,9 @@ STORED AS PARQUETFILE
 ;
 
 set hive.exec.dynamic.partition.mode=nonstrict;
+hive.exec.dynamici.partition=true;
 INSERT overwrite TABLE ods_fd_vb.ods_fd_order_status_change_history_inc PARTITION (pt,hour)
-select id, order_sn, field_name, old_value, new_value, create_time
+select id, order_sn, field_name, old_value, new_value, create_time,pt,hour
 from (
     SELECT  o_raw.xid AS event_id,
             o_raw.`table` AS event_table,
@@ -26,9 +27,9 @@ from (
             cast(o_raw.old_value AS bigint) AS old_value,
             cast(o_raw.new_value AS bigint) AS new_value,
             cast(unix_timestamp(o_raw.create_time, 'yyyy-MM-dd HH:mm:ss') as BIGINT) AS create_time,
+            row_number () OVER (PARTITION BY o_raw.id ORDER BY o_raw.xid DESC) AS rank,
             pt,
-            hour,
-            row_number () OVER (PARTITION BY o_raw.id ORDER BY o_raw.xid DESC) AS rank
+            hour
     FROM    pdb.fd_vb_order_status_change_history
     LATERAL VIEW json_tuple(value, 'kafka_table', 'kafka_ts', 'kafka_commit', 'kafka_xid','kafka_type', 'kafka_old','id', 'order_sn', 'field_name', 'old_value', 'new_value', 'create_time') o_raw
     AS `table`, ts, `commit`, xid, type, old, id, order_sn, field_name, old_value, new_value, create_time

@@ -13,6 +13,7 @@ STORED AS PARQUETFILE
 
 
 set hive.exec.dynamic.partition.mode=nonstrict;
+hive.exec.dynamici.partition=true;
 INSERT overwrite TABLE ods_fd_vb.ods_fd_order_marketing_data_inc PARTITION (pt,hour)
 select id, order_id, sp_session_id, created_time, last_update_time,pt,hour
 from (
@@ -26,9 +27,9 @@ from (
             o_raw.sp_session_id AS sp_session_id,
             o_raw.created_time AS created_time,
             o_raw.last_update_time AS last_update_time,
+            row_number () OVER (PARTITION BY o_raw.id ORDER BY o_raw.xid DESC) AS rank,
             pt,
-            hour,
-            row_number () OVER (PARTITION BY o_raw.id ORDER BY o_raw.xid DESC) AS rank
+            hour
     FROM    pdb.fd_vb_order_marketing_data
     LATERAL VIEW json_tuple(value, 'kafka_table', 'kafka_ts', 'kafka_commit', 'kafka_xid','kafka_type', 'kafka_old', 'id', 'order_id', 'sp_session_id', 'created_time', 'last_update_time') o_raw
     AS `table`, ts, `commit`, xid, type, old, id, order_id, sp_session_id, created_time, last_update_time
