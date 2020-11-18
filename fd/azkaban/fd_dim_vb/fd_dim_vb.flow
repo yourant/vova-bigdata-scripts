@@ -181,20 +181,6 @@ nodes:
       - name: virtual_goods_start
         type: noop
 
-      - name: judge_ods_fd_vb_virtual_goods
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_virtual_goods
-        dependsOn:
-          - virtual_goods_start
-
-      - name: fd_dim_virtual_goods
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dim/run.sh dim_virtual_goods
-        dependsOn:
-          - judge_ods_fd_vb_virtual_goods
-
     dependsOn:
       - fd_dim_vb_start 
 
@@ -207,4 +193,3 @@ nodes:
       - fd_vb_languages
       - fd_vb_region
       - fd_vb_user_agent_analysis
-      - fd_vb_virtual_goods
