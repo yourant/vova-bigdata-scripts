@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS tmp.tmp_fd_ecs_order_attribute(
+CREATE EXTERNAL TABLE IF NOT EXISTS tmp.tmp_fd_ecs_order_attribute(
     value STRING
 ) 
 PARTITIONED BY (dt STRING,hour STRING)

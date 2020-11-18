@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS tmp.tmp_fd_ecs_fd_stock_ecs_order_sale_bak_detail
+CREATE EXTERNAL TABLE IF NOT EXISTS tmp.tmp_fd_ecs_fd_stock_ecs_order_sale_bak_detail
 ( 
     value STRING
 ) 

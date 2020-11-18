@@ -195,7 +195,7 @@ nodes:
     dependsOn:
       - fd_dw_orders_init_flow
 
-  - name: fd_dw_init_flow_one
+  - name: fd_dw_base_init_flow
     type: flow
     config:
       prop: value
@@ -248,7 +248,7 @@ nodes:
     dependsOn:
       - fd_dw_dim_init_flow
 
-  - name: fd_dw_init_flow_two
+  - name: fd_dw_app_init_flow
     type: flow
     config:
       prop: value
@@ -287,7 +287,7 @@ nodes:
     dependsOn:
       - fd_dw_dim_init_flow
 
-  - name: fd_dw_init_flow_three
+  - name: fd_dw_goods_init_flow
     type: flow
     config:
       prop: value
@@ -361,7 +361,7 @@ nodes:
     dependsOn:
       - fd_dw_dim_init_flow
 
-  - name: fd_dw_init_flow_four
+  - name: fd_dw_user_init_flow
     type: flow
     config:
       prop: value
@@ -417,9 +417,9 @@ nodes:
   - name: fd_dw_vbridal_init_end
     type: noop
     dependsOn:
-      - fd_dw_init_flow_one
-      - fd_dw_init_flow_two
-      - fd_dw_init_flow_three
-      - fd_dw_init_flow_four
+      - fd_dw_base_init_flow
+      - fd_dw_app_init_flow
+      - fd_dw_goods_init_flow
+      - fd_dw_user_init_flow
 
 
