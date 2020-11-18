@@ -19,7 +19,7 @@ nodes:
       - name: judge_ods_fd_vb_user_duid
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_user_duid ${dt}
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_user_duid
         dependsOn:
           - fd_dwd_vb_goods_flow_start
       
@@ -36,14 +36,21 @@ nodes:
       - name: judge_fd_dim_vb_end
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fd_dim_vb_end ${dt}
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fd_dim_vb_end
+        dependsOn:
+          - fd_dwd_vb_goods_flow_start
+      
+      - name: judge_ods_order_analytics
+        type: noop
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_ar_order_analytics
         dependsOn:
           - fd_dwd_vb_goods_flow_start
 
       - name: dwd_fd_goods_add_info
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_goods_add_info/run.sh ${dt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_goods_add_info/run.sh
         dependsOn:
           - judge_fd_dim_vb_end
           - judge_ods_snowplow
@@ -51,7 +58,7 @@ nodes:
       - name: dwd_fd_order_info
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_order_info/run.sh ${dt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_order_info/run.sh
         dependsOn:
           - judge_fd_ods_vb_blg_end
           - judge_ods_fd_vb_user_duid
@@ -60,44 +67,19 @@ nodes:
       - name: dwd_fd_order_goods
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_order_goods/run.sh ${dt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_order_goods/run.sh
         dependsOn:
           - judge_fd_ods_vb_blg_end
           - judge_ods_fd_vb_user_duid
           - judge_fd_dim_vb_end
-
-    dependsOn:
-      - fd_dwd_vb_start
-  
-  - name: fd_dwd_vb_orders_flow
-    type: flow
-    config:
-      prop: value
-    nodes:
-      - name: fd_dwd_vb_orders_flow_start
-        type: noop
       
-      - name: judge_ods_order_analytics
-        type: noop
-        config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_ar_order_analytics ${dt}
-        dependsOn:
-          - fd_dwd_vb_orders_flow_start
-      
-      - name: judge_dwd_fd_order_goods
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_goods ${dt}
-        dependsOn:
-          - fd_dwd_vb_orders_flow_start
-
       - name: dwd_fd_order_channel_analytics
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_order_channel_analytics/run.sh ${dt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_order_channel_analytics/run.sh
         dependsOn:
           - judge_ods_order_analytics
-          - judge_dwd_fd_order_goods
+          - dwd_fd_order_goods
 
     dependsOn:
       - fd_dwd_vb_start
@@ -106,5 +88,4 @@ nodes:
     type: noop
     dependsOn:
       - fd_dwd_vb_goods_flow
-      - fd_dwd_vb_orders_flow
 

@@ -55,6 +55,7 @@ CREATE TABLE IF NOT EXISTS dwd.dwd_fd_order_info (
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
+set hive.execution.engine=tez;
 INSERT overwrite table dwd.dwd_fd_order_info
 select 
     ud.sp_duid,
