@@ -54,14 +54,14 @@ CREATE TABLE IF NOT EXISTS `dwb.dwb_fd_app_retention_activity_report`(
   `user_new_first_success_coupon_order_id` string COMMENT '新用户使用coupon支付成功首单总数')
 COMMENT '用户留存，签到，大转盘和用户注册相关数据，数据来源业务表以及打点数据'
 PARTITIONED BY (
-  `dt` string,
+  `pt` string,
   `classify` string)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS ORC
 TBLPROPERTIES ("orc.compress"="SNAPPY");
 
 set mapred.reduce.tasks=1;
-insert overwrite table dwb.dwb_fd_app_retention_activity_report partition (dt='${hiveconf:dt}',classify='checkin')
+insert overwrite table dwb.dwb_fd_app_retention_activity_report partition (pt='${hiveconf:pt}',classify='checkin')
 select
       project as project,
       platform_type as platform_type,
@@ -78,7 +78,7 @@ select
       null,null,null,null,null,null,
 	  null,null,null,null
 from ods.ods_fd_snowplow_all_event
-where dt = '${hiveconf:dt}' and platform_type in ('android_app','ios_app') and page_code = 'myrewards'
+where pt = '${hiveconf:pt}' and platform_type in ('android_app','ios_app') and page_code = 'myrewards'
 and project is not null and project !=''
 
 union
@@ -101,7 +101,7 @@ select
 from ods_fd_vb.ods_fd_user_check_in_log ul
 left join ods_fd_vb.ods_fd_users u on ul.user_id = u.user_id
 left join dim.dim_fd_region r on u.country = r.region_id
-where date(TO_UTC_TIMESTAMP(ul.time, 'America/Los_Angeles')) = '${hiveconf:dt}'
+where date(TO_UTC_TIMESTAMP(ul.time, 'America/Los_Angeles')) = '${hiveconf:pt}'
 and ul.project is not null and ul.project !=''
 
 union
@@ -132,4 +132,4 @@ from (
     from ods_fd_vb.ods_fd_user_check_in_log ul
     left join ods_fd_vb.ods_fd_users u on ul.user_id = u.user_id
     left join dim.dim_fd_region r on u.country = r.region_id
-) t1 where t1.rank = 1 and t1.check_date = '${hiveconf:dt}';
+) t1 where t1.rank = 1 and t1.check_date = '${hiveconf:pt}';

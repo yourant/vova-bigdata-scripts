@@ -46,7 +46,7 @@ shell_path="/mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal"
 flume_path="s3a://bigdata-offline/warehouse/pdb/fd/vbridal"
 
 #将flume收集的数据存到tmp表中
-hive -hiveconf flume_path=$flume_path  -f ${shell_path}/${table_name}/tmp_${table_name}.hql
+hive -hiveconf flume_path=$flume_path  -f ${shell_path}/${table_name}/pdb_${table_name}.hql
 
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
@@ -64,10 +64,10 @@ fi
 echo "step2: ${table_name}_inc table is finished !"
 
 #这一步为了初始化订单表，将全量数据放到arc表中
-hive -hiveconf pt=$pt -f ${shell_path}/${table_name}/${table_name}_arc_full.hql
+#hive -hiveconf pt=$pt -f ${shell_path}/${table_name}/${table_name}_arc_full.hql
 
 #arc最终表
-#hive -hiveconf pt=$pt -hiveconf pt_last=$pt_last -f ${shell_path}/${table_name}/${table_name}_arc.hql
+hive -hiveconf pt=$pt -hiveconf pt_last=$pt_last -f ${shell_path}/${table_name}/${table_name}_arc.hql
 
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then

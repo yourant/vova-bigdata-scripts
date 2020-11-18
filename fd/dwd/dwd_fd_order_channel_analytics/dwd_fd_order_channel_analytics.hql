@@ -1,7 +1,6 @@
 CREATE TABLE IF NOT EXISTS `dwd.dwd_fd_order_channel_analytics`(
   `order_id` bigint COMMENT '订单id',
   `order_sn` bigint COMMENT '订单sn',
-  `event_date` bigint COMMENT 'insert/update时间',
   `user_id` string COMMENT '数据库注册用户id',
   `user_agent_id` bigint COMMENT '用户代理id',
   `platform` string COMMENT '用户代理下单平台(web or mob)',
@@ -54,17 +53,15 @@ CREATE TABLE IF NOT EXISTS `dwd.dwd_fd_order_channel_analytics`(
   `ga_channel` string COMMENT '投放渠道',
   `last_update_time` string COMMENT '渠道数据更新时间')
 COMMENT '订单渠道分析基础表'
-PARTITIONED BY (pt string)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUET;
 
 
-INSERT OVERWRITE table  dwd.dwd_fd_order_channel_analytics PARTITION (pt='${hiveconf:pt}')
+INSERT OVERWRITE table  dwd.dwd_fd_order_channel_analytics
 SELECT 
 ogi.order_id, 
 ogi.order_sn,
-ogi.event_date, 
-ogi.user_id, 
+ogi.user_id,
 ogi.user_agent_id, 
 if(ogi.is_app is null, 'other', if(ogi.is_app = 0, 'web', 'mob')) AS platform,
 ogi.platform_type, 
@@ -115,8 +112,5 @@ ooa.origin_medium,
 ooa.ga_channel, 
 ooa.last_update_time
 
-FROM (
-    select  order_id, order_sn, event_date, user_id, user_agent_id, is_app, platform_type, device_type, order_time, pay_status, pay_time, country, country_code, language_id, language_code, order_currency_id, order_currency_code, party_id, project_name, goods_id, goods_name, goods_sn, goods_sku, cat_id, cat_name, goods_number, market_price, shop_price, bonus, version, virtual_goods_id, integral, email, coupon_code
-    from dwd.dwd_fd_order_goods where pt = '${hiveconf:pt}'
-) ogi
-LEFT JOIN ods_fd_vb.ods_fd_order_analytics ooa ON ooa.order_id = ogi.order_id;
+FROM dwd.dwd_fd_order_goods ogi
+LEFT JOIN ods_fd_ar.ods_fd_order_analytics ooa ON ooa.order_id = ogi.order_id;

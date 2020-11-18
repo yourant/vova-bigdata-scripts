@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS  `ods_fd_vb.ods_fd_order_analytics_arc`(
+CREATE TABLE IF NOT EXISTS  `ods_fd_ar.ods_fd_order_analytics_arc`(
   `oa_id` bigint COMMENT '自增id',
   `order_id` bigint COMMENT '订单id',
   `source` string COMMENT '来源',
@@ -41,7 +41,7 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 
-INSERT overwrite table ods_fd_vb.ods_fd_order_analytics_arc PARTITION (dt='${hiveconf:dt}')
+INSERT overwrite table ods_fd_ar.ods_fd_order_analytics_arc PARTITION (dt='${hiveconf:dt}')
 select oa_id, order_id, source, keyword, landing_page, country, region, city, browser, screen_resolution, campaign, visitor_type, operating_system, adFormat, adDisplayUrl, adDestinationUrl, adwordsCustomerID, adGroup, adwordsCriteriaID, adDistributionNetwork, adMatchType, adMatchedQuery, adwordsCampaignID, adwordsAdGroupID, adwordsCreativeID, deviceCategory, medium, party_id, order_sn, medium_partition, fullReferrer, ad_content, origin_source, origin_medium, ga_channel, last_update_time
 from (
     select oa_id, order_id, source, keyword, landing_page, country, region, city, browser, screen_resolution, campaign, visitor_type, operating_system, adFormat, adDisplayUrl, adDestinationUrl, adwordsCustomerID, adGroup, adwordsCriteriaID, adDistributionNetwork, adMatchType, adMatchedQuery, adwordsCampaignID, adwordsAdGroupID, adwordsCreativeID, deviceCategory, medium, party_id, order_sn, medium_partition, fullReferrer, ad_content, origin_source, origin_medium, ga_channel, last_update_time, 
@@ -127,6 +127,6 @@ from (
             origin_medium,
             ga_channel,
             last_update_time
-        from ods_fd_vb.ods_fd_order_analytics_inc where dt = '${hiveconf:dt}'
+        from ods_fd_ar.ods_fd_order_analytics_inc where dt = '${hiveconf:dt}'
     )inc
 ) arc where arc.rank =1;

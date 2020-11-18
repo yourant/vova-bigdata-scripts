@@ -119,8 +119,8 @@ fi
 
 #9 删除临时目录为后面做准备
 #note:sqoop先将数据导入到HDFS的临时目录,然后再将导入到HDFS的数据迁移到Hive仓库,第一步默认的临时目录是hdfs:///tmp/sqoop/themis/vova_order_info_inc
-#tmp_path=s3://bigdata-offline/tmp/sqoop/${hiveDb}/${table_name}
-tmp_path=hdfs:///tmp/sqoop/${hiveDb}/${table_name}
+tmp_path=s3://bigdata-offline/tmp/sqoop/${hiveDb}/${table_name}
+#tmp_path=hdfs:///tmp/sqoop/${hiveDb}/${table_name}
 hadoop fs -rm -r $tmp_path
 #10 根据不同的etl_type　ALL,INIT,INCTIME,INCID　走不同的逻辑处理
 #note:target-dir #11已解释

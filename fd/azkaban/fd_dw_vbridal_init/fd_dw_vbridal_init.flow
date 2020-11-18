@@ -19,7 +19,7 @@ nodes:
       - name: ads_adgroup_daily_flat_report
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=INIT --table_name=ads_adgroup_daily_flat_report --mapers=8 --partition_num=4 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=INIT --table_name=ads_adgroup_daily_flat_report --mapers=8 --partition_num=8 --period_type=day
         dependsOn:
           - fd_dw_artemis_init_flow_start
       
@@ -33,14 +33,21 @@ nodes:
       - name: feed_tag_log
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=INIT --table_name=feed_tag_log --mapers=10 --partition_num=16 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=INIT --table_name=feed_tag_log  --partition_num=2 --period_type=day --split_id=goods_id
         dependsOn:
           - fd_dw_artemis_init_flow_start
       
       - name: order_analytics
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=INIT --table_name=order_analytics --mapers=120 --partition_num=100 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=INIT --table_name=order_analytics --mapers=10 --partition_num=4 --period_type=day
+        dependsOn:
+          - fd_dw_artemis_init_flow_start
+      
+      - name: campaign_adgroup_mapping
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=INIT --table_name=campaign_adgroup_mapping --partition_num=1 --period_type=day --split_id=is_rem
         dependsOn:
           - fd_dw_artemis_init_flow_start
 
@@ -188,7 +195,7 @@ nodes:
     dependsOn:
       - fd_dw_orders_init_flow
 
-  - name: fd_dw_init_flow_one
+  - name: fd_dw_base_init_flow
     type: flow
     config:
       prop: value
@@ -241,7 +248,7 @@ nodes:
     dependsOn:
       - fd_dw_dim_init_flow
 
-  - name: fd_dw_init_flow_two
+  - name: fd_dw_app_init_flow
     type: flow
     config:
       prop: value
@@ -280,7 +287,7 @@ nodes:
     dependsOn:
       - fd_dw_dim_init_flow
 
-  - name: fd_dw_init_flow_three
+  - name: fd_dw_goods_init_flow
     type: flow
     config:
       prop: value
@@ -354,7 +361,7 @@ nodes:
     dependsOn:
       - fd_dw_dim_init_flow
 
-  - name: fd_dw_init_flow_four
+  - name: fd_dw_user_init_flow
     type: flow
     config:
       prop: value
@@ -410,9 +417,9 @@ nodes:
   - name: fd_dw_vbridal_init_end
     type: noop
     dependsOn:
-      - fd_dw_init_flow_one
-      - fd_dw_init_flow_two
-      - fd_dw_init_flow_three
-      - fd_dw_init_flow_four
+      - fd_dw_base_init_flow
+      - fd_dw_app_init_flow
+      - fd_dw_goods_init_flow
+      - fd_dw_user_init_flow
 
 

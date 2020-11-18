@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS tmp.tmp_fd_ecs_goods(
+CREATE EXTERNAL TABLE IF NOT EXISTS tmp.tmp_fd_ecs_goods(
     value STRING
 ) 
 PARTITIONED BY (dt STRING,hour STRING)

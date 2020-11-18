@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_feed_shopping_performance_report_arc
+CREATE TABLE IF NOT EXISTS ods_fd_ar.ods_fd_feed_shopping_performance_report_arc
 (
     `fspr_id` bigint  COMMENT 'auto increase feed_shopping_performance_report id',
     `project` string COMMENT 'project name',
@@ -17,7 +17,7 @@ PARTITIONED BY (dt STRING )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
-INSERT overwrite table ods_fd_vb.ods_fd_feed_shopping_performance_report_arc PARTITION (dt='${hiveconf:dt}')
+INSERT overwrite table ods_fd_ar.ods_fd_feed_shopping_performance_report_arc PARTITION (dt='${hiveconf:dt}')
 select 
     fspr_id,
     project,
@@ -61,7 +61,7 @@ from (
             ctr,
             conversion_rate,
             insert_date
-        from ods_fd_vb.ods_fd_feed_shopping_performance_report_arc where dt = '${hiveconf:dt_last}'
+        from ods_fd_ar.ods_fd_feed_shopping_performance_report_arc where dt = '${hiveconf:dt_last}'
 
         UNION
 
@@ -79,6 +79,6 @@ from (
             ctr,
             conversion_rate,
             insert_date
-        from ods_fd_vb.ods_fd_feed_shopping_performance_report_inc where dt = '${hiveconf:dt}'
+        from ods_fd_ar.ods_fd_feed_shopping_performance_report_inc where dt = '${hiveconf:dt}'
     )inc
 ) arc where arc.rank =1;

@@ -1,11 +1,9 @@
 CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_order_info (
     order_id BIGINT,
-    event_date BIGINT,
     party_id BIGINT,
     order_sn STRING,
     user_id BIGINT,
-    order_time_original STRING,
-    order_time BIGINT,
+    order_time timestamp,
     order_status BIGINT,
     shipping_status BIGINT,
     pay_status BIGINT,
@@ -26,7 +24,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_order_info (
     best_time STRING,
     sign_building STRING,
     postscript STRING COMMENT '订单附言',
-    important_day BIGINT COMMENT 'The Date of Your Important Day (Wedding, Prom, Party, etc)',
+    important_day date COMMENT 'The Date of Your Important Day (Wedding, Prom, Party, etc)',
     sm_id BIGINT COMMENT 'shipping method id',
     shipping_id BIGINT,
     shipping_name STRING,
@@ -68,10 +66,9 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_order_info (
     from_ad BIGINT,
     referer STRING,
     confirm_time BIGINT,
-    pay_time_original STRING,
-    pay_time BIGINT,
+    pay_time timestamp,
     shipping_time BIGINT,
-    shipping_date_estimate STRING COMMENT '预计发货日期',
+    shipping_date_estimate date COMMENT '预计发货日期',
     shipping_carrier STRING,
     shipping_tracking_number STRING COMMENT '货运单号',
     pack_id BIGINT,
@@ -137,4 +134,4 @@ STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_vb.ods_fd_order_info
-select `(pt)?+.+` from ods_fd_vb.ods_fd_order_info_arc where pt = '${hiveconf:pt}';
+select `(pt)?+.+` from ods_fd_vb.ods_fd_order_info_arc where pt >= '${hiveconf:pt}';

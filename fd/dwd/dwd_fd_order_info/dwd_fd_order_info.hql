@@ -1,67 +1,7 @@
-CREATE TABLE IF NOT EXISTS dwd.dwd_fd_order_info (
-    sp_duid string COMMENT '来自打点数据',
-    order_id bigint,
-    event_date bigint,
-    party_id bigint,
-    order_sn string,
-    user_id bigint,
-    order_time_original string COMMENT 'flume收集时的原始数据值',
-    order_time bigint,
-    order_status bigint,
-    shipping_status bigint,
-    pay_status bigint,
-    country_id bigint,
-    mobile string,
-    email string,
-    payment_id bigint,
-    payment_name string,
-    goods_amount decimal(15, 4),
-    goods_amount_exchange decimal(15, 4) COMMENT '商品转换后的数额',
-    shipping_fee decimal(15, 4),
-    shipping_fee_exchange decimal(15, 4),
-    integral bigint COMMENT '已经抵用欧币',
-    integral_money decimal(15, 4),
-    bonus decimal(15, 4) COMMENT '优惠费用，负值',
-    bonus_exchange decimal(15, 4),
-    order_amount decimal(15, 4),
-    base_currency_id bigint COMMENT '币种ID',
-    order_currency_id bigint COMMENT '生成订单时用户选择的币种',
-    order_currency_symbol string COMMENT 'like US$ HK$',
-    rate string COMMENT '字符串：exchange/base',
-    order_amount_exchange decimal(15, 4) COMMENT '转换后的数额',
-    from_ad bigint,
-    referer string,
-    pay_time_original string COMMENT 'flume收集是原始数据值',
-    pay_time bigint,
-    coupon_code string COMMENT '优惠券代码',
-    order_type_id string,
-    taobao_order_sn string,
-    language_id bigint,
-    coupon_cat_id bigint,
-    coupon_config_value decimal(15, 4) COMMENT '@see ok_coupon_config',
-    coupon_config_coupon_type string COMMENT '@see ok_coupon_config',
-    is_conversion bigint COMMENT '数据是否已提交给google adwords',
-    from_domain string COMMENT '订单来源',
-    project_name string,
-    user_agent_id bigint COMMENT '下单时的 user agent',
-    platform_type string COMMENT '',
-    version string COMMENT 'APP版本号',
-    is_app bigint COMMENT '是否APP',
-    device_type string COMMENT '设备类型',
-    os_type string COMMENT '操作系统类型',
-    country_code string COMMENT '国家code',
-    language_code string COMMENT '语言code',
-    order_currency_code string COMMENT '货币单位'
-) COMMENT '订单事实表数据'
-PARTITIONED BY (pt string)
-ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE;
-
-INSERT overwrite table dwd.dwd_fd_order_info PARTITION (pt='${hiveconf:pt}')
+INSERT overwrite table dwd.dwd_fd_order_info
 select 
     ud.sp_duid,
     oi.order_id,
-    oi.event_date,
     oi.party_id,
     oi.order_sn,
     oi.user_id,
@@ -115,12 +55,11 @@ select
 from(
     select 
         order_id,
-        event_date,
         party_id,
         order_sn,
         user_id,
-        order_time_original,
-        order_time,
+        order_time as order_time_original,
+        cast(unix_timestamp(to_utc_timestamp(order_time, 'America/Los_Angeles'), 'yyyy-MM-dd HH:mm:ss') as BIGINT) AS order_time,
         order_status,
         shipping_status,
         pay_status,
@@ -141,7 +80,7 @@ from(
         best_time,
         sign_building,
         postscript,
-        important_day,
+        cast(unix_timestamp(to_utc_timestamp(important_day, 'America/Los_Angeles'), 'yyyy-MM-dd') as BIGINT) AS important_day,
         sm_id,
         shipping_id,
         shipping_name,
@@ -183,10 +122,10 @@ from(
         from_ad,
         referer,
         confirm_time,
-        pay_time_original,
-        pay_time,
+        pay_time as pay_time_original,
+        cast(unix_timestamp(to_utc_timestamp(pay_time, 'America/Los_Angeles'), 'yyyy-MM-dd HH:mm:ss') as BIGINT) AS pay_time,
         shipping_time,
-        shipping_date_estimate,
+        cast(unix_timestamp(to_utc_timestamp(shipping_date_estimate, 'America/Los_Angeles'), 'yyyy-MM-dd') as BIGINT) AS shipping_date_estimate,
         shipping_carrier,
         shipping_tracking_number,
         pack_id,
@@ -245,8 +184,7 @@ from(
         display_bonus_exchange,
         token,
         payer_id
-    from ods_fd_vb.ods_fd_order_info 
-
+    from ods_fd_vb.ods_fd_order_info
 )oi
 left join (select user_id, sp_duid from ods_fd_vb.ods_fd_user_duid where sp_duid IS NOT NULL group by user_id, sp_duid) ud ON oi.user_id = ud.user_id
 left join dim.dim_fd_user_agent ua ON oi.user_agent_id = ua.user_agent_id

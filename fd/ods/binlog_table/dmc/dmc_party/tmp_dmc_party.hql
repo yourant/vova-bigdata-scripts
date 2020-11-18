@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS tmp.tmp_fd_dmc_party (
+CREATE EXTERNAL TABLE IF NOT EXISTS tmp.tmp_fd_dmc_party (
     value STRING
 ) 
 PARTITIONED BY (dt STRING,hour STRING)

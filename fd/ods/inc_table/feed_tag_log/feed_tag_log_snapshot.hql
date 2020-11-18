@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_feed_tag_log (
+CREATE TABLE IF NOT EXISTS ods_fd_ar.ods_fd_feed_tag_log (
     `feed_name` string COMMENT 'feed full name',
     `goods_id` bigint COMMENT 'real goods_id strat with 5',
     `log_date` string COMMENT 'log date when insert yyyy-MM-dd ',
@@ -20,5 +20,5 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
-INSERT overwrite table ods_fd_vb.ods_fd_feed_tag_log
-select `(dt)?+.+` from ods_fd_vb.ods_fd_feed_tag_log_arc where dt = '${hiveconf:dt}';
+INSERT overwrite table ods_fd_ar.ods_fd_feed_tag_log
+select `(dt)?+.+` from ods_fd_ar.ods_fd_feed_tag_log_arc where dt = '${hiveconf:dt}';
