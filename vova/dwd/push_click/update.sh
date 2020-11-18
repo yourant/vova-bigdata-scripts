@@ -7,7 +7,7 @@ cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 ###更新
 sql="
-insert overwrite table dwd.dwd_fact_vova_push_click
+insert overwrite table dwd.dwd_vova_fact_push_click
 select 'vova'                          as datasource,
        vaelmp.uid                                             as buyer_id,
        nvl(regexp_extract(ug.user_tag, 'R_([0-9])', 0), 'NA') as r_tag,
@@ -90,7 +90,7 @@ from ods_vova_tp.ods_vova_ac_app_event_log_message_push vaelmp
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
 #hive -e "$sql"
-spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.app.name=dwd_fact_vova_push_click" --conf "spark.dynamicAllocation.minExecutors=30" --conf "spark.dynamicAllocation.initialExecutors=40" -e "$sql"
+spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.app.name=dwd_vova_fact_push_click" --conf "spark.dynamicAllocation.minExecutors=30" --conf "spark.dynamicAllocation.initialExecutors=40" -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1

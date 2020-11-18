@@ -1,5 +1,5 @@
-drop table dwd.dwd_fact_vova_pay;
-CREATE  TABLE IF NOT EXISTS dwd.dwd_fact_vova_pay
+drop table dwd.dwd_vova_fact_pay;
+CREATE  TABLE IF NOT EXISTS dwd.dwd_vova_fact_pay
 (
     datasource       string comment '数据平台',
     order_goods_id   bigint comment '子订单ID',

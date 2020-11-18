@@ -7,7 +7,7 @@ cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 
 sql="
-insert overwrite table dwd.dwd_fact_vova_refund
+insert overwrite table dwd.dwd_vova_fact_refund
 select
       CASE
            WHEN oi.from_domain LIKE '%vova%' THEN 'vova'
@@ -56,7 +56,7 @@ left join ods_vova_themis.ods_vova_order_goods og on og.rec_id = rr.order_goods_
 LEFT JOIN ods_vova_themis.ods_vova_order_info oi ON oi.order_id = og.order_id
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
-spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.app.name=dwd_fact_vova_refund" -e "$sql"
+spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.app.name=dwd_vova_fact_refund" -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1

@@ -1,5 +1,5 @@
-drop table dwd.dwd_fact_vova_refund;
-CREATE TABLE IF NOT EXISTS dwd.dwd_fact_vova_refund
+drop table dwd.dwd_vova_fact_refund;
+CREATE TABLE IF NOT EXISTS dwd.dwd_vova_fact_refund
 (
     datasource     string comment '数据平台',
     refund_id                      bigint COMMENT '退款ID',

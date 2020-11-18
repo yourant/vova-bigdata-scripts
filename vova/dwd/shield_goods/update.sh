@@ -1,7 +1,7 @@
 #!/bin/bash
 #指定日期和引擎
 sql="
-insert overwrite table dwd.dwd_fact_vova_shield_goods
+insert overwrite table dwd.dwd_vova_fact_shield_goods
 select
 goods_id,
 region_id,
@@ -35,7 +35,7 @@ create_time
 ;
 "
 #如果使用spark-sql运行，则执行spark-sql -e
-spark-sql --conf "spark.app.name=dwd_fact_vova_shield_goods"   --conf "spark.dynamicAllocation.maxExecutors=100"  -e "$sql"
+spark-sql --conf "spark.app.name=dwd_vova_fact_shield_goods"   --conf "spark.dynamicAllocation.maxExecutors=100"  -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1

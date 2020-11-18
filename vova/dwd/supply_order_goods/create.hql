@@ -1,5 +1,5 @@
-DROP TABLE dwd.dwd_fact_vova_supply_order_goods;
-CREATE TABLE IF NOT EXISTS dwd.dwd_fact_vova_supply_order_goods
+DROP TABLE dwd.dwd_vova_fact_supply_order_goods;
+CREATE TABLE IF NOT EXISTS dwd.dwd_vova_fact_supply_order_goods
 (
     order_goods_id                    bigint COMMENT '销售子订单id',
     order_id                          bigint COMMENT '销售父订单id',

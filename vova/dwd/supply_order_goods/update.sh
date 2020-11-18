@@ -7,7 +7,7 @@ cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 ###逻辑sql
 sql="
-insert overwrite table dwd.dwd_fact_vova_supply_order_goods
+insert overwrite table dwd.dwd_vova_fact_supply_order_goods
 select
 tpog.order_goods_id,
 tpog.order_id,
@@ -86,7 +86,7 @@ LEFT JOIN ods_vova_pangu.ods_vova_outbound_waybill_info owi ON tpog.refer_waybil
 "
 
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
-spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"  --conf "spark.dynamicAllocation.minExecutors=20" --conf "spark.dynamicAllocation.initialExecutors=40" --conf "spark.app.name=dwd_fact_vova_supply_order_goods" -e "$sql"
+spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"  --conf "spark.dynamicAllocation.minExecutors=20" --conf "spark.dynamicAllocation.initialExecutors=40" --conf "spark.app.name=dwd_vova_fact_supply_order_goods" -e "$sql"
 
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then

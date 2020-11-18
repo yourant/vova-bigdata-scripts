@@ -7,7 +7,7 @@ cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 ###逻辑sql
 sql="
-insert overwrite table dwd.dwd_fact_vova_comment
+insert overwrite table dwd.dwd_vova_fact_comment
 SELECT 'vova'          AS datasource,
        vgc.comment_id,
        vgc.goods_id,
@@ -27,7 +27,7 @@ SELECT 'vova'          AS datasource,
 FROM ods_vova_themis.ods_vova_goods_comment vgc;
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
-spark-sql  --conf "spark.app.name=dwd_fact_vova_comment" --conf "spark.sql.parquet.writeLegacyFormat=true" -e "$sql"
+spark-sql  --conf "spark.app.name=dwd_vova_fact_comment" --conf "spark.sql.parquet.writeLegacyFormat=true" -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1

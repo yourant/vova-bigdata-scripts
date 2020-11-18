@@ -7,7 +7,7 @@ cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 ###逻辑sql
 sql="
-insert overwrite table dwd.dwd_fact_vova_pay
+insert overwrite table dwd.dwd_vova_fact_pay
 select case
            when oi.from_domain like '%vova%' then 'vova'
            when oi.from_domain like '%airyclub%' then 'airyclub'
@@ -61,7 +61,7 @@ where oi.pay_status >= 1
   and oi.parent_order_id = 0;
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
-spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"  --conf "spark.app.name=dwd_fact_vova_pay"   --conf "spark.sql.output.coalesceNum=40" --conf "spark.dynamicAllocation.minExecutors=40" --conf "spark.dynamicAllocation.initialExecutors=60" -e "$sql"
+spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"  --conf "spark.app.name=dwd_vova_fact_pay"   --conf "spark.sql.output.coalesceNum=40" --conf "spark.dynamicAllocation.minExecutors=40" --conf "spark.dynamicAllocation.initialExecutors=60" -e "$sql"
 #hive -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then

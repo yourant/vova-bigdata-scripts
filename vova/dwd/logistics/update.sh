@@ -8,7 +8,7 @@ fi
 ###逻辑sql
 #oge.collection_plan_id IN (1, 2)是集运
 sql="
-insert overwrite table dwd.dwd_fact_vova_logistics
+insert overwrite table dwd.dwd_vova_fact_logistics
 select case
            when oi.from_domain like '%vova%' then 'vova'
            when oi.from_domain like '%airyclub%' then 'airyclub'
@@ -68,7 +68,7 @@ from ods_vova_themis.ods_vova_order_info oi
                     group by sol.order_goods_id) sol on sol.order_goods_id = og.rec_id;
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
-spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"  --conf "spark.dynamicAllocation.minExecutors=20" --conf "spark.dynamicAllocation.initialExecutors=40" --conf "spark.app.name=dwd_fact_vova_logistics" -e "$sql"
+spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"  --conf "spark.dynamicAllocation.minExecutors=20" --conf "spark.dynamicAllocation.initialExecutors=40" --conf "spark.app.name=dwd_vova_fact_logistics" -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1

@@ -1,5 +1,5 @@
-drop table dwd.dwd_fact_vova_push_click;
-CREATE TABLE IF NOT EXISTS dwd.dwd_fact_vova_push_click
+drop table dwd.dwd_vova_fact_push_click;
+CREATE TABLE IF NOT EXISTS dwd.dwd_vova_fact_push_click
 (
     --app_event_log_message_push
     datasource       string comment '数据平台',

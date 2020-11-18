@@ -39,7 +39,7 @@ from (select buyer_id,
              app_version,
              max_collector_time,
              row_number() over (partition by buyer_id,datasource order by pt desc, max_collector_time desc)        as rank
-      from dwd.dwd_fact_vova_start_up su where su.buyer_id > 0) su
+      from dwd.dwd_vova_fact_start_up su where su.buyer_id > 0) su
 where su.rank = 1;
 
 insert overwrite table dim.dim_vova_buyers
