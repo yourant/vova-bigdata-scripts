@@ -55,7 +55,6 @@ CREATE TABLE IF NOT EXISTS dwd.dwd_fd_order_info (
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
-set hive.execution.engine=tez;
 INSERT overwrite table dwd.dwd_fd_order_info
 select 
     ud.sp_duid,
@@ -242,8 +241,7 @@ from(
         display_bonus_exchange,
         token,
         payer_id
-    from ods_fd_vb.ods_fd_order_info 
-
+    from ods_fd_vb.ods_fd_order_info
 )oi
 left join (select user_id, sp_duid from ods_fd_vb.ods_fd_user_duid where sp_duid IS NOT NULL group by user_id, sp_duid) ud ON oi.user_id = ud.user_id
 left join dim.dim_fd_user_agent ua ON oi.user_agent_id = ua.user_agent_id
