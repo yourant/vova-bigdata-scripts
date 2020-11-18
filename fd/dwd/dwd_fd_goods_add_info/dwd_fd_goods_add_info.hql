@@ -48,7 +48,7 @@ from (
         project as project_name,
         if(event_name IN ('add'),session_id,null) as add_session_id,
         if(event_name IN ('page_view', 'screen_view') and page_code = 'product' ,session_id,null) as view_session_id
-    from ods.ods_fd_snowplow_all_event
+    from ods_fd_snowplow.ods_fd_snowplow_all_event
     LATERAL VIEW OUTER explode(ecommerce_product) single_ecommerce_event_table AS single_ecommerce_event
     where pt = '${hiveconf:pt}' and event_name in ('page_view', 'screen_view', 'add')
     
