@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS tmp.tmp_fd_dmc_competing_website_tort (
+CREATE EXTERNAL TABLE IF NOT EXISTS tmp.tmp_fd_dmc_competing_website_tort (
     value STRING
 ) 
 PARTITIONED BY (dt STRING,hour STRING)
