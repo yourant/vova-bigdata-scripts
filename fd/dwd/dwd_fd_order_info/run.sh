@@ -25,5 +25,8 @@ shell_path="/mnt/vova-bigdata-scripts/fd/dwd"
 
 hive -f ${shell_path}/dwd_fd_order_info/create_table.hql
 
-spark-sql  -f ${shell_path}/dwd_fd_order_info/dwd_fd_order_info.hql
+spark-sql --conf "spark.app.name=fd_dwd_fd_order_info_gaohaitao" --conf "spark.sql.parquet.writeLegacyFormat=true"  -f ${shell_path}/dwd_fd_order_info/dwd_fd_order_info.hql
 
+if [ $? -ne 0 ];then
+  exit 1
+fi

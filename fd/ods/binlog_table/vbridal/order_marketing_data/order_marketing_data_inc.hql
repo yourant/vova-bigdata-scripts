@@ -13,7 +13,7 @@ STORED AS PARQUETFILE
 
 
 set hive.exec.dynamic.partition.mode=nonstrict;
-hive.exec.dynamici.partition=true;
+set hive.exec.dynamici.partition=true;
 INSERT overwrite TABLE ods_fd_vb.ods_fd_order_marketing_data_inc PARTITION (pt,hour)
 select id, order_id, sp_session_id, created_time, last_update_time,pt,hour
 from (

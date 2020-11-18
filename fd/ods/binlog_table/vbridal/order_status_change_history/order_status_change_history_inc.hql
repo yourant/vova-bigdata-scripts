@@ -12,7 +12,7 @@ STORED AS PARQUETFILE
 ;
 
 set hive.exec.dynamic.partition.mode=nonstrict;
-hive.exec.dynamici.partition=true;
+set hive.exec.dynamici.partition=true;
 INSERT overwrite TABLE ods_fd_vb.ods_fd_order_status_change_history_inc PARTITION (pt,hour)
 select id, order_sn, field_name, old_value, new_value, create_time,pt,hour
 from (
