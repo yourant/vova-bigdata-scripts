@@ -21,4 +21,7 @@ echo $pt
 shell_path="/mnt/vova-bigdata-scripts/fd/dwd"
 
 #订单事实表dwd_fd_order_info
-hive -hiveconf pt=$pt -hiveconf mapred.job.name=fd_dwd_fd_order_info_gaohaitao  -f ${shell_path}/dwd_fd_order_info/dwd_fd_order_info.hql
+#hive -hiveconf pt=$pt -hiveconf mapred.job.name=fd_dwd_fd_order_info_gaohaitao  -f ${shell_path}/dwd_fd_order_info/dwd_fd_order_info.hql
+
+spark-sql  -f ${shell_path}/dwd_fd_order_info/dwd_fd_order_info.hql
+
