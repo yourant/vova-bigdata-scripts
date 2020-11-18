@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `dwd.dwd_fd_goods_add_info`(
   `project_name` string COMMENT '组织',
   `add_session_id` string COMMENT '加车session',
   `view_session_id` string COMMENT 'view session')
-COMMENT '打点数据中add和view事件生成的关于商品的中间表'
+COMMENT '打点数据商品的表'
 PARTITIONED BY (pt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUET;
