@@ -13,14 +13,15 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_fd_app_user_coupon_order
     coupon_used_72h       string COMMENT '获取红包48h-72h内使用量',
     coupon_used_greater_72h  string COMMENT '获取红包大于72h内使用量'
 ) COMMENT 'appp用户优惠券使用指标报表'
-PARTITIONED BY (dt STRING)
+PARTITIONED BY (pt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS ORC
 TBLPROPERTIES ("orc.compress"="SNAPPY");
 
 
 set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite table dwb.dwb_fd_app_user_coupon_order PARTITION (dt)
+set hive.exec.dynamic.partition=true;
+INSERT overwrite table dwb.dwb_fd_app_user_coupon_order PARTITION (pt)
 select
   t1.project_name as project_name,
   Coalesce(t1.platform_type,t2.platform_type,'unknown') as platform_type,
@@ -34,7 +35,7 @@ select
   if(t3.coupon_code is not null and (unix_timestamp(t3.order_time) - unix_timestamp(t1.coupon_give_date))/3600 >= 24 and (unix_timestamp(t3.order_time) - unix_timestamp(t1.coupon_give_date))/3600 < 48,t1.coupon_code,null) as coupon_used_48h,
   if(t3.coupon_code is not null and (unix_timestamp(t3.order_time) - unix_timestamp(t1.coupon_give_date))/3600 >= 48 and (unix_timestamp(t3.order_time) - unix_timestamp(t1.coupon_give_date))/3600 < 72,t1.coupon_code,null) as coupon_used_72h,
   if(t3.coupon_code is not null and (unix_timestamp(t3.order_time) - unix_timestamp(t1.coupon_give_date))/3600 >= 72,t1.coupon_code,null) as coupon_used_greater_72h,
-  t1.dt as dt
+  t1.pt as pt
 from (
   select
     tab1.user_id as user_id,
@@ -46,7 +47,7 @@ from (
     Coalesce(tab2.project_name,tab3.reg_site_name) as project_name,
     Coalesce(tab2.platform,null) as platform_type,
     Coalesce(tab2.country_code,null) as country_code,
-    date(tab1.coupon_give_date) as dt
+    date(tab1.coupon_give_date) as pt
   from (
       select 
             oc.user_id,
@@ -65,8 +66,8 @@ from (
         from ods_fd_vb.ods_fd_ok_coupon
         where can_use_times = 1
         and length(coupon_code) = 16
-        and date(from_unixtime(coupon_gtime, 'yyyy-MM-dd HH:mm:ss')) >= date_sub('${hiveconf:dt}',60)
-        and date(from_unixtime(coupon_gtime, 'yyyy-MM-dd HH:mm:ss')) <= '${hiveconf:dt}'
+        and date(from_unixtime(coupon_gtime, 'yyyy-MM-dd HH:mm:ss')) >= date_sub('${hiveconf:pt}',30)
+        and date(from_unixtime(coupon_gtime, 'yyyy-MM-dd HH:mm:ss')) <= '${hiveconf:pt}'
       ) oc
       left join (select coupon_config_id,coupon_config_comment from ods_fd_vb.ods_fd_ok_coupon_config ) kcc ON oc.coupon_config_id = kcc.coupon_config_id
         
@@ -88,8 +89,7 @@ from (
                 country_code,
                 Row_Number() OVER (partition by user_id  ORDER BY event_time desc) rank
             from ods_fd_vb.ods_fd_app_install_record
-            where  user_id is not null 
-                and user_id != 0
+            where  user_id is not null and user_id != 0
       ) t1 where t1.rank = 1
 
   ) tab2 on tab2.user_id = tab1.user_id
@@ -111,7 +111,7 @@ left join (
                 end as platform_type,
                 Row_Number() OVER (partition by user_id,project_name ORDER BY order_time desc) rank
         from dwd.dwd_fd_order_info 
-        where dt = '${hiveconf:dt}' and user_id is not null and user_id != 0
+        where user_id is not null and user_id != 0
     )t0 WHERE t0.rank = 1
 
 ) t2 on (t1.user_id = t2.user_id and t1.project_name = t2.project_name)
@@ -123,5 +123,5 @@ left join (
         project_name,
         pay_status
     from dwd.dwd_fd_order_info
-    where dt = '${hiveconf:dt}'
+
 )t3 on t3.coupon_code = t1.coupon_code;

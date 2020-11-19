@@ -63,15 +63,15 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_order_goods_inc (
     heel_type_price_exchange decimal(15, 4) COMMENT '鞋跟定制支付币种费用',
     display_heel_type_price_exchange decimal(15, 4) COMMENT '鞋跟定制支付币种显示费用'
 ) COMMENT '来自kafka订单商品每日增量数据'
-PARTITIONED BY (pt STRING,hour STRING)
+PARTITIONED BY (pt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE
 ;
 
 set hive.exec.dynamic.partition.mode=nonstrict;
 set hive.exec.dynamic.partition=true;
-INSERT overwrite TABLE ods_fd_vb.ods_fd_order_goods_inc PARTITION (pt,hour)
-select rec_id, order_id, goods_style_id, sku, sku_id, goods_id, goods_name, goods_sn, goods_sku, goods_number, market_price, shop_price, shop_price_exchange, shop_price_amount_exchange, bonus, coupon_code, goods_attr, send_number, is_real, extension_code, parent_id, is_gift, goods_status, action_amt, action_reason_cat, action_note, carrier_bill_id, provider_id, invoice_num, return_points, return_bonus, biaoju_store_goods_id, subtitle, addtional_shipping_fee, style_id, customized, status_id, added_fee, custom_fee, custom_fee_exchange, plussize_fee, plussize_fee_exchange, rush_order_fee, rush_order_fee_exchange, coupon_goods_id, coupon_cat_id, coupon_config_value, coupon_config_coupon_type, styles, img_type, goods_gallery, goods_price_original, wrap_price, wrap_price_exchange, display_shop_price_exchange, display_shop_price_amount_exchange, display_custom_fee_exchange, display_plussize_fee_exchange, display_rush_order_fee_exchange, display_wrap_price_exchange, heel_type_price, heel_type_price_exchange, display_heel_type_price_exchange,pt,hour
+INSERT overwrite TABLE ods_fd_vb.ods_fd_order_goods_inc PARTITION (pt)
+select rec_id, order_id, goods_style_id, sku, sku_id, goods_id, goods_name, goods_sn, goods_sku, goods_number, market_price, shop_price, shop_price_exchange, shop_price_amount_exchange, bonus, coupon_code, goods_attr, send_number, is_real, extension_code, parent_id, is_gift, goods_status, action_amt, action_reason_cat, action_note, carrier_bill_id, provider_id, invoice_num, return_points, return_bonus, biaoju_store_goods_id, subtitle, addtional_shipping_fee, style_id, customized, status_id, added_fee, custom_fee, custom_fee_exchange, plussize_fee, plussize_fee_exchange, rush_order_fee, rush_order_fee_exchange, coupon_goods_id, coupon_cat_id, coupon_config_value, coupon_config_coupon_type, styles, img_type, goods_gallery, goods_price_original, wrap_price, wrap_price_exchange, display_shop_price_exchange, display_shop_price_amount_exchange, display_custom_fee_exchange, display_plussize_fee_exchange, display_rush_order_fee_exchange, display_wrap_price_exchange, heel_type_price, heel_type_price_exchange, display_heel_type_price_exchange,pt
 from(
     SELECT  o_raw.xid AS event_id,
             o_raw.`table` AS event_table,

@@ -23,9 +23,15 @@ shell_path="/mnt/vova-bigdata-scripts/fd/dwd"
 #订单事实表dwd_fd_order_info
 #hive -hiveconf pt=$pt -hiveconf mapred.job.name=fd_dwd_fd_order_info_gaohaitao  -f ${shell_path}/dwd_fd_order_info/dwd_fd_order_info.hql
 
+#sed -i '' 's/${hiveconf:pt}/'$pt'/g' ${shell_path}/dwd_fd_order_info/dwd_fd_order_info.hql
+
 hive -f ${shell_path}/dwd_fd_order_info/create_table.hql
 
-spark-sql --conf "spark.app.name=fd_dwd_fd_order_info_gaohaitao" --conf "spark.sql.parquet.writeLegacyFormat=true"  -f ${shell_path}/dwd_fd_order_info/dwd_fd_order_info.hql
+#spark-sql --conf "spark.app.name=fd_dwd_fd_order_info_gaohaitao" --conf "spark.sql.parquet.writeLegacyFormat=true" -d pt=$pt -f ${shell_path}/dwd_fd_order_info/dwd_fd_order_info.hql
+
+spark-sql --master yarn  --driver-cores 2 --driver-memory 2g  --executor-memory 3g --executor-cores 3 --num-executors 8  --conf "spark.app.name=fd_dwd_fd_order_info_gaohaitao" --conf "spark.sql.parquet.writeLegacyFormat=true" -f ${shell_path}/dwd_fd_order_info/dwd_fd_order_info.hql
+
+#sed -i '' 's/'$pt'/${hiveconf:pt}/g' ${shell_path}/dwd_fd_order_info/dwd_fd_order_info.hql
 
 if [ $? -ne 0 ];then
   exit 1

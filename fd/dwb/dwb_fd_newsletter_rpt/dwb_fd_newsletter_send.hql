@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS dwb.dwb_fd_newsletter_send_report (
+CREATE TABLE IF NOT EXISTS dwb.dwb_fd_newsletter_send_rpt (
 `project` string COMMENT '组织',
 `nl_code_num` string COMMENT 'nl期数',
 `nl_code` string COMMENT 'nl_code',
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_fd_newsletter_send_report (
 `open_count` bigint COMMENT '打开量',
 `unsubscribe_count` bigint COMMENT '退订量'
 ) COMMENT 'Newsltter 发送量报表'
-PARTITIONED BY (dt STRING)
+PARTITIONED BY (pt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS ORC
 TBLPROPERTIES ("orc.compress"="SNAPPY");
@@ -19,7 +19,7 @@ TBLPROPERTIES ("orc.compress"="SNAPPY");
 
 set mapred.reduce.tasks=1;
 set hive.exec.dynamic.partition.mode=nonstrict;
-insert overwrite table dwb.dwb_fd_newsletter_send_report partition (dt)
+insert overwrite table dwb.dwb_fd_newsletter_send_rpt partition (pt)
 select tab1.project,
        tab1.nl_code_num,
        tab1.nl_code,
@@ -31,7 +31,7 @@ select tab1.project,
        tab1.fail_count,
        tab1.open_count,
        nvl(tab2.unsubscribe_count,tab1.unsubscribe_count) as unsubscribe_count,
-       tab1.dt as dt
+       tab1.pt as pt
 from (
   select
       case
@@ -50,11 +50,11 @@ from (
       (send_count-arrive_count) as fail_count,
       open_count,
       0 as unsubscribe_count,
-      date(TO_UTC_TIMESTAMP(UNIX_TIMESTAMP(from_unixtime(send_time,'yyyy-MM-dd HH:mm:ss'),"yyyy-MM-dd hh:mm:ss") * 1000, 'America/Los_Angeles')) as dt
+      date(TO_UTC_TIMESTAMP(UNIX_TIMESTAMP(from_unixtime(send_time,'yyyy-MM-dd HH:mm:ss'),"yyyy-MM-dd hh:mm:ss") * 1000, 'America/Los_Angeles')) as pt
       from ods_fd_vb.ods_fd_newsletters
       where substr(nl_code,0,2) IN ('ad','fd','sd','td')
-      and date(TO_UTC_TIMESTAMP(UNIX_TIMESTAMP(from_unixtime(send_time,'yyyy-MM-dd HH:mm:ss'),"yyyy-MM-dd hh:mm:ss") * 1000, 'America/Los_Angeles')) >= date_sub ('${hiveconf:dt}',1000)
-      and date(TO_UTC_TIMESTAMP(UNIX_TIMESTAMP(from_unixtime(send_time,'yyyy-MM-dd HH:mm:ss'),"yyyy-MM-dd hh:mm:ss") * 1000, 'America/Los_Angeles')) <= '${hiveconf:dt}'
+      and date(TO_UTC_TIMESTAMP(UNIX_TIMESTAMP(from_unixtime(send_time,'yyyy-MM-dd HH:mm:ss'),"yyyy-MM-dd hh:mm:ss") * 1000, 'America/Los_Angeles')) >= date_sub ('${hiveconf:pt}',1000)
+      and date(TO_UTC_TIMESTAMP(UNIX_TIMESTAMP(from_unixtime(send_time,'yyyy-MM-dd HH:mm:ss'),"yyyy-MM-dd hh:mm:ss") * 1000, 'America/Los_Angeles')) <= '${hiveconf:pt}'
 ) tab1
 left join (
     select reason,count(1) as unsubscribe_count

@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `dwb.dwb_fd_app_retention_activity_report`(
+CREATE TABLE IF NOT EXISTS `dwb.dwb_fd_app_retention_activity_rpt`(
   `project` string COMMENT '组织',
   `platform_type` string COMMENT '平台',
   `country_code` string COMMENT '国家',
@@ -60,25 +60,38 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS ORC
 TBLPROPERTIES ("orc.compress"="SNAPPY");
 
-insert overwrite table dwb.dwb_fd_app_retention_activity_report partition (dt = '${hiveconf:dt}',classify='visit_source')
+
+set mapred.reduce.tasks=1;
+insert overwrite table dwb.dwb_fd_app_retention_activity_rpt partition (dt='${hiveconf:dt}',classify='retention')
 select
-	project,
-	platform_type,
-	country as country_code,
-
+    rewards_day1.project as project,
+	rewards_day1.platform_type as platform_type,
+	rewards_day1.country as country_code,
 	null,null,
-   	null,null,null,null,null,null,null,null,
-   	null,null,null,
-   	null,null,null,null,
-   	null,null,null,null,null,null,
-   	null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-
-	if(page_code = 'myrewards',domain_userid,null) as myrewards_domain_userid,
-	if(page_code = 'myrewards' and referrer_url = 'homepage',domain_userid,null) as homepage_domain_userid,
-	if(page_code = 'myrewards' and referrer_url = 'userZone',domain_userid,null) as userZone_domain_userid,
-	if(page_code = 'myrewards' and referrer_url = 'account',domain_userid,null) as account_domain_userid,
-	if(page_code = 'myrewards' and referrer_url like 'afterPay/order_sn%',domain_userid,null) as afterPay_domain_userid,
-	if(page_code = 'myrewards' and referrer_url not in('homepage','userZone','account','afterPay'),domain_userid,null) as other_domain_userid,
+	rewards_day1.domain_userid as retention_domain_userid_2d,
+	rewards_today.domain_userid as retention_domain_userid_1d,
+	if(rewards_day1.user_id != '0' and rewards_day1.user_id is not null,rewards_day1.domain_userid,null) as login_domain_userid_2d,
+	if(rewards_day1.user_id != '0' and rewards_day1.user_id is not null,rewards_today.domain_userid,null) as login_domain_userid_1d,
+	if(rewards_day1.list_name in ('check_in_success','my_rewards_check_success') and rewards_day1.event_name = 'common_impression' and rewards_day1.element_name in('my_rewards_check_success','check_coupon'),rewards_day1.domain_userid,null) as checkin_domain_userid_2d,
+	if(rewards_day1.list_name in ('check_in_success','my_rewards_check_success') and rewards_day1.event_name = 'common_impression' and rewards_day1.element_name in('my_rewards_check_success','check_coupon'),rewards_today.domain_userid,null) as checkin_domain_userid_1d,
+	if(rewards_day1.element_name  = 'free_play',rewards_day1.domain_userid,null) as play_domain_userid_2d,
+	if(rewards_day1.element_name = 'free_play',rewards_today.domain_userid,null) as play_domain_userid_1d,
+	null,null,null,
+	null,null,null,null,
+	null,null,null,null,null,null,
+	null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+	null,null,null,null,null,null,
 	null,null,null,null
-from ods.ods_fd_snowplow_all_event
-where dt = '${hiveconf:dt}' and platform_type in ('android_app','ios_app') and page_code = 'myrewards' distribute by pmod(cast(rand()*1000 as int),3);
+from(
+	select distinct user_id,domain_userid,project,country,platform_type,event_name,common_element.element_name as element_name,common_element.list_type as list_name
+	from (
+		select user_id,domain_userid,project,country,platform_type,event_name,element_event_struct
+		from ods.ods_fd_snowplow_all_event
+		where  dt = date_sub('${hiveconf:dt}',1) and platform_type in ('android_app','ios_app')
+		and project is not null and project !=''
+	)ce_d6 LATERAL VIEW OUTER explode(ce_d6.element_event_struct)ce_d6 as common_element
+) rewards_day1 left join(
+	select distinct domain_userid,user_id
+	from ods.ods_fd_snowplow_all_event
+	where dt = '${hiveconf:dt}' and platform_type in ('android_app','ios_app')
+) rewards_today on rewards_day1.domain_userid = rewards_today.domain_userid;

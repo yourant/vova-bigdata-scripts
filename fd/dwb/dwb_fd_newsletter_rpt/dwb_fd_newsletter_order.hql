@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS dwb.dwb_fd_newsletter_order_report (
+CREATE TABLE IF NOT EXISTS dwb.dwb_fd_newsletter_order_rpt (
 `project` string COMMENT '组织',
 `order_date_utc` string COMMENT '下单时间',
 `order_id` string COMMENT '订单id',
@@ -13,14 +13,14 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_fd_newsletter_order_report (
 `goods_number` bigint COMMENT '商品销售量',
 `shop_price`  decimal(15,4) COMMENT '商品销售总价'
 ) COMMENT 'Newsltter 订单报表'
-PARTITIONED BY (dt STRING)
+PARTITIONED BY (pt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS ORC
 TBLPROPERTIES ("orc.compress"="SNAPPY");
 
 
 set mapred.reduce.tasks=1;
-insert overwrite table dwb.dwb_fd_newsletter_order_report partition (dt = '${hiveconf:dt_last}')
+insert overwrite table dwb.dwb_fd_newsletter_order_rpt partition (pt = '${hiveconf:pt_last}')
 select oi.project_name as project,
        oi.order_date as order_date_utc,
        oi.order_id as order_id,
@@ -49,9 +49,8 @@ from  (
     order_sn,
     date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) as order_date
   from dwd.dwd_fd_order_goods
-  where dt = '${hiveconf:dt}'
-    and pay_status = 2
-    and date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:dt_last}'
+  where pay_status = 2
+    and date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:pt_last}'
 
 ) oi
 left join (

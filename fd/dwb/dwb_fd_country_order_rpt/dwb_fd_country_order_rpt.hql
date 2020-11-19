@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS dwb.dwb_fd_country_order_report
+CREATE TABLE IF NOT EXISTS dwb.dwb_fd_country_order_rpt
 (
     project_name     string comment '组织',
     platform         string COMMENT '平台',
@@ -12,12 +12,12 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_fd_country_order_report
     customer_price      DECIMAL(15, 4) COMMENT 'customer_price',
     shipping_free       DECIMAL(15, 4) COMMENT 'shipping_free'
 ) COMMENT '国家订单相关金额报表'
-PARTITIONED BY (dt STRING)
+PARTITIONED BY (pt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS ORC
 TBLPROPERTIES ("orc.compress"="SNAPPY");
 
-INSERT overwrite table dwb.dwb_fd_country_order_report PARTITION (dt = '${hiveconf:dt}')
+INSERT overwrite table dwb.dwb_fd_country_order_rpt PARTITION (pt = '${hiveconf:pt}')
 select 
     nvl(tab1.project_name,'all') as project_name,
     nvl(tab1.platform,'all') as platform,
@@ -27,15 +27,13 @@ select
     nvl(SUM(tab1.goods_amount)+SUM(tab1.shipping_fee),0.0) as order_amount_free,
     nvl(SUM(tab1.goods_amount),0.0) as order_amount,
     nvl(COUNT(DISTINCT tab1.user_id),0.0) as users, /*用户数*/
-    nvl(cast((SUM(tab1.goods_amount)+SUM(tab1.shipping_fee))/COUNT(DISTINCT tab1.user_id) as decimal(10,2)), 0.0) as customer_price_free,
-    nvl(cast(SUM(tab1.goods_amount)/COUNT(DISTINCT tab1.user_id) as decimal(10,2)) ,0.0) as customer_price,
+    nvl(cast((SUM(tab1.goods_amount)+SUM(tab1.shipping_fee))/COUNT(DISTINCT tab1.user_id) as decimal(15,4)), 0.0) as customer_price_free,
+    nvl(cast(SUM(tab1.goods_amount)/COUNT(DISTINCT tab1.user_id) as decimal(15,4)) ,0.0) as customer_price,
     nvl(SUM(tab1.shipping_fee),0.0) as shipping_free
 from (
 
     select 
-        to_date(from_utc_timestamp(from_unixtime(oi.event_date), 'UTC')) as event_dt,
         oi.order_id,
-        oi.event_date,
         oi.user_id,
         if(oi.is_app is null, 'other', if(oi.is_app = 0, 'web', 'mob'))  AS platform,
         if(oi.device_type is null, 'other', oi.device_type)   AS device_type,
@@ -54,8 +52,7 @@ from (
         oi.shipping_fee_exchange as shipping_fee_exchange,
         oi.email as email
     from dwd.dwd_fd_order_info oi 
-    where dt = '${hiveconf:dt}'
-    and (date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:dt}' or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:dt}')
+    where (date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:pt}' or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:pt}')
     and oi.email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
 )tab1
 group by 

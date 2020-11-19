@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `dwb.dwb_fd_app_retention_activity_report`(
+CREATE TABLE IF NOT EXISTS `dwb.dwb_fd_app_retention_activity_rpt`(
   `project` string COMMENT '组织',
   `platform_type` string COMMENT '平台',
   `country_code` string COMMENT '国家',
@@ -61,7 +61,7 @@ STORED AS ORC
 TBLPROPERTIES ("orc.compress"="SNAPPY");
 
 set mapred.reduce.tasks=1;
-insert overwrite table dwb.dwb_fd_app_retention_activity_report partition (dt='${hiveconf:dt}',classify='register')
+insert overwrite table dwb.dwb_fd_app_retention_activity_rpt partition (dt='${hiveconf:dt}',classify='register')
 select
     t1.project as project,
     t1.platform_type as platform_type,

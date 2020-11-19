@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS dwb.dwb_fd_newsletter_snowplow_report (
+CREATE TABLE IF NOT EXISTS dwb.dwb_fd_newsletter_snowplow_rpt (
 `year` string COMMENT '年',
 `month` string COMMENT '月',
 `weekofyear` string COMMENT '一年中的第几周',
@@ -15,18 +15,18 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_fd_newsletter_snowplow_report (
 `order_id` string COMMENT '订单id',
 `goods_amount` decimal(15, 4) COMMENT '销售金额'
 ) COMMENT 'Newsltter 打点数据'
-PARTITIONED BY (dt STRING)
+PARTITIONED BY (pt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS ORC
 TBLPROPERTIES ("orc.compress"="SNAPPY");
 
 
 set mapred.reduce.tasks=1;
-insert overwrite table dwb.dwb_fd_newsletter_snowplow_report  partition (dt = '${hiveconf:dt_last}')
+insert overwrite table dwb.dwb_fd_newsletter_snowplow_rpt  partition (pt = '${hiveconf:pt_last}')
 select
-        year('${hiveconf:dt_last}') as year, /* 年 */
-        substr('${hiveconf:dt_last}',1,7) as month, /* 月 */
-        concat(substring('${hiveconf:dt_last}',1,4),concat('年|第',concat(weekofyear('${hiveconf:dt_last}'),'周'))) as weekofyear, /* 一年中的第几周 */
+        year('${hiveconf:pt_last}') as year, /* 年 */
+        substr('${hiveconf:pt_last}',1,7) as month, /* 月 */
+        concat(substring('${hiveconf:pt_last}',1,4),concat('年|第',concat(weekofyear('${hiveconf:pt_last}'),'周'))) as weekofyear, /* 一年中的第几周 */
         duid_nl.project as project, /* 组织 */
         duid_nl.nl_code_num as nl_code_num, /* nl期数 */
         duid_nl.nl_code as nl_code, /* nl code */
@@ -61,7 +61,7 @@ from (
                     split(regexp_extract(page_url, 'nl_module=([A-Za-z0-9]+)', 0), '=')[1]     as nl_module,
                     row_number() over (partition by project,domain_userid,page_url order by derived_ts desc) as rn
             from ods.ods_fd_snowplow_view_event
-            where dt = '${hiveconf:dt_last}'
+            where pt = '${hiveconf:pt_last}'
             and event_name = 'page_view'
             and lower(regexp_extract(page_url, 'utm_source=[A-Za-z0-9_]+', 0)) = 'utm_source=newsletter'
             and lower(page_url) like '%nl_type%'
@@ -73,21 +73,21 @@ from (
 left join (
     select domain_userid
     from ods.ods_fd_snowplow_ecommerce_event
-    where dt = '${hiveconf:dt_last}'
+    where pt = '${hiveconf:pt_last}'
       and event_name = 'add'
     group by domain_userid
 ) add_event on add_event.domain_userid = duid_nl.domain_userid
 left join (
     select domain_userid
     from ods.ods_fd_snowplow_goods_event
-    where dt = '${hiveconf:dt_last}'
+    where pt = '${hiveconf:pt_last}'
     and event_name = 'goods_click'
     group by domain_userid
 ) click_event on click_event.domain_userid = duid_nl.domain_userid
 left join (
     select domain_userid
     from ods.ods_fd_snowplow_goods_event
-    where dt = '${hiveconf:dt_last}'
+    where pt = '${hiveconf:pt_last}'
     and event_name = 'goods_impression'
     group by domain_userid
 ) impression_event  on impression_event.domain_userid = duid_nl.domain_userid
@@ -97,12 +97,10 @@ left join (
         order_id,
         sum(shop_price * goods_number) gmv
    from dwd.dwd_fd_order_goods
-   where dt = '${hiveconf:dt}'
-   and (
-      date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) >= '${hiveconf:dt_last}'
-      or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) >= '${hiveconf:dt_last}'
-      or date(from_unixtime(event_date,'yyyy-MM-dd hh:mm:ss')) >= '${hiveconf:dt_last}'
-    ) 
+   where (
+      date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) >= '${hiveconf:pt_last}'
+      or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) >= '${hiveconf:pt_last}'
+    )
    and sp_duid is not null
    group by sp_duid,order_id
 )orders on orders.sp_duid = duid_nl.domain_userid

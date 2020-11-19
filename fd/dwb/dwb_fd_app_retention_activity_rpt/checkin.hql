@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `dwb.dwb_fd_app_retention_activity_report`(
+CREATE TABLE IF NOT EXISTS `dwb.dwb_fd_app_retention_activity_rpt`(
   `project` string COMMENT '组织',
   `platform_type` string COMMENT '平台',
   `country_code` string COMMENT '国家',
@@ -54,44 +54,82 @@ CREATE TABLE IF NOT EXISTS `dwb.dwb_fd_app_retention_activity_report`(
   `user_new_first_success_coupon_order_id` string COMMENT '新用户使用coupon支付成功首单总数')
 COMMENT '用户留存，签到，大转盘和用户注册相关数据，数据来源业务表以及打点数据'
 PARTITIONED BY (
-  `dt` string,
+  `pt` string,
   `classify` string)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS ORC
 TBLPROPERTIES ("orc.compress"="SNAPPY");
 
-
 set mapred.reduce.tasks=1;
-insert overwrite table dwb.dwb_fd_app_retention_activity_report partition (dt='${hiveconf:dt}',classify='retention')
+insert overwrite table dwb.dwb_fd_app_retention_activity_rpt partition (pt='${hiveconf:pt}',classify='checkin')
 select
-    rewards_day1.project as project,
-	rewards_day1.platform_type as platform_type,
-	rewards_day1.country as country_code,
-	null,null,
-	rewards_day1.domain_userid as retention_domain_userid_2d,
-	rewards_today.domain_userid as retention_domain_userid_1d,
-	if(rewards_day1.user_id != '0' and rewards_day1.user_id is not null,rewards_day1.domain_userid,null) as login_domain_userid_2d,
-	if(rewards_day1.user_id != '0' and rewards_day1.user_id is not null,rewards_today.domain_userid,null) as login_domain_userid_1d,
-	if(rewards_day1.list_name in ('check_in_success','my_rewards_check_success') and rewards_day1.event_name = 'common_impression' and rewards_day1.element_name in('my_rewards_check_success','check_coupon'),rewards_day1.domain_userid,null) as checkin_domain_userid_2d,
-	if(rewards_day1.list_name in ('check_in_success','my_rewards_check_success') and rewards_day1.event_name = 'common_impression' and rewards_day1.element_name in('my_rewards_check_success','check_coupon'),rewards_today.domain_userid,null) as checkin_domain_userid_1d,
-	if(rewards_day1.element_name  = 'free_play',rewards_day1.domain_userid,null) as play_domain_userid_2d,
-	if(rewards_day1.element_name = 'free_play',rewards_today.domain_userid,null) as play_domain_userid_1d,
-	null,null,null,
+      project as project,
+      platform_type as platform_type,
+      country as country_code,
+      domain_userid as all_domain_userid,
+      null,
+      null,null,null,null,null,null,null,null,
+      if(page_code = 'myrewards',domain_userid,null) as checkin_points_domain_userid,
+      null as checkin_userid,
+      null as checkin_userid_first,
+      null,null,null,null,
+      null,null,null,null,null,null,
+      null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+      null,null,null,null,null,null,
+	  null,null,null,null
+from ods.ods_fd_snowplow_all_event
+where pt = '${hiveconf:pt}' and platform_type in ('android_app','ios_app') and page_code = 'myrewards'
+and project is not null and project !=''
+
+union
+select
+	ul.project as project,
+	case when ul.type = 'android_ap' then 'android_app'
+		 when ul.type = 'ios_app' then 'ios_app' end as platform_type,
+	r.region_code as country_code,
+	null as all_domain_userid,
+	null,
+	null,null,null,null,null,null,null,null,
+	null as checkin_points_domain_userid,
+	ul.user_id as checkin_userid,
+	null as checkin_userid_first,
 	null,null,null,null,
 	null,null,null,null,null,null,
 	null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
 	null,null,null,null,null,null,
 	null,null,null,null
-from(
-	select distinct user_id,domain_userid,project,country,platform_type,event_name,common_element.element_name as element_name,common_element.list_type as list_name
-	from (
-		select user_id,domain_userid,project,country,platform_type,event_name,element_event_struct
-		from ods.ods_fd_snowplow_all_event
-		where  dt = date_sub('${hiveconf:dt}',1) and platform_type in ('android_app','ios_app')
-		and project is not null and project !=''
-	)ce_d6 LATERAL VIEW OUTER explode(ce_d6.element_event_struct)ce_d6 as common_element
-) rewards_day1 left join(
-	select distinct domain_userid,user_id
-	from ods.ods_fd_snowplow_all_event
-	where dt = '${hiveconf:dt}' and platform_type in ('android_app','ios_app')
-) rewards_today on rewards_day1.domain_userid = rewards_today.domain_userid;
+from ods_fd_vb.ods_fd_user_check_in_log ul
+left join ods_fd_vb.ods_fd_users u on ul.user_id = u.user_id
+left join dim.dim_fd_region r on u.country = r.region_id
+where date(TO_UTC_TIMESTAMP(ul.time, 'America/Los_Angeles')) = '${hiveconf:pt}'
+and ul.project is not null and ul.project !=''
+
+union
+select
+	t1.project,
+	t1.platform_type,
+	t1.country_code,
+	null as all_domain_userid,
+	null,
+	null,null,null,null,null,null,null,null,
+	null as checkin_points_domain_userid,
+	null as checkin_userid,
+	t1.user_id as checkin_userid_first,
+	null,null,null,null,
+	null,null,null,null,null,null,
+	null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+	null,null,null,null,null,null,
+	null,null,null,null
+from (
+    select
+		ul.user_id,
+		ul.project,
+		case when ul.type = 'android_ap' then 'android_app'
+			 when ul.type = 'ios_app' then 'ios_app' end as platform_type,
+		r.region_code as country_code,
+		date(TO_UTC_TIMESTAMP(ul.time, 'America/Los_Angeles')) as check_date,
+        Row_Number() OVER (partition by ul.user_id ORDER BY ul.time asc) rank
+    from ods_fd_vb.ods_fd_user_check_in_log ul
+    left join ods_fd_vb.ods_fd_users u on ul.user_id = u.user_id
+    left join dim.dim_fd_region r on u.country = r.region_id
+) t1 where t1.rank = 1 and t1.check_date = '${hiveconf:pt}';

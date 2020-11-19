@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS dwb.dwb_fd_prc_abtest_funnel_report
+CREATE TABLE IF NOT EXISTS dwb.dwb_fd_prc_abtest_funnel_rpt
 (
     project                    string,
     platform_type              string,
@@ -22,12 +22,12 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_fd_prc_abtest_funnel_report
     abtest_name                string,
     abtest_version             string
 )
-    PARTITIONED BY ( dt string)
+    PARTITIONED BY ( pt string)
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
     STORED AS ORC
     TBLPROPERTIES ("orc.compress"="SNAPPY");
 
-INSERT OVERWRITE TABLE dwb.dwb_fd_prc_abtest_funnel_report PARTITION (dt = '${hiveconf:dt}')
+INSERT OVERWRITE TABLE dwb.dwb_fd_prc_abtest_funnel_rpt PARTITION (pt = '${hiveconf:pt}')
 select project,
        platform_type,
        country,
@@ -64,10 +64,10 @@ from (
          where event_name in ('page_view', 'screen_view', 'add', 'remove', 'checkout', 'checkout_option', 'purchase')
            and abtest != ''
            and abtest != '-'
-           and dt = '${hiveconf:dt}'
+           and pt = '${hiveconf:pt}'
      ) fms LATERAL VIEW OUTER explode(split(fms.abtest, '&')) fms as abtest_info;
 
-INSERT INTO TABLE dwb.dwb_fd_prc_abtest_funnel_report PARTITION (dt = '${hiveconf:dt}')
+INSERT INTO TABLE dwb.dwb_fd_prc_abtest_funnel_report PARTITION (pt = '${hiveconf:pt}')
 select fboi.project_name                                   as project,
        fboi.platform_type                                  as platform_type,
        fboi.country_code                                   as country,
@@ -112,8 +112,7 @@ from (
         country_code,
         version
         from dwd.dwd_fd_order_info
-        where dt = '${hiveconf:dt}'
-        and date_format(from_utc_timestamp(cast(pay_time * 1000 as timestamp), 'PRC'), 'yyyy-MM-dd') = '${hiveconf:dt}'
+        where date_format(from_utc_timestamp(cast(pay_time * 1000 as timestamp), 'PRC'), 'yyyy-MM-dd') = '${hiveconf:pt}'
         and pay_status = 2
         and email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
     )oi
