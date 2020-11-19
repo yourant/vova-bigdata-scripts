@@ -15,11 +15,11 @@ set hive.exec.dynamic.partition.mode=nonstrict;
 INSERT overwrite table ods_fd_vb.ods_fd_order_status_change_history_arc PARTITION (pt='${hiveconf:pt}')
 select id, order_sn, field_name, old_value, new_value, create_time
 from (
-        select dt, id, order_sn, field_name, old_value, new_value, create_time,
-        row_number () OVER (PARTITION BY id ORDER BY dt DESC) AS rank
+        select pt, id, order_sn, field_name, old_value, new_value, create_time,
+        row_number () OVER (PARTITION BY id ORDER BY pt DESC) AS rank
     from (
         select
-            dt,
+            pt,
             id,
             order_id,
             ext_name,
@@ -30,7 +30,7 @@ from (
 
         UNION
         select
-            dt,
+            pt,
             id,
             order_sn,
             field_name,
