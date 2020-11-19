@@ -1,0 +1,37 @@
+---
+config:
+  failure.emails: qwang@i9i8.com
+  retries: 6
+  retry.backoff: 300000
+
+nodes:
+  - name: newsletter_report_start
+    type: noop
+
+  - name: judge_ods_fd_vb_newsletters
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_newsletters
+    dependsOn:
+      - newsletter_report_start
+
+  - name: judge_ods_fd_vb_email_unsubscribe
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_email_unsubscribe
+    dependsOn:
+      - newsletter_report_start
+
+  - name: newsletter_send_report_caculate
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_newsletter_report/send_run.sh ${dt}
+    dependsOn:
+      - judge_ods_fd_vb_newsletters
+      - judge_ods_fd_vb_email_unsubscribe
+
+  - name: newsletter_report_end
+    type: noop
+    dependsOn:
+      - newsletter_send_report_caculate
+
