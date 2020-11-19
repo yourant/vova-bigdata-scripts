@@ -21,7 +21,7 @@ from (
         select
             pt,
             id,
-            order_id,
+            order_sn,
             ext_name,
             ext_value,
             is_delete,
