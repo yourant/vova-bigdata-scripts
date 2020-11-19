@@ -1,4 +1,3 @@
-drop table IF EXISTS dwd.dwd_fd_order_channel_analytics;
 CREATE TABLE IF NOT EXISTS `dwd.dwd_fd_order_channel_analytics`(
   `order_id` bigint COMMENT '订单id',
   `order_sn` bigint COMMENT '订单sn',

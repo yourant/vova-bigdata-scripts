@@ -53,7 +53,7 @@ from (
       date(TO_UTC_TIMESTAMP(UNIX_TIMESTAMP(from_unixtime(send_time,'yyyy-MM-dd HH:mm:ss'),"yyyy-MM-dd hh:mm:ss") * 1000, 'America/Los_Angeles')) as pt
       from ods_fd_vb.ods_fd_newsletters
       where substr(nl_code,0,2) IN ('ad','fd','sd','td')
-      and date(TO_UTC_TIMESTAMP(UNIX_TIMESTAMP(from_unixtime(send_time,'yyyy-MM-dd HH:mm:ss'),"yyyy-MM-dd hh:mm:ss") * 1000, 'America/Los_Angeles')) >= date_sub ('${hiveconf:pt}',1000)
+      and date(TO_UTC_TIMESTAMP(UNIX_TIMESTAMP(from_unixtime(send_time,'yyyy-MM-dd HH:mm:ss'),"yyyy-MM-dd hh:mm:ss") * 1000, 'America/Los_Angeles')) >= date_sub ('${hiveconf:pt}',15)
       and date(TO_UTC_TIMESTAMP(UNIX_TIMESTAMP(from_unixtime(send_time,'yyyy-MM-dd HH:mm:ss'),"yyyy-MM-dd hh:mm:ss") * 1000, 'America/Los_Angeles')) <= '${hiveconf:pt}'
 ) tab1
 left join (
