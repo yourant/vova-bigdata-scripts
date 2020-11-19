@@ -25,6 +25,7 @@ shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_country_order_rpt"
 
 #报表country_order_report
 hive -hiveconf pt=$pt -f ${shell_path}/dwb_fd_country_order_rpt.hql
+
 if [ $? -ne 0 ];then
   exit 1
 fi
