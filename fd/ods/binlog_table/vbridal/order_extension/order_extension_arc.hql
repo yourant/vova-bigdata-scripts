@@ -20,7 +20,7 @@ from (
         row_number () OVER (PARTITION BY id ORDER BY pt DESC) AS rank
     from (
         select
-            pt
+            pt,
             id,
             order_id,
             ext_name,
