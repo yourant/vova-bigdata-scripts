@@ -20,5 +20,7 @@ echo $pt
 #脚本路径
 shell_path="/mnt/vova-bigdata-scripts/fd/dwd"
 
+hive -f ${shell_path}/dwd_fd_order_channel_analytics/create_table.hql
+
 #订单渠道分析表
 hive -hiveconf pt=$pt -hiveconf mapred.job.name=fd_dwd_fd_order_channel_analytics_gaohaitao -f ${shell_path}/dwd_fd_order_channel_analytics/dwd_fd_order_channel_analytics.hql

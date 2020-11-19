@@ -22,9 +22,9 @@ from (
             pt,
             id,
             order_sn,
-            ext_name,
-            ext_value,
-            is_delete,
+            field_name,
+            old_value,
+            new_value,
             create_time
         from ods_fd_vb.ods_fd_order_status_change_history_arc where pt='${hiveconf:pt_last}'
 
