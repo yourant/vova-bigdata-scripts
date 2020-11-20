@@ -25,7 +25,7 @@ nodes:
   - name: newsletter_send_report_caculate
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_newsletter_report/send_run.sh ${dt}
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_newsletter_rpt/send_run.sh ${pt}
     dependsOn:
       - judge_ods_fd_vb_newsletters
       - judge_ods_fd_vb_email_unsubscribe

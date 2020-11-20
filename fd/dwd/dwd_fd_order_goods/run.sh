@@ -25,7 +25,7 @@ shell_path="/mnt/vova-bigdata-scripts/fd/dwd"
 
 hive -f ${shell_path}/dwd_fd_order_goods/create_table.hql
 
-spark-sql --master yarn  --driver-cores 2 --driver-memory 2g  --executor-memory 20g --executor-cores 5 --num-executors 10  --conf "spark.app.name=fd_dwd_fd_order_goods_gaohaitao" --conf "spark.sql.parquet.writeLegacyFormat=true" -f ${shell_path}/dwd_fd_order_goods/dwd_fd_order_goods.hql
+spark-sql  --conf "spark.app.name=fd_dwd_fd_order_goods_gaohaitao" --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.dynamicAllocation.minExecutors=40" --conf "spark.dynamicAllocation.initialExecutors=60" -f ${shell_path}/dwd_fd_order_goods/dwd_fd_order_goods.hql
 
 if [ $? -ne 0 ];then
   exit 1

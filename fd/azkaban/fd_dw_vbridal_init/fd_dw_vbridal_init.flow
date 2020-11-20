@@ -227,21 +227,21 @@ nodes:
       - name: email_unsubscribe
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=email_unsubscribe --mapers=6 --partition_num=2 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=nl --etl_type=INIT --table_name=email_unsubscribe --mapers=6 --partition_num=2 --period_type=day
         dependsOn:
           - fd_dw_init_flow_one_start
 
       - name: newsletters
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=newsletters --mapers=8 --partition_num=2 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=nl --etl_type=INIT --table_name=newsletters --mapers=8 --partition_num=2 --period_type=day
         dependsOn:
           - fd_dw_init_flow_one_start
 
       - name: email_subscribe
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=email_subscribe --mapers=8 --partition_num=2 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=nl --etl_type=INIT --table_name=email_subscribe --mapers=8 --partition_num=2 --period_type=day
         dependsOn:
           - fd_dw_init_flow_one_start
 
@@ -280,7 +280,7 @@ nodes:
       - name: app_message_push
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=app_message_push --mapers=8 --partition_num=2 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=app_message_push --mapers=40 --partition_num=20 --period_type=day
         dependsOn:
           - fd_dw_init_flow_two_start
 

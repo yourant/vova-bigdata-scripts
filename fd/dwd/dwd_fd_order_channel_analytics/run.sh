@@ -25,4 +25,4 @@ hive -f ${shell_path}/dwd_fd_order_channel_analytics/create_table.hql
 #订单渠道分析表
 #hive -hiveconf pt=$pt -hiveconf mapred.job.name=fd_dwd_fd_order_channel_analytics_gaohaitao -f ${shell_path}/dwd_fd_order_channel_analytics/dwd_fd_order_channel_analytics.hql
 
-spark-sql --master yarn  --driver-cores 2 --driver-memory 2g  --executor-memory 10g --executor-cores 5 --num-executors 20  --conf "spark.app.name=fd_dwd_fd_order_goods_gaohaitao" --conf "spark.sql.parquet.writeLegacyFormat=true" -f ${shell_path}/dwd_fd_order_channel_analytics/dwd_fd_order_channel_analytics.hql
+spark-sql --conf "spark.app.name=fd_dwd_fd_order_goods_gaohaitao" --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.dynamicAllocation.minExecutors=30" --conf "spark.dynamicAllocation.initialExecutors=40" -f ${shell_path}/dwd_fd_order_channel_analytics/dwd_fd_order_channel_analytics.hql
