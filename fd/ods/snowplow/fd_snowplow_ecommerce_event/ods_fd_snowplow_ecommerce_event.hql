@@ -1,4 +1,4 @@
-create table if not exists ods.ods_fd_snowplow_ecommerce_event
+create table if not exists ods_fd_snowplow.ods_fd_snowplow_ecommerce_event
 (
     app_id               STRING,
     platform             STRING,
@@ -65,17 +65,17 @@ create table if not exists ods.ods_fd_snowplow_ecommerce_event
     ecommerce_product    struct<id : String, name : String, brand : String, category : String, coupon : String, position
                                 : BIGINT, price : Double, quantity : BIGINT, variant : String>
 ) partitioned by (
-    `dt` string,
+    `pt` string,
     `hour` int
     )
-    stored as parquet
-    location 's3a://vova-bd-test/warehouse_test/ods/ods_fd_snowplow_ecommerce_event';
+    ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
+    stored as parquet;
 
 ---
 set hive.exec.dynamic.partition.mode=nonstrict;
 ---
 
-INSERT OVERWRITE table ods.ods_fd_snowplow_ecommerce_event partition (dt, hour)
+INSERT OVERWRITE table ods_fd_snowplow.ods_fd_snowplow_ecommerce_event partition (pt, hour)
 SELECT app_id,
        platform,
        project,
@@ -138,9 +138,9 @@ SELECT app_id,
        url_virtual_goods_id,
        ecommerce_action,
        ep,
-       dt,
+       pt,
        hour
-from ods.ods_fd_snowplow_all_event
+from ods_fd_snowplow.ods_fd_snowplow_all_event
          LATERAL VIEW OUTER explode(ecommerce_product) ecommerce_product_info as ep
-where ${hiveconf:dt_filter}
+where ${hiveconf:pt_filter}
   and raw_event_name in ("action");

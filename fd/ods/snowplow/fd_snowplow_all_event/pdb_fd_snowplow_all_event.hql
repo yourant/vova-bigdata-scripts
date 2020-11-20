@@ -1,4 +1,4 @@
-CREATE table if not exists tmp.tmp_fd_snowplow_all_event
+create external table if not exists pdb.pdb_fd_snowplow_all_event
 (
     common_struct        struct<app_id :STRING, platform :STRING, project :STRING, platform_type :STRING, collector_ts
                                 :STRING, dvce_created_ts :STRING, dvce_sent_ts :STRING, etl_ts :STRING, derived_ts
@@ -31,10 +31,10 @@ CREATE table if not exists tmp.tmp_fd_snowplow_all_event
     ecommerce_product    array<struct<id : String, name : String, brand : String, category : String, coupon : String,
                                       position : BIGINT, price : Double, quantity : BIGINT, variant : String>>
 ) PARTITIONED BY (
-    `dt` string,
+    `pt` string,
     `hour` string)
     ROW FORMAT SERDE 'org.apache.hive.hcatalog.data.JsonSerDe'
     stored as textfile
     location '${hiveconf:flume_path}/fd/snowplow/snowplow_all_event';
 
-MSCK REPAIR TABLE tmp.tmp_fd_snowplow_all_event;
+MSCK REPAIR TABLE pdb.pdb_fd_snowplow_all_event;

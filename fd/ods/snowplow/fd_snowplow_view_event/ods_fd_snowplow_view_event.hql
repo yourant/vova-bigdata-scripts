@@ -1,4 +1,4 @@
-create  table if not exists ods.ods_fd_snowplow_view_event
+create  table if not exists ods_fd_snowplow.ods_fd_snowplow_view_event
 (
     app_id               STRING,
     platform             STRING,
@@ -61,17 +61,17 @@ create  table if not exists ods.ods_fd_snowplow_view_event
     url_route_sn         STRING,
     url_virtual_goods_id STRING
 ) partitioned by (
-    `dt` string,
+    `pt` string,
     `hour` int
     )
-    stored as parquet
-    location 's3a://vova-bd-test/warehouse_test/ods/ods_fd_snowplow_view_event';
+    ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
+    stored as parquet;
 
 ---
 set hive.exec.dynamic.partition.mode=nonstrict;
 ---
 
-INSERT OVERWRITE table ods.ods_fd_snowplow_view_event partition (dt, hour)
+INSERT OVERWRITE table ods_fd_snowplow.ods_fd_snowplow_view_event partition (pt, hour)
 SELECT app_id,
        platform,
        project,
@@ -132,8 +132,8 @@ SELECT app_id,
        referrer_page_code,
        url_route_sn,
        url_virtual_goods_id,
-       dt,
+       pt,
        hour
-from ods.ods_fd_snowplow_all_event
-where dt = '2020-10-19'
+from ods_fd_snowplow.ods_fd_snowplow_all_event
+where pt = ${hiveconf:pt_filter}
   and event_name in ("screen_view","page_view")
