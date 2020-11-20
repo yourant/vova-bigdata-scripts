@@ -1,8 +1,8 @@
 ---
 config:
   failure.emails: htgao@i9i8.com
-  retries: 1
-  retry.backoff: 100000
+  retries: 5
+  retry.backoff: 300000
 
 nodes:
   - name: fd_ods_vb_blg_start
@@ -16,40 +16,110 @@ nodes:
       - name: fd_ods_vb_blg_flow_start
         type: noop
 
+      - name: ods_fd_vb_order_extension_inc
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/inc_run.sh order_extension
+        dependsOn:
+          - fd_ods_vb_blg_flow_start
+      
+      - name: ods_fd_vb_order_extension_arc
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/arc_run.sh order_extension
+        dependsOn:
+          - ods_fd_vb_order_extension_inc
+
       - name: ods_fd_vb_order_extension
         type: command
         config:
           command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/run.sh order_extension
         dependsOn:
+          - ods_fd_vb_order_extension_arc
+
+      - name: ods_fd_vb_order_goods_inc
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/inc_run.sh order_goods
+        dependsOn:
           - fd_ods_vb_blg_flow_start
 
+      - name: ods_fd_vb_order_goods_arc
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/arc_run.sh order_goods
+        dependsOn:
+          - ods_fd_vb_order_goods_inc
+      
       - name: ods_fd_vb_order_goods
         type: command
         config:
           command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/run.sh order_goods
         dependsOn:
-          - fd_ods_vb_blg_flow_start
+          - ods_fd_vb_order_goods_arc
 
+      - name: ods_fd_vb_order_info_inc
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/inc_run.sh order_info
+        dependsOn:
+          - fd_ods_vb_blg_flow_start
+      
+      - name: ods_fd_vb_order_info_arc
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/arc_run.sh order_info
+        dependsOn:
+          - ods_fd_vb_order_info_inc
+      
       - name: ods_fd_vb_order_info
         type: command
         config:
           command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/run.sh order_info
         dependsOn:
-          - fd_ods_vb_blg_flow_start
+          - ods_fd_vb_order_info_arc
 
+      - name: ods_fd_vb_order_marketing_data_inc
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/inc_run.sh order_marketing_data
+        dependsOn:
+          - fd_ods_vb_blg_flow_start
+      
+      - name: ods_fd_vb_order_marketing_data_arc
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/arc_run.sh order_marketing_data
+        dependsOn:
+          - ods_fd_vb_order_marketing_data_inc
+      
       - name: ods_fd_vb_order_marketing_data
         type: command
         config:
           command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/run.sh order_marketing_data
         dependsOn:
+          - ods_fd_vb_order_marketing_data_arc
+      
+      - name: ods_fd_vb_order_status_change_history_inc
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/inc_run.sh order_status_change_history
+        dependsOn:
           - fd_ods_vb_blg_flow_start
+      
+      - name: ods_fd_vb_order_status_change_history_arc
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/arc_run.sh order_status_change_history
+        dependsOn:
+          - ods_fd_vb_order_status_change_history_inc
       
       - name: ods_fd_vb_order_status_change_history
         type: command
         config:
           command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/run.sh order_status_change_history
         dependsOn:
-          - fd_ods_vb_blg_flow_start
+          - ods_fd_vb_order_status_change_history_arc
 
     dependsOn:
       - fd_ods_vb_blg_start

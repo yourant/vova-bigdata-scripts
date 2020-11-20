@@ -186,7 +186,15 @@ from(
         payer_id
     from ods_fd_vb.ods_fd_order_info
 )oi
-left join (select user_id, sp_duid from ods_fd_vb.ods_fd_user_duid where sp_duid IS NOT NULL group by user_id, sp_duid) ud ON oi.user_id = ud.user_id
+left join (
+    select du.user_id,du.sp_duid
+    from (
+        select user_id, sp_duid,row_number () OVER (PARTITION BY user_id ORDER BY last_update_time DESC) AS rank
+          from ods_fd_vb.ods_fd_user_duid
+         where sp_duid IS NOT NULL
+    )du where du.rank = 1
+
+) ud ON oi.user_id = ud.user_id
 left join dim.dim_fd_user_agent ua ON oi.user_agent_id = ua.user_agent_id
 left join dim.dim_fd_region r ON oi.country_id = r.region_id
 left join dim.dim_fd_language l ON oi.language_id = l.language_id

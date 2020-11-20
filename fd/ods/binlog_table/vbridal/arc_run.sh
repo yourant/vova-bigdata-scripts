@@ -36,11 +36,20 @@ echo $pt_last
 
 #脚本路径
 shell_path="/mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal"
+sql_path=${shell_path}/${table_name}/${table_name}_arc.hql
 
-#snapshot表
-hive -hiveconf pt=$pt -f ${shell_path}/${table_name}/${table_name}_snapshot.hql
+sed -i '' 's/${hiveconf:pt}/'$pt'/g' ${sql_path}
+sed -i '' 's/${hiveconf:pt_last}/'$pt_last'/g' ${sql_path}
+
+#arc表
+#hive -hiveconf pt=$pt -hiveconf pt_last=$pt_last -f ${shell_path}/${table_name}/${table_name}_arc.hql
+spark-sql  --conf "spark.app.name=fd_order_info_binlog_gaohaitao" --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.dynamicAllocation.minExecutors=30" --conf "spark.dynamicAllocation.initialExecutors=40" -d pt=$pt  -d pt_last=$pt_last  -f ${shell_path}/${table_name}/${table_name}_arc.hql
+
+sed -i '' 's/'$pt'/${hiveconf:pt}/g' ${sql_path}
+sed -i '' 's/'$pt_last'/${hiveconf:$pt_last}/g' ${sql_path}
 
 if [ $? -ne 0 ];then
   exit 1
 fi
-echo "step: ${table_name}_snapshot table is finished !"
+echo "step: ${table_name}_arc table is finished !"
+
