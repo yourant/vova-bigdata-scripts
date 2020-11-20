@@ -36,7 +36,7 @@ echo $pt_last
 
 #脚本路径
 sql="
-alter table ods_fd_vb.ods_fd_order_goods_arc drop if not exists partition (pt='$pt');
+alter table ods_fd_vb.ods_fd_order_goods_arc drop if exists partition (pt='$pt');
 
 INSERT INTO table ods_fd_vb.ods_fd_order_goods_arc PARTITION (pt='$pt')
 select /*+ REPARTITION(10) */
