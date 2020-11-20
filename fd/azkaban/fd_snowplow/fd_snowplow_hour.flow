@@ -1,6 +1,6 @@
 ---
 config:
-  failure.emails: yunling@i9i8.com
+  failure.emails: jhlu@i9i8.com
   retries: 10
   retry.backoff: 300000
 
