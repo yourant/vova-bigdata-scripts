@@ -27,6 +27,6 @@ echo $dt_format
 echo $dt_format_last
 
 
-hive   -f /mnt/vova-bigdata-scripts/fd/dwb.dwb_fd_common_ctr_report/dwb_fd_common_ctr.hql
+hive   -f /mnt/vova-bigdata-scripts/fd/dwb.dwb_fd_common_ctr_rpt/dwb_fd_common_ctr.hql
 
-#hive -hiveconf dt=$dt -f /mnt/vova-bigdata-scripts/fd/dwb.dwb_fd_common_ctr_report/dwb_fd_common_ctr_report.hql
+#hive -hiveconf dt=$dt -f /mnt/vova-bigdata-scripts/fd/dwb.dwb_fd_common_ctr_rpt/dwb_fd_common_ctr_rpt.hql

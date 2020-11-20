@@ -1,6 +1,6 @@
 use dwb;
 
-CREATE table if not exists  dwb.dwb_fd_common_ctr_report
+CREATE table if not exists  dwb.dwb_fd_common_ctr_rpt
 (
     platform_type string,
     app_version string,
@@ -21,7 +21,7 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS orc
 TBLPROPERTIES ("orc.compress"="SNAPPY");
 
-insert overwrite table dwb.dwb_fd_common_ctr_report  partition(dt='${hiveconf:dt}')
+insert overwrite table dwb.dwb_fd_common_ctr_rpt  partition(dt='${hiveconf:dt}')
 SELECT
     platform_type,
     app_version,
