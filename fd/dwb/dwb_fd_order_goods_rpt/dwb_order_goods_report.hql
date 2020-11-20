@@ -1,4 +1,4 @@
-create view if not exists dwb.dwb_fd_order_goods_report_view as 
+create view if not exists dwb.dwb_fd_order_goods_rpt_view as
 select 
     order_id,
     user_id,

@@ -1,4 +1,4 @@
-CREATE table if not exists dwb.dwb_fd_banner_ctr_report(
+CREATE table if not exists dwb.dwb_fd_banner_ctr_rpt(
        project string,
        platform string,
        country string,
@@ -15,7 +15,7 @@ STORED AS ORC
 TBLPROPERTIES ("orc.compress"="SNAPPY");
 
 
-insert overwrite table dwb.dwb_fd_banner_ctr_report partition (dt='${hiveconf:dt}')
+insert overwrite table dwb.dwb_fd_banner_ctr_rpt partition (dt='${hiveconf:dt}')
 select project,
        platform,
        country,

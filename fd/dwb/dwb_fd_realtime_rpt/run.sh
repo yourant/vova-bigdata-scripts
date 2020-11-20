@@ -4,7 +4,7 @@ cd $home
 
 if [ ! -n "$1" ] ;then
     dt=`date  +%Y-%m-%d`
-   # dt_last=`date -d "-2 days" +%Y-%m-%d`
+    #dt_last=`date -d "-2 days" +%Y-%m-%d`
     #dt_format=`date -d "-1 days" +%Y%m%d`
     #dt_format_last=`date -d "-2 days" +%Y%m%d`
 else
@@ -14,9 +14,9 @@ else
         exit
     fi
     dt=$1
-    #dt_last=`date -d "$1 -1 days" +%Y-%m-%d`
-    #dt_format=`date -d "$1" +%Y%m%d`
-   # dt_format_last=`date -d "$1 -1 days" +%Y%m%d`
+    dt_last=`date -d "$1 -1 days" +%Y-%m-%d`
+    dt_format=`date -d "$1" +%Y%m%d`
+    dt_format_last=`date -d "$1 -1 days" +%Y%m%d`
 
 fi
 
@@ -26,12 +26,7 @@ echo $dt
 #echo $dt_format
 #echo $dt_format_last
 
-shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_last_7_days_goods_report"
+#脚本路径
+shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_realtime_rpt"
 
-#计算留存数据
-hive -hiveconf dt=$dt -f ${shell_path}/dwb_fd_last_7_days_goods_report.hql
-#如果脚本失败，则报错
-if [ $? -ne 0 ];then
-  exit 1
-fi
-echo "last_7_days_goods report  table is finished !"
+hive -hiveconf dt=$dt -f ${shell_path}/dwb_fd_realtime_gmv_orders_rpt.hql

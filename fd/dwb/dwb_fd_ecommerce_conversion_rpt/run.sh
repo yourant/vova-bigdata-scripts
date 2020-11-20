@@ -26,10 +26,10 @@ echo $dt_last
 echo $dt_format
 echo $dt_format_last
 
-shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_ecommerce_conversion_report"
+shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_ecommerce_conversion_rpt"
 
 #计算数据
-hive -hiveconf dt=$dt   -f ${shell_path}/dwb_fd_ecommerce_conversion_report.hql
+hive -hiveconf dt=$dt   -f ${shell_path}/dwb_fd_ecommerce_conversion_rpt.hql
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1

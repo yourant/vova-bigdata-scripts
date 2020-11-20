@@ -26,16 +26,19 @@ echo $dt_last
 echo $dt_format
 echo $dt_format_last
 
-hive -hiveconf dt=$dt -f /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_module_conversion_report/dwb_fd_common_module_interact.hql
-#如果脚本失败，则报错
-if [ $? -ne 0 ];then
-  exit 1
-fi
-echo "step1: common_module_interact table is finished !"
+shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_repurchase_rpt"
 
-hive -hiveconf dt=$dt -f  /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_module_conversion_report/dwb_fd_module_order_interact_report.hql
+hive -hiveconf dt=$dt -f ${shell_path}/dwd_fd_user_window_buy.hql
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
 fi
-echo "step2: report table is finished !"
+echo "step1: user_window_buy table is finished !"
+
+#计算访问来源数据
+hive -hiveconf dt=$dt -f ${shell_path}/dwb_fd_repurchase_rpt.hql
+#如果脚本失败，则报错
+if [ $? -ne 0 ];then
+  exit 1
+fi
+echo "step2: dwb_fd_repurchase_rpt  table is finished !"

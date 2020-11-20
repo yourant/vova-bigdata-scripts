@@ -3,8 +3,8 @@ home=`dirname "$0"`
 cd $home
 
 if [ ! -n "$1" ] ;then
-    dt=`date  +%Y-%m-%d`
-    #dt_last=`date -d "-2 days" +%Y-%m-%d`
+    dt=`date -d  +%Y-%m-%d`
+   #dt_last=`date -d "-2 days" +%Y-%m-%d`
     #dt_format=`date -d "-1 days" +%Y%m%d`
     #dt_format_last=`date -d "-2 days" +%Y%m%d`
 else
@@ -26,7 +26,9 @@ echo $dt
 #echo $dt_format
 #echo $dt_format_last
 
+#dwb层的表在s3上存放的路径
+s3_path="s3://vova-bd-test/warehouse_test/dwb"
 #脚本路径
-shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_real_time_report"
+shell_path="/mnt/vova-bigdata-scripts/fd/dwb.dwb_fd_realtime_rpt"
 
-hive -hiveconf dt=$dt -f ${shell_path}/dwb_fd_real_time_gmv_orders_report.hql
+hive -hiveconf dt=$dt  -hiveconf s3_path=$s3_path  -f ${shell_path}/dwb_fd_realtime_session_rpt.hql

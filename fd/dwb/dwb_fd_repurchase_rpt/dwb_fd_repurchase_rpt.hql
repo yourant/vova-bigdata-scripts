@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS dwb.dwb_fd_repurchase_report (
+CREATE TABLE IF NOT EXISTS dwb.dwb_fd_repurchase_rpt (
     project_name STRING COMMENT '网站组织'
     ,country_code STRING COMMENT '国家缩写'
     ,platform STRING COMMENT '用户访问平台类型（web or mob）'
@@ -20,7 +20,7 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS orc
 
 
-INSERT OVERWRITE TABLE dwb.dwb_fd_repurchase_report PARTITION (dt='${hiveconf:dt}')
+INSERT OVERWRITE TABLE dwb.dwb_fd_repurchase_rpt PARTITION (dt='${hiveconf:dt}')
 SELECT
     u1.project_name
     ,u1.country_code
@@ -42,7 +42,7 @@ WHERE
     u1.window_sig >= from_unixtime(unix_timestamp(add_months('${hiveconf:dt}', -6), 'yyyy-MM-dd'), 'yyyy-MM-01');
 
 
-CREATE VIEW IF NOT EXISTS dwb.dwb_fd_repurchase_report_view AS SELECT
+CREATE VIEW IF NOT EXISTS dwb.dwb_fd_repurchase_rpt_view AS SELECT
     `project_name`
     ,`country_code`
     ,`platform`
@@ -56,5 +56,5 @@ CREATE VIEW IF NOT EXISTS dwb.dwb_fd_repurchase_report_view AS SELECT
     ,`w4`
     ,`w5`
     ,`w6`
-FROM dwb.dwb_fd_repurchase_report t
-WHERE t.dt in (select max(dt) as max_dt from dwb.dwb_fd_repurchase_report);
+FROM dwb.dwb_fd_repurchase_rpt t
+WHERE t.dt in (select max(dt) as max_dt from dwb.dwb_fd_repurchase_rpt);

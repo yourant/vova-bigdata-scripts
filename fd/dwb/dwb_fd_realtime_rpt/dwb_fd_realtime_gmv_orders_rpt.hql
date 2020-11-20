@@ -1,4 +1,4 @@
-CREATE TABLE  if not exists dwb.dwb_fd_real_time_report (
+CREATE TABLE  if not exists dwb.dwb_fd_realtime_rpt (
   `derived_date` string,
   `project` string,
   `platform` string,
@@ -32,7 +32,7 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS orc
 TBLPROPERTIES ("orc.compress"="SNAPPY");
 
-insert overwrite table dwb.dwb_fd_real_time_report partition(dt='${hiveconf:dt}',class='orders_number')
+insert overwrite table dwb.dwb_fd_realtime_rpt partition(dt='${hiveconf:dt}',class='orders_number')
 SELECT
            paid_time,
            project,
@@ -100,7 +100,7 @@ group by paid_time, project, platform, country;
 
 
 
-insert overwrite table dwb.dwb_fd_real_time_report partition(dt='${hiveconf:dt}',class='gmv')
+insert overwrite table dwb.dwb_fd_realtime_rpt partition(dt='${hiveconf:dt}',class='gmv')
 SELECT
            paid_time,
            project,

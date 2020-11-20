@@ -1,4 +1,4 @@
-create view if not exists dwb.dwb_fd_page_data_report
+create view if not exists dwb.dwb_fd_page_data_rpt
 as select
        project,
        platform,

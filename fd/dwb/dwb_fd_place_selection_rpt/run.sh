@@ -26,19 +26,12 @@ echo $dt_last
 echo $dt_format
 echo $dt_format_last
 
-shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_repurchase_report"
+shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_place_selection_rpt"
 
-hive -hiveconf dt=$dt -f ${shell_path}/dwd_fd_user_window_buy.hql
+#计算留存数据
+hive -hiveconf dt=$dt -f ${shell_path}/dwb_fd_place_selection_rpt.hql
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
 fi
-echo "step1: user_window_buy table is finished !"
-
-#计算访问来源数据
-hive -hiveconf dt=$dt -f ${shell_path}/dwb_fd_repurchase_report.hql
-#如果脚本失败，则报错
-if [ $? -ne 0 ];then
-  exit 1
-fi
-echo "step2: dwb_fd_repurchase_report  table is finished !"
+echo "place selection report  table is finished !"

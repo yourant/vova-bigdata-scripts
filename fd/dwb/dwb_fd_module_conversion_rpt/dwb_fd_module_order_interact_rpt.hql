@@ -1,4 +1,4 @@
-CREATE TABLE if not EXISTS `dwb.dwb_fd_module_order_interact_report`(
+CREATE TABLE if not EXISTS `dwb.dwb_fd_module_order_interact_rpt`(
     `module_name` string COMMENT '', 
     `platform` string COMMENT '', 
     `project_name` string COMMENT '', 
@@ -27,7 +27,7 @@ TBLPROPERTIES ("orc.compress"="SNAPPY");
 
 
 
-INSERT overwrite table dwb.dwb_fd_module_order_interact_report partition (dt = '${hiveconf:dt}')
+INSERT overwrite table dwb.dwb_fd_module_order_interact_rpt partition (dt = '${hiveconf:dt}')
 SELECT s.module_name,
        s.platform_type,
        s.project                     as project_name,

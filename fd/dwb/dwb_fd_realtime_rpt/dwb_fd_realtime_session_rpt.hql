@@ -1,4 +1,4 @@
-insert overwrite table dwb.dwb_fd_real_time_report partition(dt='${hiveconf:dt}',class='sessions')
+insert overwrite table dwb.dwb_fd_realtime_rpt partition(dt='${hiveconf:dt}',class='sessions')
 
 select
     deriver_time,

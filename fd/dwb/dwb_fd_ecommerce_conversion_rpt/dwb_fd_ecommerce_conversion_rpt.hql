@@ -1,4 +1,4 @@
-CREATE TABLE  if not exists dwb.dwb_fd_ecommerce_conversion_report (
+CREATE TABLE  if not exists dwb.dwb_fd_ecommerce_conversion_rpt (
   `project_name` string ,
   `platform_type`  string,
   `country` string,
@@ -17,7 +17,7 @@ STORED AS ORC
 TBLPROPERTIES ("orc.compress"="SNAPPY");
 
 
-insert overwrite table dwb.dwb_fd_ecommerce_conversion_report partition (dt='${hiveconf:dt}')
+insert overwrite table dwb.dwb_fd_ecommerce_conversion_rpt partition (dt='${hiveconf:dt}')
 SELECT
     session_table.project,
     session_table.country,

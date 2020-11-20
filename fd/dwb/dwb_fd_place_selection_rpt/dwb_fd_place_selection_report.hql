@@ -1,5 +1,5 @@
 
-CREATE TABLE if not exists dwb.dwb_fd_place_selection_report (
+CREATE TABLE if not exists dwb.dwb_fd_place_selection_rpt (
   `data_type` string COMMENT '数据类型',
   `project_name` string COMMENT '网站组织名',
 
@@ -22,7 +22,7 @@ CREATE TABLE if not exists dwb.dwb_fd_place_selection_report (
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS ORC;
 
-insert overwrite table dwb.dwb_fd_place_selection_report 
+insert overwrite table dwb.dwb_fd_place_selection_rpt
 select
        'sales',
        'floryday',

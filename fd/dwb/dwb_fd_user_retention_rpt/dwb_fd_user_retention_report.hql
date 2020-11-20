@@ -1,4 +1,4 @@
-CREATE table if not exists dwb.dwb_fd_user_retention_report
+CREATE table if not exists dwb.dwb_fd_user_retention_rpt
 (
     prc_date                string comment '当前北京时间',
     platform_type           string comment '平台',
@@ -28,7 +28,7 @@ CREATE table if not exists dwb.dwb_fd_user_retention_report
     STORED AS ORC;
 
 
-insert overwrite table dwb.dwb_fd_user_retention_report partition (dt='${hiveconf:dt}')
+insert overwrite table dwb.dwb_fd_user_retention_rpt partition (dt='${hiveconf:dt}')
 select
        '${hiveconf:dt}',
        nvl(t1.platform_type,'all'),

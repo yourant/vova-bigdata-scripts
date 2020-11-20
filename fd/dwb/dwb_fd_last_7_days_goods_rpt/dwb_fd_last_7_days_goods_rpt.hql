@@ -1,4 +1,4 @@
-CREATE TABLE if not EXISTS dwb.dwb_fd_last_7_days_goods_report(
+CREATE TABLE if not EXISTS dwb.dwb_fd_last_7_days_goods_rpt(
     dt string comment'统计时间',
     project_name string comment'组织名称',
     goods_id bigint comment'商品ID',
@@ -9,7 +9,7 @@ STORED AS ORC
 TBLPROPERTIES ("orc.compress"="SNAPPY");
 
 
-insert overwrite table dwb.dwb_fd_last_7_days_goods_report
+insert overwrite table dwb.dwb_fd_last_7_days_goods_rpt
 SELECT 
     from_utc_timestamp(1000*unix_timestamp('${hiveconf:dt}'),'America/Los_Angeles'),
     oi.project_name,

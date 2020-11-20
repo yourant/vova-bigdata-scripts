@@ -26,12 +26,16 @@ echo $dt_last
 echo $dt_format
 echo $dt_format_last
 
-shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_banner_ctr_report"
-
-#计算留存数据
-hive -hiveconf dt=$dt -f ${shell_path}/dwb_fd_banner_ctr_report.hql
+hive -hiveconf dt=$dt -f /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_module_conversion_report/dwb_fd_common_module_interact.hql
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
 fi
-echo "banner report  table is finished !"
+echo "step1: common_module_interact table is finished !"
+
+hive -hiveconf dt=$dt -f  /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_module_conversion_report/dwb_fd_module_order_interact_rpt.hql
+#如果脚本失败，则报错
+if [ $? -ne 0 ];then
+  exit 1
+fi
+echo "step2: report table is finished !"
