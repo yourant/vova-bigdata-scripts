@@ -48,7 +48,7 @@ fi
 echo "step1: tmp_${table_name} table is finished !"
 
 #inc表
-hive -hiveconf pt=$pt -f ${shell_path}/${table_name}/${table_name}_inc.hql
+hive -hiveconf pt=$pt -hiveconf mapred.job.name=fd_${table_name}_gaohaitao -f ${shell_path}/${table_name}/${table_name}_inc.hql
 
 if [ $? -ne 0 ];then
   exit 1
