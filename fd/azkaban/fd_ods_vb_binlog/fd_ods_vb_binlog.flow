@@ -26,14 +26,14 @@ nodes:
       - name: ods_fd_vb_order_extension_arc
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/arc_run.sh order_extension
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/order_extension/arc_run.sh order_extension
         dependsOn:
           - ods_fd_vb_order_extension_inc
 
       - name: ods_fd_vb_order_extension
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/run.sh order_extension
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/order_extension/spt_run.sh order_extension
         dependsOn:
           - ods_fd_vb_order_extension_arc
 
@@ -47,14 +47,14 @@ nodes:
       - name: ods_fd_vb_order_goods_arc
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/arc_run.sh order_goods
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/order_goods/arc_run.sh order_goods
         dependsOn:
           - ods_fd_vb_order_goods_inc
       
       - name: ods_fd_vb_order_goods
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/run.sh order_goods
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/order_goods/spt_run.sh order_goods
         dependsOn:
           - ods_fd_vb_order_goods_arc
 
@@ -68,14 +68,14 @@ nodes:
       - name: ods_fd_vb_order_info_arc
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/arc_run.sh order_info
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/order_info/arc_run.sh order_info
         dependsOn:
           - ods_fd_vb_order_info_inc
       
       - name: ods_fd_vb_order_info
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/run.sh order_info
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/order_info/spt_run.sh order_info
         dependsOn:
           - ods_fd_vb_order_info_arc
 
@@ -89,14 +89,14 @@ nodes:
       - name: ods_fd_vb_order_marketing_data_arc
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/arc_run.sh order_marketing_data
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/order_marketing_data/arc_run.sh order_marketing_data
         dependsOn:
           - ods_fd_vb_order_marketing_data_inc
       
       - name: ods_fd_vb_order_marketing_data
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/run.sh order_marketing_data
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/order_marketing_data/spt_run.sh order_marketing_data
         dependsOn:
           - ods_fd_vb_order_marketing_data_arc
       
@@ -110,14 +110,14 @@ nodes:
       - name: ods_fd_vb_order_status_change_history_arc
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/arc_run.sh order_status_change_history
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/order_status_change_history/arc_run.sh order_status_change_history
         dependsOn:
           - ods_fd_vb_order_status_change_history_inc
       
       - name: ods_fd_vb_order_status_change_history
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/run.sh order_status_change_history
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/order_status_change_history/spt_run.sh order_status_change_history
         dependsOn:
           - ods_fd_vb_order_status_change_history_arc
 
