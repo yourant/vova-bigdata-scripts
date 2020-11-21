@@ -71,7 +71,7 @@ tab1.country_code,
 tab1.pay_status with cube;
 "
 
-spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"  --conf "spark.app.name=fd_dwd_newsletter_order_gaohaitao"   --conf "spark.sql.output.coalesceNum=30" --conf "spark.dynamicAllocation.minExecutors=10" --conf "spark.dynamicAllocation.initialExecutors=20" -e "$sql"
+spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"  --conf "spark.app.name=fd_dwd_country_order_gaohaitao"   --conf "spark.sql.output.coalesceNum=30" --conf "spark.dynamicAllocation.minExecutors=10" --conf "spark.dynamicAllocation.initialExecutors=20" -e "$sql"
 
 if [ $? -ne 0 ];then
   exit 1
