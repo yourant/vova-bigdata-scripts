@@ -181,8 +181,8 @@ null as user_new_first_success_order_id,
 null as user_new_first_success_coupon_order_id
 from (
 select user_id,order_id,country,user_agent_id,project_name
-from dwd.dwd_fd_order_info
-where date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) = '${pt}'
+from ods_fd_vb.ods_fd_order_info
+where date(to_utc_timestamp(order_time, 'America/Los_Angeles')) = '${pt}'
 and project_name is not null and project_name !=''
 )t1
 inner join (
