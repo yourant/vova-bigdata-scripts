@@ -1,24 +1,3 @@
-CREATE TABLE IF NOT EXISTS dwb.dwb_fd_app_user_coupon_order
-(
-    project_name     string comment '组织',
-    platform_type    string COMMENT '平台',
-    country_code 	 string COMMENT '国家',
-    coupon_config_id      string COMMENT '优惠券配置ID',
-    coupon_give           string COMMENT '红包发放量',
-    coupon_used           string COMMENT '红包使用量',
-    coupon_used_success   string COMMENT '红包使用成功量',
-    coupon_used_1h        string COMMENT '获取红包1h内使用量',
-    coupon_used_24h       string comment '获取红包1h-24h内使用量',
-    coupon_used_48h       string COMMENT '获取红包24h-48h内使用量',
-    coupon_used_72h       string COMMENT '获取红包48h-72h内使用量',
-    coupon_used_greater_72h  string COMMENT '获取红包大于72h内使用量'
-) COMMENT 'appp用户优惠券使用指标报表'
-PARTITIONED BY (pt STRING)
-ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS ORC
-TBLPROPERTIES ("orc.compress"="SNAPPY");
-
-
 set hive.exec.dynamic.partition.mode=nonstrict;
 set hive.exec.dynamic.partition=true;
 INSERT overwrite table dwb.dwb_fd_app_user_coupon_order PARTITION (pt)
@@ -66,8 +45,8 @@ from (
         from ods_fd_vb.ods_fd_ok_coupon
         where can_use_times = 1
         and length(coupon_code) = 16
-        and date(from_unixtime(coupon_gtime, 'yyyy-MM-dd HH:mm:ss')) >= date_sub('${hiveconf:pt}',30)
-        and date(from_unixtime(coupon_gtime, 'yyyy-MM-dd HH:mm:ss')) <= '${hiveconf:pt}'
+        and date(from_unixtime(coupon_gtime, 'yyyy-MM-dd HH:mm:ss')) >= date_sub('$pt',10)
+        and date(from_unixtime(coupon_gtime, 'yyyy-MM-dd HH:mm:ss')) <= '$pt'
       ) oc
       left join (select coupon_config_id,coupon_config_comment from ods_fd_vb.ods_fd_ok_coupon_config ) kcc ON oc.coupon_config_id = kcc.coupon_config_id
         
