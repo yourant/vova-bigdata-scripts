@@ -1,0 +1,75 @@
+---
+config:
+  failure.emails: yunling@i9i8.com
+  retries: 5
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_app_related_report_start
+    type: noop
+
+  - name: app_user_coupon_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: app_user_coupon_report_start
+        type: noop
+        
+      - name: judge_dwd_fd_order_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_info
+        dependsOn:
+          - app_user_coupon_report_start
+      
+      - name: judge_ods_fd_vb_user_check_in
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_user_check_in
+        dependsOn:
+          - app_user_coupon_report_start
+
+      - name: judge_ods_fd_vb_ok_coupon_config
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_ok_coupon_config
+        dependsOn:
+          - app_user_coupon_report_start
+      
+      - name: judge_ods_fd_vb_users
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_users
+        dependsOn:
+          - app_user_coupon_report_start
+
+      - name: app_user_coupon_report_base
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_user_coupon_rpt/run.sh ${dt}
+        dependsOn:
+          - judge_dwd_fd_order_info
+          - judge_ods_user_check_in
+          - judge_ods_ok_coupon_config
+          - judge_ods_users
+      
+      - name: app_user_coupon_report_caculate
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_user_coupon_rpt/run_rpt.sh ${dt}
+        dependsOn:
+          - app_user_coupon_report_base
+
+      - name: app_user_coupon_flow_end
+        type: noop
+        dependsOn:
+          - app_user_coupon_report_caculate
+
+    dependsOn:
+      - fd_app_related_report_start
+
+  - name: fd_app_related_report_end
+    type: noop
+    dependsOn:
+      - app_user_coupon_flow
