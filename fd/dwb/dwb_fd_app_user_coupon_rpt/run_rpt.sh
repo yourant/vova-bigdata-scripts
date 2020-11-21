@@ -23,7 +23,7 @@ echo $pt_last
 #app用户优惠券使用情况
 sql="
 set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite table dwb.dwb_fd_app_user_coupon_order_report PARTITION (pt)
+INSERT overwrite table dwb.dwb_fd_app_user_coupon_order_rpt PARTITION (pt)
 select
 /*+ REPARTITION(1) */
 project_name,
