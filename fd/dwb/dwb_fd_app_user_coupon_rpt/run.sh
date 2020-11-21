@@ -26,7 +26,6 @@ set hive.exec.dynamic.partition.mode=nonstrict;
 set hive.exec.dynamic.partition=true;
 INSERT overwrite table dwb.dwb_fd_app_user_coupon_order PARTITION (pt)
 select
-/*+ REPARTITION(2) */
 t1.project_name as project_name,
 COALESCE(t1.platform_type,t2.platform_type,'unknown') as platform_type,
 COALESCE(t1.country_code,t2.country_code,'unknown') as country_code,
@@ -122,13 +121,14 @@ where user_id is not null and user_id != 0
 left join (
 select
 user_id,
-TO_UTC_TIMESTAMP(order_time, 'America/Los_Angeles') as order_time,
+from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss') as order_time,
 coupon_code,
 project_name,
 pay_status
 from dwd.dwd_fd_order_info
 
 )t3 on t3.coupon_code = t1.coupon_code;
+
 "
 
 spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"  --conf "spark.app.name=fd_dwd_app_user_coupon_gaohaitao"   --conf "spark.sql.output.coalesceNum=30" --conf "spark.dynamicAllocation.minExecutors=30" --conf "spark.dynamicAllocation.initialExecutors=50" -e "$sql"
