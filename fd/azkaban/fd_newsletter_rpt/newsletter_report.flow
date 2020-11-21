@@ -56,3 +56,4 @@ nodes:
     type: noop
     dependsOn:
       - newsletter_send_report_caculate
+      - newsletter_order_report_caculate

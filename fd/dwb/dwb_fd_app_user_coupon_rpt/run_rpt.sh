@@ -52,7 +52,7 @@ count(distinct coupon_used_48h) as coupon_used_48h_cnt, /*获取红包24h-48h内
 count(distinct coupon_used_72h) as coupon_used_72h_cnt, /*获取红包48h-72h内使用量*/
 count(distinct coupon_used_greater_72h) as coupon_used_greater_72h_cnt /*获取红包大于72h内使用量*/
 from dwb.dwb_fd_app_user_coupon_order
-where pt >= date_sub('$pt',30)
+where pt >= date_sub('$pt',10)
 group by
 pt,
 project_name,

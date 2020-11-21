@@ -25,6 +25,7 @@ hive -f ${shell_path}/dwd_fd_order_channel_analytics/create_table.hql
 sql="
 INSERT OVERWRITE table dwd.dwd_fd_order_channel_analytics
 SELECT
+/*+ REPARTITION(5) */
 ogi.order_id,
 ogi.order_sn,
 ogi.user_id,
