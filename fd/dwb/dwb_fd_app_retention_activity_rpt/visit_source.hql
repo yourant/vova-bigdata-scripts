@@ -1,4 +1,4 @@
-insert overwrite table dwb.dwb_fd_app_retention_activity_rpt partition (pt = '${pt}',classify='visit_source')
+insert overwrite table dwb.dwb_fd_app_retention_activity partition (pt = '${pt}',classify='visit_source')
 select
 /*+ REPARTITION(1) */
 project,
