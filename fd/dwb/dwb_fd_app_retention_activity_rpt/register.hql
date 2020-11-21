@@ -243,7 +243,7 @@ where date(TO_UTC_TIMESTAMP(reg_time, 'America/Los_Angeles')) = '${pt}'
 left join (
 select user_id,order_id,country,user_agent_id,project_name,coupon_code,pay_status
 from ods_fd_vb.ods_fd_order_info
-where date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) = '${pt}'
+where date(to_utc_timestamp(order_time, 'America/Los_Angeles')) = '${pt}'
 and project_name !='' and project_name is not null
 )t3 on t2.user_id = t3.user_id
 inner join (
