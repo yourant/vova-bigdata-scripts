@@ -85,24 +85,59 @@ nodes:
       - name: app_retention_activity_report_start
         type: noop
         
-      - name: judge_fd_dw_ods_full_end
+      - name: judge_fd_dw_dwd_end
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fd_dw_ods_full_end
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fd_dw_dwd_end
         dependsOn:
           - app_retention_activity_report_start
 
-      - name: app_retention_report_caculate
+      - name: app_retention
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_retention_activity_report/run.sh ${dt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_retention_activity_rpt/retention_run.sh ${dt}
         dependsOn:
-          - judge_fd_dw_ods_full_end
+          - judge_fd_dw_dwd_end
+      
+      - name: app_checkin
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_retention_activity_rpt/checkin_run.sh ${dt}
+        dependsOn:
+          - app_retention
+      
+      - name: app_play
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_retention_activity_rpt/play_run.sh ${dt}
+        dependsOn:
+          - app_checkin
+      
+      - name: app_register
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_retention_activity_rpt/register_run.sh ${dt}
+        dependsOn:
+          - app_play
+      
+      - name: app_checkin_acc
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_retention_activity_rpt/checkin_acc_run.sh ${dt}
+        dependsOn:
+          - app_register
+      
+      - name: app_visit_source
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_retention_activity_rpt/visit_source_run.sh ${dt}
+        dependsOn:
+          - app_checkin_acc
 
       - name: app_retention_flow_end
         type: noop
         dependsOn:
-          - app_retention_report_caculate
+          - app_visit_source
 
     dependsOn:
       - fd_app_related_report_start
