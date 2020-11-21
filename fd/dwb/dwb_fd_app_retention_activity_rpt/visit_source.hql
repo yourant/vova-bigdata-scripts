@@ -1,5 +1,6 @@
 insert overwrite table dwb.dwb_fd_app_retention_activity_rpt partition (pt = '${pt}',classify='visit_source')
 select
+/*+ REPARTITION(1) */
 project,
 platform_type,
 country as country_code,
