@@ -3,8 +3,8 @@ set hive.exec.dynamic.partition=true;
 INSERT overwrite table dwb.dwb_fd_app_user_coupon_order PARTITION (pt)
 select
   t1.project_name as project_name,
-  Coalesce(t1.platform_type,t2.platform_type,'unknown') as platform_type,
-  Coalesce(t1.country_code,t2.country_code,'unknown') as country_code,
+  COALESCE(t1.platform_type,t2.platform_type,'unknown') as platform_type,
+  COALESCE(t1.country_code,t2.country_code,'unknown') as country_code,
   t1.coupon_config_id,
   t1.coupon_code as coupon_give,
   if(t3.coupon_code is not null,t1.coupon_code,null) as coupon_used,
@@ -23,9 +23,9 @@ from (
     tab1.coupon_config_comment as coupon_config_comment,
     tab1.coupon_gtime as coupon_gtime,
     tab1.coupon_give_date as coupon_give_date,
-    Coalesce(tab2.project_name,tab3.reg_site_name) as project_name,
-    Coalesce(tab2.platform,null) as platform_type,
-    Coalesce(tab2.country_code,null) as country_code,
+    COALESCE(tab2.project_name,tab3.reg_site_name) as project_name,
+    COALESCE(tab2.platform,null) as platform_type,
+    COALESCE(tab2.country_code,null) as country_code,
     date(tab1.coupon_give_date) as pt
   from (
       select 
@@ -97,7 +97,7 @@ left join (
 left join (
     select
         user_id,
-        TO_UTC_TIMESTAMP(order_time, 'America/Los_Angeles') as order_time,
+        from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss') as order_time,
         coupon_code,
         project_name,
         pay_status
