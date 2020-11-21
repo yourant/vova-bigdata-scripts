@@ -1,0 +1,45 @@
+---
+config:
+  failure.emails: jhlu@i9i8.com
+  retries: 10
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_daily_job_start
+    type: noop
+
+  - name: fd_dwd_daily_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_dwb_daily_flow_start
+        type: noop
+
+      - name: judge_ods_fd_snowplow_goods_event
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_snowplow_goods_event_hour
+        dependsOn:
+          - fd_dwb_daily_flow_start
+
+      - name: dwb_fd_landing_check
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_landing_check/run.sh "${pt}"
+        dependsOn:
+          - judge_ods_fd_snowplow_goods_event
+
+      - name: fd_dwb_daily_flow_end
+        type: noop
+        dependsOn:
+          - dwb_fd_landing_check
+
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: fd_hour_job_end
+    type: noop
+    dependsOn:
+      - fd_dwd_daily_flow
+
