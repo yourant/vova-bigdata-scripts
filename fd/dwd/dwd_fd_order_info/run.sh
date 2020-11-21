@@ -26,6 +26,7 @@ hive -f ${shell_path}/dwd_fd_order_info/create_table.hql
 sql="
 INSERT overwrite table dwd.dwd_fd_order_info
 select
+/*+ REPARTITION(5) */
 ud.sp_duid,
 oi.order_id,
 oi.party_id,

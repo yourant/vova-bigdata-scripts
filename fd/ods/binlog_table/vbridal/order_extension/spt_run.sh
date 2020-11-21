@@ -36,7 +36,7 @@ echo $pt_last
 
 sql="
 INSERT overwrite table ods_fd_vb.ods_fd_order_extension
-select /*+ REPARTITION(10) */ id, order_id, ext_name, ext_value, is_delete, last_update_time
+select /*+ REPARTITION(5) */ id, order_id, ext_name, ext_value, is_delete, last_update_time
 from ods_fd_vb.ods_fd_order_extension_arc
 where pt = '$pt';
 "
