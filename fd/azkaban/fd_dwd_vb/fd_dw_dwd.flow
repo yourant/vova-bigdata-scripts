@@ -48,9 +48,7 @@ nodes:
           - fd_dwd_vb_goods_flow_start
 
       - name: dwd_fd_goods_add_info
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_goods_add_info/run.sh
+        type: noop
         dependsOn:
           - judge_fd_dim_vb_end
           - judge_ods_snowplow

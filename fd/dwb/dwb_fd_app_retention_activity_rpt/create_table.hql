@@ -119,8 +119,7 @@ CREATE TABLE IF NOT EXISTS `dwb.dwb_fd_app_retention_activity_rpt`(
   )
 COMMENT '用户留存，签到，大转盘和用户注册相关数据，数据来源业务表以及打点数据'
 PARTITIONED BY (
-  `pt` string,
-  `classify` string)
+  `pt` string)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS ORC
 TBLPROPERTIES ("orc.compress"="SNAPPY");
