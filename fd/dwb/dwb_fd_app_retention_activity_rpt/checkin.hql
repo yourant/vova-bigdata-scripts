@@ -16,7 +16,7 @@ null,null,null,null,null,null,
 null,null,null,null
 from ods_fd_snowplow.ods_fd_snowplow_all_event
 where pt = '${pt}' and platform_type in ('android_app','ios_app') and page_code = 'myrewards'
-and project is not null and project !=''
+and project is not null and project !='' and country is not null and country != ''
 
 union
 select
@@ -39,7 +39,7 @@ from ods_fd_vb.ods_fd_user_check_in_log ul
 left join ods_fd_vb.ods_fd_users u on ul.user_id = u.user_id
 left join dim.dim_fd_region r on u.country = r.region_id
 where date(TO_UTC_TIMESTAMP(ul.time, 'America/Los_Angeles')) = '${pt}'
-and ul.project is not null and ul.project !=''
+and ul.project is not null and ul.project !='' and r.region_code is not null and r.region_code != ''
 
 union
 select
@@ -69,4 +69,4 @@ Row_Number() OVER (partition by ul.user_id ORDER BY ul.time asc) rank
 from ods_fd_vb.ods_fd_user_check_in_log ul
 left join ods_fd_vb.ods_fd_users u on ul.user_id = u.user_id
 left join dim.dim_fd_region r on u.country = r.region_id
-) t1 where t1.rank = 1 and t1.check_date = '${pt}';
+) t1 where t1.rank = 1 and t1.check_date = '${pt}' and t1.country_code !='' and t1.country_code is not null;
