@@ -4,7 +4,7 @@ set hive.exec.dynamic.partition.mode=nonstrict;
 
 INSERT OVERWRITE table ods_fd_snowplow.ods_fd_snowplow_view_event partition (pt, hour)
 SELECT
-/*+ REPARTITION(3) */
+/*+ REPARTITION(1) */
        app_id,
        platform,
        project,
