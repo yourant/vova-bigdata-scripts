@@ -21,7 +21,7 @@ shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_retention_activity_rpt"
 #hive -hiveconf pt=$pt -f ${shell_path}/checkin.hql
 
 spark-sql \
---conf "spark.app.name=dwd_fd_checkin_gaohaitao"   \
+--conf "spark.app.name=dwd_fd_app_retention_activity_rpt_gaohaitao"   \
 --conf "spark.dynamicAllocation.maxExecutors=60" \
 -d pt=$pt \
 -f ${shell_path}/app_retention_activity_rpt.hql
