@@ -134,10 +134,17 @@ nodes:
         dependsOn:
           - app_checkin_acc
 
+      - name: app_retention_activity_rpt
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_retention_activity_rpt/run.sh ${dt}
+        dependsOn:
+          - app_visit_source
+
       - name: app_retention_flow_end
         type: noop
         dependsOn:
-          - app_visit_source
+          - app_retention_activity_rpt
 
     dependsOn:
       - fd_app_related_report_start

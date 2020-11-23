@@ -59,3 +59,68 @@ PARTITIONED BY (
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS ORC
 TBLPROPERTIES ("orc.compress"="SNAPPY");
+
+
+
+CREATE TABLE IF NOT EXISTS `dwb.dwb_fd_app_retention_activity_rpt`(
+  `project` string COMMENT '组织',
+  `platform_type` string COMMENT '平台',
+  `country_code` string COMMENT '国家',
+  `retention_domain_userid_1d_cnt` bigint COMMENT '前一天留存的设备id-数',
+  `retention_domain_userid_2d_cnt` bigint COMMENT '当天和前一天都留存的设备id-数',
+  `login_domain_userid_1d_cnt` bigint COMMENT '前一天登录用户的设备id-数',
+  `login_domain_userid_2d_cnt` bigint COMMENT '当天和前一天都登录用户的设备id-数',
+  `checkin_domain_userid_1d_cnt` bigint COMMENT '前一天签到用户的设备id-数',
+  `checkin_domain_userid_2d_cnt` bigint COMMENT '当天和前天都签到用户的设备id-数',
+  `play_domain_userid_1d_cnt` bigint COMMENT '前一天玩大转盘用户的设备id-数',
+  `play_domain_userid_2d_cnt` bigint COMMENT '当天和前天都玩大转盘用户的设备id-数',
+  `checkin_points_domain_userid_cnt` bigint COMMENT '访问积分页用户(D)',
+  `checkin_userid_cnt` bigint COMMENT '签到用户(U)',
+  `checkin_userid_first_cnt` bigint COMMENT '首次签到用户(U) ',
+  `all_domain_userid_cnt` bigint COMMENT '当日用户总数(D)',
+  `play_visit_domain_userid_cnt` bigint COMMENT '大转盘用户(D)',
+  `play_join_userid_cnt` bigint COMMENT '抽奖用户(U)',
+  `play_first_join_userid_cnt` bigint COMMENT '首次抽奖用户(U)',
+  `play_points_join_userid_cnt` bigint COMMENT '积分抽奖用户(U)',
+  `all_session_cnt` bigint COMMENT '会话总数(S)',
+  `user_login_domain_userid_cnt` bigint COMMENT '登录用户(D)',
+  `user_register_domain_userid_cnt` bigint COMMENT '注册用户(D)',
+  `user_new_domain_userid_cnt` bigint COMMENT '新用户(D)',
+  `user_new_register_domain_userid_cnt` bigint COMMENT '新用户注册(D)',
+  `user_order_id_cnt` bigint COMMENT '订单量',
+  `user_new_order_id_cnt` bigint COMMENT '新用户订单量 ',
+  `all_check_user_id_cnt` bigint COMMENT '签到用户总数(U) ',
+  `all_cont_check_user_id_cnt` bigint COMMENT '连续签到用户总数(U)',
+  `acc_check_user_id_1th_cnt` bigint COMMENT '累计签到1次',
+  `acc_check_user_id_2th_cnt` bigint COMMENT '累计签到2次',
+  `acc_check_user_id_3th_cnt` bigint COMMENT '累计签到3次',
+  `acc_check_user_id_4th_cnt` bigint COMMENT '累计签到4次',
+  `acc_check_user_id_5th_cnt` bigint COMMENT '累计签到5次',
+  `acc_check_user_id_6th_cnt` bigint COMMENT '累计签到6次',
+  `acc_check_user_id_7th_cnt` bigint COMMENT '累计签到7次',
+  `acc_check_user_id_greater_7th_cnt` bigint COMMENT '累计签到大于7次',
+  `cont_check_user_id_2th_cnt` bigint COMMENT '连续签到2次',
+  `cont_check_user_id_3th_cnt` bigint COMMENT '连续签到3次',
+  `cont_check_user_id_4th_cnt` bigint COMMENT '连续签到4次',
+  `cont_check_user_id_5th_cnt` bigint COMMENT '连续签到5次',
+  `cont_check_user_id_6th_cnt` bigint COMMENT '连续签到6次',
+  `cont_check_user_id_7th_cnt` bigint COMMENT '连续签到7次',
+  `cont_check_user_id_greater_7th_cnt` bigint COMMENT '连续签到大于7次',
+  `points_domain_userid_cnt` bigint COMMENT '访问积分页次数(D)',
+  `points_homepage_domain_userid_cnt` bigint COMMENT '首页进入积分页次数(D)',
+  `points_userzone_domain_userid_cnt` bigint COMMENT '新人专区进入积分页次数(D)',
+  `points_account_domain_userid_cnt` bigint COMMENT '个人中心进入积分页次数(D) ',
+  `points_afterpay_domain_userid_cnt` bigint COMMENT '支付成功进入积分页次数(D)',
+  `points_others_domain_userid_cnt` bigint COMMENT '其它页进入积分页次数(D)',
+  `user_new_first_order_id_cnt` bigint COMMENT '新用户首单数',
+  `user_new_first_coupon_order_id_cnt` bigint COMMENT '新用户使用coupon首单数',
+  `user_new_first_success_order_id_cnt` bigint COMMENT '新用户支付成功首单数',
+  `user_new_first_success_coupon_order_id_cnt` bigint COMMENT '新用户使用coupon支付成功首单数'
+  )
+COMMENT '用户留存，签到，大转盘和用户注册相关数据，数据来源业务表以及打点数据'
+PARTITIONED BY (
+  `pt` string,
+  `classify` string)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
+STORED AS ORC
+TBLPROPERTIES ("orc.compress"="SNAPPY");
