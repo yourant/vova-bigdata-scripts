@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `dwb.dwb_fd_rpt_main_process`(
   `shipping_fee` decimal(15,4) COMMENT '订单运费')
 COMMENT '主流程数据表'
 PARTITIONED BY (
-  `dt` string)
+  `pt` string)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS ORC
 TBLPROPERTIES ("orc.compress"="SNAPPY");

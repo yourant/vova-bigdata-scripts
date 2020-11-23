@@ -9,12 +9,12 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_email_subscribe_arc(
         pn_bak string  ,
         language_id bigint
 ) comment '从tmp.tmp_email_subscribe同步过来的email_subscribe表'
-PARTITIONED BY (dt STRING )
+PARTITIONED BY (pt STRING )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 
-INSERT overwrite table ods_fd_vb.ods_fd_email_subscribe_arc PARTITION (dt='${hiveconf:dt}')
+INSERT overwrite table ods_fd_vb.ods_fd_email_subscribe_arc PARTITION (pt='${hiveconf:pt}')
 select
     es_id
     ,email

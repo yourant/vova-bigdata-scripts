@@ -12,12 +12,12 @@ CREATE TABLE IF NOT EXISTS ods_fd_ecshop.ods_fd_ecs_fd_sku_backups_inc (
     `color` string COMMENT 'sku颜色',
     `size` string COMMENT 'sku尺码'
 ) COMMENT 'fd相关组织所有有销量或者有库存的sku备份'
-PARTITIONED BY (dt STRING,hour STRING)
+PARTITIONED BY (pt STRING,hour STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_fd_sku_backups_inc  PARTITION (dt='${hiveconf:dt}',hour)
+INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_fd_sku_backups_inc  PARTITION (pt='${hiveconf:pt}',hour)
 select 
     o_raw.xid AS event_id,
     o_raw.`table` AS event_table,
@@ -33,4 +33,4 @@ select
 from tmp.tmp_fd_ecs_fd_sku_backups
 LATERAL VIEW json_tuple(value, 'kafka_table', 'kafka_ts', 'kafka_commit', 'kafka_xid','kafka_type' , 'kafka_old' , 'id', 'uniq_sku', 'sale_region', 'color', 'size') o_raw
 AS `table`, ts, `commit`, xid, type, old, id,uniq_sku,sale_region,color,size
-where dt = '${hiveconf:dt}';
+where pt = '${hiveconf:pt}';

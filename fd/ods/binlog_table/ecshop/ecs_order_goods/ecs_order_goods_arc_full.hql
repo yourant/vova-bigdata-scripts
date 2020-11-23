@@ -24,31 +24,31 @@ CREATE TABLE IF NOT EXISTS ods_fd_ecshop.ods_fd_ecs_order_goods_arc (
     return_bonus            string,
     biaoju_store_goods_id   bigint,
     subtitle                string,
-    addtional_shipping_fee  bigint,
+    adptional_shipping_fee  bigint,
     style_id                bigint,
     customized              string,
     status_id               string comment '商品新旧状态',
     added_fee               decimal(15, 4) comment '税率',
     external_order_goods_id bigint comment '网站order_goods_id'
 ) COMMENT '来自kafka erp订单每日增量数据'
-PARTITIONED BY (dt STRING,hour STRING)
+PARTITIONED BY (pt STRING,hour STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE
 ;
 
 
 set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_order_goods_arc PARTITION (dt = '${hiveconf:dt}')
+INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_order_goods_arc PARTITION (pt = '${hiveconf:pt}')
 select 
-     rec_id, order_id, goods_id, goods_name, goods_sn, goods_number, market_price, goods_price, goods_attr, send_number, is_real, extension_code, parent_id, is_gift, goods_status, action_amt, action_reason_cat, action_note, carrier_bill_id, provider_id, invoice_num, return_points, return_bonus, biaoju_store_goods_id, subtitle, addtional_shipping_fee, style_id, customized, status_id, added_fee, external_order_goods_i
+     rec_id, order_id, goods_id, goods_name, goods_sn, goods_number, market_price, goods_price, goods_attr, send_number, is_real, extension_code, parent_id, is_gift, goods_status, action_amt, action_reason_cat, action_note, carrier_bill_id, provider_id, invoice_num, return_points, return_bonus, biaoju_store_goods_id, subtitle, adptional_shipping_fee, style_id, customized, status_id, added_fee, external_order_goods_i
 from (
 
     select 
-        dt,rec_id, order_id, goods_id, goods_name, goods_sn, goods_number, market_price, goods_price, goods_attr, send_number, is_real, extension_code, parent_id, is_gift, goods_status, action_amt, action_reason_cat, action_note, carrier_bill_id, provider_id, invoice_num, return_points, return_bonus, biaoju_store_goods_id, subtitle, addtional_shipping_fee, style_id, customized, status_id, added_fee, external_order_goods_i,
-        row_number () OVER (PARTITION BY region_id ORDER BY dt DESC) AS rank
+        pt,rec_id, order_id, goods_id, goods_name, goods_sn, goods_number, market_price, goods_price, goods_attr, send_number, is_real, extension_code, parent_id, is_gift, goods_status, action_amt, action_reason_cat, action_note, carrier_bill_id, provider_id, invoice_num, return_points, return_bonus, biaoju_store_goods_id, subtitle, adptional_shipping_fee, style_id, customized, status_id, added_fee, external_order_goods_i,
+        row_number () OVER (PARTITION BY region_id ORDER BY pt DESC) AS rank
     from (
 
-        select  '2020-01-01' as dt,
+        select  '2020-01-01' as pt,
                 rec_id,
                 order_id,
                 goods_id,
@@ -74,7 +74,7 @@ from (
                 return_bonus,
                 biaoju_store_goods_id,
                 subtitle,
-                addtional_shipping_fee,
+                adptional_shipping_fee,
                 style_id,
                 customized,
                 status_id,
@@ -84,10 +84,10 @@ from (
 
         UNION
 
-        select dt,rec_id, order_id, goods_id, goods_name, goods_sn, goods_number, market_price, goods_price, goods_attr, send_number, is_real, extension_code, parent_id, is_gift, goods_status, action_amt, action_reason_cat, action_note, carrier_bill_id, provider_id, invoice_num, return_points, return_bonus, biaoju_store_goods_id, subtitle, addtional_shipping_fee, style_id, customized, status_id, added_fee, external_order_goods_i
+        select pt,rec_id, order_id, goods_id, goods_name, goods_sn, goods_number, market_price, goods_price, goods_attr, send_number, is_real, extension_code, parent_id, is_gift, goods_status, action_amt, action_reason_cat, action_note, carrier_bill_id, provider_id, invoice_num, return_points, return_bonus, biaoju_store_goods_id, subtitle, adptional_shipping_fee, style_id, customized, status_id, added_fee, external_order_goods_i
         from (
 
-            select  dt
+            select  pt
                     rec_id,
                     order_id,
                     goods_id,

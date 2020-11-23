@@ -6,16 +6,16 @@ home=`dirname "$0"`
 cd $home
 
 if [ ! -n "$1" ] ;then
-    #hive 表的dt
-    dt=`date -d "$dt -1 days" +%Y-%m-%d`
+    #hive 表的pt
+    pt=`date -d "$pt -1 days" +%Y-%m-%d`
 else
-    dt=$1
+    pt=$1
 fi
 
-dt_format=$(date -d "-1 day" +%Y%m%d)
+pt_format=$(date -d "-1 day" +%Y%m%d)
 
-echo $dt
-echo $dt_format
+echo $pt
+echo $pt_format
 
 #mysql配置信息
 db_host=${vbridal_db[db_host]}

@@ -27,12 +27,12 @@ CREATE TABLE  if not exists dwb.dwb_fd_realtime_rpt (
   `h21` DOUBLE ,
   `h22` DOUBLE ,
   `h23` DOUBLE 
-)partitioned by(dt string,class string)
+)partitioned by(pt string,class string)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS orc
 TBLPROPERTIES ("orc.compress"="SNAPPY");
 
-insert overwrite table dwb.dwb_fd_realtime_rpt partition(dt='${hiveconf:dt}',class='orders_number')
+insert overwrite table dwb.dwb_fd_realtime_rpt partition(pt='${hiveconf:pt}',class='orders_number')
 SELECT
            paid_time,
            project,
@@ -72,7 +72,7 @@ from
         gmv
 from
 (select          
-                 if(date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) between date_add('${hiveconf:dt}' ,-1) and '${hiveconf:dt}' ,date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')),date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')))      as paid_time,
+                 if(date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) between date_add('${hiveconf:pt}' ,-1) and '${hiveconf:pt}' ,date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')),date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')))      as paid_time,
                  oi.project_name     as project,
                  is_app,
                  device_type,
@@ -90,8 +90,8 @@ from
 from ods_fd_vb.ods_fd_order_info oi
 left join  ods_fd_vb.ods_fd_user_agent_analysis uaa on oi.user_agent_id=uaa.user_agent_id
 left join dim.dim_fd_region r on r.region_id = oi.country
-where (date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) >= date_add('${hiveconf:dt}' ,-1)
-or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) >= date_add('${hiveconf:dt}',-1)) and pay_status=2 
+where (date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) >= date_add('${hiveconf:pt}' ,-1)
+or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) >= date_add('${hiveconf:pt}',-1)) and pay_status=2
 and  email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
 )tab1
 )tab2
@@ -100,7 +100,7 @@ group by paid_time, project, platform, country;
 
 
 
-insert overwrite table dwb.dwb_fd_realtime_rpt partition(dt='${hiveconf:dt}',class='gmv')
+insert overwrite table dwb.dwb_fd_realtime_rpt partition(pt='${hiveconf:pt}',class='gmv')
 SELECT
            paid_time,
            project,
@@ -140,7 +140,7 @@ from
         gmv
 from
 (select
-                 if(date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) between date_add('${hiveconf:dt}' ,-1) and '${hiveconf:dt}' ,date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')),date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')))      as paid_time,
+                 if(date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) between date_add('${hiveconf:pt}' ,-1) and '${hiveconf:pt}' ,date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')),date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')))      as paid_time,
                  oi.project_name     as project,
                  is_app,
                  device_type,
@@ -158,8 +158,8 @@ from
 from ods_fd_vb.ods_fd_order_info oi
 left join   ods_fd_vb.ods_fd_user_agent_analysis  uaa on oi.user_agent_id=uaa.user_agent_id
 left join dim.dim_fd_region r on r.region_id = oi.country
-where (date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) >= date_add('${hiveconf:dt}' ,-1)
-or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) >= date_add('${hiveconf:dt}',-1)) and pay_status=2
+where (date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) >= date_add('${hiveconf:pt}' ,-1)
+or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) >= date_add('${hiveconf:pt}',-1)) and pay_status=2
 and  email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
 )tab1
 )tab2

@@ -5,8 +5,8 @@ home=`dirname "$0"`
 cd $home
 
 if [ ! -n "$1" ] ;then
-    dt=`date -d "-1 days" +%Y-%m-%d`
-    dt_last=`date -d "-2 days" +%Y-%m-%d`
+    pt=`date -d "-1 days" +%Y-%m-%d`
+    pt_last=`date -d "-2 days" +%Y-%m-%d`
     dt_format=`date -d "-1 days" +%Y%m%d`
     dt_format_last=`date -d "-2 days" +%Y%m%d`
 else

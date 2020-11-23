@@ -11,13 +11,13 @@ CREATE TABLE IF NOT EXISTS ods_fd_ecshop.ods_fd_ecs_order_attribute_inc (
     attr_name string COMMENT '扩展名',
     attr_value string COMMENT '扩展值'
 ) COMMENT '来自kafka erp表每日增量数据'
-PARTITIONED BY (dt STRING,hour STRING)
+PARTITIONED BY (pt STRING,hour STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE
 ;
 
 set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_order_attribute_inc  PARTITION (dt='${hiveconf:dt}',hour)
+INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_order_attribute_inc  PARTITION (pt='${hiveconf:pt}',hour)
 select 
     o_raw.xid AS event_id
     ,o_raw.`table` AS event_table
@@ -32,4 +32,4 @@ select
 from tmp.tmp_fd_ecs_order_attribute
 LATERAL VIEW json_tuple(value, 'kafka_table', 'kafka_ts', 'kafka_commit', 'kafka_xid','kafka_type' , 'kafka_old' , 'attribute_id', 'order_id', 'attr_name', 'attr_value') o_raw
 AS `table`, ts, `commit`, xid, type, old, attribute_id, order_id, attr_name, attr_value
-where dt = '${hiveconf:dt}';
+where pt = '${hiveconf:pt}';

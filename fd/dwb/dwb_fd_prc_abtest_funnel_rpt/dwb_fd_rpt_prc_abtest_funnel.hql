@@ -60,7 +60,7 @@ from (
                 app_version,
                 session_id,
                 abtest
-         from ods.ods_fd_prc_snowplow_all_event
+         from ods_fd_snowplow.ods_fd_prc_snowplow_all_event
          where event_name in ('page_view', 'screen_view', 'add', 'remove', 'checkout', 'checkout_option', 'purchase')
            and abtest != ''
            and abtest != '-'

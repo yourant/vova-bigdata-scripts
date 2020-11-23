@@ -12,4 +12,4 @@ select
     goods_id,
     project_name
 from ods_fd_vb.ods_fd_virtual_goods_arc
-where dt = '${hiveconf:dt}';
+where pt = '${hiveconf:pt}';

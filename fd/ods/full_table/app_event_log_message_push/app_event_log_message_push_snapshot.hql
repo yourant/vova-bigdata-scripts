@@ -28,6 +28,6 @@ STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_vb.ods_fd_app_event_log_message_push
-select `(dt)?+.+`
+select `(pt)?+.+`
 from ods_fd_vb.ods_fd_app_event_log_message_push_arc
-where dt = '${hiveconf:dt}';
+where pt = '${hiveconf:pt}';

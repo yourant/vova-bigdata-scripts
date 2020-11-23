@@ -5,18 +5,18 @@ home=`dirname "$0"`
 cd $home
 
 if [ ! -n "$1" ] ;then
-    #hive 表的dt
-    dt=`date -d "$dt -1 days" +%Y-%m-%d`
+    #hive 表的pt
+    pt=`date -d "$pt -1 days" +%Y-%m-%d`
 else
-    dt=$1
+    pt=$1
 fi
 
 pt=$(date -d "-1 day" +%Y-%m-%d)
 
-one_begin=`date -d "$dt -1 month" +%Y-%m-01`
-one_end=`date -d "$dt -1 month" +%Y-%m-31`
+one_begin=`date -d "$pt -1 month" +%Y-%m-01`
+one_end=`date -d "$pt -1 month" +%Y-%m-31`
 
-echo $dt
+echo $pt
 echo $one_begin
 echo $one_end
 

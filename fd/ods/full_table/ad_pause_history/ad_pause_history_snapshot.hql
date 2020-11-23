@@ -14,5 +14,5 @@ STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_vb.ods_fd_ad_pause_history
-select `(dt)?+.+` from ods_fd_vb.ods_fd_ad_pause_history_arc 
-where dt = '${hiveconf:dt}';
+select `(pt)?+.+` from ods_fd_vb.ods_fd_ad_pause_history_arc
+where pt = '${hiveconf:pt}';

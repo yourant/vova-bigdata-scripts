@@ -25,6 +25,6 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_goods_test_goods
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_vb.ods_fd_goods_test_goods
-select `(dt)?+.+`
+select `(pt)?+.+`
 from ods_fd_vb.ods_fd_goods_test_goods_arc
-where dt = '${hiveconf:dt}';
+where pt = '${hiveconf:pt}';

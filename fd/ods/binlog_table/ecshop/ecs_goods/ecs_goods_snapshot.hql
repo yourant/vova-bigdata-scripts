@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_ecshop.ods_fd_ecs_goods (
     boost                  float,
     limit_integral         bigint,
     top_cat_id             bigint,
-    addtional_shipping_fee bigint,
+    adptional_shipping_fee bigint,
     vip_price              decimal(15, 4),
     is_vip                 bigint,
     is_remains             bigint,
@@ -91,4 +91,4 @@ STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_goods
-select `(dt)?+.+` from ods_fd_ecshop.ods_fd_ecs_goods_arc where dt = '${hiveconf:dt}';
+select `(pt)?+.+` from ods_fd_ecshop.ods_fd_ecs_goods_arc where pt = '${hiveconf:pt}';

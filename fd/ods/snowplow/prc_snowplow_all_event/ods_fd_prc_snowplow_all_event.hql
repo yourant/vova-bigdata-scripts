@@ -75,14 +75,14 @@ CREATE table if not exists ods.ods_fd_prc_snowplow_all_event
     ecommerce_product    array<struct<id : String, name : String, brand : String, category : String, coupon : String,
                                       position : BIGINT, price : Double, quantity : BIGINT, variant : String>>
 ) COMMENT '打点数据prc'
-PARTITIONED BY (dt STRING)
+PARTITIONED BY (pt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUET
 TBLPROPERTIES ("parquet.compress"="SNAPPY");
 
 MSCK REPAIR TABLE tmp.tmp_fd_snowplow_all_event;
 
-INSERT OVERWRITE table ods.ods_fd_prc_snowplow_all_event partition (dt = '${hiveconf:dt}')
+INSERT OVERWRITE table ods.ods_fd_prc_snowplow_all_event partition (pt = '${hiveconf:pt}')
 SELECT common_struct.app_id,
        common_struct.platform,
        common_struct.project,
@@ -161,6 +161,6 @@ SELECT common_struct.app_id,
        ecommerce_action,
        ecommerce_product
 from tmp.tmp_fd_snowplow_all_event
-where dt >= date_sub('${hiveconf:dt}',1) and dt <= '${hiveconf:dt}'
+where pt >= date_sub('${hiveconf:pt}',1) and pt <= '${hiveconf:pt}'
 and common_struct.app_id is not null 
-and to_date(from_utc_timestamp(common_struct.derived_ts,'PRC')) = '${hiveconf:dt}';
+and to_date(from_utc_timestamp(common_struct.derived_ts,'PRC')) = '${hiveconf:pt}';

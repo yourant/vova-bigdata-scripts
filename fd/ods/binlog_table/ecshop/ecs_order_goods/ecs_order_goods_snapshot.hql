@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_ecshop.ods_fd_ecs_order_goods (
     return_bonus            string,
     biaoju_store_goods_id   bigint,
     subtitle                string,
-    addtional_shipping_fee  bigint,
+    adptional_shipping_fee  bigint,
     style_id                bigint,
     customized              string,
     status_id               string comment '商品新旧状态',
@@ -36,4 +36,4 @@ STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_order_goods
-select `(dt)?+.+` from ods_fd_ecshop.ods_fd_ecs_order_goods_arc where dt = '${hiveconf:dt}';
+select `(pt)?+.+` from ods_fd_ecshop.ods_fd_ecs_order_goods_arc where pt = '${hiveconf:pt}';

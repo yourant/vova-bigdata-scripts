@@ -13,6 +13,6 @@ as select
             end  as is_new_user,
        page_code,
        session_id,
-       dt
+       pt
 from ods.ods_fd_snowplow_all_event
 where event_name in('page_view','screen_view')

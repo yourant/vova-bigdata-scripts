@@ -24,4 +24,4 @@ STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_vb.ods_fd_app_message_info
-select `(dt)?+.+` from ods_fd_vb.ods_fd_app_message_info_arc where dt = '${hiveconf:dt}';
+select `(pt)?+.+` from ods_fd_vb.ods_fd_app_message_info_arc where pt = '${hiveconf:pt}';

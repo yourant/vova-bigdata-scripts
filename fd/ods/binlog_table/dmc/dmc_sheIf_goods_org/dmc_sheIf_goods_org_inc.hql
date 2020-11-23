@@ -27,12 +27,12 @@ CREATE TABLE IF NOT EXISTS ods_fd_dmc.ods_fd_dmc_sheIf_goods_org_inc (
     `test_location` string comment '测试坑位',
     `test_note` string comment '测试备注'
 ) COMMENT '上架商品对应组织'
-PARTITIONED BY (dt STRING,hour STRING)
+PARTITIONED BY (pt STRING,hour STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite table ods_fd_dmc.ods_fd_dmc_sheIf_goods_org_inc  PARTITION (dt='${hiveconf:dt}',hour)
+INSERT overwrite table ods_fd_dmc.ods_fd_dmc_sheIf_goods_org_inc  PARTITION (pt='${hiveconf:pt}',hour)
 select 
     o_raw.xid AS event_id,
     o_raw.`table` AS event_table,
@@ -63,4 +63,4 @@ select
 from tmp.tmp_fd_dmc_sheIf_goods_org
 LATERAL VIEW json_tuple(value, 'kafka_table', 'kafka_ts', 'kafka_commit', 'kafka_xid','kafka_type' , 'kafka_old' , 'id', 'org_name', 'virtual_id', 'sheIf_goods_id', 'updated_at', 'created_at', 'deleted_at', 'party_id', 'is_sheIf', 'operate_price_user_email', 'operate_price_user', 'sheIf_time', 'sheIf_user_email', 'sheIf_user', 'sheIf_note', 'extend_goods_id', 'pg_id', 'status', 'test_location', 'test_note') o_raw
 AS `table`, ts, `commit`, xid, type, old, id, org_name, virtual_id, sheIf_goods_id, updated_at, created_at, deleted_at, party_id, is_sheIf, operate_price_user_email, operate_price_user, sheIf_time, sheIf_user_email, sheIf_user, sheIf_note, extend_goods_id, pg_id, status, test_location, test_note
-where dt = '${hiveconf:dt}';
+where pt = '${hiveconf:pt}';

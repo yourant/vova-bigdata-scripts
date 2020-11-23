@@ -20,12 +20,12 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_goods_test_goods_arc
     `is_auto`            bigint COMMENT '',
     `type_name`          bigint COMMENT ''
 ) comment 'vbridal.goods_test_goods表'
-    PARTITIONED BY (dt STRING )
+    PARTITIONED BY (pt STRING )
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
     STORED AS PARQUETFILE;
 
 
-INSERT overwrite table ods_fd_vb.ods_fd_goods_test_goods_arc PARTITION (dt = '${hiveconf:dt}')
+INSERT overwrite table ods_fd_vb.ods_fd_goods_test_goods_arc PARTITION (pt = '${hiveconf:pt}')
 select id,
        goods_id,
        pipeline_id,

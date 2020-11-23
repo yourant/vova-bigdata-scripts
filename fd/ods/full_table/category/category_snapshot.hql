@@ -21,6 +21,6 @@ STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_vb.ods_fd_category
-select `(dt)?+.+` 
+select `(pt)?+.+`
 from ods_fd_vb.ods_fd_category_arc 
 where dt = '${hiveconf:dt}';

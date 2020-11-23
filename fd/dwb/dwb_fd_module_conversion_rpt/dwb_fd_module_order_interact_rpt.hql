@@ -20,14 +20,14 @@ CREATE TABLE if not EXISTS `dwb.dwb_fd_module_order_interact_rpt`(
     `goods_price` decimal(10,2) COMMENT '')
 COMMENT 'banner'
 PARTITIONED BY ( 
-`dt` string)
+`pt` string)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS orc
 TBLPROPERTIES ("orc.compress"="SNAPPY");
 
 
 
-INSERT overwrite table dwb.dwb_fd_module_order_interact_rpt partition (dt = '${hiveconf:dt}')
+INSERT overwrite table dwb.dwb_fd_module_order_interact_rpt partition (pt = '${hiveconf:pt}')
 SELECT s.module_name,
        s.platform_type,
        s.project                     as project_name,
@@ -58,7 +58,7 @@ FROM (
                 IF(sum(IF(event_step = 'module_pv', 1, 0)) > 0, domain_userid, '')             as pv_duid,
                 IF(sum(IF(event_step in ('add', 'goods_click'), 1, 0)) > 0, domain_userid, '') as action_duid
          FROM dwb.dwb_fd_common_module_interact
-         WHERE dt = '${hiveconf:dt}' AND module_name IS NOT NULL AND module_name <> ''
+         WHERE pt = '${hiveconf:pt}' AND module_name IS NOT NULL AND module_name <> ''
          group by module_name, domain_userid
      ) s
          LEFT JOIN (
@@ -83,8 +83,8 @@ FROM (
                     collect_set(country)[0]        as country
              FROM dwb.dwb_fd_common_module_interact
              WHERE event_name IN ('goods_click', 'add')
-               and dt >= date_add('${hiveconf:dt}',-3)
-               and dt <= '${hiveconf:dt}'
+               and pt >= date_add('${hiveconf:pt}',-3)
+               and pt <= '${hiveconf:pt}'
              GROUP BY module_name, domain_userid, goods_id
          ) interact_duids
              INNER JOIN (
@@ -100,9 +100,9 @@ FROM (
                shipping_fee,
                project_name
         FROM dwd.dwd_fd_order_goods_info
-        WHERE dt = '${hiveconf:dt}' and (date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:dt}' 
-or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:dt}'
-or date(from_unixtime(event_date,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:dt}')
+        WHERE pt = '${hiveconf:pt}' and (date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:pt}' 
+or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:pt}'
+or date(from_unixtime(event_date,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:pt}')
     ) order_duids ON order_duids.sp_duid = interact_duids.domain_userid
         AND order_duids.virtual_goods_id = interact_duids.goods_id
 ) t ON t.module_name = s.module_name AND t.domain_userid = s.domain_userid;

@@ -17,7 +17,7 @@ SELECT
     element_event_struct.element_type AS element_type,
     IF(event_name = 'common_impression', session_id, NULL) AS impression_session_id,
     IF(event_name = 'common_click', session_id, NULL) AS click_session_id,
-    dt
-from ods.ods_fd_snowplow_element_event
+    pt
+from ods_fd_snowplow.ods_fd_snowplow_element_event
 where event_name in ('common_impression', 'common_click');
 

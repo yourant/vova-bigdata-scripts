@@ -24,12 +24,12 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_ok_coupon_config_arc
   `currency` string COMMENT 'USD HKD',
   `coupon_config_minimum_goods_number` bigint
  )comment '红包'
-PARTITIONED BY (dt STRING ) 
+PARTITIONED BY (pt STRING )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 
-INSERT overwrite table ods_fd_vb.ods_fd_ok_coupon_config_arc PARTITION (dt='${hiveconf:dt}')
+INSERT overwrite table ods_fd_vb.ods_fd_ok_coupon_config_arc PARTITION (pt='${hiveconf:pt}')
 select  
 coupon_config_id,
 site_id,

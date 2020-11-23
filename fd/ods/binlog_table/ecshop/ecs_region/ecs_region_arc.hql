@@ -6,13 +6,13 @@ CREATE TABLE IF NOT EXISTS ods_fd_ecshop.ods_fd_ecs_region_arc (
 	region_cn_name string,
 	region_code string
 ) COMMENT '来自kafka erp currency_conversion数据'
-PARTITIONED BY (dt STRING)
+PARTITIONED BY (pt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 
 set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_region_arc PARTITION (dt = '${hiveconf:dt}')
+INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_region_arc PARTITION (pt = '${hiveconf:dt}')
 select 
      region_id, parent_id, region_name, region_type, region_cn_name, region_code
 from (

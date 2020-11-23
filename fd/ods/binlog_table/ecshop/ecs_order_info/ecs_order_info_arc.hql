@@ -100,23 +100,23 @@ CREATE TABLE IF NOT EXISTS ods_fd_ecshop.ods_fd_ecs_order_info_arc (
     `track_status` string COMMENT '订单跟踪状态，t代表跟踪中，f代表跟踪完成',
     `defray_time` bigint COMMENT '字段当前用作order_action首次变为付款时间，以后考虑用作网站客户真实付款时间(北京)'
 ) COMMENT '来自kafka erp订单每日增量数据'
-PARTITIONED BY (dt STRING)
+PARTITIONED BY (pt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 
 set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_order_info_arc PARTITION (dt = '${hiveconf:dt}')
+INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_order_info_arc PARTITION (pt = '${hiveconf:pt}')
 select 
      order_id, event_date, party_id, order_sn, user_id, order_time, order_status, shipping_status, pay_status, consignee, sex, country, province, city, district, address, zipcode, tel, mobile, email, best_time, sign_building, postscript, shipping_id, shipping_name, pay_id, pay_name, how_oos, how_surplus, pack_name, card_name, card_message, inv_payee, inv_content, inv_address, inv_zipcode, inv_phone, goods_amount, shipping_fee, duty_fee, insure_fee, shipping_proxy_fee, pay_fee, pack_fee, card_fee, money_paid, surplus, integral, integral_money, bonus, order_amount, from_ad, referer, confirm_time, pay_time, shipping_time, reserved_time, pack_id, card_id, bonus_id, invoice_no, extension_code, extension_id, to_buyer, pay_note, invoice_status, carrier_bill_id, receiving_time, biaoju_store_id, parent_order_id, track_id, real_paid, real_shipping_fee, is_shipping_fee_clear, is_order_amount_clear, is_ship_emailed, proxy_amount, pay_method, is_back, is_finance_clear, finance_clear_type, handle_time, start_shipping_time, end_shipping_time, shortage_status, is_shortage_await, order_type_id, is_display, special_type_id, misc_fee, additional_amount, distributor_id, taobao_order_sn, distribution_purchase_order_sn, need_invoice, facility_id, currency, language_id, track_status, defray_time
 from (
 
     select 
-        dt,order_id, event_date, party_id, order_sn, user_id, order_time, order_status, shipping_status, pay_status, consignee, sex, country, province, city, district, address, zipcode, tel, mobile, email, best_time, sign_building, postscript, shipping_id, shipping_name, pay_id, pay_name, how_oos, how_surplus, pack_name, card_name, card_message, inv_payee, inv_content, inv_address, inv_zipcode, inv_phone, goods_amount, shipping_fee, duty_fee, insure_fee, shipping_proxy_fee, pay_fee, pack_fee, card_fee, money_paid, surplus, integral, integral_money, bonus, order_amount, from_ad, referer, confirm_time, pay_time, shipping_time, reserved_time, pack_id, card_id, bonus_id, invoice_no, extension_code, extension_id, to_buyer, pay_note, invoice_status, carrier_bill_id, receiving_time, biaoju_store_id, parent_order_id, track_id, real_paid, real_shipping_fee, is_shipping_fee_clear, is_order_amount_clear, is_ship_emailed, proxy_amount, pay_method, is_back, is_finance_clear, finance_clear_type, handle_time, start_shipping_time, end_shipping_time, shortage_status, is_shortage_await, order_type_id, is_display, special_type_id, misc_fee, additional_amount, distributor_id, taobao_order_sn, distribution_purchase_order_sn, need_invoice, facility_id, currency, language_id, track_status, defray_time,
-        row_number () OVER (PARTITION BY order_id ORDER BY dt DESC) AS rank
+        pt,order_id, event_date, party_id, order_sn, user_id, order_time, order_status, shipping_status, pay_status, consignee, sex, country, province, city, district, address, zipcode, tel, mobile, email, best_time, sign_building, postscript, shipping_id, shipping_name, pay_id, pay_name, how_oos, how_surplus, pack_name, card_name, card_message, inv_payee, inv_content, inv_address, inv_zipcode, inv_phone, goods_amount, shipping_fee, duty_fee, insure_fee, shipping_proxy_fee, pay_fee, pack_fee, card_fee, money_paid, surplus, integral, integral_money, bonus, order_amount, from_ad, referer, confirm_time, pay_time, shipping_time, reserved_time, pack_id, card_id, bonus_id, invoice_no, extension_code, extension_id, to_buyer, pay_note, invoice_status, carrier_bill_id, receiving_time, biaoju_store_id, parent_order_id, track_id, real_paid, real_shipping_fee, is_shipping_fee_clear, is_order_amount_clear, is_ship_emailed, proxy_amount, pay_method, is_back, is_finance_clear, finance_clear_type, handle_time, start_shipping_time, end_shipping_time, shortage_status, is_shortage_await, order_type_id, is_display, special_type_id, misc_fee, additional_amount, distributor_id, taobao_order_sn, distribution_purchase_order_sn, need_invoice, facility_id, currency, language_id, track_status, defray_time,
+        row_number () OVER (PARTITION BY order_id ORDER BY pt DESC) AS rank
     from (
 
-        select  dt
+        select  pt
                 order_id,
                 event_date,
                 party_id,
@@ -217,14 +217,14 @@ from (
                 language_id,
                 track_status,
                 defray_time
-        from ods_fd_ecshop.ods_fd_ecs_order_info_arc where dt  = '${hiveconf:dt_last}'
+        from ods_fd_ecshop.ods_fd_ecs_order_info_arc where pt  = '${hiveconf:pt_last}'
 
         UNION
 
-        select dt,order_id, party_id, order_sn, user_id, order_time, order_status, shipping_status, pay_status, consignee, sex, country, province, city, district, address, zipcode, tel, mobile, email, best_time, sign_building, postscript, shipping_id, shipping_name, pay_id, pay_name, how_oos, how_surplus, pack_name, card_name, card_message, inv_payee, inv_content, inv_address, inv_zipcode, inv_phone, goods_amount, shipping_fee, duty_fee, insure_fee, shipping_proxy_fee, pay_fee, pack_fee, card_fee, money_paid, surplus, integral, integral_money, bonus, order_amount, from_ad, referer, confirm_time, pay_time, shipping_time, reserved_time, pack_id, card_id, bonus_id, invoice_no, extension_code, extension_id, to_buyer, pay_note, invoice_status, carrier_bill_id, receiving_time, biaoju_store_id, parent_order_id, track_id, real_paid, real_shipping_fee, is_shipping_fee_clear, is_order_amount_clear, is_ship_emailed, proxy_amount, pay_method, is_back, is_finance_clear, finance_clear_type, handle_time, start_shipping_time, end_shipping_time, shortage_status, is_shortage_await, order_type_id, is_display, special_type_id, misc_fee, additional_amount, distributor_id, taobao_order_sn, distribution_purchase_order_sn, need_invoice, facility_id, currency, language_id, track_status, defray_time
+        select pt,order_id, party_id, order_sn, user_id, order_time, order_status, shipping_status, pay_status, consignee, sex, country, province, city, district, address, zipcode, tel, mobile, email, best_time, sign_building, postscript, shipping_id, shipping_name, pay_id, pay_name, how_oos, how_surplus, pack_name, card_name, card_message, inv_payee, inv_content, inv_address, inv_zipcode, inv_phone, goods_amount, shipping_fee, duty_fee, insure_fee, shipping_proxy_fee, pay_fee, pack_fee, card_fee, money_paid, surplus, integral, integral_money, bonus, order_amount, from_ad, referer, confirm_time, pay_time, shipping_time, reserved_time, pack_id, card_id, bonus_id, invoice_no, extension_code, extension_id, to_buyer, pay_note, invoice_status, carrier_bill_id, receiving_time, biaoju_store_id, parent_order_id, track_id, real_paid, real_shipping_fee, is_shipping_fee_clear, is_order_amount_clear, is_ship_emailed, proxy_amount, pay_method, is_back, is_finance_clear, finance_clear_type, handle_time, start_shipping_time, end_shipping_time, shortage_status, is_shortage_await, order_type_id, is_display, special_type_id, misc_fee, additional_amount, distributor_id, taobao_order_sn, distribution_purchase_order_sn, need_invoice, facility_id, currency, language_id, track_status, defray_time
         from (
 
-            select  dt
+            select  pt
                     order_id,
                     event_date,
                     party_id,
@@ -326,7 +326,7 @@ from (
                     track_status,
                     defray_time,
                     row_number () OVER (PARTITION BY order_id ORDER BY event_id DESC) AS rank
-            from ods_fd_ecshop.ods_fd_ecs_order_info_inc where dt='${hiveconf:dt}'
+            from ods_fd_ecshop.ods_fd_ecs_order_info_inc where pt='${hiveconf:pt}'
         ) inc where inc.rank = 1
     ) arc 
 ) tab where tab.rank = 1;

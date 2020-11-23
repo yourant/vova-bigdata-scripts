@@ -71,13 +71,13 @@ CREATE TABLE IF NOT EXISTS ods_fd_romeo.ods_fd_romeo_refund_inc (
     refund_to                   bigint comment '',
     is_first_free               bigint comment ''
 ) COMMENT '来自kafka erp表每日增量数据'
-PARTITIONED BY (dt STRING,hour STRING)
+PARTITIONED BY (pt STRING,hour STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE
 ;
 
 set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite table ods_fd_romeo.ods_fd_romeo_refund_inc  PARTITION (dt='${hiveconf:dt}',hour)
+INSERT overwrite table ods_fd_romeo.ods_fd_romeo_refund_inc  PARTITION (pt='${hiveconf:pt}',hour)
 select 
     o_raw.xid AS event_id,
     o_raw.`table` AS event_table,
@@ -157,4 +157,4 @@ select
 from tmp.tmp_fd_romeo_refund
 LATERAL VIEW json_tuple(value, 'kafka_table', 'kafka_ts', 'kafka_commit', 'kafka_xid','kafka_type' , 'kafka_old' , 'refund_id', 'created_stamp', 'last_update_stamp', 'last_update_tx_stamp', 'created_tx_stamp', 'status', 'current_status_sequence_no', 'note', 'created_by_user_login', 'last_modified_by_user_login', 'total_amount', 'customer_user_id', 'order_id', 'bank_name', 'bank_account_no', 'account_user_login', 'bank_province', 'bank_city', 'execute_date', 'execute_by_user_login', 'confirm_date', 'confirm_by_user_login', 'check_date_1', 'check_date_2', 'check_date_3', 'check_date_4', 'check_date_5', 'check_user_login_1', 'check_user_login_2', 'check_user_login_3', 'check_user_login_4', 'check_user_login_5', 'current_check_level', 'bank_transaction_no', 'check_note_1', 'check_note_2', 'check_note_3', 'check_note_4', 'check_note_5', 'refund_type_id', 'refund_payment_type_id', 'shipping_amount', 'duty_fee', 'insure_fee', 'alteration_fee', 'rush_order_fee', 'pick_amount', 'pack_amount', 'cancel_date', 'cancel_note', 'customer_user_name', 'party_id', 'currency', 'return_apply_id', 'customer_service_type', 'coupon_fee', 'deducted_by_points', 'restocking_fee', 'balance_amount', 'item_deleted_fee', 'refund_domain', 'return_refund_type', 'refund_to', 'is_first_fre') o_raw
 AS `table`, ts, `commit`, xid, type, old, refund_id, created_stamp, last_update_stamp, last_update_tx_stamp, created_tx_stamp, status, current_status_sequence_no, note, created_by_user_login, last_modified_by_user_login, total_amount, customer_user_id, order_id, bank_name, bank_account_no, account_user_login, bank_province, bank_city, execute_date, execute_by_user_login, confirm_date, confirm_by_user_login, check_date_1, check_date_2, check_date_3, check_date_4, check_date_5, check_user_login_1, check_user_login_2, check_user_login_3, check_user_login_4, check_user_login_5, current_check_level, bank_transaction_no, check_note_1, check_note_2, check_note_3, check_note_4, check_note_5, refund_type_id, refund_payment_type_id, shipping_amount, duty_fee, insure_fee, alteration_fee, rush_order_fee, pick_amount, pack_amount, cancel_date, cancel_note, customer_user_name, party_id, currency, return_apply_id, customer_service_type, coupon_fee, deducted_by_points, restocking_fee, balance_amount, item_deleted_fee, refund_domain, return_refund_type, refund_to, is_first_free
-where dt = '${hiveconf:dt}';
+where pt = '${hiveconf:pt}';

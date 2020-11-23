@@ -10,12 +10,12 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_style_arc(
         `last_update_time` string COMMENT '最后更新时间',
         `style_price` decimal(15, 4) COMMENT '定制样式费用',
         `is_important` bigint)
-PARTITIONED BY (dt STRING )
+PARTITIONED BY (pt STRING )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 
-INSERT overwrite table ods_fd_vb.ods_fd_style_arc PARTITION (dt='${hiveconf:dt}')
+INSERT overwrite table ods_fd_vb.ods_fd_style_arc PARTITION (pt='${hiveconf:pt}')
 select
     style_id,
     cat_id,

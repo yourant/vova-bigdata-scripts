@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_ecshop.ods_fd_ecs_goods_arc (
     boost                  float,
     limit_integral         bigint,
     top_cat_id             bigint,
-    addtional_shipping_fee bigint,
+    adptional_shipping_fee bigint,
     vip_price              decimal(15, 4),
     is_vip                 bigint,
     is_remains             bigint,
@@ -86,24 +86,24 @@ CREATE TABLE IF NOT EXISTS ods_fd_ecshop.ods_fd_ecs_goods_arc (
     erp_sku                string,
     create_time            bigint comment 'goods创建时间戳bigint'
 ) COMMENT '来自kafka erp订单每日增量数据'
-PARTITIONED BY (dt STRING,hour STRING)
+PARTITIONED BY (pt STRING,hour STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE
 ;
 
 
 set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_goods_arc PARTITION (dt = '${hiveconf:dt}')
+INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_goods_arc PARTITION (pt = '${hiveconf:pt}')
 select 
-     goods_id, goods_party_id, cat_id, goods_sn, sku, goods_name, click_count, brand_id, provider_name, goods_number, goods_weight, goods_volume, market_price, shop_price, fitting_price, promote_price, promote_start, promote_end, warn_number, keywords, goods_brief, goods_desc, goods_thumb, goods_img, original_img, is_real, extension_code, is_on_sale, is_alone_sale, is_linked, is_basic, is_gift, can_handsel, integral, add_time, sort_order, is_delete, is_best, is_new, is_hot, is_promote, bonus_type_id, last_update, goods_type, seller_note, cycle_img, provider_id, goods_details, vote_times, vote_score, is_on_sale_pending, boost, limit_integral, top_cat_id, addtional_shipping_fee, vip_price, is_vip, is_remains, return_ratio, customized, is_same_price, sale_status, sale_status_detail, commonsense, is_shield, is_display, price_range, goods_name_short, identify, suit, clerk_comment, media_comment, os, resolution, java_support, bill, extra, barcode, uniq_sku, is_maintain_weight, external_cat_id, is_batch, product_id, external_goods_id, erp_sku, create_time
+     goods_id, goods_party_id, cat_id, goods_sn, sku, goods_name, click_count, brand_id, provider_name, goods_number, goods_weight, goods_volume, market_price, shop_price, fitting_price, promote_price, promote_start, promote_end, warn_number, keywords, goods_brief, goods_desc, goods_thumb, goods_img, original_img, is_real, extension_code, is_on_sale, is_alone_sale, is_linked, is_basic, is_gift, can_handsel, integral, add_time, sort_order, is_delete, is_best, is_new, is_hot, is_promote, bonus_type_id, last_update, goods_type, seller_note, cycle_img, provider_id, goods_details, vote_times, vote_score, is_on_sale_pending, boost, limit_integral, top_cat_id, adptional_shipping_fee, vip_price, is_vip, is_remains, return_ratio, customized, is_same_price, sale_status, sale_status_detail, commonsense, is_shield, is_display, price_range, goods_name_short, identify, suit, clerk_comment, media_comment, os, resolution, java_support, bill, extra, barcode, uniq_sku, is_maintain_weight, external_cat_id, is_batch, product_id, external_goods_id, erp_sku, create_time
 from (
 
     select 
-        dt,goods_id, goods_party_id, cat_id, goods_sn, sku, goods_name, click_count, brand_id, provider_name, goods_number, goods_weight, goods_volume, market_price, shop_price, fitting_price, promote_price, promote_start, promote_end, warn_number, keywords, goods_brief, goods_desc, goods_thumb, goods_img, original_img, is_real, extension_code, is_on_sale, is_alone_sale, is_linked, is_basic, is_gift, can_handsel, integral, add_time, sort_order, is_delete, is_best, is_new, is_hot, is_promote, bonus_type_id, last_update, goods_type, seller_note, cycle_img, provider_id, goods_details, vote_times, vote_score, is_on_sale_pending, boost, limit_integral, top_cat_id, addtional_shipping_fee, vip_price, is_vip, is_remains, return_ratio, customized, is_same_price, sale_status, sale_status_detail, commonsense, is_shield, is_display, price_range, goods_name_short, identify, suit, clerk_comment, media_comment, os, resolution, java_support, bill, extra, barcode, uniq_sku, is_maintain_weight, external_cat_id, is_batch, product_id, external_goods_id, erp_sku, create_time,
-        row_number () OVER (PARTITION BY goods_id ORDER BY dt DESC) AS rank
+        pt,goods_id, goods_party_id, cat_id, goods_sn, sku, goods_name, click_count, brand_id, provider_name, goods_number, goods_weight, goods_volume, market_price, shop_price, fitting_price, promote_price, promote_start, promote_end, warn_number, keywords, goods_brief, goods_desc, goods_thumb, goods_img, original_img, is_real, extension_code, is_on_sale, is_alone_sale, is_linked, is_basic, is_gift, can_handsel, integral, add_time, sort_order, is_delete, is_best, is_new, is_hot, is_promote, bonus_type_id, last_update, goods_type, seller_note, cycle_img, provider_id, goods_details, vote_times, vote_score, is_on_sale_pending, boost, limit_integral, top_cat_id, adptional_shipping_fee, vip_price, is_vip, is_remains, return_ratio, customized, is_same_price, sale_status, sale_status_detail, commonsense, is_shield, is_display, price_range, goods_name_short, identify, suit, clerk_comment, media_comment, os, resolution, java_support, bill, extra, barcode, uniq_sku, is_maintain_weight, external_cat_id, is_batch, product_id, external_goods_id, erp_sku, create_time,
+        row_number () OVER (PARTITION BY goods_id ORDER BY pt DESC) AS rank
     from (
 
-        select  '2020-01-01' as dt,
+        select  '2020-01-01' as pt,
                 goods_id,
                 goods_party_id,
                 cat_id,
@@ -158,7 +158,7 @@ from (
                 boost,
                 limit_integral,
                 top_cat_id,
-                addtional_shipping_fee,
+                adptional_shipping_fee,
                 vip_price,
                 is_vip,
                 is_remains,
@@ -194,10 +194,10 @@ from (
 
         UNION
 
-        select dt,goods_id, goods_party_id, cat_id, goods_sn, sku, goods_name, click_count, brand_id, provider_name, goods_number, goods_weight, goods_volume, market_price, shop_price, fitting_price, promote_price, promote_start, promote_end, warn_number, keywords, goods_brief, goods_desc, goods_thumb, goods_img, original_img, is_real, extension_code, is_on_sale, is_alone_sale, is_linked, is_basic, is_gift, can_handsel, integral, add_time, sort_order, is_delete, is_best, is_new, is_hot, is_promote, bonus_type_id, last_update, goods_type, seller_note, cycle_img, provider_id, goods_details, vote_times, vote_score, is_on_sale_pending, boost, limit_integral, top_cat_id, addtional_shipping_fee, vip_price, is_vip, is_remains, return_ratio, customized, is_same_price, sale_status, sale_status_detail, commonsense, is_shield, is_display, price_range, goods_name_short, identify, suit, clerk_comment, media_comment, os, resolution, java_support, bill, extra, barcode, uniq_sku, is_maintain_weight, external_cat_id, is_batch, product_id, external_goods_id, erp_sku, create_time
+        select pt,goods_id, goods_party_id, cat_id, goods_sn, sku, goods_name, click_count, brand_id, provider_name, goods_number, goods_weight, goods_volume, market_price, shop_price, fitting_price, promote_price, promote_start, promote_end, warn_number, keywords, goods_brief, goods_desc, goods_thumb, goods_img, original_img, is_real, extension_code, is_on_sale, is_alone_sale, is_linked, is_basic, is_gift, can_handsel, integral, add_time, sort_order, is_delete, is_best, is_new, is_hot, is_promote, bonus_type_id, last_update, goods_type, seller_note, cycle_img, provider_id, goods_details, vote_times, vote_score, is_on_sale_pending, boost, limit_integral, top_cat_id, adptional_shipping_fee, vip_price, is_vip, is_remains, return_ratio, customized, is_same_price, sale_status, sale_status_detail, commonsense, is_shield, is_display, price_range, goods_name_short, identify, suit, clerk_comment, media_comment, os, resolution, java_support, bill, extra, barcode, uniq_sku, is_maintain_weight, external_cat_id, is_batch, product_id, external_goods_id, erp_sku, create_time
         from (
 
-            select  dt
+            select  pt
                     goods_id,
                     goods_party_id,
                     cat_id,
@@ -252,7 +252,7 @@ from (
                     boost,
                     limit_integral,
                     top_cat_id,
-                    addtional_shipping_fee,
+                    adptional_shipping_fee,
                     vip_price,
                     is_vip,
                     is_remains,
@@ -285,7 +285,7 @@ from (
                     erp_sku,
                     create_time,
                     row_number () OVER (PARTITION BY goods_id ORDER BY event_id DESC) AS rank
-            from ods_fd_ecshop.ods_fd_ecs_goods_inc where dt='${hiveconf:dt}'
+            from ods_fd_ecshop.ods_fd_ecs_goods_inc where pt='${hiveconf:pt}'
 
         ) inc where inc.rank = 1
     ) arc 

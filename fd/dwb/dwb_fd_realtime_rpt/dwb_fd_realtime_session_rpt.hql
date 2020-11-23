@@ -1,4 +1,4 @@
-insert overwrite table dwb.dwb_fd_realtime_rpt partition(dt='${hiveconf:dt}',class='sessions')
+insert overwrite table dwb.dwb_fd_realtime_rpt partition(pt='${hiveconf:pt}',class='sessions')
 
 select
     deriver_time,
@@ -45,6 +45,6 @@ from
        country,
        session_id
 from ods.ods_fd_snowplow_all_event
-where dt='${hiveconf:dt}'
+where pt='${hiveconf:pt}'
 )tab1
 group by  deriver_time,project,platform,country;

@@ -15,12 +15,12 @@ CREATE TABLE IF NOT EXISTS `dwb.dwb_fd_goods_add_test_channel_info`(
   `success_goods_amount` DECIMAL(15, 4) COMMENT '测款成功的订单金额')
 COMMENT '商品加购测款渠道信息表'
 PARTITIONED BY (
-  `dt` string)
+  `pt` string)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS ORC
 TBLPROPERTIES ("orc.compress"="SNAPPY");
 
-INSERT overwrite table dwb.dwb_fd_goods_add_test_channel_info PARTITION (dt = '${hiveconf:dt}')
+INSERT overwrite table dwb.dwb_fd_goods_add_test_channel_info PARTITION (pt = '${hiveconf:pt}')
 select t.project_name,
        t.platform,
        t.country,
@@ -45,16 +45,16 @@ select
         if(add_session_id is null,view_session_id, add_session_id) as session_id,
         view_session_id,
         add_session_id,
-        dt
+        pt
     from dwd.dwd_fd_goods_add_info
-    where dt <= '${hiveconf:dt}'
+    where pt <= '${hiveconf:pt}'
     and cat_name is not null
 ) t
     left join
 (
     select session_id, ga_channel
     from dwd.dwd_fd_session_channel
-    where dt = '${hiveconf:dt}'
+    where pt = '${hiveconf:pt}'
 ) s on t.session_id = s.session_id
 
 union all
@@ -77,10 +77,10 @@ select project_name,
        null                      as success_order_id,
        null                      as success_goods_amount
 from dwd.dwd_fd_order_channel_analytics
-where dt = '${hiveconf:dt}'
+where pt = '${hiveconf:pt}'
   and (
-      date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:dt}' 
-      or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:dt}'
+      date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:pt}' 
+      or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:pt}'
   )
   and pay_status = 2
 
@@ -99,8 +99,8 @@ select a.project_name,
        if(a.result = 1,a.virtual_goods_id,null)  as success_goods_test_goods_id,
        null               as success_order_id,
        null               as success_goods_amount
-from (select project_name,platform_name,country_code,cat_id,cat_name,virtual_goods_id,result from dwd.dwd_fd_finished_goods_test_info where dt = '${hiveconf:dt}' ) a
-left join (select virtual_goods_id,project_name,ga_channel from dwd.dwd_fd_order_channel_analytics where dt = '${hiveconf:dt}' ) b on a.project_name = b.project_name and a.virtual_goods_id = b.virtual_goods_id
+from (select project_name,platform_name,country_code,cat_id,cat_name,virtual_goods_id,result from dwd.dwd_fd_finished_goods_test_info where pt = '${hiveconf:pt}' ) a
+left join (select virtual_goods_id,project_name,ga_channel from dwd.dwd_fd_order_channel_analytics where pt = '${hiveconf:pt}' ) b on a.project_name = b.project_name and a.virtual_goods_id = b.virtual_goods_id
 
 union all
 select a.project_name,
@@ -126,7 +126,7 @@ from (
                 virtual_goods_id,
                 create_time
          from dwd.dwd_fd_finished_goods_test_info
-         where dt <= '${hiveconf:dt}'
+         where pt <= '${hiveconf:pt}'
            and result = 1
      ) a
          inner join
@@ -146,10 +146,10 @@ from (
                 from_unixtime(order_time, 'yyyy-MM-dd hh:mm:ss') as order_time,
                 (goods_number * shop_price)                      as success_goods_amount
          from dwd.dwd_fd_order_channel_analytics 
-         where dt = '${hiveconf:dt}'
+         where pt = '${hiveconf:pt}'
            and (
-                date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:dt}' 
-                or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:dt}'
+                date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:pt}' 
+                or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:pt}'
             )
            and pay_status = 2
      ) b on b.project_name = a.project_name

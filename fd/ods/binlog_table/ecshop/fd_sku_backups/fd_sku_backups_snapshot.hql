@@ -10,4 +10,4 @@ STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_fd_sku_backups
-select `(dt)?+.+` from ods_fd_ecshop.ods_fd_ecs_fd_sku_backups_arc where dt = '${hiveconf:dt}';
+select `(pt)?+.+` from ods_fd_ecshop.ods_fd_ecs_fd_sku_backups_arc where pt = '${hiveconf:pt}';

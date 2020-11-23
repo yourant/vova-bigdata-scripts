@@ -27,12 +27,12 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_ok_coupon_arc
   `used_user_id` bigint COMMENT '使用人ID',
   `coupon_use_remarks` string COMMENT '红包备注文案'
  )comment '红包'
-PARTITIONED BY (dt STRING ) 
+PARTITIONED BY (pt STRING )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 
-INSERT overwrite table ods_fd_vb.ods_fd_ok_coupon_arc PARTITION (dt='${hiveconf:dt}')
+INSERT overwrite table ods_fd_vb.ods_fd_ok_coupon_arc PARTITION (pt='${hiveconf:pt}')
 select  
     coupon_id,
     party_id,

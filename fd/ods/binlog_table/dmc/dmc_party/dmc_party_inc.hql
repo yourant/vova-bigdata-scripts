@@ -14,12 +14,12 @@ CREATE TABLE IF NOT EXISTS ods_fd_dmc.ods_fd_dmc_party_inc (
     `short_party_name` string comment '组织缩写',
     `platform` string comment '组织所属平台：fam, shopify等'
 ) COMMENT '组织表'
-PARTITIONED BY (dt STRING,hour STRING)
+PARTITIONED BY (pt STRING,hour STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite table ods_fd_dmc.ods_fd_dmc_party_inc  PARTITION (dt='${hiveconf:dt}',hour)
+INSERT overwrite table ods_fd_dmc.ods_fd_dmc_party_inc  PARTITION (pt='${hiveconf:pt}',hour)
 select 
     o_raw.xid AS event_id,
     o_raw.`table` AS event_table,
@@ -37,4 +37,4 @@ select
 from tmp.tmp_fd_dmc_party
 LATERAL VIEW json_tuple(value, 'kafka_table', 'kafka_ts', 'kafka_commit', 'kafka_xid','kafka_type' , 'kafka_old' , 'party_id', 'created_at', 'updated_at', 'name', 'lower_name', 'short_party_name', 'platform') o_raw
 AS `table`, ts, `commit`, xid, type, old, party_id, created_at, updated_at, name, lower_name, short_party_name, platform
-where dt = '${hiveconf:dt}';
+where pt = '${hiveconf:pt}';

@@ -18,12 +18,12 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_app_message_info_arc
     `create_time` string COMMENT '',
     `update_time` string COMMENT ''
  )comment '消息推送计划表'
-PARTITIONED BY (dt STRING ) 
+PARTITIONED BY (pt STRING )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 
-INSERT overwrite table ods_fd_vb.ods_fd_app_message_info_arc PARTITION (dt='${hiveconf:dt}')
+INSERT overwrite table ods_fd_vb.ods_fd_app_message_info_arc PARTITION (pt='${hiveconf:pt}')
 select  
     id,
     status,
