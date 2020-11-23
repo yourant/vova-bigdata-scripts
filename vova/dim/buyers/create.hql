@@ -43,7 +43,11 @@ CREATE TABLE IF NOT EXISTS dim.dim_vova_buyers
     first_order_id   bigint COMMENT '买家支付首单ID',
     first_order_time timestamp COMMENT '买家支付首单下单时间',
     first_pay_time   timestamp,
-    first_refund_time timestamp COMMENT '买家首单退款时间'
+    first_refund_time timestamp COMMENT '买家首单退款时间',
+    user_age_group STRING COMMENT 'user_age_group',
+     current_device_id STRING COMMENT 'current_device_id',
+     current_app_version STRING COMMENT 'current_app_version',
+     last_start_up_date DATE, bind_time TIMESTAMP COMMENT '邮箱绑定日期'
 ) COMMENT '买家维度表'
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
