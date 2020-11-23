@@ -1,4 +1,4 @@
-create table if not exists ods.ods_fd_snowplow_all_event
+create table if not exists ods_fd_snowplow.ods_fd_snowplow_all_event
 (
     app_id               STRING,
     platform             STRING,
@@ -73,17 +73,17 @@ create table if not exists ods.ods_fd_snowplow_all_event
     ecommerce_product    array<struct<id : String, name : String, brand : String, category : String, coupon : String,
                                       position : BIGINT, price : Double, quantity : BIGINT, variant : String>>
 ) partitioned by (
-    `dt` string,
+    `pt` string,
     `hour` int
     )
-    stored as parquet
-    location 's3a://vova-bd-test/warehouse_test/ods/ods_fd_snowplow_all_event';
+    ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
+    stored as parquet;
 
 ---
 set hive.exec.dynamic.partition.mode=nonstrict;
 ---
 
-INSERT OVERWRITE table ods.ods_fd_snowplow_all_event partition (dt, hour)
+INSERT OVERWRITE table ods_fd_snowplow.ods_fd_snowplow_all_event partition (pt, hour)
 SELECT common_struct.app_id,
        common_struct.platform,
        common_struct.project,
@@ -159,8 +159,8 @@ from (select common_struct,
              ecommerce_product,
              row_number()
                      over (partition by common_struct.event_fingerprint order by common_struct.collector_ts asc ) as row_num
-      from tmp.tmp_fd_snowplow_all_event
-      where ${hiveconf:dt_filter}
+      from pdb.pdb_fd_snowplow_all_event
+      where ${hiveconf:pt_filter}
         and common_struct.collector_ts >= "${hiveconf:start}"
         and common_struct.collector_ts < "${hiveconf:end}"
         and common_struct.app_id is not null) tmp

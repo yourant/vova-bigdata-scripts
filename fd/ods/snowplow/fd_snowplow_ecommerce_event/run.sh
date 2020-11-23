@@ -13,7 +13,7 @@ else
     echo "接收的时间格式${1}不符合:%Y-%m-%d %H:%M:%S，请输入正确的格式!"
     exit
   fi
-  pt_now=$1
+  pt_now=$(date -d "$1" +"%Y-%m-%d %H")
 fi
 
 #collector开始时间

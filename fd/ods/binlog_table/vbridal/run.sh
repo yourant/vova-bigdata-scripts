@@ -36,32 +36,6 @@ echo $pt_last
 
 #脚本路径
 shell_path="/mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal"
-#flume搜集的binlog日志路径
-flume_path="s3a://bigdata-offline/warehouse/pdb/fd/vbridal"
-
-#将flume收集的数据存到tmp表中
-hive -hiveconf flume_path=$flume_path  -f ${shell_path}/${table_name}/pdb_${table_name}.hql
-
-if [ $? -ne 0 ];then
-  exit 1
-fi
-echo "step1: tmp_${table_name} table is finished !"
-
-#inc表
-hive -hiveconf pt=$pt -f ${shell_path}/${table_name}/${table_name}_inc.hql
-
-if [ $? -ne 0 ];then
-  exit 1
-fi
-echo "step2: ${table_name}_inc table is finished !"
-
-#arc表
-hive -hiveconf pt=$pt -hiveconf pt_last=$pt_last -f ${shell_path}/${table_name}/${table_name}_arc.hql
-
-if [ $? -ne 0 ];then
-  exit 1
-fi
-echo "step3: ${table_name}_arc table is finished !"
 
 #snapshot表
 hive -hiveconf pt=$pt -f ${shell_path}/${table_name}/${table_name}_snapshot.hql
@@ -69,4 +43,4 @@ hive -hiveconf pt=$pt -f ${shell_path}/${table_name}/${table_name}_snapshot.hql
 if [ $? -ne 0 ];then
   exit 1
 fi
-echo "step4: ${table_name}_snapshot table is finished !"
+echo "step: ${table_name}_snapshot table is finished !"

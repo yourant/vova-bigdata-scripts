@@ -1,34 +1,29 @@
 #!/bin/sh
-home=`dirname "$0"`
-cd $home
-
-if [ ! -n "$1" ] ;then
-    dt=`date -d "-1 days" +%Y-%m-%d`
-    dt_last=`date -d "-2 days" +%Y-%m-%d`
-    dt_format=`date -d "-1 days" +%Y%m%d`
-    dt_format_last=`date -d "-2 days" +%Y%m%d`
+if [ ! -n "$1" ]; then
+  pt_now=$(date +"%Y-%m-%d")
+  pt=$(date -d "$1 - 1 days " +"%Y-%m-%d")
 else
-    echo $1 | grep -Eq "[0-9]{4}-[0-9]{2}-[0-9]{2}" && date -d $1 +%Y-%m-%d > /dev/null
-    if [[ $? -ne 0 ]]; then
-        echo "接收的时间格式${1}不符合:%Y-%m-%d，请输入正确的格式!"
-        exit
-    fi
-    dt=$1
-    dt_last=`date -d "$1 -1 days" +%Y-%m-%d`
-    dt_format=`date -d "$1" +%Y%m%d`
-    dt_format_last=`date -d "$1 -1 days" +%Y%m%d`
-
+  echo $1 | grep -Eq "[0-9]{4}-[0-9]{2}-[0-9]{2}" && date -d "$1" +"%Y-%m-%d" >/dev/null
+  if [[ $? -ne 0 ]]; then
+    echo "接收的时间格式${1}不符合:%Y-%m-%d，请输入正确的格式!"
+    exit
+  fi
+   pt_now=$1
+   pt=$1
 fi
 
-#hive sql中使用的变量
-echo $dt
-echo $dt_last
-echo $dt_format
-echo $dt_format_last
 
-#脚本路径
+echo "now:  " $pt_now
+echo "pt:   " $pt
+
 shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_rpt_ecommerce_funnel_report"
 
-#app用户优惠券使用情况
-hive -hiveconf dt=$dt -f ${shell_path}/dwb_fd_rpt_ecommerce_funnel_report.hql
 
+#创建表
+hive -f ${shell_path}/dwb_fd_rpt_ecommerce_funnel_report_create.hql
+
+spark-sql \
+--conf "spark.app.name=dwb_fd_rpt_ecommerce_funnel_report_lujiaheng"   \
+--conf "spark.dynamicAllocation.maxExecutors=60" \
+-d pt=$pt \
+-f ${shell_path}/dwb_fd_rpt_ecommerce_funnel_report_insert.hql

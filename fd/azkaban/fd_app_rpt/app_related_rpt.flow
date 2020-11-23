@@ -1,0 +1,149 @@
+---
+config:
+  failure.emails: htgao@i9i8.com
+  retries: 5
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_app_related_report_start
+    type: noop
+
+  - name: app_user_coupon_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: app_user_coupon_report_start
+        type: noop
+        
+      - name: judge_dwd_fd_order_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_info
+        dependsOn:
+          - app_user_coupon_report_start
+      
+      - name: judge_ods_fd_vb_app_install_record
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_app_install_record
+        dependsOn:
+          - app_user_coupon_report_start
+
+      - name: judge_ods_fd_vb_ok_coupon_config
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_ok_coupon_config
+        dependsOn:
+          - app_user_coupon_report_start
+      
+      - name: judge_ods_fd_vb_ok_coupon
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_ok_coupon
+        dependsOn:
+          - app_user_coupon_report_start
+      
+      - name: judge_ods_fd_vb_users
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_users
+        dependsOn:
+          - app_user_coupon_report_start
+
+      - name: app_user_coupon_report_base
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_user_coupon_rpt/run.sh ${dt}
+        dependsOn:
+          - judge_dwd_fd_order_info
+          - judge_ods_fd_vb_app_install_record
+          - judge_ods_fd_vb_ok_coupon_config
+          - judge_ods_fd_vb_ok_coupon
+          - judge_ods_fd_vb_users
+      
+      - name: app_user_coupon_report_caculate
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_user_coupon_rpt/run_rpt.sh ${dt}
+        dependsOn:
+          - app_user_coupon_report_base
+
+      - name: app_user_coupon_flow_end
+        type: noop
+        dependsOn:
+          - app_user_coupon_report_caculate
+
+    dependsOn:
+      - fd_app_related_report_start
+
+  - name: app_retention_flow
+    type: flow
+    config:
+      prop: values
+    nodes:
+      - name: app_retention_activity_report_start
+        type: noop
+        
+      - name: judge_fd_dw_dwd_end
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fd_dw_dwd_end
+        dependsOn:
+          - app_retention_activity_report_start
+
+      - name: app_retention
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_retention_activity_rpt/retention_run.sh ${dt}
+        dependsOn:
+          - judge_fd_dw_dwd_end
+      
+      - name: app_checkin
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_retention_activity_rpt/checkin_run.sh ${dt}
+        dependsOn:
+          - app_retention
+      
+      - name: app_play
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_retention_activity_rpt/play_run.sh ${dt}
+        dependsOn:
+          - app_checkin
+      
+      - name: app_register
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_retention_activity_rpt/register_run.sh ${dt}
+        dependsOn:
+          - app_play
+      
+      - name: app_checkin_acc
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_retention_activity_rpt/checkin_acc_run.sh ${dt}
+        dependsOn:
+          - app_register
+      
+      - name: app_visit_source
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_retention_activity_rpt/visit_source_run.sh ${dt}
+        dependsOn:
+          - app_checkin_acc
+
+      - name: app_retention_flow_end
+        type: noop
+        dependsOn:
+          - app_visit_source
+
+    dependsOn:
+      - fd_app_related_report_start
+
+  - name: fd_app_related_report_end
+    type: noop
+    dependsOn:
+      - app_user_coupon_flow
+      - app_retention_flow
