@@ -13,6 +13,14 @@ select
     coupon_used_48h_cnt,
     coupon_used_72h_cnt,
     coupon_used_greater_72h_cnt,
+    coupon_used_per,
+    coupon_used_success_per,
+    coupon_success_rate,
+    coupon_used_1h_per,
+    coupon_used_24h_per,
+    coupon_used_48h_per,
+    coupon_used_72h_per,
+    coupon_used_greater_72h_per,
     pt
 from (
     select 
@@ -27,7 +35,15 @@ from (
         count(distinct coupon_used_24h) as coupon_used_24h_cnt, /*获取红包1h-24h内使用量*/
         count(distinct coupon_used_48h) as coupon_used_48h_cnt, /*获取红包24h-48h内使用量*/
         count(distinct coupon_used_72h) as coupon_used_72h_cnt, /*获取红包48h-72h内使用量*/
-        count(distinct coupon_used_greater_72h) as coupon_used_greater_72h_cnt /*获取红包大于72h内使用量*/
+        count(distinct coupon_used_greater_72h) as coupon_used_greater_72h_cnt, /*获取红包大于72h内使用量*/
+        (cast(count(distinct coupon_used) as float) / cast(count(distinct coupon_give) as float)) as coupon_used_per,
+        (cast(count(distinct coupon_used_success) as float) / cast(count(distinct coupon_used) as float)) as coupon_used_success_per,
+        (cast(count(distinct coupon_used_success) as float) / cast(count(distinct coupon_give) as float)) as coupon_success_rate,
+        (cast(count(distinct coupon_used_1h) as float) / cast(count(distinct coupon_used) as float)) as coupon_used_1h_per,
+        (cast(count(distinct coupon_used_24h) as float) / cast(count(distinct coupon_used) as float)) as coupon_used_24h_per,
+        (cast(count(distinct coupon_used_48h) as float) / cast(count(distinct coupon_used) as float)) as coupon_used_48h_per,
+        (cast(count(distinct coupon_used_72h) as float) / cast(count(distinct coupon_used) as float)) as coupon_used_72h_per,
+        (cast(count(distinct coupon_used_greater_72h) as float) / cast(count(distinct coupon_used) as float)) as coupon_used_greater_72h_per
     from dwb.dwb_fd_app_user_coupon_order
     where pt >= date_sub('$pt',10)
     group by 

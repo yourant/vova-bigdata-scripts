@@ -1,8 +1,8 @@
 ---
 config:
   failure.emails: htgao@i9i8.com
-  retries: 5
-  retry.backoff: 300000
+  retries: 1
+  retry.backoff: 100000
 
 nodes:
   - name: fd_dw_vbridal_init_start
@@ -280,7 +280,7 @@ nodes:
       - name: app_message_push
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=app_message_push --mapers=200 --partition_num=100 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INIT --table_name=app_message_push --mapers=300 --partition_num=100 --period_type=day
         dependsOn:
           - fd_dw_init_flow_two_start
 
