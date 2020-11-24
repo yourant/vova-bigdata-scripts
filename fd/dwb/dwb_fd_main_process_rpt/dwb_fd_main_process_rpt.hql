@@ -1,26 +1,3 @@
-CREATE TABLE IF NOT EXISTS `dwb.dwb_fd_rpt_main_process`(
-  `project` string COMMENT '网站名称',
-  `platform_type` string COMMENT '平台类型',
-  `country` string COMMENT '国家',
-  `is_new_user` string COMMENT '是否新会话',
-  `ga_channel` string COMMENT 'session来源渠道',
-  `all_sessions` bigint COMMENT '用来计算总会话',
-  `product_view_sessions` bigint COMMENT '用来计算详情页总会话',
-  `add_sessions` bigint COMMENT '用来计算加车总会话',
-  `checkout_sessions` bigint COMMENT '用来计算checkout总会话',
-  `checkout_option_sessions` bigint COMMENT '用来计算下单总会话',
-  `purchase_sessions` bigint COMMENT '用来计算完成订单总会话',
-  `orders` bigint COMMENT '订单号',
-  `goods_amount` decimal(15,4) COMMENT '订单商品金额',
-  `bonus` decimal(15,4) COMMENT '订单折扣',
-  `shipping_fee` decimal(15,4) COMMENT '订单运费')
-COMMENT '主流程数据表'
-PARTITIONED BY (
-  `pt` string)
-ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS ORC
-TBLPROPERTIES ("orc.compress"="SNAPPY");
-
 set hive.new.job.grouping.set.cardinality=128;
 insert overwrite table dwb.dwb_fd_rpt_main_process PARTITION (pt = '${hiveconf:pt}')
 select session_table.project
@@ -57,7 +34,7 @@ from (
                        , fms.project                     as project
                        , nvl(fms.platform_type,'others')  as platform_type
                        , nvl(fms.is_new_user, 'old')     as is_new_user
-                       , nvl(fdusc.ga_channel, 'Others') as ga_channel
+                       , nvl(fdusc.ga_channel, 'others') as ga_channel
                        , fms.session_id
                        , fms.product_view_session_id
                        , fms.add_session_id
@@ -159,7 +136,7 @@ from (
                        select 
                             session_id, 
                             collect_set(ga_channel)[0] as ga_channel
-                        from dwd.dwd_fd_session_channe
+                        from dwd.dwd_fd_session_channel
                         where pt BETWEEN date_sub('${hiveconf:pt}', 3) AND date_add('${hiveconf:pt}', 1)
                         group by session_id
 

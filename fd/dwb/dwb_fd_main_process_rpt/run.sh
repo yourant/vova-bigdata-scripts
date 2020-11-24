@@ -27,7 +27,20 @@ echo $dt_format
 echo $dt_format_last
 
 #脚本路径
-shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_main_process_report"
+shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_main_process_rpt"
 
 #主流程事实表
-hive -hiveconf dt=$dt -f ${shell_path}/dwb_fd_main_process_report.hql
+hive -hiveconf dt=$dt -f ${shell_path}/dwb_fd_main_process_rpt.hql
+
+spark-sql \
+  --conf "spark.app.name=main_process_gaohaitao" \
+  --conf "spark.dynamicAllocation.maxExecutors=60" \
+  -d $pt=$pt \
+  -d $pt3=$pt3 \
+  -d $pt11=$pt11 \
+  -f ${shell_path}/dwb_fd_main_process_rpt.hql
+
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+echo "dwb_fd_main_process_rpt table is finished !"
