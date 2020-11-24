@@ -67,7 +67,7 @@ from (
                         select 
                             session_id, collect_set(ga_channel)[0] as ga_channel
                         from dwd.dwd_fd_session_channel
-                        where pt BETWEEN date_sub('${pt}', 3) AND date_add('${pt}', 1)
+                        where pt BETWEEN date_sub('${pt}', 4) AND date_add('${pt}', 1)
                         group by session_id
                     ) fdusc on fms.session_id = fdusc.session_id
 
@@ -137,7 +137,7 @@ from (
                             session_id, 
                             collect_set(ga_channel)[0] as ga_channel
                         from dwd.dwd_fd_session_channel
-                        where pt BETWEEN date_sub('${pt}', 3) AND date_add('${pt}', 1)
+                        where pt BETWEEN date_sub('${pt}', 4) AND date_add('${pt}', 1)
                         group by session_id
 
                   ) fdpsc on fdpsc.session_id = om.sp_session_id
