@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS dwb.dwb_fd_order_coupon
+CREATE TABLE IF NOT EXISTS dwb.dwb_fd_order_coupon_rpt
 (
     project_name     string comment '组织',
     coupon_code      string COMMENT '优惠券code',
@@ -16,14 +16,13 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_fd_order_coupon
     country_code     string COMMENT '国家code',
     language_code    string COMMENT '语言code'
 ) COMMENT '订单优惠券信息表'
-PARTITIONED BY (dt STRING)
+PARTITIONED BY (pt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS ORC
-TBLPROPERTIES ("orc.compress"="SNAPPY");
+STORED AS ORC;
 
 
 set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite table dwb.dwb_fd_order_coupon PARTITION (dt)
+INSERT overwrite table dwb.dwb_fd_order_coupon_rpt PARTITION (pt)
 select 
 	project_name,
 	coupon_code,
@@ -40,10 +39,9 @@ select
 	platform_type,
 	country_code,
 	language_code,
-	date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) as dt
+	date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) as pt
 from dwd.dwd_fd_order_info 
 where 
 coupon_code !='' 
-and email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
-and dt = '${hiveconf:dt}'
+and email NOT REGEXP 'tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com'
 and date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) >= '2020-07-01';

@@ -55,5 +55,5 @@ count(distinct user_new_first_coupon_order_id) as user_new_first_coupon_order_id
 count(distinct user_new_first_success_order_id) as user_new_first_success_order_id_cnt,
 count(distinct user_new_first_success_coupon_order_id) as user_new_first_success_coupon_order_id_cnt
 from dwb.dwb_fd_app_retention_activity
-where pt = '${pt}'
+where pt = '${pt}' and country_code !='' and country_code is not null
 group by project,platform_type,country_code with cube;
