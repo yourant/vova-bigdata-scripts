@@ -3,8 +3,8 @@ home=`dirname "$0"`
 cd $home
 
 if [ ! -n "$1" ] ;then
-    dt=`date -d "-1 days" +%Y-%m-%d`
-    dt_last=`date -d "-2 days" +%Y-%m-%d`
+    pt=`date -d "-1 days" +%Y-%m-%d`
+    pt_last=`date -d "-2 days" +%Y-%m-%d`
     dt_format=`date -d "-1 days" +%Y%m%d`
     dt_format_last=`date -d "-2 days" +%Y%m%d`
 else
@@ -26,7 +26,12 @@ echo $dt_last
 echo $dt_format
 echo $dt_format_last
 
+shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_page_data_rpt"
 
-hive   -f /mnt/vova-bigdata-scripts/fd/dwb.dwb_fd_common_ctr_rpt/dwb_fd_common_ctr.hql
-
-#hive -hiveconf dt=$dt -f /mnt/vova-bigdata-scripts/fd/dwb.dwb_fd_common_ctr_rpt/dwb_fd_common_ctr_rpt.hql
+#计算留存数据
+hive -hiveconf dt=$dt -f ${shell_path}/dwb_fd_page_data_rpt.hql
+#如果脚本失败，则报错
+if [ $? -ne 0 ];then
+  exit 1
+fi
+echo "page data report  table is finished !"
