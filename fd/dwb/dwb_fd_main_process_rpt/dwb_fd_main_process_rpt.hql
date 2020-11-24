@@ -1,5 +1,5 @@
 set hive.new.job.grouping.set.cardinality=128;
-insert overwrite table dwb.dwb_fd_rpt_main_process PARTITION (pt = '${hiveconf:pt}')
+insert overwrite table dwb.dwb_fd_rpt_main_process PARTITION (pt = '${pt}')
 select session_table.project
      , session_table.platform_type
      , session_table.country
@@ -58,7 +58,7 @@ from (
                             , if(event_name == 'checkout_option', session_id, NULL) as checkout_option_session_id
                             , if(event_name == 'purchase', session_id, NULL)        as purchase_session_id
                         from ods.ods_fd_snowplow_all_event
-                        where pt = '${hiveconf:pt}'
+                        where pt = '${pt}'
                             and project is not null
                             and length(project) > 2
                             and event_name in ('page_view', 'screen_view', 'add', 'checkout', 'checkout_option', 'purchase')
@@ -67,7 +67,7 @@ from (
                         select 
                             session_id, collect_set(ga_channel)[0] as ga_channel
                         from dwd.dwd_fd_session_channel
-                        where pt BETWEEN date_sub('${hiveconf:pt}', 3) AND date_add('${hiveconf:pt}', 1)
+                        where pt BETWEEN date_sub('${pt}', 3) AND date_add('${pt}', 1)
                         group by session_id
                     ) fdusc on fms.session_id = fdusc.session_id
 
@@ -137,7 +137,7 @@ from (
                             session_id, 
                             collect_set(ga_channel)[0] as ga_channel
                         from dwd.dwd_fd_session_channel
-                        where pt BETWEEN date_sub('${hiveconf:pt}', 3) AND date_add('${hiveconf:pt}', 1)
+                        where pt BETWEEN date_sub('${pt}', 3) AND date_add('${pt}', 1)
                         group by session_id
 
                   ) fdpsc on fdpsc.session_id = om.sp_session_id
