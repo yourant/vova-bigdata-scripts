@@ -44,4 +44,4 @@ from dwd.dwd_fd_order_info
 where 
 coupon_code !='' 
 and email NOT REGEXP 'tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com'
-and date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) >= '2020-07-01';
+and date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) = '${pt}';
