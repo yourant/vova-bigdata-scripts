@@ -22,7 +22,7 @@ STORED AS ORC
 TBLPROPERTIES ("orc.compress"="SNAPPY");
 
 set hive.new.job.grouping.set.cardinality=128;
-insert overwrite table dwb.dwb_fd_rpt_main_process PARTITION (dt = '${hiveconf:dt}')
+insert overwrite table dwb.dwb_fd_rpt_main_process PARTITION (pt = '${hiveconf:pt}')
 select session_table.project
      , session_table.platform_type
      , session_table.country
@@ -81,7 +81,7 @@ from (
                             , if(event_name == 'checkout_option', session_id, NULL) as checkout_option_session_id
                             , if(event_name == 'purchase', session_id, NULL)        as purchase_session_id
                         from ods.ods_fd_snowplow_all_event
-                        where dt = '${hiveconf:dt}'
+                        where pt = '${hiveconf:pt}'
                             and project is not null
                             and length(project) > 2
                             and event_name in ('page_view', 'screen_view', 'add', 'checkout', 'checkout_option', 'purchase')
@@ -90,7 +90,7 @@ from (
                         select 
                             session_id, collect_set(ga_channel)[0] as ga_channel
                         from dwd.dwd_fd_session_channel
-                        where dt BETWEEN date_sub('${hiveconf:dt}', 3) AND date_add('${hiveconf:dt}', 1)
+                        where pt BETWEEN date_sub('${hiveconf:pt}', 3) AND date_add('${hiveconf:pt}', 1)
                         group by session_id
                     ) fdusc on fms.session_id = fdusc.session_id
 
@@ -130,8 +130,7 @@ from (
                             bonus,
                             shipping_fee
                         from dwd.dwd_fd_order_info oi 
-                        where dt = '${hiveconf:dt}'
-                        and (date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:dt}' or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:dt}')
+                        where date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) = '${pt}'
                         and pay_status = 2
                         and project_name is not NULL
                         and length(project_name) > 2
@@ -151,8 +150,8 @@ from (
                                 when platform = 'mob' and session_idx = 1 then 'new'
                                 when platform = 'mob' and session_idx > 1 then 'old'
                                 end as is_new_user 
-                            from ods.ods_fd_snowplow_other_event
-                            where dt BETWEEN date_sub('${hiveconf:dt}', 3) AND '${hiveconf:dt}' and event_name in ('page_view', 'screen_view')
+                            from ods_fd_snowplow.ods_fd_snowplow_all_event
+                            where pt BETWEEN date_sub('${pt}', 3) AND '${pt}' and event_name in ('page_view', 'screen_view')
                         ) soe group by soe.session_id
 
                   ) fms on fms.session_id = om.sp_session_id
@@ -160,8 +159,8 @@ from (
                        select 
                             session_id, 
                             collect_set(ga_channel)[0] as ga_channel
-                        from dwd.dwd_fd_session_channel
-                        where dt BETWEEN date_sub('${hiveconf:dt}', 3) AND date_add('${hiveconf:dt}', 1)
+                        from dwd.dwd_fd_session_channe
+                        where pt BETWEEN date_sub('${hiveconf:pt}', 3) AND date_add('${hiveconf:pt}', 1)
                         group by session_id
 
                   ) fdpsc on fdpsc.session_id = om.sp_session_id

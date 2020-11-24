@@ -23,10 +23,10 @@ nodes:
         dependsOn:
           - goods_adjust_flow_start
       
-      - name: judge_ods_fd_goods_purchase_price
+      - name: judge_ods_fd_vb_goods_purchase_price
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_goods_purchase_price
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_goods_purchase_price
         dependsOn:
           - goods_adjust_flow_start
       
@@ -36,7 +36,7 @@ nodes:
           command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_adjust_price_rpt/order_goods_top_run.sh ${dt}
         dependsOn:
           - judge_dwd_fd_order_info
-          - judge_ods_fd_goods_purchase_price
+          - judge_ods_fd_vb_goods_purchase_price
       
       - name: goods_click_detail
         type: command
