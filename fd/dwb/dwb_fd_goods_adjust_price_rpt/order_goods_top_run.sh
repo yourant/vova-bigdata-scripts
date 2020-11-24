@@ -27,7 +27,7 @@ shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_adjust_price_rpt"
 #hive -hiveconf pt=$pt -hiveconf pt3=$pt3 -hiveconf pt11=$pt11 -f ${shell_path}/order_goods_top.hql
 
 spark-sql \
-  --conf "spark.app.name=goods_click_detail_gaohaitao" \
+  --conf "spark.app.name=order_goods_top_gaohaitao" \
   --conf "spark.dynamicAllocation.maxExecutors=60" \
   -d pt=$pt \
   -d pt3=$pt3 \
