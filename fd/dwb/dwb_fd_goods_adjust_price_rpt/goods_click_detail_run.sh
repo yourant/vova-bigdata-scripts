@@ -29,7 +29,7 @@ hive -hiveconf pt=$pt -hiveconf pt3=$pt3 -hiveconf pt11=$pt11 -f ${shell_path}/g
 spark-sql \
   --conf "spark.app.name=goods_click_detail_gaohaitao" \
   --conf "spark.dynamicAllocation.maxExecutors=60" \
-  -d $pt=$pt \
-  -d $pt3=$pt3 \
-  -d $pt11=$pt11 \
+  -d pt=$pt \
+  -d pt3=$pt3 \
+  -d pt11=$pt11 \
   -f ${shell_path}/goods_click_detail.hql

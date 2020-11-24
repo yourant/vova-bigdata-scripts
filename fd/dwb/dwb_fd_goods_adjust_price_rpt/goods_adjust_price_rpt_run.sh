@@ -29,9 +29,9 @@ shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_adjust_price_rpt"
 spark-sql \
   --conf "spark.app.name=goods_adjust_price_rpt_gaohaitao" \
   --conf "spark.dynamicAllocation.maxExecutors=60" \
-  -d $pt=$pt \
-  -d $pt3=$pt3 \
-  -d $pt11=$pt11 \
+  -d pt=$pt \
+  -d pt3=$pt3 \
+  -d pt11=$pt11 \
   -f ${shell_path}/goods_adjust_price_rpt.hql
 
 if [ $? -ne 0 ]; then
