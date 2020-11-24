@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `dwb.dwb_fd_rpt_main_process`(
+CREATE TABLE IF NOT EXISTS `dwb.dwb_fd_rpt_main_process_rpt`(
   `project` string COMMENT '网站名称',
   `platform_type` string COMMENT '平台类型',
   `country` string COMMENT '国家',
