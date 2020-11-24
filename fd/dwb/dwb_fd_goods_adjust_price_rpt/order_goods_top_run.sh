@@ -11,8 +11,8 @@ else
         exit
     fi
     pt=$1
-    pt3=`date -d "$1 -3 days" +%Y-%m-%d`\
-    pt11=`date -d "$1 -11 days" +%Y-%m-%d`\
+    pt3=`date -d "$1 -3 days" +%Y-%m-%d`
+    pt11=`date -d "$1 -11 days" +%Y-%m-%d`
 
 fi
 
