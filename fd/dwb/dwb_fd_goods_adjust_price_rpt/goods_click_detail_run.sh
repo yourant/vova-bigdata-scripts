@@ -23,8 +23,8 @@ echo $pt11
 
 shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_adjust_price_rpt"
 
-#计算访问积分页数据
-hive -hiveconf pt=$pt -hiveconf pt3=$pt3 -hiveconf pt11=$pt11 -f ${shell_path}/goods_click_detail.hql
+#
+#hive -hiveconf pt=$pt -hiveconf pt3=$pt3 -hiveconf pt11=$pt11 -f ${shell_path}/goods_click_detail.hql
 
 spark-sql \
   --conf "spark.app.name=goods_click_detail_gaohaitao" \
@@ -33,3 +33,8 @@ spark-sql \
   -d pt3=$pt3 \
   -d pt11=$pt11 \
   -f ${shell_path}/goods_click_detail.hql
+
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+echo "goods_click_detail table is finished !"

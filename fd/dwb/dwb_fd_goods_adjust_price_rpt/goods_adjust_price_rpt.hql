@@ -63,7 +63,7 @@ from (
             where date(from_unixtime(t.pay_time,'yyyy-MM-dd hh:mm:ss')) >= date_sub('${pt3}', 3)
             and date(from_unixtime(t.pay_time,'yyyy-MM-dd hh:mm:ss')) <= date_add('${pt3}', 3)
             and t.virtual_goods_id is not null  and t.pay_status = 2
-			and upper(t.country_code) in ('DE', 'FR', 'GB', 'US', 'SE', 'IT', 'ES', 'NL', 'NO', 'MX', 'CH', 'DK', 'PL', 'SA', 'BE', 'AT', 'AU', 'RU', 'FI', 'CA') /* 限制国家 */
+			and upper(t.country_code) in ('DE', 'FR', 'GB', 'US', 'SE', 'IT', 'ES', 'NL', 'NO', 'MX', 'CH', 'DK', 'PL', 'SA', 'BE', 'AT', 'AU', 'RU', 'FI', 'CA')
     ) ogi2 on ogi2.virtual_goods_id= ogi1.virtual_goods_id
     group by ogi1.virtual_goods_id,ogi2.country_code,ogi2.project_name,ogi2.platform with cube
 ) tab1

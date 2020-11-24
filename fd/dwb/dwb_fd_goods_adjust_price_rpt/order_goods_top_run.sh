@@ -24,4 +24,17 @@ echo $pt11
 shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_adjust_price_rpt"
 
 #计算访问积分页数据
-hive -hiveconf pt=$pt -hiveconf pt3=$pt3 -hiveconf pt11=$pt11 -f ${shell_path}/order_goods_top.hql
+#hive -hiveconf pt=$pt -hiveconf pt3=$pt3 -hiveconf pt11=$pt11 -f ${shell_path}/order_goods_top.hql
+
+spark-sql \
+  --conf "spark.app.name=goods_click_detail_gaohaitao" \
+  --conf "spark.dynamicAllocation.maxExecutors=60" \
+  -d pt=$pt \
+  -d pt3=$pt3 \
+  -d pt11=$pt11 \
+  -f ${shell_path}/order_goods_top.hql
+
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+echo "order_goods_top table is finished !"

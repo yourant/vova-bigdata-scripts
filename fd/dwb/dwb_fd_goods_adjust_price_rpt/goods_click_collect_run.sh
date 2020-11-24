@@ -33,3 +33,8 @@ spark-sql \
   -d pt3=$pt3 \
   -d pt11=$pt11 \
   -f ${shell_path}/goods_click_collect.hql
+
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+echo "goods_click_collect table is finished !"
