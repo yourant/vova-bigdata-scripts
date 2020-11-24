@@ -21,16 +21,19 @@ CREATE table if not exists dwb.dwb_fd_user_retention_rpt
     access_7ago_users_new   bigint COMMENT '7天前新访问用户',
     access_both7_users_new  bigint COMMENT '7天前新访问用户在今天也访问的用户',
     access_28ago_users_new  bigint COMMENT '28天前新访问用户',
-    access_both28_users_new bigint COMMENT '28天前新访问用户在今天也访问的用户'
+    access_both28_users_new bigint COMMENT '28天前新访问用户在今天也访问的用户',
+    uv_past_paid            bigint COMMENT '今天新访问用户中曾经下过单的用户'
 ) comment '各维度下的uv，订单量，销售额，用户n天留存分析'
-    partitioned by (dt string)
+    partitioned by (pt string)
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-    STORED AS ORC;
+    STORED AS ORC
+    TBLPROPERTIES ("orc.compress"="SNAPPY");
 
 
-insert overwrite table dwb.dwb_fd_user_retention_rpt partition (dt='${hiveconf:dt}')
+
+insert overwrite table dwb.dwb_fd_user_retention_rpt partition (pt='${hiveconf:pt}')
 select
-       '${hiveconf:dt}',
+       '${hiveconf:pt}',
        nvl(t1.platform_type,'all'),
        nvl(t1.country,'all'),
        0.0,
@@ -50,17 +53,24 @@ select
        count(distinct if(t1.is_new_user = 'new' and t2.domain_userid is not null, t1.domain_userid, null))     as access_both1_new,
 
 
-            0,
+       0,
+       0,
        0,
        0,
        0
-from (select distinct domain_userid, is_new_user, platform_type, country
-      from ods.ods_fd_prc_snowplow_all_event
-      where dt = date_add('${hiveconf:dt}', -1)
+from (select distinct domain_userid,        case
+when session_idx=1 then 'new'
+when session_idx>1 then 'old'
+end  as is_new_user, platform_type, country
+      from ods_fd_snowplow.ods_fd_snowplow_all_event
+      where pt = date_add('${hiveconf:pt}', -1)
         and project = 'tendaisy') t1
-         left join (select distinct domain_userid, is_new_user, platform_type, country
-                    from ods.ods_fd_prc_snowplow_all_event
-                    where dt = '${hiveconf:dt}'
+         left join (select distinct domain_userid, case
+         when session_idx=1 then 'new'
+         when session_idx>1 then 'old'
+         end  as is_new_user, platform_type, country
+                    from ods_fd_snowplow.ods_fd_snowplow_all_event
+                    where pt = '${hiveconf:pt}'
                       and project = 'tendaisy'
 ) t2 on t1.domain_userid = t2.domain_userid
 group by t1.platform_type, t1.country with cube
@@ -68,7 +78,7 @@ group by t1.platform_type, t1.country with cube
     union all
 
 select
-       '${hiveconf:dt}',
+       '${hiveconf:pt}',
        nvl(t1.platform_type,'all'),
        nvl(t1.country,'all'),
        0.0,
@@ -89,15 +99,22 @@ select
       count(distinct if(t1.is_new_user = 'new', t1.domain_userid, null))       as access_7ago_new,
        count(distinct if(t1.is_new_user = 'new' and t2.domain_userid is not null, t1.domain_userid, null))     as access_both7_new,
       0,
+       0,
        0
 
-from (select distinct domain_userid, is_new_user, platform_type, country
-      from ods.ods_fd_prc_snowplow_all_event
-      where dt = date_add('${hiveconf:dt}', -7)
+from (select distinct domain_userid,  case
+when session_idx=1 then 'new'
+when session_idx>1 then 'old'
+end  as is_new_user, platform_type, country
+      from ods_fd_snowplow.ods_fd_snowplow_all_event
+      where pt = date_add('${hiveconf:pt}', -7)
         and project = 'tendaisy') t1
-         left join (select distinct domain_userid, is_new_user, platform_type, country
-                    from ods.ods_fd_prc_snowplow_all_event
-                    where dt = '${hiveconf:dt}'
+         left join (select distinct domain_userid,  case
+         when session_idx=1 then 'new'
+         when session_idx>1 then 'old'
+         end  as is_new_user, platform_type, country
+                    from ods_fd_snowplow.ods_fd_snowplow_all_event
+                    where pt = '${hiveconf:pt}'
                       and project = 'tendaisy'
 ) t2 on t1.domain_userid = t2.domain_userid
 group by t1.platform_type, t1.country with cube
@@ -105,7 +122,7 @@ group by t1.platform_type, t1.country with cube
     union all
 
 select
-       '${hiveconf:dt}',
+       '${hiveconf:pt}',
        nvl(t1.platform_type,'all'),
        nvl(t1.country,'all'),
        0.0,
@@ -125,15 +142,22 @@ select
         0,
        0,
       count(distinct if(t1.is_new_user = 'new', t1.domain_userid, null))       as access_28ago_new,
-       count(distinct if(t1.is_new_user = 'new' and t2.domain_userid is not null, t1.domain_userid, null))     as access_both28_new
+       count(distinct if(t1.is_new_user = 'new' and t2.domain_userid is not null, t1.domain_userid, null))     as access_both28_new,
+       0
 
-from (select distinct domain_userid, is_new_user, platform_type, country
-      from ods.ods_fd_prc_snowplow_all_event
-      where dt = date_add('${hiveconf:dt}', -28)
+from (select distinct domain_userid,  case
+when session_idx=1 then 'new'
+when session_idx>1 then 'old'
+end  as is_new_user, platform_type, country
+      from ods_fd_snowplow.ods_fd_snowplow_all_event
+      where pt = date_add('${hiveconf:pt}', -28)
         and project = 'tendaisy') t1
-         left join (select distinct domain_userid, is_new_user, platform_type, country
-                    from ods.ods_fd_prc_snowplow_all_event
-                    where dt = '${hiveconf:dt}'
+         left join (select distinct domain_userid,  case
+         when session_idx=1 then 'new'
+         when session_idx>1 then 'old'
+         end  as is_new_user, platform_type, country
+                    from ods_fd_snowplow.ods_fd_snowplow_all_event
+                    where pt = '${hiveconf:pt}'
                       and project = 'tendaisy'
 ) t2 on t1.domain_userid = t2.domain_userid
 group by t1.platform_type, t1.country with cube
@@ -141,7 +165,7 @@ group by t1.platform_type, t1.country with cube
         union all
 
     SELECT
-           '${hiveconf:dt}',
+           '${hiveconf:pt}',
             nvl(platform_type,'all'),
             nvl(country_code,'all') ,
             sum(goods_number*shop_price) ,
@@ -161,11 +185,12 @@ group by t1.platform_type, t1.country with cube
            0,
            0,
            0,
+           0,
            0
 
   from dwd.dwd_fd_order_goods
-  where dt = '${hiveconf:dt}'
-  and date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '${hiveconf:dt}'
+  where  (date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '${hiveconf:pt}' or
+     date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '${hiveconf:pt}')
   and pay_status=2
   and email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
   and project_name='tendaisy'
@@ -174,7 +199,7 @@ group by t1.platform_type, t1.country with cube
   union all
 
 select
-        '${hiveconf:dt}',
+        '${hiveconf:pt}',
         nvl(platform_type,'all'),
         nvl(country,'all'),
           0.0,
@@ -182,7 +207,8 @@ select
         count(distinct sp_duid) as paid_users,
         count(distinct domain_userid) as uv,
         count(distinct if(is_new_user = 'new', domain_userid, null)) as access_today_users_new,
-       
+
+        0,
         0,
         0,
         0,
@@ -195,28 +221,66 @@ select
         0,
         0,
         0
-    
+
 from(
   select
-        '${hiveconf:dt}',
+        '${hiveconf:pt}',
         platform_type,
         country,
+        case
+        when session_idx=1 then 'new'
+        when session_idx>1 then 'old'
+        end  as is_new_user,
         domain_userid
-              from ods.ods_fd_prc_snowplow_all_event
-              where dt = '${hiveconf:dt}'
+              from ods_fd_snowplow.ods_fd_snowplow_all_event
+              where pt = '${hiveconf:pt}'
                   and project = 'tendaisy'
 )t1  left  join (
                   select ud.sp_duid
-                    from 
-		 	(select user_id,pay_status,project_name,email from dwd.dwd_fd_order_info 
-                      	where dt='${hiveconf:dt}' 
-                      	and (date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '${hiveconf:dt}' or
-                          date_format(from_utc_timestamp(from_unixtime(order_time), 'PRC'), 'yyyy-MM-dd') = '${hiveconf:dt}' or 
-                          date_format(from_utc_timestamp(from_unixtime(event_date), 'PRC'), 'yyyy-MM-dd') = '${hiveconf:dt}')
+                    from
+		 	(select user_id,pay_status,project_name,email from dwd.dwd_fd_order_info
+                      	where  date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '${hiveconf:pt}' or
+                          date_format(from_utc_timestamp(from_unixtime(order_time), 'PRC'), 'yyyy-MM-dd') = '${hiveconf:pt}'
                     )oi
                     inner join ods_fd_vb.ods_fd_user_duid ud on oi.user_id = ud.user_id
                     where oi.pay_status = 2
                       and oi.project_name = 'tendaisy'
                       AND oi.email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
 ) t2 on t1.domain_userid = t2.sp_duid
-group by platform_type,country with cube;
+group by platform_type,country with cube
+
+
+union all
+
+
+SELECT
+      '${hiveconf:pt}',
+      nvl(platform_type,'all'),
+      nvl(country,'all'),
+        0.0,
+        0,
+        0 ,
+        0,
+        0,
+
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+      count(distinct sp_duid)
+from(select sp_duid,platform_type,country_code as country from((select distinct domain_userid
+from ods_fd_snowplow.ods_fd_snowplow_all_event  where pt = '${hiveconf:pt}'and project = 'tendaisy'
+)t1 left join (select sp_duid,platform_type,country_code from dwd.dwd_fd_order_info where pay_status = 2
+                      and project_name = 'tendaisy'
+                      AND email not like '%%@tetx.com'
+                      AND email not like '%%@i9i8.com')t2
+  on t1.domain_userid=t2.sp_duid)where platform_type is not null and  country_code is not NULL
+)tab1 GROUP by platform_type,country with cube;
