@@ -57,7 +57,7 @@ from (
                             , if(event_name == 'checkout', session_id, NULL)        as checkout_session_id
                             , if(event_name == 'checkout_option', session_id, NULL) as checkout_option_session_id
                             , if(event_name == 'purchase', session_id, NULL)        as purchase_session_id
-                        from ods.ods_fd_snowplow_all_event
+                        from ods_fd_snowplow.ods_fd_snowplow_all_event
                         where pt = '${pt}'
                             and project is not null
                             and length(project) > 2
@@ -150,4 +150,3 @@ from (
          and session_table.platform_type = order_table.platform_type
          and session_table.is_new_user = order_table.is_new_user
          and session_table.ga_channel = order_table.ga_channel;
-
