@@ -29,7 +29,7 @@ from (
                 null                                                                         as paid_order_id,
                 IF(fms.event_name = 'goods_click', session_id, NULL)                         as goods_click_session_id,
                 IF(fms.event_name = 'goods_impression', session_id, NULL)                    as goods_impression_session_id,
-                fms.pt                                                                       as pt_date
+                cast(fms.pt as string)                                                       as pt_date
          from ods_fd_snowplow.ods_fd_snowplow_all_event fms
                   LATERAL VIEW OUTER explode(goods_event_struct) single_goods_event_table AS single_goods_event
                   LATERAL VIEW OUTER explode(ecommerce_product) single_ecommerce_event_table AS single_ecommerce_event
@@ -52,7 +52,7 @@ from (
                 ogi.order_id            as paid_order_id,
                 null                    as goods_click_session_id,
                 null                    as goods_impression_session_id,
-                date(from_unixtime(ogi.pay_time,'yyyy-MM-dd hh:mm:ss'))   as pt_date
+                cast(date(from_unixtime(ogi.pay_time,'yyyy-MM-dd hh:mm:ss')) as string)  as pt_date
          from dwd.dwd_fd_order_goods ogi
          where date(from_unixtime(ogi.pay_time,'yyyy-MM-dd hh:mm:ss')) >= date_sub('${pt3}', 3)
            and date(from_unixtime(ogi.pay_time,'yyyy-MM-dd hh:mm:ss')) <= date_add('${pt3}', 3)
