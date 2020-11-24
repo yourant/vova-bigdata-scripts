@@ -35,9 +35,9 @@ shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_main_process_rpt"
 spark-sql \
   --conf "spark.app.name=main_process_gaohaitao" \
   --conf "spark.dynamicAllocation.maxExecutors=60" \
-  -d $pt=$pt \
-  -d $pt3=$pt3 \
-  -d $pt11=$pt11 \
+  -d pt=$pt \
+  -d pt3=$pt3 \
+  -d pt11=$pt11 \
   -f ${shell_path}/dwb_fd_main_process_rpt.hql
 
 if [ $? -ne 0 ]; then
