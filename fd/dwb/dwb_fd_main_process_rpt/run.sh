@@ -30,7 +30,7 @@ echo $dt_format_last
 shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_main_process_rpt"
 
 #主流程事实表
-hive -hiveconf dt=$dt -f ${shell_path}/dwb_fd_main_process_rpt.hql
+#hive -hiveconf dt=$dt -f ${shell_path}/dwb_fd_main_process_rpt.hql
 
 spark-sql \
   --conf "spark.app.name=main_process_gaohaitao" \
