@@ -1,5 +1,6 @@
 insert overwrite table dwb.dwb_fd_goods_adjust_price_rpt partition (pt = '${pt}')
-select /*+ REPARTITION(1) */'${pt3}' as adjust_date,
+select /*+ REPARTITION(1) */
+     '${pt3}' as adjust_date,
      nvl(tab4.goods_id,'all') as goods_id,
      tab1.virtual_goods_id as virtual_goods_id,
      tab1.country_code as country_code,
