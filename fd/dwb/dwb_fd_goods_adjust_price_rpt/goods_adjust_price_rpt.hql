@@ -55,13 +55,13 @@ from (
                 when t.is_app = 0 and t.device_type = 'mobile' then 'h5'
                 when t.is_app = 1 then 'mob'
                 else 'others' end   as platform,
-			date(from_unixtime(t.pay_time,'yyyy-MM-dd hh:mm:ss')) as pt,
+			date(from_unixtime(t.pay_time,'yyyy-MM-dd HH:mm:ss')) as pt,
 			t.goods_number,
 			t.shop_price,
 			t.virtual_goods_id
 			from dwd.dwd_fd_order_goods t
-            where date(from_unixtime(t.pay_time,'yyyy-MM-dd hh:mm:ss')) >= date_sub('${pt3}', 3)
-            and date(from_unixtime(t.pay_time,'yyyy-MM-dd hh:mm:ss')) <= date_add('${pt3}', 3)
+            where date(from_unixtime(t.pay_time,'yyyy-MM-dd HH:mm:ss')) >= date_sub('${pt3}', 3)
+            and date(from_unixtime(t.pay_time,'yyyy-MM-dd HH:mm:ss')) <= date_add('${pt3}', 3)
             and t.virtual_goods_id is not null  and t.pay_status = 2
 			and upper(t.country_code) in ('DE', 'FR', 'GB', 'US', 'SE', 'IT', 'ES', 'NL', 'NO', 'MX', 'CH', 'DK', 'PL', 'SA', 'BE', 'AT', 'AU', 'RU', 'FI', 'CA')
     ) ogi2 on ogi2.virtual_goods_id= ogi1.virtual_goods_id
@@ -83,13 +83,13 @@ left join (
                 when t.is_app = 0 and t.device_type = 'mobile' then 'h5'
                 when t.is_app = 1 then 'mob'
             else 'others' end   as platform,
-			date(from_unixtime(t.pay_time,'yyyy-MM-dd hh:mm:ss')) as pt,
+			date(from_unixtime(t.pay_time,'yyyy-MM-dd HH:mm:ss')) as pt,
 			t.goods_number,
 			t.shop_price,
 			t.virtual_goods_id
 			from dwd.dwd_fd_order_goods t
-            where date(from_unixtime(t.pay_time,'yyyy-MM-dd hh:mm:ss')) >= date_sub('${pt3}', 3)
-            and date(from_unixtime(t.pay_time,'yyyy-MM-dd hh:mm:ss')) <= date_add('${pt3}', 3)
+            where date(from_unixtime(t.pay_time,'yyyy-MM-dd HH:mm:ss')) >= date_sub('${pt3}', 3)
+            and date(from_unixtime(t.pay_time,'yyyy-MM-dd HH:mm:ss')) <= date_add('${pt3}', 3)
             and t.virtual_goods_id is not null  and t.pay_status = 2
 
     ) ogi2 on ogi2.virtual_goods_id= ogi1.virtual_goods_id

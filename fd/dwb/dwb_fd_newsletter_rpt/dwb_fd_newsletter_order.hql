@@ -25,10 +25,10 @@ from  (
     virtual_goods_id,
     cat_name,
     order_sn,
-    date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) as order_date
+    date(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss')) as order_date
   from dwd.dwd_fd_order_goods
   where pay_status = 2
-    and date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:pt_last}'
+    and date(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss')) = '${hiveconf:pt_last}'
 
 ) oi
 left join (

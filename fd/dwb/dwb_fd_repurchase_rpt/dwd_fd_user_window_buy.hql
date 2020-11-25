@@ -43,7 +43,7 @@ FROM (
         dt='${hiveconf:dt}'
         and  pay_status = 1
         and order_time is not null
-        and date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) <= '${hiveconf:dt}' 
+        and date(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss')) <= '${hiveconf:dt}'
 ) oi
 INNER JOIN (
     SELECT

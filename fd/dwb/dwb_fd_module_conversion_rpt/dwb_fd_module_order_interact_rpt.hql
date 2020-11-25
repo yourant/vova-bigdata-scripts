@@ -100,9 +100,9 @@ FROM (
                shipping_fee,
                project_name
         FROM dwd.dwd_fd_order_goods_info
-        WHERE pt = '${hiveconf:pt}' and (date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:pt}' 
-or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:pt}'
-or date(from_unixtime(event_date,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:pt}')
+        WHERE pt = '${hiveconf:pt}' and (date(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss')) = '${hiveconf:pt}'
+or date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${hiveconf:pt}'
+or date(from_unixtime(event_date,'yyyy-MM-dd HH:mm:ss')) = '${hiveconf:pt}')
     ) order_duids ON order_duids.sp_duid = interact_duids.domain_userid
         AND order_duids.virtual_goods_id = interact_duids.goods_id
 ) t ON t.module_name = s.module_name AND t.domain_userid = s.domain_userid;

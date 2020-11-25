@@ -75,8 +75,8 @@ left join (
         sum(shop_price * goods_number) gmv
    from dwd.dwd_fd_order_goods
    where (
-      date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) >= '${hiveconf:pt_last}'
-      or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) >= '${hiveconf:pt_last}'
+      date(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss')) >= '${hiveconf:pt_last}'
+      or date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) >= '${hiveconf:pt_last}'
     )
    and sp_duid is not null
    group by sp_duid,order_id
