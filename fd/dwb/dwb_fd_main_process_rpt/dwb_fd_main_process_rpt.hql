@@ -1,5 +1,5 @@
 set hive.new.job.grouping.set.cardinality=128;
-insert overwrite table dwb.dwb_fd_rpt_main_process PARTITION (pt = '${pt}')
+insert overwrite table dwb.dwb_fd_rpt_main_process_rpt PARTITION (pt = '${pt}')
 select session_table.project
      , session_table.platform_type
      , session_table.country
