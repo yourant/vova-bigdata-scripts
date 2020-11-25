@@ -78,7 +78,7 @@ from (select common_struct,
              ecommerce_product,
              row_number()
                      over (partition by common_struct.event_fingerprint order by common_struct.collector_ts asc ) as row_num
-      from pdb.pdb_fd_snowplow_all_event
+      from pdb.pdb_fd_snowplow_offline
       where ${pt_filter}
         and common_struct.collector_ts >= "${start}"
         and common_struct.collector_ts < "${end}"
