@@ -23,7 +23,7 @@ from(
 
         select user_id,order_id
          from ods_fd_vb.ods_fd_order_info
-         where  date(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss')) = '${pt}'
+         where  date(to_utc_timestamp(order_time, 'America/Los_Angeles')) = '${pt}'
          and email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
          group by user_id,order_id
 
@@ -64,8 +64,8 @@ from(
             select user_id,order_id,goods_amount,shipping_fee,pay_status
             from ods_fd_vb.ods_fd_order_info
             where (
-                date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${pt}'
-                or date(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss')) = '${pt}'
+                date(to_utc_timestamp(pay_time, 'America/Los_Angeles')) = '${pt}'
+                or date(to_utc_timestamp(order_time, 'America/Los_Angeles')) = '${pt}'
             )
             and pay_status = 2
             and email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
