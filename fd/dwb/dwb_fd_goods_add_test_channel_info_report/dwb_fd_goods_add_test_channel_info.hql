@@ -78,7 +78,7 @@ select project_name,
        null                      as success_order_id,
        null                      as success_goods_amount
 from dwd.dwd_fd_order_channel_analytics
-where  date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:pt}'
+where  date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${hiveconf:pt}'
   and pay_status = 2
 
 union all
@@ -97,7 +97,7 @@ select a.project_name,
        null               as success_order_id,
        null               as success_goods_amount
 from (select project_name,platform_name,country_code,cat_id,cat_name,virtual_goods_id,result from dwd.dwd_fd_finished_goods_test where to_date(finish_time) = '${hiveconf:pt}' ) a
-left join (select virtual_goods_id,project_name,ga_channel from dwd.dwd_fd_order_channel_analytics where to_date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:pt}') b on a.project_name = b.project_name and a.virtual_goods_id = b.virtual_goods_id
+left join (select virtual_goods_id,project_name,ga_channel from dwd.dwd_fd_order_channel_analytics where to_date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${hiveconf:pt}') b on a.project_name = b.project_name and a.virtual_goods_id = b.virtual_goods_id
 
 union all
 select a.project_name,
@@ -140,10 +140,10 @@ from (
                 ga_channel,
                 order_id                                         as success_order_id,
                 cast(virtual_goods_id as int)                    as virtual_goods_id,
-                from_unixtime(order_time, 'yyyy-MM-dd hh:mm:ss') as order_time,
+                from_unixtime(order_time, 'yyyy-MM-dd HH:mm:ss') as order_time,
                 (goods_number * shop_price)                      as success_goods_amount
          from dwd.dwd_fd_order_channel_analytics
-           where  date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:pt}'
+           where  date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${hiveconf:pt}'
            and pay_status = 2
      ) b on b.project_name = a.project_name
          and b.platform = a.platform_type and b.country_code = a.country_code and b.cat_id = a.cat_id and a.virtual_goods_id = cast(b.virtual_goods_id as int)

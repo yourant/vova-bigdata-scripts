@@ -52,10 +52,10 @@ shop_price,
 virtual_goods_id,
 cat_name,
 order_sn,
-date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) as order_date
+date(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss')) as order_date
 from dwd.dwd_fd_order_goods
 where pay_status = 2
-and date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) = '$pt_last'
+and date(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss')) = '$pt_last'
 ) oi
 left join (
 select t2.order_sn,t2.country,t2.nl_code,t2.order_id,t2.region_code

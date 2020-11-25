@@ -53,7 +53,7 @@ oi.project_name as project_name,
 oi.goods_amount as goods_amount,
 oi.shipping_fee as shipping_fee
 from dwd.dwd_fd_order_info oi
-where (date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) = '$pt' or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) = '$pt')
+where (date(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss')) = '$pt' or date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '$pt')
 and oi.email NOT REGEXP 'tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com'
 )tab1
 group by

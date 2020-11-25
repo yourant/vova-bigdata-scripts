@@ -22,8 +22,8 @@ from (
                                   cat_name,
                                   sum(goods_number) as total_goods_number
                            from dwd.dwd_fd_order_goods
-                           where date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) < '${pt3}'
-                             and date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) >= '${pt11}'
+                           where date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) < '${pt3}'
+                             and date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) >= '${pt11}'
                              and lower(project_name) = 'floryday'
                              and pay_status = 2
                              and virtual_goods_id is not null
@@ -46,8 +46,8 @@ from (
                                         cat_name,
                                         sum(goods_number) as total_goods_number
                                  from dwd.dwd_fd_order_goods
-                                 where date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) < '${pt3}'
-                                   and date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) >= '${pt11}'
+                                 where date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) < '${pt3}'
+                                   and date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) >= '${pt11}'
                                    and lower(project_name) = 'airydress'
                                    and pay_status = 2
                                    and virtual_goods_id is not null
@@ -82,8 +82,8 @@ from (
                         cat_name,
                         sum(goods_number) as total_goods_number
                      from dwd.dwd_fd_order_goods
-                     where date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) <= '${pt}'
-                       and date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) >= '${pt11}'
+                     where date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) <= '${pt}'
+                       and date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) >= '${pt11}'
                        and lower(project_name) in ('floryday','airydress')
                        and pay_status = 2
                        and virtual_goods_id is not null

@@ -52,10 +52,10 @@ from (
                 ogi.order_id            as paid_order_id,
                 null                    as goods_click_session_id,
                 null                    as goods_impression_session_id,
-                cast(date(from_unixtime(ogi.pay_time,'yyyy-MM-dd hh:mm:ss')) as string)  as pt_date
+                cast(date(from_unixtime(ogi.pay_time,'yyyy-MM-dd HH:mm:ss')) as string)  as pt_date
          from dwd.dwd_fd_order_goods ogi
-         where date(from_unixtime(ogi.pay_time,'yyyy-MM-dd hh:mm:ss')) >= date_sub('${pt3}', 3)
-           and date(from_unixtime(ogi.pay_time,'yyyy-MM-dd hh:mm:ss')) <= date_add('${pt3}', 3)
+         where date(from_unixtime(ogi.pay_time,'yyyy-MM-dd HH:mm:ss')) >= date_sub('${pt3}', 3)
+           and date(from_unixtime(ogi.pay_time,'yyyy-MM-dd HH:mm:ss')) <= date_add('${pt3}', 3)
            and ogi.pay_status = 2
      ) tab1
     inner join (
