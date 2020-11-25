@@ -13,12 +13,12 @@ create table dwb.dwb_fd_goods_test_sales_ratio
     sum_detail_add_uv_1m     BIGINT,
     sum_detail_view_uv_1m    BIGINT,
     sales_num_1m             BIGINT,
-    sales_amount_1m          DECIMAL,
-    sales_amount_2m          DECIMAL,
-    sales_amount_3m          DECIMAL,
-    category_sales_amount_1m DECIMAL,
-    category_sales_amount_2m DECIMAL,
-    category_sales_amount_3m DECIMAL
+    sales_amount_1m          DECIMAL(15,4),
+    sales_amount_2m          DECIMAL(15,4),
+    sales_amount_3m          DECIMAL(15,4),
+    category_sales_amount_1m DECIMAL(15,4),
+    category_sales_amount_2m DECIMAL(15,4),
+    category_sales_amount_3m DECIMAL(15,4)
 )
     COMMENT '月测款成功商品次n月表现'
     PARTITIONED BY (`mt` string)

@@ -1,4 +1,4 @@
-insert into dwd.dwd_fd_category_sales_monthly partition (mt = '${mt}')
+insert overwrite table dwd.dwd_fd_category_sales_monthly partition (mt = '${mt}')
 select
        /*+ REPARTITION(1) */
        cat_id,
