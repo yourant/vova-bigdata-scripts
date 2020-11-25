@@ -1,0 +1,82 @@
+---
+config:
+  failure.emails: yunling@i9i8.com
+  retries: 5
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_order_attribute_report_start
+    type: noop
+
+  - name: order_attribute_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: order_attribute_report_start
+        type: noop
+        
+      - name: judge_snowplow_all_event
+        type: noop
+        dependsOn:
+          - order_attribute_report_start
+      
+      - name: judge_ods_order_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_order_info
+        dependsOn:
+          - order_attribute_report_start
+      
+      - name: judge_ods_user_duid
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_user_duid
+        dependsOn:
+          - order_attribute_report_start
+      
+      - name: snowplow_click_impr_caculate
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_order_attribute_rpt/click_impr_run.sh ${dt}
+        dependsOn:
+          - judge_snowplow_all_event
+      
+      - name: snowplow_add_caculate
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_order_attribute_rpt/add_run.sh ${dt}
+        dependsOn:
+          - judge_snowplow_all_event
+          - snowplow_click_impr_caculate
+      
+      - name: snowplow_order_caculate
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_order_attribute_rpt/order_run.sh ${dt}
+        dependsOn:
+          - judge_ods_order_info
+          - judge_ods_user_duid
+          - snowplow_click_impr_caculate
+
+      - name: order_attribute_report_caculate
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_order_attribute_rpt/order_attribution_run.sh ${dt}
+        dependsOn:
+          - snowplow_click_impr_caculate
+          - snowplow_add_caculate
+          - snowplow_order_caculate
+
+      - name: order_attribute_report_end
+        type: noop
+        dependsOn:
+          - order_attribute_report_caculate
+
+    dependsOn:
+      - fd_order_attribute_report_start
+
+  - name: fd_order_attribute_report_end
+    type: noop
+    dependsOn:
+      - order_attribute_flow

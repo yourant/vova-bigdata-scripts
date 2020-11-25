@@ -21,7 +21,7 @@ echo $pt3
 shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_order_attribute_rpt"
 
 #主流程事实表
-#hive -hiveconf dt=$dt -f ${shell_path}/snowplow_click_impr.hql
+#hive -hiveconf pt=$pt -f ${shell_path}/snowplow_click_impr.hql
 
 spark-sql \
   --conf "spark.app.name=snowplow_click_impr_gaohaitao" \

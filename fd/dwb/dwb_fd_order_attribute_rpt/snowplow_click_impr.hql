@@ -1,15 +1,15 @@
 insert overwrite table dwd.dwd_fd_snowplow_click_impr partition (pt = '${pt}')
 SELECT
-    /*+ REPARTITION(4) */
-    project AS project_name,
-    upper(country) as country,
-    platform_type,
-    page_code,
-    goods_event_struct.list_type AS list_type,
-    domain_userid,
-    event_name,
-    session_id,
-    derived_ts as derived_tstamp
+/*+ REPARTITION(1) */
+project AS project_name,
+upper(country) as country,
+platform_type,
+page_code,
+goods_event_struct.list_type AS list_type,
+domain_userid,
+event_name,
+session_id,
+derived_ts as derived_tstamp
 FROM ods_fd_snowplow.ods_fd_snowplow_goods_event
 WHERE event_name in ('goods_click', 'goods_impression')
 AND pt = '${pt}'
