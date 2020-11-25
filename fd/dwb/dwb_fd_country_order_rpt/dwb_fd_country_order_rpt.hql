@@ -34,7 +34,7 @@ from (
         oi.email as email
     from dwd.dwd_fd_order_info oi 
     where (date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:pt}' or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) = '${hiveconf:pt}')
-    and oi.email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
+    and oi.email NOT REGEXP 'tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com'
 )tab1
 group by 
         tab1.project_name,

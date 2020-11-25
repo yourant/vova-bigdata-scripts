@@ -322,21 +322,21 @@ nodes:
       - name: ods_fd_vb_newsletters
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=newsletters  --partition_num=1 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=nl --etl_type=ALL --table_name=newsletters  --partition_num=1 --period_type=day
         dependsOn:
           - fd_ods_newsletter_flow_start
 
       - name: ods_fd_vb_email_unsubscribe
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=email_unsubscribe  --partition_num=1 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=nl --etl_type=ALL --table_name=email_unsubscribe  --partition_num=1 --period_type=day
         dependsOn:
           - fd_ods_newsletter_flow_start
 
       - name: ods_fd_vb_email_subscribe
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=email_subscribe  --partition_num=2 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=nl --etl_type=ALL --table_name=email_subscribe  --partition_num=2 --period_type=day
         dependsOn:
           - fd_ods_newsletter_flow_start
 
