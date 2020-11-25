@@ -32,7 +32,7 @@ from (
         null as success_order_user_id,
         null as gmv
     from dwd.dwd_fd_snowplow_click_impr
-    where pt = '${pt}'  /* AND project_name = 'floryday' */
+    where pt = '${pt}'
     AND project_name is not null
     AND country is not null
     AND country !=''
@@ -87,7 +87,6 @@ from (
         if(pay_status = '2',order_amount,null) as gmv
     from dwd.dwd_fd_snowplow_order
     where pt = '${pt}'
-    /* AND project_name = 'floryday' */
     AND project_name is not null
     AND country is not null
     AND country !=''

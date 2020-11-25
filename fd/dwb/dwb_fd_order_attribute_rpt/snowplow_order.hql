@@ -35,9 +35,8 @@ from(
              user_id,
              sp_duid,
              created_time,
-             from_unixtime(created_time) as create_time_utc,
-             last_update_time as update_time ,
-             from_unixtime(last_update_time) as last_update_time,
+             to_utc_timestamp(created_time, 'America/Los_Angeles') as create_time_utc,
+             last_update_time,
              row_number() over (partition by user_id order by last_update_time desc) as rn
          FROM ods_fd_vb.ods_fd_user_duid
          WHERE  sp_duid is not null
@@ -78,9 +77,8 @@ from(
                  user_id,
                  sp_duid,
                  created_time,
-                 from_unixtime(created_time) as create_time_utc,
-                 last_update_time as update_time ,
-                 from_unixtime(last_update_time) as last_update_time,
+                 to_utc_timestamp(created_time, 'America/Los_Angeles') as create_time_utc,
+                 last_update_time,
                  row_number() over (partition by user_id order by last_update_time desc) as rn
              FROM  ods_fd_vb.ods_fd_user_duid
              WHERE sp_duid is not null
