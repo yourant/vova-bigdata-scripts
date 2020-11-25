@@ -47,19 +47,11 @@ oi.user_id,
 if(oi.is_app is null, 'other', if(oi.is_app = 0, 'web', 'mob'))  AS platform,
 if(oi.device_type is null, 'other', oi.device_type)   AS device_type,
 oi.platform_type as platform_type,
-oi.order_time as order_time,
 cast(oi.pay_status as string) as pay_status,
-if(oi.pay_time < 0 or oi.pay_time is null, 0, oi.pay_time)  AS pay_time,
 oi.country_code as country_code,
-oi.language_code as language_code,
-oi.order_currency_code as order_currency_code,
 oi.project_name as project_name,
 oi.goods_amount as goods_amount,
-oi.goods_amount_exchange as goods_amount_exchange,
-oi.bonus as bonus,
-oi.shipping_fee as shipping_fee,
-oi.shipping_fee_exchange as shipping_fee_exchange,
-oi.email as email
+oi.shipping_fee as shipping_fee
 from dwd.dwd_fd_order_info oi
 where (date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) = '$pt' or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) = '$pt')
 and oi.email NOT REGEXP 'tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com'

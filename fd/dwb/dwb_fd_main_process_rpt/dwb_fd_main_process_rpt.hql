@@ -1,6 +1,6 @@
 set hive.new.job.grouping.set.cardinality=128;
 insert overwrite table dwb.dwb_fd_rpt_main_process_rpt PARTITION (pt = '${pt}')
-select session_table.project
+select /*+ REPARTITION(1) */ session_table.project
      , session_table.platform_type
      , session_table.country
      , session_table.is_new_user
@@ -53,10 +53,10 @@ from (
                                 end as is_new_user
                             , session_id
                             , if(event_name in ('page_view', 'screen_view') and page_code = 'product', session_id,NULL) as product_view_session_id
-                            , if(event_name == 'add', session_id, NULL)             as add_session_id
-                            , if(event_name == 'checkout', session_id, NULL)        as checkout_session_id
-                            , if(event_name == 'checkout_option', session_id, NULL) as checkout_option_session_id
-                            , if(event_name == 'purchase', session_id, NULL)        as purchase_session_id
+                            , if(event_name in ('add'), session_id, NULL)             as add_session_id
+                            , if(event_name in ('checkout'), session_id, NULL)        as checkout_session_id
+                            , if(event_name in ('checkout_option'), session_id, NULL) as checkout_option_session_id
+                            , if(event_name in ('purchase'), session_id, NULL)        as purchase_session_id
                         from ods_fd_snowplow.ods_fd_snowplow_all_event
                         where pt = '${pt}'
                             and project is not null
@@ -128,7 +128,7 @@ from (
                                 when platform = 'mob' and session_idx > 1 then 'old'
                                 end as is_new_user 
                             from ods_fd_snowplow.ods_fd_snowplow_all_event
-                            where pt BETWEEN date_sub('${pt}', 3) AND '${pt}' and event_name in ('page_view', 'screen_view')
+                            where pt BETWEEN date_sub('${pt}', 4) AND '${pt}' and event_name in ('page_view', 'screen_view')
                         ) soe group by soe.session_id
 
                   ) fms on fms.session_id = om.sp_session_id
