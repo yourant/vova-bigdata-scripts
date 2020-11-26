@@ -62,7 +62,7 @@ create  table if not exists ods_fd_snowplow.ods_fd_snowplow_view_event
     url_virtual_goods_id STRING
 ) partitioned by (
     `pt` string,
-    `hour` int
+    `hour` string
     )
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
     stored as parquet;
