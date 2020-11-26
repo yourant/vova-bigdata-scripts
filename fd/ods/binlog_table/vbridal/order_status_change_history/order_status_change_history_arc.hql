@@ -23,7 +23,7 @@ from (
             old_value,
             new_value,
             create_time
-        from ods_fd_vb.ods_fd_order_status_change_history_inc where pt >= '${hiveconf:pt}'
+        from ods_fd_vb.ods_fd_order_status_change_history_inc where pt = '${hiveconf:pt}'
     )arc
 
 ) tab where tab.rank = 1;
