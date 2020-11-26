@@ -1,5 +1,5 @@
 set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite table ods_fd_ecshop.ods_fd_order_attribute_arc PARTITION (pt = '${hiveconf:pt}')
+INSERT overwrite table ods_fd_ecshop.ods_fd_order_attribute_arc PARTITION (pt = '${pt}')
 select 
      attribute_id, order_id, attr_name, attr_value
 from (
@@ -14,13 +14,13 @@ from (
                 order_id,
                 attr_name,
                 attr_value
-        from ods_fd_ecshop.ods_fd_order_attribute_arc where pt = '${hiveconf:pt_last}'
+        from ods_fd_ecshop.ods_fd_order_attribute_arc where pt = '${pt_last}'
         UNION
         select  pt,
                 attribute_id,
                 order_id,
                 attr_name,
                 attr_value
-        from ods_fd_ecshop.ods_fd_order_attribute_inc where pt='${hiveconf:pt}'
+        from ods_fd_ecshop.ods_fd_order_attribute_inc where pt='${pt}'
     ) arc 
 ) tab where tab.rank = 1;

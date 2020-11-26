@@ -1,5 +1,5 @@
 set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite table ods_fd_ecshop.ods_fd_fd_stock_goods_config_arc PARTITION (pt = '${hiveconf:pt}')
+INSERT overwrite table ods_fd_ecshop.ods_fd_fd_stock_goods_config_arc PARTITION (pt = '${pt}')
 select 
      id,goods_id,min_quantity,produce_days,change_provider,change_provider_days,change_provider_reason,is_delete,update_date,fabric,provider_type
 from (
@@ -21,7 +21,7 @@ from (
                 update_date,
                 fabric,
                 provider_type
-        from ods_fd_ecshop.ods_fd_fd_stock_goods_config_arc where pt = '${hiveconf:pt_last}'
+        from ods_fd_ecshop.ods_fd_fd_stock_goods_config_arc where pt = '${pt_last}'
 
         UNION
 
@@ -37,6 +37,6 @@ from (
                 update_date,
                 fabric,
                 provider_type
-        from ods_fd_ecshop.ods_fd_fd_stock_goods_config_inc where pt='${hiveconf:pt}'
+        from ods_fd_ecshop.ods_fd_fd_stock_goods_config_inc where pt='${pt}'
     ) arc 
 ) tab where tab.rank = 1;
