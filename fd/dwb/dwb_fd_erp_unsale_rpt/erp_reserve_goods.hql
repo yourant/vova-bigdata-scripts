@@ -1,8 +1,8 @@
 insert overwrite table dwd.dwd_fd_erp_reserve_goods partition (pt = '${pt}')
 SELECT
-	eg.external_goods_id as goods_id, /* 商品id */
-	eg.uniq_sku as goods_sku, /* SKU */
-	SUM(ins.available_to_reserved) as reserve_num /* 可预订库存*/
+	eg.external_goods_id as goods_id,
+	eg.uniq_sku as goods_sku,
+	SUM(ins.available_to_reserved) as reserve_num
 FROM (
 	select
 		product_id,
