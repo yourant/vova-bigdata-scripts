@@ -54,7 +54,7 @@ nodes:
       - name: app_user_coupon_report_base
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_user_coupon_rpt/run.sh ${dt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_user_coupon_rpt/run.sh ${pt}
         dependsOn:
           - judge_dwd_fd_order_info
           - judge_ods_fd_vb_app_install_record
@@ -65,7 +65,7 @@ nodes:
       - name: app_user_coupon_report_caculate
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_user_coupon_rpt/run_rpt.sh ${dt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_user_coupon_rpt/run_rpt.sh ${pt}
         dependsOn:
           - app_user_coupon_report_base
 
