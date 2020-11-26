@@ -74,7 +74,7 @@ create table if not exists ods_fd_snowplow.ods_fd_snowplow_all_event
                                       position : BIGINT, price : Double, quantity : BIGINT, variant : String>>
 ) partitioned by (
     `pt` string,
-    `hour` int
+    `hour` string
     )
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
     stored as parquet;

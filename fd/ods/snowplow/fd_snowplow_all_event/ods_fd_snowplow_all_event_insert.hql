@@ -69,7 +69,7 @@ SELECT
        ecommerce_action,
        ecommerce_product,
        date(common_struct.collector_ts),
-       hour(common_struct.collector_ts)
+       lpad(cast(hour(common_struct.collector_ts) as STRING), 2, "0")
 from (select common_struct,
              goods_event_struct,
              element_event_struct,

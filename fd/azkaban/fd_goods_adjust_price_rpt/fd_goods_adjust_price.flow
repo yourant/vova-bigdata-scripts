@@ -33,7 +33,7 @@ nodes:
       - name: order_goods_top
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_adjust_price_rpt/order_goods_top_run.sh ${dt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_adjust_price_rpt/order_goods_top_run.sh ${pt}
         dependsOn:
           - judge_dwd_fd_order_info
           - judge_ods_fd_vb_goods_purchase_price
@@ -41,21 +41,21 @@ nodes:
       - name: goods_click_detail
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_adjust_price_rpt/goods_click_detail_run.sh ${dt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_adjust_price_rpt/goods_click_detail_run.sh ${pt}
         dependsOn:
           - order_goods_top
       
       - name: goods_click_collect
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_adjust_price_rpt/goods_click_collect_run.sh ${dt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_adjust_price_rpt/goods_click_collect_run.sh ${pt}
         dependsOn:
           - goods_click_detail
       
       - name: goods_adjust_price_rpt
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_adjust_price_rpt/goods_adjust_price_rpt_run.sh ${dt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_adjust_price_rpt/goods_adjust_price_rpt_run.sh ${pt}
         dependsOn:
           - goods_click_collect
 

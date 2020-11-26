@@ -1,6 +1,6 @@
 insert overwrite table dwd.dwd_fd_snowplow_click_impr partition (pt = '${pt}')
 SELECT
-/*+ REPARTITION(1) */
+/*+ REPARTITION(50) */
 project AS project_name,
 upper(country) as country,
 platform_type,
