@@ -13,8 +13,8 @@ INNER JOIN (
 	from ods_fd_ecshop.ods_fd_ecs_order_info
 	where pay_status = 2
 	and order_type_id = 'SALE'
-	and to_date(from_utc_timestamp(order_time * 1000, 'PRC')) >= trunc('${pt}','MM')
-	and to_date(from_utc_timestamp(order_time * 1000, 'PRC')) <= '${pt}'
+	and to_date(to_utc_timestamp(order_time, 'PRC')) >= trunc('${pt}','MM')
+	and to_date(to_utc_timestamp(order_time, 'PRC')) <= '${pt}'
 	group by order_id
 )eoi on eoi.order_id = eog.order_id
 INNER JOIN (

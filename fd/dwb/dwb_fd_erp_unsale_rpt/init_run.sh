@@ -49,7 +49,7 @@ spark-sql \
 if [ $? -ne 0 ]; then
   exit 1
 fi
-echo "erp_14d_avg_sale table is finished !"
+echo "erp_goods_sale_monthly table is finished !"
 
 #goods_sku
 spark-sql \
