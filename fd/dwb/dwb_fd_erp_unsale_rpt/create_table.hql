@@ -69,7 +69,7 @@ partitioned by (`pt` string)
 row format delimited fields terminated by '\t' lines terminated by '\n'
 stored as orc;
 
-CREATE TABLE IF NOT EXISTS  dwd.dwd_fd_erp_unsale_rpt (
+CREATE TABLE IF NOT EXISTS  dwb.dwb_fd_erp_unsale_rpt (
 `unsale_level` string COMMENT '滞销程度',
 `unsale_rate` decimal(10, 6) COMMENT '滞销率',
 `unsale_goods_num` bigint COMMENT '滞销件数',

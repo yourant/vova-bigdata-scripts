@@ -1,4 +1,4 @@
-insert overwrite table dwd.dwd_fd_erp_unsale_rpt  partition (pt = '${pt}')
+insert overwrite table dwb.dwb_fd_erp_unsale_rpt  partition (pt = '${pt}')
 select
 	tab1.unsale_level,
 	tab1.unsale_rate as unsale_rate,
