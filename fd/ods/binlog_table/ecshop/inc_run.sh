@@ -16,8 +16,6 @@ elif [[ $# -ge 1 && $# -le 2 ]]; then
         table_name=$1
         pt=`date -d "-1 days" +%Y-%m-%d`
         pt_last=`date -d "-2 days" +%Y-%m-%d`
-        pt_format=`date -d "-1 days" +%Y%m%d`
-        pt_format_last=`date -d "-2 days" +%Y%m%d`
 
         if [[ $# -eq 2 ]]; then
                 echo $2 | grep -Eq "[0-9]{4}-[0-9]{2}-[0-9]{2}" && date -d $2 +%Y-%m-%d > /dev/null
@@ -28,8 +26,6 @@ elif [[ $# -ge 1 && $# -le 2 ]]; then
                 table_name=$1
                 pt=$2
                 pt_last=`date -d "$2 -1 days" +%Y-%m-%d`
-                pt_fcormat=`date -d "$2" +%Y%m%d`
-                pt_format_last=`date -d "$2 -1 days" +%Y%m%d`
         fi
 fi
 
@@ -37,50 +33,25 @@ fi
 echo $table_name
 echo $pt
 echo $pt_last
-echo $pt_format
-echo $pt_format_last
 
 #脚本路径
-shell_path="/mnt/vova-bigdata-scripts/fd/ods/binlog_table/romeo"
-
+shell_path="/mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop"
 #flume搜集的binlog日志路径
-flume_path="s3a://bigdata-offline/warehouse/pdb/fd/romeo"
+flume_path="s3a://bigdata-offline/warehouse/pdb/fd/ecshop"
 
 #将flume收集的数据存到tmp表中
-hive -hiveconf flume_path=$flume_path  -f ${shell_path}/${table_name}/tmp_${table_name}.hql
+hive -hiveconf flume_path=$flume_path  -f ${shell_path}/${table_name}/pdb_${table_name}.hql
 
-#如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
 fi
 echo "step1: tmp_${table_name} table is finished !"
 
-#将每天增量数据放到inc对应的天表中
-hive -hiveconf pt=$pt -f ${shell_path}/${table_name}/${table_name}_inc.hql
+#inc表
+hive -hiveconf pt=$pt -hiveconf mapred.job.name=fd_${table_name}_gaohaitao -f ${shell_path}/${table_name}/${table_name}_inc.hql
 
-#如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
 fi
 echo "step2: ${table_name}_inc table is finished !"
 
-#这一步为了初始化订单表，将全量数据放到arc表中
-hive -hiveconf pt=$pt -f ${shell_path}/${table_name}/${table_name}_arc_full.hql
-
-#arc最终表
-#hive -hiveconf pt=$pt -hiveconf pt_last=$pt_last -f ${shell_path}/${table_name}/${table_name}_arc.hql
-
-#如果脚本失败，则报错
-if [ $? -ne 0 ];then
-  exit 1
-fi
-echo "step3: ${table_name}_arc table is finished !"
-
-#snapshot表
-hive -hiveconf pt=$pt -f ${shell_path}/${table_name}/${table_name}_snapshot.hql
-
-#如果脚本失败，则报错
-if [ $? -ne 0 ];then
-  exit 1
-fi
-echo "step4: ${table_name}_snapshot table is finished !"

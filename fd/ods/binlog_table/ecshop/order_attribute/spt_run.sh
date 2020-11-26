@@ -35,10 +35,16 @@ echo $pt
 echo $pt_last
 
 #脚本路径
-shell_path="/mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal"
+shell_path="/mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop"
 
-#snapshot表
-hive -hiveconf pt=$pt -f ${shell_path}/${table_name}/${table_name}_snapshot.hql
+spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"  \
+--conf "spark.app.name=order_attribute_snapshot_gaohaitao"  \
+--conf "spark.sql.output.coalesceNum=4" \
+--conf "spark.dynamicAllocation.minExecutors=10" \
+--conf "spark.dynamicAllocation.initialExecutors=20" \
+-d pt=$pt \
+-d pt_last=$pt_last \
+-f ${shell_path}/${table_name}/order_attribute_snapshot.hql
 
 if [ $? -ne 0 ];then
   exit 1

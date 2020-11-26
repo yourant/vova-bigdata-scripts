@@ -152,6 +152,13 @@ nodes:
           command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=dmc --etl_type=ALL --table_name=dmc_goods --mapers=2 --partition_num=1 --period_type=day
         dependsOn:
           - fd_dw_erp_dmc_flow_start
+      
+      - name: ods_fam_party
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=fam --etl_type=ALL --table_name=fam_party --mapers=2 --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_dw_erp_dmc_flow_start
 
     dependsOn:
       - fd_dw_erp_ods_inc_start
