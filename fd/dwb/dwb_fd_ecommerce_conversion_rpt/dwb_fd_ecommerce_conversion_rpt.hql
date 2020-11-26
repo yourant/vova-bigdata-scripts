@@ -73,10 +73,7 @@ left JOIN
   from 
   (select project_name,platform_type,country_code,order_id
   from dwd.dwd_fd_order_info 
-  where pt = '${hiveconf:pt}'
-  and (date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '${hiveconf:pt}' or
-  date_format(from_utc_timestamp(from_unixtime(order_time), 'PRC'), 'yyyy-MM-dd') = '${hiveconf:pt}' or 
-  date_format(from_utc_timestamp(from_unixtime(event_date), 'PRC'), 'yyyy-MM-dd') = '${hiveconf:pt}')
+  where date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '${hiveconf:pt}'
   and pay_status=2   
   and email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
   )oi

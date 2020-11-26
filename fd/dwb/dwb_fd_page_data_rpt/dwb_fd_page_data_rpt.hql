@@ -11,7 +11,7 @@ CREATE table if not exists  dwb.dwb_fd_page_data_rpt
     app_version string,
     is_new_user string,
     page_code string,
-    session_id string,
+    session_id string
 )comment '打点数据页面浏览量的ctr报表'
 partitioned by(`pt` string)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
@@ -20,8 +20,8 @@ TBLPROPERTIES ("orc.compress"="SNAPPY");
 
 
 
-insert overwrite table  dwb.dwb_fd_page_data_rpt(partition pt='${hiveconf:pt}')
-as select
+insert overwrite table  dwb.dwb_fd_page_data_rpt partition (pt='${hiveconf:pt}')
+select
        project,
        platform,
        platform_type,
@@ -38,4 +38,4 @@ as select
        page_code,
        session_id
 from ods_fd_snowplow.ods_fd_snowplow_all_event
-where event_name in('page_view','screen_view');
+where pt='${hiveconf:pt}' and event_name in('page_view','screen_view');

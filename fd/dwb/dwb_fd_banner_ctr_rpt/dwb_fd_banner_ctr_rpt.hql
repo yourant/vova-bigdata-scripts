@@ -3,6 +3,7 @@ CREATE table if not exists dwb.dwb_fd_banner_ctr_rpt(
        platform string,
        country string,
        app_version string,
+       dvce_type string,
        list_name string,
        element_name string,
        absolute_position bigint,
@@ -14,12 +15,15 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS ORC
 TBLPROPERTIES ("orc.compress"="SNAPPY");
 
+set hive.new.job.grouping.set.cardinality=128;
+set mapred.reduce.tasks = 1;
 
 insert overwrite table dwb.dwb_fd_banner_ctr_rpt partition (pt='${hiveconf:pt}')
 select project,
        platform,
        country,
        app_version,
+       dvce_type,
        list_type,
        element_name,
        absolute_position,
@@ -30,6 +34,7 @@ from (
                 platform,
                 country,
                 app_version,
+                dvce_type,
                 element_event_struct.list_type                               as list_type,
                 element_event_struct.element_name,
                 element_event_struct.absolute_position,
