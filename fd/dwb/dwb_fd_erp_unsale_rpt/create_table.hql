@@ -3,11 +3,9 @@ CREATE TABLE IF NOT EXISTS dwd.dwd_fd_erp_14d_avg_sale (
 `goods_sku` string COMMENT '商品sku',
 `14d_avg_sale` decimal(10, 6) COMMENT '最近14天每天平均销量'
 ) COMMENT 'erp最近14天每天平均销量'
-PARTITIONED BY(dt STRING)
-ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
-STORED AS PARQUETFILE
-LOCATION 's3a://artemis-data-lake/floryday/middle/fd_mid_erp_14d_avg_sale'
-TBLPROPERTIES ("parquet.compress"="SNAPPY");
+PARTITIONED BY (pt STRING)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
+STORED AS PARQUETFILE;
 
 
 CREATE TABLE IF NOT EXISTS dwd.dwd_fd_erp_goods_sale_monthly (
@@ -17,7 +15,7 @@ CREATE TABLE IF NOT EXISTS dwd.dwd_fd_erp_goods_sale_monthly (
 ) COMMENT 'erp可预订库存'
 PARTITIONED BY (pt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS ORC;
+STORED AS PARQUETFILE;
 
 CREATE TABLE IF NOT EXISTS dwd.dwd_fd_erp_goods_sku (
 `goods_id` bigint COMMENT '商品id',
@@ -67,17 +65,17 @@ CREATE TABLE IF NOT EXISTS  dwb.dwb_fd_erp_unsale_detail (
 `back_days` decimal(10, 2) COMMENT 'max(30,备货天数)',
 `unsale_goods_num` decimal(10, 2) COMMENT 'max(30,备货天数)'
 ) COMMENT 'romeo组织的配置表'
-partitioned by (`dt` string)
+partitioned by (`pt` string)
 row format delimited fields terminated by '\t' lines terminated by '\n'
 stored as orc;
 
-CREATE EXTERNAL TABLE IF NOT EXISTS  dwd.dwd_fd_erp_unsale_rpt (
+CREATE TABLE IF NOT EXISTS  dwd.dwd_fd_erp_unsale_rpt (
 `unsale_level` string COMMENT '滞销程度',
 `unsale_rate` decimal(10, 6) COMMENT '滞销率',
 `unsale_goods_num` bigint COMMENT '滞销件数',
 `goods_number_total` bigint COMMENT '月销量',
 `ws_goods_number_rate` decimal(10, 6) COMMENT '库存变化率'
 ) COMMENT 'erp滞销报表指标汇总'
-partitioned by (`dt` string)
+partitioned by (`pt` string)
 row format delimited fields terminated by '\t' lines terminated by '\n'
 stored as orc;
