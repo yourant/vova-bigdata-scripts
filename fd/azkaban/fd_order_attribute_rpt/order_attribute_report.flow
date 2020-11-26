@@ -38,14 +38,14 @@ nodes:
       - name: snowplow_click_impr_caculate
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_order_attribute_rpt/click_impr_run.sh ${dt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_order_attribute_rpt/click_impr_run.sh ${pt}
         dependsOn:
           - judge_snowplow_all_event
       
       - name: snowplow_add_caculate
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_order_attribute_rpt/add_run.sh ${dt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_order_attribute_rpt/add_run.sh ${pt}
         dependsOn:
           - judge_snowplow_all_event
           - snowplow_click_impr_caculate
@@ -53,7 +53,7 @@ nodes:
       - name: snowplow_order_caculate
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_order_attribute_rpt/order_run.sh ${dt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_order_attribute_rpt/order_run.sh ${pt}
         dependsOn:
           - judge_ods_order_info
           - judge_ods_user_duid
@@ -62,7 +62,7 @@ nodes:
       - name: order_attribute_report_caculate
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_order_attribute_rpt/order_attribution_run.sh ${dt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_order_attribute_rpt/order_attribution_run.sh ${pt}
         dependsOn:
           - snowplow_click_impr_caculate
           - snowplow_add_caculate

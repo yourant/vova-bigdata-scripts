@@ -162,6 +162,17 @@ nodes:
           command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop/fd_stock_goods_config/spt_run.sh fd_stock_goods_config
         dependsOn:
           - ods_fd_fd_stock_goods_config_arc
+      
+      - name: erp_ecshop_ods_end
+        type: noop
+        dependsOn:
+          - ods_fd_fd_stock_goods_config
+          - ods_fd_fd_stock_ecs_order_sale_bak_detail
+          - ods_fd_fd_sku_backups
+          - ods_fd_ecs_region
+          - ods_fd_ecs_order_info
+          - ods_fd_ecs_order_goods
+          - ods_fd_ecs_goods
 
     dependsOn:
       - fd_dw_erp_ods_inc_start
@@ -194,6 +205,11 @@ nodes:
           command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop/inventory_summary/spt_run.sh inventory_summary
         dependsOn:
           - ods_fd_inventory_summary_arc
+      
+      - name: erp_romeo_ods_end
+        type: noop
+        dependsOn:
+          - ods_fd_inventory_summary
 
     dependsOn:
       - fd_dw_erp_ods_inc_start
@@ -220,12 +236,10 @@ nodes:
         dependsOn:
           - fd_dmc_flow_start
       
-      - name: ods_fam_party
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=fam --etl_type=ALL --table_name=fam_party --mapers=2 --partition_num=1 --period_type=day
+      - name: erp_dmc_ods_end
+        type: noop
         dependsOn:
-          - fd_dmc_flow_start
+          - ods_dmc_goods
     
     dependsOn:
       - fd_dw_erp_ods_inc_start
@@ -244,6 +258,11 @@ nodes:
           command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=fam --etl_type=ALL --table_name=fam_party --mapers=2 --partition_num=1 --period_type=day
         dependsOn:
           - fd_fam_flow_start
+      
+      - name: erp_fam_ods_end
+        type: noop
+        dependsOn:
+          - ods_fam_party
     
     dependsOn:
       - fd_dw_erp_ods_inc_start

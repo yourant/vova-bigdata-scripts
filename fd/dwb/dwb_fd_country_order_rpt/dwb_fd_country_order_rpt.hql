@@ -33,7 +33,7 @@ from (
         oi.shipping_fee_exchange as shipping_fee_exchange,
         oi.email as email
     from dwd.dwd_fd_order_info oi 
-    where (date(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss')) = '${hiveconf:pt}' or date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${hiveconf:pt}')
+    where date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${hiveconf:pt}'
     and oi.email NOT REGEXP 'tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com'
 )tab1
 group by 

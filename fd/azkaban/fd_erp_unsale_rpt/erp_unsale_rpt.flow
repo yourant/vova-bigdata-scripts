@@ -1,0 +1,59 @@
+---
+config:
+  failure.emails: yunling@i9i8.com
+  retries: 5
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_erp_rpt_start
+    type: noop
+
+  - name: erp_unsale_rpt_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: erp_unsale_rpt_flow_start
+        type: noop
+      
+      - name: judge_erp_ecshop_ods_end
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh erp_ecshop_ods_end
+        dependsOn:
+          - erp_unsale_rpt_flow_start
+      
+      - name: judge_erp_romeo_ods_end
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh erp_romeo_ods_end
+        dependsOn:
+          - erp_unsale_rpt_flow_start
+
+      - name: base_caculate
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_erp_unsale_rpt/init_run.sh ${pt}
+        dependsOn:
+          - judge_erp_ecshop_ods_end
+          - judge_erp_romeo_ods_end
+      
+      - name: unsale_rpt_caculate
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_erp_unsale_rpt/run.sh ${pt}
+        dependsOn:
+          - base_caculate
+
+      - name: erp_unsale_rpt_flow_end
+        type: noop
+        dependsOn:
+          - unsale_rpt_caculate
+
+    dependsOn:
+      - fd_erp_rpt_start
+
+  - name: fd_erp_rpt_end
+    type: noop
+    dependsOn:
+      - erp_unsale_rpt_flow
