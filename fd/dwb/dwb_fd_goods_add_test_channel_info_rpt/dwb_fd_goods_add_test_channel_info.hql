@@ -149,4 +149,4 @@ from (
                             country,
                             cat_id,
                             cat_name,
-                            ga_channel, with cube;
+                            ga_channel  with cube;
