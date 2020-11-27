@@ -1,5 +1,4 @@
-set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite table ods_fd_ecshop.ods_fd_fd_sku_backups_arc PARTITION (pt = '${hiveconf:pt}')
+INSERT overwrite table ods_fd_ecshop.ods_fd_fd_sku_backups_arc PARTITION (pt = '${pt}')
 select 
      id,uniq_sku,sale_region,color,size
 from (
@@ -14,9 +13,9 @@ from (
                 sale_region,
                 color,
                 size
-        from ods_fd_ecshop.ods_fd_fd_sku_backups_arc where pt = '${hiveconf:pt_last}'
+        from ods_fd_ecshop.ods_fd_fd_sku_backups_arc where pt = '${pt_last}'
 
-        UNION
+        UNION ALL
 
         select  pt,
                 id,
@@ -24,7 +23,7 @@ from (
                 sale_region,
                 color,
                 size
-        from ods_fd_ecshop.ods_fd_fd_sku_backups_inc where pt='${hiveconf:pt}'
+        from ods_fd_ecshop.ods_fd_fd_sku_backups_inc where pt='${pt}'
 
     ) arc 
 ) tab where tab.rank = 1;

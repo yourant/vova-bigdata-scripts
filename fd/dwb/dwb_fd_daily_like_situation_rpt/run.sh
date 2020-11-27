@@ -3,7 +3,7 @@ home=`dirname "$0"`
 cd $home
 
 if [ ! -n "$1" ] ;then
-    pt=`date -d "-1 days" +%Y-%m-%d `
+    pt=`date -d "-1 days" +%Y-%m-%d`
     pt_last=`date -d "-2 days" +%Y-%m-%d`
     pt_format=`date -d "-1 days" +%Y%m%d`
     pt_format_last=`date -d "-2 days" +%Y%m%d`
@@ -26,12 +26,12 @@ echo $pt_last
 echo $pt_format
 echo $pt_format_last
 
-shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_ecommerce_conversion_rpt"
+shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_banner_ctr_rpt"
 
-#计算数据
-hive -hiveconf pt=$pt   -f ${shell_path}/dwb_fd_ecommerce_conversion_rpt.hql
+#计算留存数据
+hive -hiveconf pt=$pt -f ${shell_path}/dwb_fd_banner_ctr_rpt.hql
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
 fi
-echo " ecommerce_conversion  report  table is finished !"
+echo "banner report  table is finished !"

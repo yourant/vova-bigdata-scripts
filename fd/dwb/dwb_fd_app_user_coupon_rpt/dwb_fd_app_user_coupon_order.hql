@@ -97,7 +97,7 @@ left join (
 left join (
     select
         user_id,
-        from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss') as order_time,
+        from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss') as order_time,
         coupon_code,
         project_name,
         pay_status

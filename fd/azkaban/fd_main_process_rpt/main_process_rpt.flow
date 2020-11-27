@@ -26,10 +26,10 @@ nodes:
         dependsOn:
           - main_process_report_start
       
-      - name: judge_ods_fd_order_marketing_data
+      - name: judge_ods_fd_vb_order_marketing_data
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_order_marketing_data
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_order_marketing_data
         dependsOn:
           - main_process_report_start
       
@@ -47,7 +47,7 @@ nodes:
         dependsOn:
           - judge_snowplow_all_event
           - judge_session_channel
-          - judge_ods_fd_order_marketing_data
+          - judge_ods_fd_vb_order_marketing_data
           - judge_dwd_fd_order_info
 
       - name: main_process_report_end
