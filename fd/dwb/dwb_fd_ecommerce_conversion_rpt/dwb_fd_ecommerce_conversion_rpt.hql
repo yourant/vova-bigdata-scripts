@@ -54,7 +54,7 @@ from(
     if(event_name == 'checkout', session_id, NULL)        as checkout_session_id,
     if(event_name == 'checkout_option', session_id, NULL) as checkout_option_session_id,
     if(event_name == 'purchase', session_id, NULL)        as purchase_session_id
-from ods_fd_snowplow.ods_fd_prc_snowplow_all_event where pt='${hiveconf:pt}'
+from ods_fd_snowplow.ods_fd_prc_snowplow_all_event where pt  between date_format('${hiveconf:pt_last}','yyyy-MM-dd 16') and date_format('${hiveconf:pt}','yyyy-MM-dd 16')
 and event_name in('page_view','screen_view','add','checkout','checkout_option','purchase')
 )fms
   left join (select session_id,collect_set(ga_channel)[0] as ga_channel from dwd.dwd_fd_session_channel where ga_channel is not null and  pt between date_add('${hiveconf:pt}',-3) and date_add('${hiveconf:pt}',1)  group by session_id)sc on fms.session_id=sc.session_id
