@@ -1,0 +1,37 @@
+---
+config:
+  failure.emails: htgao@i9i8.com
+  retries: 5
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_common_ctr_rpt_start
+    type: noop
+
+  - name: common_ctr_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: common_ctr_flow_start
+        type: noop
+      
+      - name: common_ctr_caculate
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_common_ctr_rpt/run.sh ${pt}
+        dependsOn:
+          - common_ctr_flow_start
+
+      - name: common_ctr_flow_end
+        type: noop
+        dependsOn:
+          - common_ctr_caculate
+
+    dependsOn:
+      - fd_common_ctr_rpt_start
+
+  - name: fd_common_ctr_rpt_end
+    type: noop
+    dependsOn:
+      - common_ctr_flow
