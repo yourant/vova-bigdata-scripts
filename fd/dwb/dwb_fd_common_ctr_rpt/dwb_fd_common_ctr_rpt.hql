@@ -1,26 +1,27 @@
-
+set hive.new.job.grouping.set.cardinality=128;
 insert overwrite table dwb.dwb_fd_common_ctr_rpt  partition(pt='${pt}')
 SELECT
-    platform_type,
-    app_version,
-    country,
-    `language`,
-    project,
-    page_code,
-    nvl(position,''),
-    nvl(list_name,'unknown'),
-    nvl(element_name,'unknown'),
-    nvl(element_content,'unknown'),
-    nvl(element_type,'unknown'),
+    /*+ REPARTITION(1) */
+    nvl(platform_type,'all') as platform_type,
+    nvl(app_version,'all') as app_version,
+    nvl(country,'all') as country,
+    nvl(language,'all') as language,
+    nvl(project,'all') as project,
+    nvl(page_code,'all') as page_code,
+    nvl(position,'all') as position,
+    nvl(list_name,'all') as list_name,
+    nvl(element_name,'all') as element_name,
+    nvl(element_content,'all') as element_content,
+    nvl(element_type,'all') as element_type,
     count(DISTINCT impression_session_id),
     count(DISTINCT click_session_id)
 from (SELECT
-          platform_type,
-          app_version,
-          country,
-          `language`,
-          project,
-          page_code,
+          nvl(platform_type,'other') as platform_type,
+          nvl(app_version,'other') as app_version,
+          nvl(country,'other') as country,
+          nvl(`language`,'other') as language,
+          nvl(project,'other') as project,
+          nvl(page_code,'other')  as page_code,
           element_event_struct.absolute_position AS position,
           element_event_struct.list_type AS list_name,
           element_event_struct.element_name AS element_name,
@@ -31,18 +32,18 @@ from (SELECT
           pt
       from ods_fd_snowplow.ods_fd_snowplow_all_event
       where event_name in ('common_impression', 'common_click')
+      and country is not null
       and pt='${pt}'
       )tab1
-
 GROUP by platform_type,
 	app_version,
 	country,
-	`language`,
+	language,
 	project,
 	page_code,
 	position,
 	list_name,
 	element_name,
 	element_content,
-	element_type ;
+	element_type with cube;
 
