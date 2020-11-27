@@ -24,9 +24,9 @@ from (SELECT
           nvl(page_code,'other')  as page_code,
           cast(element_event_struct.absolute_position  as string) AS position,
           cast(element_event_struct.list_type  as string) AS list_name,
-          element_event_struct.element_name AS element_name,
-          element_event_struct.element_content AS element_content,
-          element_event_struct.element_type AS element_type,
+          cast(element_event_struct.element_name as string) AS element_name,
+          cast(element_event_struct.element_content as string) AS element_content,
+          cast(element_event_struct.element_type  as string) AS element_type,
           IF(event_name = 'common_impression', session_id, NULL) AS impression_session_id,
           IF(event_name = 'common_click', session_id, NULL) AS click_session_id,
           pt
