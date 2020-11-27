@@ -40,7 +40,7 @@ shell_path="/mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop"
 sql="
 alter table ods_fd_ecshop.ods_fd_fd_sku_backups_arc drop if exists partition (pt='$pt');
 
-INSERT overwrite table ods_fd_ecshop.ods_fd_fd_sku_backups_arc PARTITION (pt='$pt')
+INSERT into table ods_fd_ecshop.ods_fd_fd_sku_backups_arc PARTITION (pt='$pt')
 select
 id,uniq_sku,sale_region,color,size
 from (
