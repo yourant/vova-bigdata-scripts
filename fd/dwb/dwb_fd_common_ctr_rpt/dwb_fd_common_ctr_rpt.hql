@@ -1,4 +1,4 @@
-set hive.new.job.grouping.set.cardinality=128;
+set hive.new.job.grouping.set.cardinality=256;
 insert overwrite table dwb.dwb_fd_common_ctr_rpt  partition(pt='${pt}')
 SELECT
     /*+ REPARTITION(1) */
