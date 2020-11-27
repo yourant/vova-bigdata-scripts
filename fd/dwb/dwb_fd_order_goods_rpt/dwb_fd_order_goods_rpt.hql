@@ -25,8 +25,8 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS orc
 TBLPROPERTIES ("orc.compress"="SNAPPY");
 
-insert overwrite table dwb.dwb_fd_order_goods_rpt partition(pt='{hiveconf:pt}')
-select 
+insert overwrite table dwb.dwb_fd_order_goods_rpt partition(pt='${hiveconf:pt}')
+select
     order_id,
     user_id,
     platform_type,
@@ -47,6 +47,6 @@ select
     date(from_unixtime(order_time)) as order_time,
     date(from_unixtime(pay_time)) as pay_time
 from dwd.dwd_fd_order_goods
-where  date(from_unixtime(pay_time))= '{hiveconf:pt}'
+where  date(from_unixtime(pay_time))= '${hiveconf:pt}'
 and pay_status = 2
 and email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com";
