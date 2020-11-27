@@ -24,7 +24,7 @@ null as user_new_first_success_coupon_order_id
 from (
 select user_id,session_id,domain_userid,project,country as country_code,platform_type
 from ods_fd_snowplow.ods_fd_snowplow_all_event
-where  pt = '${pt}t' and platform_type in ('android_app','ios_app') and project is not null and project != ''
+where  pt = '${pt}' and platform_type in ('android_app','ios_app') and project is not null and project != ''
 ) t1
 
 union

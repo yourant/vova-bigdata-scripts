@@ -7,8 +7,26 @@ user=lujiaheng
 
 shell_path="$base_path/fd_snowplow_all_event"
 
-#将flume收集的数据存到tmp表中
+saprk_pt=$(date -d "$pt_now - 1 hours" +"%Y/%m/%d/%H")
+
+echo "saprk_pt: $saprk_pt"
+
+spark-submit \
+    --master yarn \
+    --deploy-mode cluster \
+    --conf "spark.dynamicAllocation.maxExecutors=120" \
+    --conf spark.executor.memory=4096M \
+    --conf spark.yarn.appMasterEnv.sparkMaster=yarn \
+    --conf spark.yarn.appMasterEnv.appName=FDSnowplowOffline \
+    --conf spark.yarn.appMasterEnv.rawDataPath=s3://artemis-evt/enrich-good \
+    --conf spark.yarn.appMasterEnv.savePath=s3://bigdata-offline/warehouse/pdb/fd/snowplow/snowplow_offline \
+    --conf spark.yarn.appMasterEnv.start=$saprk_pt \
+    --conf spark.app.name=FDSnowplowOffline \
+    --class com.fd.bigdata.sparkbatch.log.jobs.SnowplowOffline \
+    s3://vomkt-emr-rec/jar/warehouse/fd/snowplow_offline_1.2.jar
+
 hive -hiveconf flume_path=$flume_path -f ${shell_path}/pdb_fd_snowplow_offline.hql
+
 if [ $? -ne 0 ]; then
   exit 1
 fi
