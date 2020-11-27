@@ -23,7 +23,7 @@ echo $pt11
 
 shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_erp_unsale_rpt"
 
-#最近14天每天平均销量
+#滞销报表结果表
 spark-sql \
   --conf "spark.app.name=erp_unsale_detail_gaohaitao" \
   --conf "spark.dynamicAllocation.maxExecutors=10" \
@@ -37,7 +37,7 @@ if [ $? -ne 0 ]; then
 fi
 echo "erp_unsale_detail table is finished !"
 
-#月销售数
+#滞销报表结果表
 spark-sql \
   --conf "spark.app.name=erp_unsale_rpt_gaohaitao" \
   --conf "spark.dynamicAllocation.maxExecutors=40" \
