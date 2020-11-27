@@ -25,7 +25,7 @@ shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_order_attribute_rpt"
 
 spark-sql \
   --conf "spark.app.name=snowplow_order_gaohaitao" \
-  --conf "spark.dynamicAllocation.maxExecutors=40" \
+  --conf "spark.dynamicAllocation.maxExecutors=100" \
   -d pt=$pt \
   -d pt3=$pt3 \
   -d pt11=$pt11 \
