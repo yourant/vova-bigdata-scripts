@@ -1,7 +1,8 @@
 set hive.exec.dynamic.partition.mode=nonstrict;
 set hive.exec.dynamic.partition=true;
 INSERT overwrite table dwb.dwb_fd_app_user_coupon_order_rpt PARTITION (pt)
-select 
+select
+ /*+ REPARTITION(1) */
     project_name,
     country_code,
     coupon_config_id,

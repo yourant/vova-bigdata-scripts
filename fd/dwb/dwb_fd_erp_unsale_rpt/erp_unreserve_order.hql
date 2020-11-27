@@ -1,5 +1,6 @@
 insert overwrite table dwd.dwd_fd_erp_unreserve_order partition (pt = '${pt}')
 SELECT
+     /*+ REPARTITION(1) */
 	eg.external_goods_id as goods_id,
 	eg.uniq_sku as goods_sku,
 	SUM(ins.demand_quantity) as goods_number

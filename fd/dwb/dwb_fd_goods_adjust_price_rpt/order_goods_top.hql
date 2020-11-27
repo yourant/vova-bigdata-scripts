@@ -1,5 +1,6 @@
 insert overwrite table dwd.dwd_fd_order_goods_top partition (pt = '${pt3}')
-select  virtual_goods_id,goods_id,cat_name,purchase_price,goods_type
+select  /*+ REPARTITION(1) */
+ virtual_goods_id,goods_id,cat_name,purchase_price,goods_type
 from (
     select   tab3.virtual_goods_id,
              tab3.goods_id,
