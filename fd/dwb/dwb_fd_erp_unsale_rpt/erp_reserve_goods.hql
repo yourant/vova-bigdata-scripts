@@ -9,7 +9,7 @@ FROM (
 		available_to_reserved,
 		demand_quantity
 	from ods_fd_romeo.ods_fd_inventory_summary
-	and STATUS_ID= 'INV_STTS_AVAILABLE' and facility_id = '383497303'
+	where STATUS_ID= 'INV_STTS_AVAILABLE' and facility_id = '383497303'
 	group by product_id,available_to_reserved,demand_quantity
 
 ) ins
