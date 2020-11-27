@@ -1,7 +1,7 @@
 ---
 config:
   failure.emails: yunling@i9i8.com
-  retries: 5
+  retries: 1
   retry.backoff: 300000
 
 nodes:
