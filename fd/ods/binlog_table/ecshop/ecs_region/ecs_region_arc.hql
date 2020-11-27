@@ -1,4 +1,3 @@
-set hive.exec.dynamic.partition.mode=nonstrict;
 INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_region_arc PARTITION (pt = '${pt}')
 select 
      region_id, parent_id, region_name, region_type, region_cn_name, region_code
@@ -18,7 +17,7 @@ from (
                 region_code
         from ods_fd_ecshop.ods_fd_ecs_region_arc where pt = '${pt_last}'
 
-        UNION
+        UNION ALL
 
         select  pt,
                 region_id,

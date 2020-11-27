@@ -1,4 +1,3 @@
-set hive.exec.dynamic.partition.mode=nonstrict;
 INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_goods_arc PARTITION (pt = '${pt}')
 select 
      goods_id, goods_party_id, cat_id, goods_sn, sku, goods_name, click_count, brand_id, provider_name, goods_number, goods_weight, goods_volume, market_price, shop_price, fitting_price, promote_price, promote_start, promote_end, warn_number, keywords, goods_brief, goods_desc, goods_thumb, goods_img, original_img, is_real, extension_code, is_on_sale, is_alone_sale, is_linked, is_basic, is_gift, can_handsel, integral, add_time, sort_order, is_delete, is_best, is_new, is_hot, is_promote, bonus_type_id, last_update, goods_type, seller_note, cycle_img, provider_id, goods_details, vote_times, vote_score, is_on_sale_pending, boost, limit_integral, top_cat_id, adptional_shipping_fee, vip_price, is_vip, is_remains, return_ratio, customized, is_same_price, sale_status, sale_status_detail, commonsense, is_shield, is_display, price_range, goods_name_short, identify, suit, clerk_comment, media_comment, os, resolution, java_support, bill, extra, barcode, uniq_sku, is_maintain_weight, external_cat_id, is_batch, product_id, external_goods_id, erp_sku, create_time
@@ -98,7 +97,7 @@ from (
                 create_time
         from ods_fd_ecshop.ods_fd_ecs_goods_arc where pt = '${pt_last}'
 
-        UNION
+        UNION ALL
 
         select  pt,
                 goods_id,

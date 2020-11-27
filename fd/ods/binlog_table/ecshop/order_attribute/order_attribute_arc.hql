@@ -1,4 +1,3 @@
-set hive.exec.dynamic.partition.mode=nonstrict;
 INSERT overwrite table ods_fd_ecshop.ods_fd_order_attribute_arc PARTITION (pt = '${pt}')
 select 
      attribute_id, order_id, attr_name, attr_value
@@ -15,7 +14,7 @@ from (
                 attr_name,
                 attr_value
         from ods_fd_ecshop.ods_fd_order_attribute_arc where pt = '${pt_last}'
-        UNION
+        UNION ALL
         select  pt,
                 attribute_id,
                 order_id,
