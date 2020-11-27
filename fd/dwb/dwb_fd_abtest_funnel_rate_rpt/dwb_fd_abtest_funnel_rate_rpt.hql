@@ -18,11 +18,9 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_fd_abtest_funnel_rate_rpt
     STORED AS ORC
     TBLPROPERTIES ("orc.compress"="SNAPPY");
 
-set hive.new.job.grouping.set.cardinality=128;
-set mapred.reduce.tasks = 1;
 
 
-INSERT OVERWRITE TABLE dwb.dwb_fd_abtest_funnel_rate_rpt PARTITION (pt = '${hiveconf:pt}')
+INSERT OVERWRITE TABLE dwb.dwb_fd_abtest_funnel_rate_rpt PARTITION (pt = '${pt}')
 
 select
     nvl(project,'all'),
@@ -65,8 +63,8 @@ from (
          where event_name in ('page_view', 'screen_view', 'add', 'checkout', 'checkout_option', 'purchase')
            and abtest != ''
            and abtest != '-'
-           and pt = '${hiveconf:pt}'
+           and pt = '${pt}'
      ) fms LATERAL VIEW OUTER explode(split(fms.abtest, '&')) fms as abtest_info
 
      )tab1
-     group by project,platform_type,country,app_version,abtest_name,abtest_version with cube
+     group by project,platform_type,country,app_version,abtest_name,abtest_version with cube;
