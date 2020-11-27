@@ -1,5 +1,6 @@
 insert overwrite table dwb.dwb_fd_app_retention_activity partition (pt='${pt}',classify='retention')
 select
+ /*+ REPARTITION(1) */
 rewards_day1.project as project,
 rewards_day1.platform_type as platform_type,
 rewards_day1.country as country_code,

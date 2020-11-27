@@ -26,6 +26,7 @@ set hive.exec.dynamic.partition.mode=nonstrict;
 set hive.exec.dynamic.partition=true;
 INSERT overwrite table dwb.dwb_fd_app_user_coupon_order PARTITION (pt)
 select
+ /*+ REPARTITION(1) */
 t1.project_name as project_name,
 COALESCE(t1.platform_type,t2.platform_type,'unknown') as platform_type,
 COALESCE(t1.country_code,t2.country_code,'unknown') as country_code,

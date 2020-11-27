@@ -1,5 +1,6 @@
 insert overwrite table dwd.dwd_fd_goods_click_detail partition (pt = '${pt3}')
-select nvl(tab2.goods_id, 'UNKNOWN')         as goods_id,
+select  /*+ REPARTITION(1) */
+       nvl(tab2.goods_id, 'UNKNOWN')         as goods_id,
        nvl(tab1.virtual_goods_id, 'UNKNOWN') as virtual_goods_id,
        nvl(tab1.project, 'UNKNOWN')          as project,
        nvl(tab1.country_code, 'UNKNOWN')     as country_code,
