@@ -29,7 +29,7 @@ from (SELECT
           IF(event_name = 'common_impression', session_id, NULL) AS impression_session_id,
           IF(event_name = 'common_click', session_id, NULL) AS click_session_id,
           pt
-      from ods_fd_snowplow.ods_fd_snowplow_element_event
+      from ods_fd_snowplow.ods_fd_snowplow_all_event
       where event_name in ('common_impression', 'common_click')
       and pt='${pt}'
       )tab1
