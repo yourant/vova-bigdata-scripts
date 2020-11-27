@@ -21,13 +21,30 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_fd_abtest_funnel_rate_rpt
 set hive.new.job.grouping.set.cardinality=128;
 set mapred.reduce.tasks = 1;
 
+
 INSERT OVERWRITE TABLE dwb.dwb_fd_abtest_funnel_rate_rpt PARTITION (pt = '${hiveconf:pt}')
-select project,
-       platform_type,
-       country,
-       app_version,
-       substr(abtest_info, 1, instr(abtest_info, '=') - 1)  as abtest_name,
-       substr(abtest_info, instr(abtest_info, '=') + 1)     as abtest_version,
+
+select
+    nvl(project,'all'),
+    nvl(platform_type,'all'),
+    nvl(country,'all'),
+    nvl(app_version,'all'),
+    nvl(abtest_name,'all'),
+    nvl(abtest_version,'all'),
+    count(distinct session_id),
+    count(distinct product_session_id),
+    count(distinct add_session_id),
+    count(distinct checkout_session_id),
+    count(distinct checkout_option_session_id),
+    count(distinct purchase_session_id)
+from
+(
+select nvl(project,'other') as project,
+       nvl(platform_type,'other') as platform_type,
+       nvl(country,'other') as country,
+       nvl(app_version,'other') as app_version,
+       nvl(substr(abtest_info, 1, instr(abtest_info, '=') - 1),'other')  as abtest_name,
+       nvl(substr(abtest_info, instr(abtest_info, '=') + 1),'other')     as abtest_version,
        session_id,
        IF(event_name in('page_view', 'screen_view') and page_code = 'product', session_id, '')   as product_session_id,
        IF(event_name = 'add', session_id, '')               as add_session_id,
@@ -49,5 +66,7 @@ from (
            and abtest != ''
            and abtest != '-'
            and pt = '${hiveconf:pt}'
-     ) fms LATERAL VIEW OUTER explode(split(fms.abtest, '&')) fms as abtest_info;
+     ) fms LATERAL VIEW OUTER explode(split(fms.abtest, '&')) fms as abtest_info
 
+     )tab1
+     group by project,platform_type,country,app_version,abtest_name,abtest_version with cube
