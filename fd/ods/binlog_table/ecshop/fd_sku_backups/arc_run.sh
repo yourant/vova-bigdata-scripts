@@ -37,14 +37,46 @@ echo $pt_last
 #脚本路径
 shell_path="/mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop"
 
-spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"  \
---conf "spark.app.name=fd_sku_backups_arc_gaohaitao"  \
---conf "spark.sql.output.coalesceNum=4" \
---conf "spark.dynamicAllocation.minExecutors=10" \
---conf "spark.dynamicAllocation.initialExecutors=20" \
--d pt=$pt \
--d pt_last=$pt_last \
--f ${shell_path}/${table_name}/fd_sku_backups_arc.hql
+sql="
+alter table ods_fd_ecshop.ods_fd_fd_sku_backups_arc drop if exists partition (pt='$pt');
+
+INSERT overwrite table ods_fd_ecshop.ods_fd_fd_sku_backups_arc PARTITION (pt='$pt')
+select
+id,uniq_sku,sale_region,color,size
+from (
+select
+pt,id,uniq_sku,sale_region,color,size,
+row_number () OVER (PARTITION BY id ORDER BY pt DESC) AS rank
+from (
+select  pt,
+id,
+uniq_sku,
+sale_region,
+color,
+size
+from ods_fd_ecshop.ods_fd_fd_sku_backups_arc where pt='$pt_last'
+UNION ALL
+select  pt,
+id,
+uniq_sku,
+sale_region,
+color,
+size
+from ods_fd_ecshop.ods_fd_fd_sku_backups_inc where pt='$pt'
+) arc
+) tab where tab.rank = 1;
+"
+
+spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"  --conf "spark.app.name=fd_sku_backups_arc_gaohaitao"   --conf "spark.sql.output.coalesceNum=40" --conf "spark.dynamicAllocation.minExecutors=40" --conf "spark.dynamicAllocation.initialExecutors=60" -e "$sql"
+
+#spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"  \
+#--conf "spark.app.name=fd_sku_backups_arc_gaohaitao"  \
+#--conf "spark.sql.output.coalesceNum=4" \
+#--conf "spark.dynamicAllocation.minExecutors=10" \
+#--conf "spark.dynamicAllocation.initialExecutors=20" \
+#-d pt=$pt \
+#-d pt_last=$pt_last \
+#-f ${shell_path}/${table_name}/fd_sku_backups_arc.hql
 
 if [ $? -ne 0 ];then
   exit 1
