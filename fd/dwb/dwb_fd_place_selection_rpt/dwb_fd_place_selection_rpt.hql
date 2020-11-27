@@ -23,6 +23,8 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS ORC
 TBLPROPERTIES ("orc.compress"="SNAPPY");
 
+set hive.auto.convert.join=false;
+
 insert overwrite table dwb.dwb_fd_place_selection_rpt
 select
        'sales',
@@ -79,11 +81,11 @@ from (select goods_id,
                             sum(users) as users,
                             (sum(clicks) / sum(impressions)) * 100                           as ctr,
                             (sum(clicks) / sum(impressions)) * (sum(sales_order) / sum(users)) * 10000 as cr
-                     from tmp.tmp_fd_goods_display_order_artemis_country_full gdoac
-                              left join tmp.tmp_fd_goods_full g on gdoac.goods_id = g.goods_id
-                              left join tmp.tmp_fd_virtual_goods_full vg
+                     from ods_fd_vb.ods_fd_goods_display_order_artemis_country gdoac
+                              left join ods_fd_vb.ods_fd_goods g on gdoac.goods_id = g.goods_id
+                              left join ods_fd_vb.ods_fd_virtual_goods vg
                                         on gdoac.goods_id = vg.goods_id and gdoac.project_name = vg.project_name
-                              left join tmp.tmp_fd_category_full c on g.cat_id = c.cat_id
+                              left join ods_fd_vb.ods_fd_category c on g.cat_id = c.cat_id
                               GROUP by              gdoac.project_name,
                                                     gdoac.goods_id,
                                                     vg.virtual_goods_id,
@@ -160,11 +162,11 @@ from (select goods_id,
                             sum(users) as users,
                             (sum(clicks) / sum(impressions)) * 100                           as ctr,
                             (sum(clicks) / sum(impressions)) * (sum(sales_order) / sum(users)) * 10000 as cr
-                     from tmp.tmp_fd_goods_display_order_artemis_country_full gdoac
-                              left join tmp.tmp_fd_goods_full g on gdoac.goods_id = g.goods_id
-                              left join tmp.tmp_fd_virtual_goods_full vg
+                     from ods_fd_vb.ods_fd_goods_display_order_artemis_country gdoac
+                              left join ods_fd_vb.ods_fd_goods g on gdoac.goods_id = g.goods_id
+                              left join ods_fd_vb.ods_fd_virtual_goods vg
                                         on gdoac.goods_id = vg.goods_id and gdoac.project_name = vg.project_name
-                              left join tmp.tmp_fd_category_full c on g.cat_id = c.cat_id
+                              left join ods_fd_vb.ods_fd_category c on g.cat_id = c.cat_id
                               GROUP by              gdoac.project_name,
                                                     gdoac.goods_id,
                                                     vg.virtual_goods_id,
@@ -241,11 +243,11 @@ from (select goods_id,
                             sum(users) as users,
                             (sum(clicks) / sum(impressions)) * 100                           as ctr,
                             (sum(clicks) / sum(impressions)) * (sum(sales_order) / sum(users)) * 10000 as cr
-                     from tmp.tmp_fd_goods_display_order_artemis_country_full gdoac
-                              left join tmp.tmp_fd_goods_full g on gdoac.goods_id = g.goods_id
-                              left join tmp.tmp_fd_virtual_goods_full vg
+                     from ods_fd_vb.ods_fd_goods_display_order_artemis_country gdoac
+                              left join ods_fd_vb.ods_fd_goods g on gdoac.goods_id = g.goods_id
+                              left join ods_fd_vb.ods_fd_virtual_goods vg
                                         on gdoac.goods_id = vg.goods_id and gdoac.project_name = vg.project_name
-                              left join tmp.tmp_fd_category_full c on g.cat_id = c.cat_id
+                              left join ods_fd_vb.ods_fd_category c on g.cat_id = c.cat_id
                               GROUP by              gdoac.project_name,
                                                     gdoac.goods_id,
                                                     vg.virtual_goods_id,
@@ -323,11 +325,11 @@ from (select goods_id,
                             sum(users) as users,
                             (sum(clicks) / sum(impressions)) * 100                           as ctr,
                             (sum(clicks) / sum(impressions)) * (sum(sales_order) / sum(users)) * 10000 as cr
-                     from tmp.tmp_fd_goods_display_order_artemis_country_full gdoac
-                              left join tmp.tmp_fd_goods_full g on gdoac.goods_id = g.goods_id
-                              left join tmp.tmp_fd_virtual_goods_full vg
+                     from ods_fd_vb.ods_fd_goods_display_order_artemis_country gdoac
+                              left join ods_fd_vb.ods_fd_goods g on gdoac.goods_id = g.goods_id
+                              left join ods_fd_vb.ods_fd_virtual_goods vg
                                         on gdoac.goods_id = vg.goods_id and gdoac.project_name = vg.project_name
-                              left join tmp.tmp_fd_category_full c on g.cat_id = c.cat_id
+                              left join ods_fd_vb.ods_fd_category c on g.cat_id = c.cat_id
                               GROUP by              gdoac.project_name,
                                                     gdoac.goods_id,
                                                     vg.virtual_goods_id,
@@ -409,11 +411,11 @@ from (select
                             ( sum(clicks) / sum(impressions)) * 100                           as ctr,
                             (sum(clicks) / sum(impressions)) * (sum(sales_order) / sum(users)) * 10000 as cr,
                             (sum(detail_add_cart) / sum(users))*100  as add_rate
-                     from tmp.tmp_fd_goods_display_order_artemis_country_full gdoac
-                              left join tmp.tmp_fd_goods_full g on gdoac.goods_id = g.goods_id
-                              left join tmp.tmp_fd_virtual_goods_full vg
+                     from ods_fd_vb.ods_fd_goods_display_order_artemis_country gdoac
+                              left join ods_fd_vb.ods_fd_goods g on gdoac.goods_id = g.goods_id
+                              left join ods_fd_vb.ods_fd_virtual_goods vg
                                         on gdoac.goods_id = vg.goods_id and gdoac.project_name = vg.project_name
-                              left join tmp.tmp_fd_category_full c on g.cat_id = c.cat_id  where gdoac.project_name  in('floryday','airydress')
+                              left join ods_fd_vb.ods_fd_category c on g.cat_id = c.cat_id  where gdoac.project_name  in('floryday','airydress')
                     group by gdoac.goods_id,gdoac.project_name, country_code, platform,vg.virtual_goods_id,c.cat_name
                     ) t1
                where  impressions > 1000
@@ -488,11 +490,11 @@ from (select
                             ( sum(clicks) / sum(impressions)) * 100                           as ctr,
                             (sum(clicks) / sum(impressions)) * (sum(sales_order) / sum(users)) * 10000 as cr,
                             (sum(checkout) / sum(users))*100  as kr
-                     from tmp.tmp_fd_goods_display_order_artemis_country_full gdoac
-                              left join tmp.tmp_fd_goods_full g on gdoac.goods_id = g.goods_id
-                              left join tmp.tmp_fd_virtual_goods_full vg
+                     from ods_fd_vb.ods_fd_goods_display_order_artemis_country gdoac
+                              left join ods_fd_vb.ods_fd_goods g on gdoac.goods_id = g.goods_id
+                              left join ods_fd_vb.ods_fd_virtual_goods vg
                                         on gdoac.goods_id = vg.goods_id and gdoac.project_name = vg.project_name
-                              left join tmp.tmp_fd_category_full c on g.cat_id = c.cat_id  
+                              left join ods_fd_vb.ods_fd_category c on g.cat_id = c.cat_id  
                               where gdoac.project_name  in('floryday','airydress')
                     group by gdoac.goods_id,gdoac.project_name, country_code, platform,vg.virtual_goods_id,c.cat_name
                     ) t1
@@ -568,11 +570,11 @@ from (select
                             ( sum(clicks) / sum(impressions)) * 100                           as ctr,
                             (sum(clicks) / sum(impressions)) * (sum(sales_order) / sum(users)) * 10000 as cr,
                             (sum(sales_order) / sum(users))*100  as rate
-                     from tmp.tmp_fd_goods_display_order_artemis_country_full gdoac
-                              left join tmp.tmp_fd_goods_full g on gdoac.goods_id = g.goods_id
-                              left join tmp.tmp_fd_virtual_goods_full vg
+                     from ods_fd_vb.ods_fd_goods_display_order_artemis_country gdoac
+                              left join ods_fd_vb.ods_fd_goods g on gdoac.goods_id = g.goods_id
+                              left join ods_fd_vb.ods_fd_virtual_goods vg
                                         on gdoac.goods_id = vg.goods_id and gdoac.project_name = vg.project_name
-                              left join tmp.tmp_fd_category_full c on g.cat_id = c.cat_id  
+                              left join ods_fd_vb.ods_fd_category c on g.cat_id = c.cat_id  
                               where gdoac.project_name  in('floryday','airydress')
                     group by gdoac.goods_id,gdoac.project_name, country_code, platform,vg.virtual_goods_id,c.cat_name
                     ) t1
