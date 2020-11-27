@@ -23,7 +23,7 @@ from (SELECT
           nvl(project,'other') as project,
           nvl(page_code,'other')  as page_code,
           cast(element_event_struct.absolute_position  as string) AS position,
-          element_event_struct.list_type AS list_name,
+          cast(element_event_struct.list_type  as string) AS list_name,
           element_event_struct.element_name AS element_name,
           element_event_struct.element_content AS element_content,
           element_event_struct.element_type AS element_type,
