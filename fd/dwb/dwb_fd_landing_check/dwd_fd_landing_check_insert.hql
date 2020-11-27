@@ -30,6 +30,7 @@ from (
            and mkt_source is not null
            and event_name = 'goods_impression'
            and page_code = 'list'
+           and goods_event_struct.list_type in ('list-category','list-mid')
            and landing_goods.postion + 1 = goods_event_struct.absolute_position
            and landing_goods.virtual_goods_id != goods_event_struct.virtual_goods_id) impresion_detail
 group by pt, page_url, project, platform_type, country, url_position, url_virtual_goods_id, absolute_position,
