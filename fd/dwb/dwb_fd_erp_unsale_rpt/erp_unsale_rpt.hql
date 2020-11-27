@@ -25,7 +25,7 @@ left join(
 	select
 		nvl(t1.unsale_level,'all') as unsale_level,
 		(sum(t1.unsale_goods_num) / sum(t1.goods_number_month)) as unsale_rate,
-		sum(t1.unsale_goods_num) as unsale_goods_num, /* 滞销件数*/
+		sum(t1.unsale_goods_num) as unsale_goods_num,
 		sum(t1.goods_number_month) as goods_number_total
 	from(
 	select
