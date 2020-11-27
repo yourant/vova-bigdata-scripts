@@ -1,5 +1,23 @@
 
 INSERT overwrite table dwb.dwb_fd_goods_add_test_channel_info PARTITION (pt = '${pt}')
+
+select
+    project_name,
+    platform,
+    country,
+    cat_id,
+    cat_name,
+    ga_channel,
+    count(distinct add_session_id),
+    count(distinct view_session_id),
+    count(distinct order_id),
+    sum(goods_amount),
+    count(distinct goods_test_goods_id),
+    count(distinct success_goods_test_goods_id),
+    count(distinct success_order_id),
+    sum(success_goods_amount)
+
+from(
 select t.project_name,
        t.platform,
        t.country,
@@ -125,4 +143,10 @@ from (
            and pay_status = 2
      ) b on b.project_name = a.project_name
          and b.platform = a.platform_type and b.country_code = a.country_code and b.cat_id = a.cat_id and a.virtual_goods_id = cast(b.virtual_goods_id as int)
-     where a.create_time <= b.order_time;
+     where a.create_time <= b.order_time
+     )tab1 group by      project_name,
+                            platform,
+                            country,
+                            cat_id,
+                            cat_name,
+                            ga_channel, with cube;
