@@ -2,12 +2,12 @@
 INSERT overwrite table dwb.dwb_fd_goods_add_test_channel_info PARTITION (pt = '${pt}')
 
 select
-    project_name,
-    platform,
-    country,
-    cat_id,
-    cat_name,
-    ga_channel,
+    nvl(project_name,'all'),
+    nvl(platform,'all'),
+    nvl(country,'all'),
+    nvl(cat_id,'all'),
+    nvl(cat_name,'all'),
+    nvl(ga_channel,'all'),
     count(distinct add_session_id),
     count(distinct view_session_id),
     count(distinct order_id),
