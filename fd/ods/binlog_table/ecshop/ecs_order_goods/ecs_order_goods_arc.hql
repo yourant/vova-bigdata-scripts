@@ -40,7 +40,7 @@ from (
                 customized,
                 status_id,
                 added_fee,
-                external_order_goods_id,
+                external_order_goods_id
         from ods_fd_ecshop.ods_fd_ecs_order_goods_arc where pt = '${pt_last}'
 
         UNION
@@ -76,8 +76,7 @@ from (
                 customized,
                 status_id,
                 added_fee,
-                external_order_goods_id,
-                row_number () OVER (PARTITION BY rec_id ORDER BY event_id DESC) AS rank
+                external_order_goods_id
         from ods_fd_ecshop.ods_fd_ecs_order_goods_inc where pt='${pt}'
 
     ) arc 

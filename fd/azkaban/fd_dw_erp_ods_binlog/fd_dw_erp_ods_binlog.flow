@@ -188,21 +188,21 @@ nodes:
       - name: ods_fd_inventory_summary_inc
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop/inc_run.sh inventory_summary
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/romeo/inc_run.sh inventory_summary
         dependsOn:
           - fd_romeo_inc_flow_start
       
       - name: ods_fd_inventory_summary_arc
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop/inventory_summary/arc_run.sh inventory_summary
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/romeo/inventory_summary/arc_run.sh inventory_summary
         dependsOn:
           - ods_fd_inventory_summary_inc
 
       - name: ods_fd_inventory_summary
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop/inventory_summary/spt_run.sh inventory_summary
+          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/romeo/inventory_summary/spt_run.sh inventory_summary
         dependsOn:
           - ods_fd_inventory_summary_arc
       
