@@ -23,4 +23,10 @@ echo $pt_last
 #脚本路径
 shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_abtest_funnel_rate_rpt"
 
-hive -hiveconf pt=$pt  -f ${shell_path}/dwb_fd_abtest_funnel_rate_rpt.hql
+#hive -hiveconf pt=$pt  -f ${shell_path}/dwb_fd_abtest_funnel_rate_rpt.hql
+
+spark-sql \
+--conf "spark.app.name=dwb_fd_abtest_funnel_rate_rpt_yjzhang"   \
+--conf "spark.dynamicAllocation.maxExecutors=60" \
+-d pt=$pt \
+-f ${shell_path}/dwb_fd_abtest_funnel_rate_rpt.hql
