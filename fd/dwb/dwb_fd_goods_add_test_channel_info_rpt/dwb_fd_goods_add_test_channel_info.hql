@@ -144,9 +144,10 @@ from (
      ) b on b.project_name = a.project_name
          and b.platform = a.platform_type and b.country_code = a.country_code and b.cat_id = a.cat_id and a.virtual_goods_id = cast(b.virtual_goods_id as int)
      where a.create_time <= b.order_time
-     )tab1 group by      project_name,
-                            platform,
-                            country,
-                            cat_id,
-                            cat_name,
-                            ga_channel, with cube;
+     )tab1
+     group by  project_name,
+                platform,
+                country,
+                cat_id,
+                cat_name,
+                ga_channel, with cube;
