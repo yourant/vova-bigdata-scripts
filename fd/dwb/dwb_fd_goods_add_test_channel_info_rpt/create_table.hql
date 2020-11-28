@@ -2,7 +2,6 @@ CREATE TABLE IF NOT EXISTS `dwb.dwb_fd_goods_add_test_channel_info`(
   `project_name` string COMMENT '组织',
   `platform` string COMMENT '平台',
   `country` string COMMENT '国家',
-  `cat_id` string COMMENT '品类id',
   `cat_name` string COMMENT '品类',
   `ga_channel` string COMMENT '投放渠道',
   `add_session_id` string COMMENT '加车 session id',

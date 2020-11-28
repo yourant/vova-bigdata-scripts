@@ -5,7 +5,6 @@ select
     nvl(project_name,'all'),
     nvl(platform,'all'),
     nvl(country,'all'),
-    nvl(cat_id,'all'),
     nvl(cat_name,'all'),
     nvl(ga_channel,'all'),
     count(distinct add_session_id),
@@ -148,7 +147,6 @@ from (
      )tab1 group by      project_name,
                             platform,
                             country,
-                            cat_id,
                             cat_name,
                             ga_channel  with cube;
 
