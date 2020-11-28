@@ -7,9 +7,10 @@ select
            nvl(platform_type,'all'),
            nvl(country,'all'),
            nvl(app_version,'all'),
-           nvl(session_id,'all'),
            nvl(abtest_name,'all'),
            nvl(abtest_version,'all'),
+
+           count(distinct session_id),
            count(distinct homepage_session_id),
            count(distinct list_session_id),
            count(distinct product_session_id),
@@ -65,7 +66,8 @@ from (
            and concat(pt,'-',hour) between concat('${pt_last}','-','16') and concat('${pt}','-','16')
      ) fms LATERAL VIEW OUTER explode(split(fms.abtest, '&')) fms as abtest_info;
 
-INSERT INTO TABLE dwb.dwb_fd_prc_abtest_funnel_report PARTITION (pt = '${pt}')
+union all
+
 select fboi.project_name                                   as project,
        fboi.platform_type                                  as platform_type,
        fboi.country_code                                   as country,
