@@ -1,5 +1,7 @@
 INSERT OVERWRITE TABLE dwb.dwb_fd_rpt_ecommerce_funnel_report PARTITION (pt = '${pt}')
-select nvl(project, "ALL")                        as project,
+select
+/*+ REPARTITION(1) */
+       nvl(project, "ALL")                        as project,
        nvl(country, "ALL")                        as country,
        nvl(platform_type, "ALL")                  as platform_type,
        nvl(ga_channel, "ALL")                     as ga_channel,
