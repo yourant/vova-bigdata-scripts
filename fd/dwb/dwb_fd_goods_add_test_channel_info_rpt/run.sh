@@ -37,3 +37,9 @@ spark-sql \
 --conf "spark.dynamicAllocation.maxExecutors=60" \
 -d pt=$pt \
 -f ${shell_path}/dwb_fd_goods_add_test_channel_info.hql
+
+#如果脚本失败，则报错
+if [ $? -ne 0 ];then
+  exit 1
+fi
+echo "goods_add_test_channel_info rpt table is finished !"
