@@ -1,5 +1,5 @@
 
--- set hive.auto.convert.join=false;
+set hive.auto.convert.join=false;
 
 insert overwrite table dwb.dwb_fd_place_selection_rpt
 select

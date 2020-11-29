@@ -10,8 +10,9 @@ CREATE table if not exists  dwb.dwb_fd_page_data_rpt
     app_version string,
     is_new_user string,
     page_code string,
-    session_id string
-)comment '打点数据页面浏览量的ctr报表'
+    view_pv       bigint,
+    view_uv       bigint
+)comment '打点数据页面浏览量的uv,pv报表'
 partitioned by(`pt` string)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS orc

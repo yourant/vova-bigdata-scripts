@@ -15,12 +15,12 @@ select
     count(distinct purchase_session_id)
 from
 (
-select project,
-       platform_type,
-       country,
-       app_version,
-       substr(abtest_info, 1, instr(abtest_info, '=') - 1) as abtest_name,
-       substr(abtest_info, instr(abtest_info, '=') + 1)    as abtest_version,
+select nvl(project,'NALL') as project,
+       nvl(platform_type,'NALL') as platform_type,
+       nvl(country,'NALL') as country,
+       nvl(app_version,'NALL') as app_version,
+       nvl(substr(abtest_info, 1, instr(abtest_info, '=') - 1),'NALL') as abtest_name,
+       nvl(substr(abtest_info, instr(abtest_info, '=') + 1),'NALL')    as abtest_version,
        session_id,
        IF(event_name in('page_view', 'screen_view') and page_code = 'product', session_id, null)   as product_session_id,
        IF(event_name = 'add', session_id, null)               as add_session_id,

@@ -17,12 +17,13 @@ select
     sum(success_goods_amount)
 
 from(
-select t.project_name,
-       t.platform,
-       t.country,
-       t.cat_id,
-       t.cat_name,
-       s.ga_channel,
+select
+        nvl(t.project_name,'NALL'),
+        nvl(t.platform,'NALL'),
+        nvl(t.country,'NALL'),
+        nvl(t.cat_id,'NALL'),
+        nvl(t.cat_name,'NALL'),
+       nvl(s.ga_channel,'NALL'),
        t.add_session_id,
        t.view_session_id,
        null as order_id,
@@ -54,16 +55,16 @@ select
 ) s on t.session_id = s.session_id
 
 union all
-select project_name,
+select nvl(project_name,'NALL'),
        case
            when platform = 'mob' then 'APP'
            when platform = 'web' and platform_type = 'pc_web' then 'PC'
            when platform = 'others' and platform_type = 'others' then 'others'
            else 'H5' end as platform,
-       country_code,
-       cat_id,
-       cat_name,
-       ga_channel,
+       nvl(country_code,'NALL'),
+       nvl(cat_id,'NALL'),
+       nvl(cat_name,'NALL'),
+       nvl(ga_channel,'NALL'),
        null                      as add_session_id,
        null                      as view_session_id,
        order_id,
@@ -77,12 +78,12 @@ where  date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${pt}'
   and pay_status = 2
 
 union all
-select a.project_name,
-       a.platform_name    as platform,
-       a.country_code,
-       a.cat_id,
-       a.cat_name,
-       b.ga_channel,
+select nvl(a.project_name,'NALL'),
+       nvl(a.platform_name,'NALL')    as platform,
+       nvl(a.country_code,'NALL'),
+       nvl(a.cat_id,'NALL'),
+       nvl(a.cat_name,'NALL'),
+       nvl(b.ga_channel,'NALL'),
        null               as add_session_id,
        null               as view_session_id,
        null               as order_id,
@@ -95,12 +96,12 @@ from (select project_name,platform_name,country_code,cat_id,cat_name,virtual_goo
 left join (select virtual_goods_id,project_name,ga_channel from dwd.dwd_fd_order_channel_analytics where to_date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${pt}') b on a.project_name = b.project_name and a.virtual_goods_id = b.virtual_goods_id
 
 union all
-select a.project_name,
-       a.platform_type as platform,
-       a.country_code,
-       a.cat_id,
-       a.cat_name,
-       b.ga_channel,
+select nvl(a.project_name,'NALL'),
+       nvl(a.platform_type,'NALL') as platform,
+       nvl(a.country_code,'NALL'),
+       nvl(a.cat_id,'NALL'),
+       nvl(a.cat_name,'NALL'),
+       nvl(b.ga_channel,'NALL'),
        null            as add_session_id,
        null            as view_session_id,
        null            as order_id,

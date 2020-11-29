@@ -31,6 +31,8 @@ select project,
        platform_type,
        country,
        app_version,
+       nvl(substr(abtest_info, 1, instr(abtest_info, '=') - 1),'NALL')  as abtest_name,
+       nvl(substr(abtest_info, instr(abtest_info, '=') + 1),'NALL')     as abtest_version,
        session_id,
        IF(page_code = 'homepage', session_id, null)           as homepage_session_id,
        IF(page_code in ('list', 'landing'), session_id, null) as list_session_id,
@@ -46,9 +48,7 @@ select project,
        NULL                                                 as order_id,
        0.0                                                  as goods_amount,
        0.0                                                  as bonus,
-       0.0                                                  as shipping_fee,
-       substr(abtest_info, 1, instr(abtest_info, '=') - 1)  as abtest_name,
-       substr(abtest_info, instr(abtest_info, '=') + 1)     as abtest_version
+       0.0                                                  as shipping_fee
 from (
          select project,
                 platform_type,
@@ -72,6 +72,8 @@ select fboi.project_name                                   as project,
        fboi.platform_type                                  as platform_type,
        fboi.country_code                                   as country,
        fboi.version                                        as app_version,
+       substr(abtest_info, 1, instr(abtest_info, '=') - 1) as abtest_name,
+       substr(abtest_info, instr(abtest_info, '=') + 1)    as abtest_version,
        NULL                                                as session_id,
        NULL                                                as homepage_session_id,
        NULL                                                as list_session_id,
@@ -87,30 +89,29 @@ select fboi.project_name                                   as project,
        fboi.goods_amount,
        fboi.bonus,
        fboi.shipping_fee,
-       substr(abtest_info, 1, instr(abtest_info, '=') - 1) as abtest_name,
-       substr(abtest_info, instr(abtest_info, '=') + 1)    as abtest_version
+
 from (
     select oi.pay_time,
-        oi.order_id,
-        oi.project_name,
-        oi.goods_amount,
-        oi.bonus,
-        oi.shipping_fee,
-        oi.platform_type,
-        oi.country_code,
-        oi.version,
-        oe.ext_value
+            oi.order_id,
+            oi.project_name,
+            oi.goods_amount,
+            oi.bonus,
+            oi.shipping_fee,
+            oi.platform_type,
+            oi.country_code,
+            oi.version,
+            oe.ext_value
     from (
         select 
-        order_id,
-        project_name,
-        goods_amount,
-        pay_time,
-        bonus,
-        shipping_fee,
-        platform_type,
-        country_code,
-        version
+            order_id,
+            project_name,
+            goods_amount,
+            pay_time,
+            bonus,
+            shipping_fee,
+            platform_type,
+            country_code,
+            version
         from dwd.dwd_fd_order_info
         where date_format(from_utc_timestamp(cast(pay_time * 1000 as timestamp), 'PRC'), 'yyyy-MM-dd') = '${pt}'
         and pay_status = 2
@@ -124,4 +125,6 @@ from (
                       platform_type,
                       country,
                       app_version,
-                      session_id with cube;
+                      abtest_name,
+                      abtest_version
+                       with cube;

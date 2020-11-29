@@ -1,5 +1,5 @@
 -- 关闭自动开启mapjoin转换
-hive.auto.convert.join=false;
+set hive.auto.convert.join=false;
 
 insert overwrite table dwb.dwb_fd_user_retention_rpt partition (pt='${pt}')
 select
