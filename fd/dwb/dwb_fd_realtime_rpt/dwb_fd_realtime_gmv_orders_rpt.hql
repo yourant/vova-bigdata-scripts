@@ -1,7 +1,7 @@
 
 insert overwrite table dwb.dwb_fd_realtime_rpt partition(pt='${pt}',class='orders_number')
 SELECT
-               nvl(deriver_time,'all'),
+               nvl(paid_time,'all'),
                nvl(project,'all'),
                nvl(platform,'all'),
                nvl(country,'all'),
@@ -35,7 +35,7 @@ from
         hour(paid_time) as hour,
         project,
         country,
-	platform,
+	    platform,
         gmv
 from
 (select          
@@ -68,7 +68,7 @@ group by paid_time, project, platform, country with cube;
 
 insert overwrite table dwb.dwb_fd_realtime_rpt partition(pt='${pt}',class='gmv')
 SELECT
-              nvl(deriver_time,'all'),
+              nvl(paid_time,'all'),
               nvl(project,'all'),
               nvl(platform,'all'),
               nvl(country,'all'),
