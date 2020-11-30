@@ -1,4 +1,6 @@
 
+set hive.new.job.grouping.set.cardinality=256;
+
 insert overwrite table dwb.dwb_fd_common_ctr_rpt  partition(pt='${hiveconf:pt}')
 
 select
@@ -24,7 +26,7 @@ SELECT
            nvl(`language`,'NALL') as language,
            nvl(project,'NALL') as project,
            nvl(page_code,'NALL') as page_code,
-          nvl(cast(element_event_struct.absolute_position as String),'NALL') AS position,
+          nvl(element_event_struct.absolute_position as String),'NALL') AS position,
           nvl(element_event_struct.list_type,'NALL')   AS list_name,
           nvl(element_event_struct.element_name,'NALL')  AS element_name,
           nvl(element_event_struct.element_content,'NALL')  AS element_content,
