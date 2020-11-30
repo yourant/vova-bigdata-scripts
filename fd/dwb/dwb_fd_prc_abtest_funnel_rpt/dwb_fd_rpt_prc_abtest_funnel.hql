@@ -113,7 +113,7 @@ from (
             country_code,
             version
         from dwd.dwd_fd_order_info
-        where date_format(from_utc_timestamp(cast(pay_time * 1000 as timestamp), 'PRC'), 'yyyy-MM-dd') = '${pt}'
+        where date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '${pt}'
         and pay_status = 2
         and email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
     )oi
