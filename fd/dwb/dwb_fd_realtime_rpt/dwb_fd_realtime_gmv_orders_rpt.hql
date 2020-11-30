@@ -40,7 +40,7 @@ from
     from(
 
         select
-                     date_format(pay_time,'yyyy-MM-dd hh:mm:ss')      as paid_time,
+                     date_format(pay_time,'yyyy-MM-dd HH:mm:ss')      as paid_time,
                      oi.project_name     as project,
                      is_app,
                      device_type,
@@ -118,7 +118,7 @@ from
     from(
 
         select
-                     date_format(pay_time,'yyyy-MM-dd hh:mm:ss')      as paid_time,
+                     date_format(pay_time,'yyyy-MM-dd HH:mm:ss')      as paid_time,
                      oi.project_name     as project,
                      is_app,
                      device_type,
