@@ -110,4 +110,4 @@ from(
       )t1 where rank = 1
 
     ) oa on orders.order_id = oa.order_id
-)tab group by year,month,weekofyear,project,nl_code_num,nl_code,nl_type,nl_module
+)tab group by year,month,weekofyear,project,nl_code_num,nl_code,nl_type,nl_module with cube;
