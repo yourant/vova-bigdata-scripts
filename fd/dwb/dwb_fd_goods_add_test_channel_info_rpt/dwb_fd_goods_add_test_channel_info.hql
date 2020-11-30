@@ -18,7 +18,7 @@ select
 
 from(
 select
-        nvl(t.project_name,'NALL') as project,
+        nvl(t.project_name,'NALL') as project_name,
         nvl(t.platform,'NALL') as platform,
         nvl(t.country,'NALL') as country,
         nvl(t.cat_id,'NALL') as cat_id,
