@@ -121,7 +121,16 @@ from (
     
 ) fboi LATERAL VIEW OUTER explode(split(fboi.ext_value, '&')) fboi as abtest_info
 
-)tab1 group by        project,
+)tab1
+where project is not null
+and  platform_type is not null
+and  country is not null
+and  app_version is not null
+and  abtest_name is not null
+and  abtest_version is not null
+
+
+group by        project,
                       platform_type,
                       country,
                       app_version,
