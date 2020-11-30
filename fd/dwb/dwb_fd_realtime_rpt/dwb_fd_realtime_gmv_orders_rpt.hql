@@ -60,7 +60,7 @@ left join dim.dim_fd_region r on r.region_id = oi.country
 where  date(pay_time) = date_add('${pt}',-1) and pay_status=2
 and  email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
 )tab1
-)tab2
+
 group by paid_time, project, platform, country with cube;
 
 
@@ -127,5 +127,5 @@ left join dim.dim_fd_region r on r.region_id = oi.country
 where  date(pay_time) = date_add('${pt}',-1) and pay_status=2
 and  email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
 )tab1
-)tab2
+
 group by paid_time, project, platform, country with cube;
