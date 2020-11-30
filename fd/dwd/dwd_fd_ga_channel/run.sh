@@ -34,7 +34,7 @@ spark-submit \
 --conf spark.yarn.appMasterEnv.pt=$pt \
 --conf spark.sql.shuffle.partitions=380 \
 --conf spark.app.name=FDSessionGAChannel \
---class com.vova.bigdata.sparkbatch.jobs.demo.SessionGAChannel \
-s3://vomkt-emr-rec/jar/warehouse/fd/ga_channel_1.0.jar
+--class com.fd.bigdata.sparkbatch.log.jobs.SessionGAChannel \
+s3://vomkt-emr-rec/jar/warehouse/fd/ga_channel_1.1.jar
 
 echo "step2: insert data finished !"
