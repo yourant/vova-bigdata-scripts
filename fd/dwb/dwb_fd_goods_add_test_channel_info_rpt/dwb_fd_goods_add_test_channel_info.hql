@@ -18,12 +18,12 @@ select
 
 from(
 select
-        nvl(t.project_name,'NALL'),
-        nvl(t.platform,'NALL'),
-        nvl(t.country,'NALL'),
-        nvl(t.cat_id,'NALL'),
-        nvl(t.cat_name,'NALL'),
-       nvl(s.ga_channel,'NALL'),
+        nvl(t.project_name,'NALL') as project,
+        nvl(t.platform,'NALL') as platform,
+        nvl(t.country,'NALL') as country,
+        nvl(t.cat_id,'NALL') as cat_id,
+        nvl(t.cat_name,'NALL') as cat_name,
+       nvl(s.ga_channel,'NALL') as ga_channel,
        t.add_session_id,
        t.view_session_id,
        null as order_id,
@@ -55,16 +55,16 @@ select
 ) s on t.session_id = s.session_id
 
 union all
-select nvl(project_name,'NALL'),
+select nvl(project_name,'NALL') as project_name,
        case
            when platform = 'mob' then 'APP'
            when platform = 'web' and platform_type = 'pc_web' then 'PC'
            when platform = 'others' and platform_type = 'others' then 'others'
            else 'H5' end as platform,
-       nvl(country_code,'NALL'),
-       nvl(cat_id,'NALL'),
-       nvl(cat_name,'NALL'),
-       nvl(ga_channel,'NALL'),
+       nvl(country_code,'NALL') as country,
+       nvl(cat_id,'NALL') as cat_id,
+       nvl(cat_name,'NALL') as cat_name,
+       nvl(ga_channel,'NALL') as ga_channel,
        null                      as add_session_id,
        null                      as view_session_id,
        order_id,
@@ -78,12 +78,12 @@ where  date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${pt}'
   and pay_status = 2
 
 union all
-select nvl(a.project_name,'NALL'),
+select nvl(a.project_name,'NALL') as project_name,
        nvl(a.platform_name,'NALL')    as platform,
-       nvl(a.country_code,'NALL'),
-       nvl(a.cat_id,'NALL'),
-       nvl(a.cat_name,'NALL'),
-       nvl(b.ga_channel,'NALL'),
+       nvl(a.country_code,'NALL') as country,
+       nvl(a.cat_id,'NALL') as cat_id,
+       nvl(a.cat_name,'NALL') as cat_name,
+       nvl(b.ga_channel,'NALL') as ga_channel,
        null               as add_session_id,
        null               as view_session_id,
        null               as order_id,
@@ -96,12 +96,12 @@ from (select project_name,platform_name,country_code,cat_id,cat_name,virtual_goo
 left join (select virtual_goods_id,project_name,ga_channel from dwd.dwd_fd_order_channel_analytics where to_date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${pt}') b on a.project_name = b.project_name and a.virtual_goods_id = b.virtual_goods_id
 
 union all
-select nvl(a.project_name,'NALL'),
+select nvl(a.project_name,'NALL') as project_name,
        nvl(a.platform_type,'NALL') as platform,
-       nvl(a.country_code,'NALL'),
-       nvl(a.cat_id,'NALL'),
-       nvl(a.cat_name,'NALL'),
-       nvl(b.ga_channel,'NALL'),
+       nvl(a.country_code,'NALL') as country,
+       nvl(a.cat_id,'NALL') as cat_id,
+       nvl(a.cat_name,'NALL') as cat_name,
+       nvl(b.ga_channel,'NALL') as ga_channel,
        null            as add_session_id,
        null            as view_session_id,
        null            as order_id,
