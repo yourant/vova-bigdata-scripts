@@ -87,7 +87,7 @@ select fboi.project_name                                   as project,
        cast(fboi.order_id as bigint),
        fboi.goods_amount,
        fboi.bonus,
-       fboi.shipping_fee,
+       fboi.shipping_fee
 
 from (
     select oi.pay_time,
