@@ -1,5 +1,5 @@
 #bin/sh
-table="dwb_fd_landing_check"
+table="dwb_fd_120_position_impression_uv_7d"
 user="lujiaheng"
 
 base_path="/mnt/vova-bigdata-scripts/dwb"

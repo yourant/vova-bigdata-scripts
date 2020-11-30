@@ -1,8 +1,8 @@
 #bin/sh
-table="dwb_fd_landing_check"
+table="dwd_fd_category_sales_monthly"
 user="lujiaheng"
 
-base_path="/mnt/vova-bigdata-scripts/dwb"
+base_path="/mnt/vova-bigdata-scripts/dwd"
 
 if [ ! -n "$1" ]; then
   pt=$(date +"%Y-%m-%d")

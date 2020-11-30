@@ -1,23 +1,23 @@
 INSERT OVERWRITE TABLE dwb.dwb_fd_rpt_ecommerce_funnel_report PARTITION (pt = '${pt}')
 select
 /*+ REPARTITION(1) */
-       nvl(project, "ALL")                        as project,
-       nvl(country, "ALL")                        as country,
-       nvl(platform_type, "ALL")                  as platform_type,
-       nvl(ga_channel, "ALL")                     as ga_channel,
-       nvl(is_new_user, "ALL")                    as is_new_user,
-       nvl(mkt_source, "ALL")                     as mkt_source,
-       nvl(mkt_medium, "ALL")                     as mkt_medium,
-       nvl(campaign_name, "ALL")                  as campaign_name,
-       count(distinct session_id)                 as all_uv,
-       count(distinct product_session_id)         as product_uv,
-       count(distinct add_session_id)             as add_uv,
-       count(distinct checkout_session_id)        as checkout_uv,
-       count(distinct checkout_option_session_id) as checkout_option_uv,
-       count(distinct purchase_session_id)        as purchase_uv,
-       count(distinct order_id)                   as paid_order_num,
-       sum(goods_amount)                          as sum_goods_amount,
-       sum(shipping_fee)                          as shipping_fee
+    nvl(project, "ALL")                                                    as project,
+    nvl(country, "ALL")                                                    as country,
+    nvl(platform_type, "ALL")                                              as platform_type,
+    nvl(ga_channel, "ALL")                                                 as ga_channel,
+    nvl(is_new_user, "ALL")                                                as is_new_user,
+    nvl(mkt_source, "ALL")                                                 as mkt_source,
+    nvl(mkt_medium, "ALL")                                                 as mkt_medium,
+    nvl(campaign_name, "ALL")                                              as campaign_name,
+    count(distinct session_id)                                             as all_uv,
+    count(distinct `if`(event_type = "detail_view", session_id, null))     as product_uv,
+    count(distinct `if`(event_type = "add", session_id, null))             as add_uv,
+    count(distinct `if`(event_type = "checkout", session_id, null))        as checkout_uv,
+    count(distinct `if`(event_type = "checkout_option", session_id, null)) as checkout_option_uv,
+    count(distinct `if`(event_type = "purchase", session_id, null))        as purchase_uv,
+    count(distinct order_id)                                               as paid_order_num,
+    sum(goods_amount)                                                      as sum_goods_amount,
+    sum(shipping_fee)                                                      as shipping_fee
 from (
          select nvl(project, "NALL")       as project,
                 nvl(country, "NALL")       as country,
@@ -28,11 +28,7 @@ from (
                 nvl(mkt_medium, "NALL")    as mkt_medium,
                 nvl(campaign_name, "NALL") as campaign_name,
                 session_id,
-                product_session_id,
-                add_session_id,
-                checkout_session_id,
-                checkout_option_session_id,
-                purchase_session_id,
+                event_type,
                 order_id,
                 goods_amount,
                 bonus,
@@ -48,11 +44,7 @@ from (
                        , if(fdpsc.campaign_name is null or fdpsc.campaign_name = '', 'Others',
                             fdpsc.campaign_name)                                                           as campaign_name
                        , om.sp_session_id                                                                  as session_id
-                       , NULL                                                                              as product_session_id
-                       , NULL                                                                              as add_session_id
-                       , NULL                                                                              as checkout_session_id
-                       , NULL                                                                              as checkout_option_session_id
-                       , NULL                                                                              as purchase_session_id
+                       , "order"                                                                           as event_type
                        , oi.order_id                                                                       as order_id
                        , oi.goods_amount                                                                   as goods_amount
                        , oi.bonus                                                                          as bonus
@@ -109,11 +101,7 @@ from (
                        , if(fdpsc.campaign_name is null or fdpsc.campaign_name = '', 'Others',
                             fdpsc.campaign_name)                                                           as campaign_name
                        , fms.session_id
-                       , fms.product_session_id
-                       , fms.add_session_id
-                       , fms.checkout_session_id
-                       , fms.checkout_option_session_id
-                       , fms.purchase_session_id
+                       , fms.event_type
                        , NULL                                                                              as order_id
                        , NULL                                                                              as goods_amount
                        , NULL                                                                              as bonus
@@ -128,19 +116,30 @@ from (
                                       when platform = 'web' and session_idx > 1 then 'old'
                                       when platform = 'mob' and session_idx = 1 then 'new'
                                       when platform = 'mob' and session_idx > 1 then 'old'
-                               end                                                     as is_new_user
+                               end           as is_new_user
                                 , session_id
-
-                                , if(event_name in ('page_view', 'screen_view') and page_code = 'product', session_id,
-                                     NULL)                                             as product_session_id
-                                , if(event_name = 'add', session_id, NULL)             as add_session_id
-                                , if(event_name = 'checkout', session_id, NULL)        as checkout_session_id
-                                , if(event_name = 'checkout_option', session_id, NULL) as checkout_option_session_id
-                                , if(event_name = 'purchase', session_id, NULL)        as purchase_session_id
-                           from ods_fd_snowplow.ods_fd_snowplow_all_event
+                                , event_name as event_type
+                           from ods_fd_snowplow.ods_fd_snowplow_ecommerce_event
                            where pt = '${pt}'
-                             and event_name in
-                                 ('page_view', 'screen_view', 'add', 'checkout', 'checkout_option', 'purchase')
+                             and event_name in ('add', 'checkout', 'checkout_option', 'purchase')
+
+                           union all
+                           select project
+                                , country
+                                , platform_type
+                                , app_version
+                                , case
+                                      when platform = 'web' and session_idx = 1 then 'new'
+                                      when platform = 'web' and session_idx > 1 then 'old'
+                                      when platform = 'mob' and session_idx = 1 then 'new'
+                                      when platform = 'mob' and session_idx > 1 then 'old'
+                               end              as is_new_user
+                                , session_id
+                                , 'detail_view' as event_type
+                           from ods_fd_snowplow.ods_fd_snowplow_view_event
+                           where pt = '${pt}'
+                             and event_name in ('page_view', 'screen_view')
+                             and page_code = 'product'
                        ) fms
                            left join (
                       select session_id,
@@ -160,4 +159,4 @@ group by project,
          mkt_source,
          mkt_medium,
          campaign_name
-with cube
+with cube ;

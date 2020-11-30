@@ -16,6 +16,9 @@ else
 fi
 echo "pt: ${pt}"
 
+mt=$(date -d ${pt} +"%Y-%m")
+echo "mt: ${mt}"
+
 shell_path="${base_path}/${table}"
 
 hive -f ${shell_path}/${table}_create.hql
@@ -23,7 +26,7 @@ hive -f ${shell_path}/${table}_create.hql
 spark-sql \
   --conf "spark.app.name=${table}_${user}" \
   --conf "spark.dynamicAllocation.maxExecutors=60" \
-  -d pt="${pt}" \
+  -d mt="${mt}" \
   -f ${shell_path}/${table}_insert.hql
 
 if [ $? -ne 0 ]; then
