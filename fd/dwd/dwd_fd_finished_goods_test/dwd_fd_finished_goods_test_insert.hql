@@ -21,5 +21,5 @@ select
        gtg.last_update_time as finish_time
 from ods_fd_vb.ods_fd_goods_test_goods gtg
          left join ods_fd_vb.ods_fd_goods_test_pipeline gtp on gtg.pipeline_id = gtp.pipeline_id
-         left join dim.dim_fd_goods g on g.goods_id = gtg.goods_id
+         left join dim.dim_fd_goods g on g.goods_id = gtg.goods_id and g.project_name = gtp.project
 where gtg.result != 0;
