@@ -1,10 +1,10 @@
-insert overwrite table dwb.dwb_fd_realtime_rpt partition(pt='${hiveconf:pt}',class='sessions')
+insert overwrite table dwb.dwb_fd_realtime_rpt partition(pt='${pt}',class='sessions')
 
 select
-    deriver_time,
-    project,
-    platform,
-    country,
+    nvl(deriver_time,'all'),
+    nvl(project,'all'),
+    nvl(platform,'all'),
+    nvl(country,'all'),
     count(distinct if(hour=0,session_id,null)) as h0,
     count(distinct if(hour=1,session_id,null)) as h1,
     count(distinct if(hour=2,session_id,null)) as h2,
@@ -31,8 +31,8 @@ select
     count(distinct if(hour=23,session_id,null)) as h23
 from
 (select
-    date(from_unixtime(unix_timestamp(derived_ts,"yyyy-MM-dd'T'hh:mm:ss.SSS'Z'"),"yyyy-MM-dd hh:mm:ss")) as deriver_time,
-    hour(from_unixtime(unix_timestamp(derived_ts,"yyyy-MM-dd'T'hh:mm:ss.SSS'Z'"),"yyyy-MM-dd hh:mm:ss"))  as hour,
+    date(derived_ts) as deriver_time,
+    hour(derived_ts)  as hour,
     project,
     CASE platform_type
         WHEN 'pc_web' THEN 'PC'
@@ -41,10 +41,10 @@ from
         WHEN 'ios_app' THEN 'IOS'
         WHEN 'tablet_web' THEN 'Tablet'
         ELSE 'Others'
-        END                                                                              as platform,
+        END           as platform,
        country,
        session_id
-from ods.ods_fd_snowplow_all_event
-where pt='${hiveconf:pt}'
+from ods_fd_snowplow.ods_fd_snowplow_all_event
+where pt='${pt}'
 )tab1
-group by  deriver_time,project,platform,country;
+group by  deriver_time,project,platform,country with cube;

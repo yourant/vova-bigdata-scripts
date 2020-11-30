@@ -1,43 +1,10 @@
-CREATE TABLE  if not exists dwb.dwb_fd_realtime_rpt (
-  `derived_date` string,
-  `project` string,
-  `platform` string,
-  `country` string,
-  `h0`  DOUBLE ,
-  `h1`  DOUBLE ,
-  `h2`  DOUBLE ,
-  `h3`  DOUBLE ,
-  `h4`  DOUBLE ,
-  `h5`  DOUBLE ,
-  `h6`  DOUBLE ,
-  `h7`  DOUBLE ,
-  `h8`  DOUBLE ,
-  `h9`  DOUBLE ,
-  `h10` DOUBLE ,
-  `h11` DOUBLE ,
-  `h12` DOUBLE ,
-  `h13` DOUBLE ,
-  `h14` DOUBLE ,
-  `h15` DOUBLE ,
-  `h16` DOUBLE ,
-  `h17` DOUBLE ,
-  `h18` DOUBLE ,
-  `h19` DOUBLE ,
-  `h20` DOUBLE ,
-  `h21` DOUBLE ,
-  `h22` DOUBLE ,
-  `h23` DOUBLE 
-)partitioned by(pt string,class string)
-ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS orc
-TBLPROPERTIES ("orc.compress"="SNAPPY");
 
-insert overwrite table dwb.dwb_fd_realtime_rpt partition(pt='${hiveconf:pt}',class='orders_number')
+insert overwrite table dwb.dwb_fd_realtime_rpt partition(pt='${pt}',class='orders_number')
 SELECT
-           paid_time,
-           project,
-           platform,
-           country,
+               nvl(paid_time,'all'),
+               nvl(project,'all'),
+               nvl(platform,'all'),
+               nvl(country,'all'),
            sum(if(hour = 0, 1, 0))             as h0,
            sum(if(hour = 1, 1, 0))             as h1,
            sum(if(hour = 2, 1, 0))             as h2,
@@ -64,15 +31,15 @@ SELECT
            sum(if(hour = 23, 1, 0))            as h23
 from
 (select 
-        paid_time,
+        date(paid_time) as paid_time,
         hour(paid_time) as hour,
         project,
         country,
-	platform,
+	    platform,
         gmv
 from
 (select          
-                 if(date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) between date_add('${hiveconf:pt}' ,-1) and '${hiveconf:pt}' ,date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')),date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')))      as paid_time,
+                 date_format(pay_time,'yyyy-MM-dd hh:mm:ss')      as paid_time,
                  oi.project_name     as project,
                  is_app,
                  device_type,
@@ -87,25 +54,24 @@ from
                  end                                                          as platform,
                  r.region_code                                                as country,
                  oi.goods_amount + oi.shipping_fee                            as gmv
-from ods_fd_vb.ods_fd_order_info oi
+from (select  *  from ods_fd_vb.ods_fd_order_info  union ods_fd_vb.ods_fd_order_info_inc) oi
 left join  ods_fd_vb.ods_fd_user_agent_analysis uaa on oi.user_agent_id=uaa.user_agent_id
 left join dim.dim_fd_region r on r.region_id = oi.country
-where (date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) >= date_add('${hiveconf:pt}' ,-1)
-or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) >= date_add('${hiveconf:pt}',-1)) and pay_status=2
+where  date(pay_time) = date_add('${pt}',-1) and pay_status=2
 and  email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
 )tab1
 )tab2
-group by paid_time, project, platform, country;
+group by paid_time, project, platform, country with cube;
 
 
 
 
-insert overwrite table dwb.dwb_fd_realtime_rpt partition(pt='${hiveconf:pt}',class='gmv')
+insert overwrite table dwb.dwb_fd_realtime_rpt partition(pt='${pt}',class='gmv')
 SELECT
-           paid_time,
-           project,
-           platform,
-           country,
+              nvl(paid_time,'all'),
+              nvl(project,'all'),
+              nvl(platform,'all'),
+              nvl(country,'all'),
            sum(if(hour = 0, gmv, 0))             as h0,
            sum(if(hour = 1, gmv, 0))             as h1,
            sum(if(hour = 2, gmv, 0))             as h2,
@@ -132,15 +98,15 @@ SELECT
            sum(if(hour = 23, gmv, 0))            as h23
 from
 (select
-        paid_time,
+        date(paid_time) as paid_time,
         hour(paid_time) as hour,
         project,
         country,
-        platform,
+	    platform,
         gmv
 from
 (select
-                 if(date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) between date_add('${hiveconf:pt}' ,-1) and '${hiveconf:pt}' ,date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')),date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')))      as paid_time,
+                 date_format(pay_time,'yyyy-MM-dd hh:mm:ss')      as paid_time,
                  oi.project_name     as project,
                  is_app,
                  device_type,
@@ -155,12 +121,11 @@ from
                  end                                                          as platform,
                  r.region_code                                                as country,
                  oi.goods_amount + oi.shipping_fee                            as gmv
-from ods_fd_vb.ods_fd_order_info oi
-left join   ods_fd_vb.ods_fd_user_agent_analysis  uaa on oi.user_agent_id=uaa.user_agent_id
+from (select  *  from ods_fd_vb.ods_fd_order_info  union ods_fd_vb.ods_fd_order_info_inc) oi
+left join  ods_fd_vb.ods_fd_user_agent_analysis uaa on oi.user_agent_id=uaa.user_agent_id
 left join dim.dim_fd_region r on r.region_id = oi.country
-where (date(from_unixtime(order_time,'yyyy-MM-dd hh:mm:ss')) >= date_add('${hiveconf:pt}' ,-1)
-or date(from_unixtime(pay_time,'yyyy-MM-dd hh:mm:ss')) >= date_add('${hiveconf:pt}',-1)) and pay_status=2
+where  date(pay_time) = date_add('${pt}',-1) and pay_status=2
 and  email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
 )tab1
 )tab2
-group by paid_time, project, platform, country;
+group by paid_time, project, platform, country with cube;

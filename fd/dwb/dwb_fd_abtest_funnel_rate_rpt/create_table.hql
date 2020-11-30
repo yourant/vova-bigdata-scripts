@@ -15,5 +15,5 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_fd_abtest_funnel_rate_rpt
 ) comment'utc时间每天的abtest打点转化明细表'
     PARTITIONED BY ( pt string)
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-    STORED AS ORC
-    TBLPROPERTIES ("orc.compress"="SNAPPY");
+    STORED AS parquet
+    TBLPROPERTIES ("parquet.compress"="SNAPPY");
