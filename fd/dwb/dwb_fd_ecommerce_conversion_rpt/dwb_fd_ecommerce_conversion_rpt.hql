@@ -1,5 +1,5 @@
 insert overwrite table dwb.dwb_fd_ecommerce_conversion_rpt partition (pt='${pt}')
-SELECT
+SELECT  /*+ REPARTITION(1) */
     session_table.project,
     session_table.country,
     session_table.platform_type,
@@ -54,7 +54,7 @@ left JOIN
   from 
   (select project_name,platform_type,country_code,order_id
   from dwd.dwd_fd_order_info 
-  where date_format(from_utc_timestamp(pay_time, 'PRC'), 'yyyy-MM-dd') = '${pt}'
+  where  pay_time is not null and date_format(from_utc_timestamp(pay_time, 'PRC'), 'yyyy-MM-dd') = '${pt}'
   and pay_status=2   
   and email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
   )oi
