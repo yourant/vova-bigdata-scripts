@@ -26,7 +26,7 @@ SELECT
            nvl(`language`,'NALL') as language,
            nvl(project,'NALL') as project,
            nvl(page_code,'NALL') as page_code,
-          nvl((element_event_struct.absolute_position as String),'NALL') AS position,
+          nvl(cast(element_event_struct.absolute_position as String),'NALL') AS position,
           nvl(element_event_struct.list_type,'NALL')   AS list_name,
           nvl(element_event_struct.element_name,'NALL')  AS element_name,
           nvl(element_event_struct.element_content,'NALL')  AS element_content,
