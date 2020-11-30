@@ -16,17 +16,10 @@ nodes:
       - name: erp_unsale_rpt_flow_start
         type: noop
       
-      - name: judge_erp_ecshop_ods_end
+      - name: judge_fd_dw_erp_ods_inc_end
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh erp_ecshop_ods_end
-        dependsOn:
-          - erp_unsale_rpt_flow_start
-      
-      - name: judge_erp_romeo_ods_end
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh erp_romeo_ods_end
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fd_dw_erp_ods_inc_end
         dependsOn:
           - erp_unsale_rpt_flow_start
 
@@ -35,8 +28,7 @@ nodes:
         config:
           command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_erp_unsale_rpt/init_run.sh ${pt}
         dependsOn:
-          - judge_erp_ecshop_ods_end
-          - judge_erp_romeo_ods_end
+          - judge_fd_dw_erp_ods_inc_end
       
       - name: unsale_rpt_caculate
         type: command

@@ -29,7 +29,14 @@ echo $pt_format_last
 shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_place_selection_rpt"
 
 #计算留存数据
-hive -hiveconf pt=$pt -f ${shell_path}/dwb_fd_place_selection_rpt.hql
+#hive -hiveconf pt=$pt -f ${shell_path}/dwb_fd_place_selection_rpt.hql
+
+spark-sql \
+--conf "spark.app.name=dwb_fd_place_selection_rpt_yjzhang"   \
+--conf "spark.dynamicAllocation.maxExecutors=60" \
+-d pt=$pt \
+-f ${shell_path}/dwb_fd_place_selection_rpt.hql
+
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1

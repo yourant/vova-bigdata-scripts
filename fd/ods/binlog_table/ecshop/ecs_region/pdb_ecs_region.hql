@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS pdb.fd_ecshop_ecs_region(
+CREATE EXTERNAL TABLE IF NOT EXISTS pdb.fd_ecshop_ecs_region(
     value STRING
 ) 
 PARTITIONED BY (pt STRING,hour STRING)

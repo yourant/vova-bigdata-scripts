@@ -27,7 +27,19 @@ echo $pt_format
 echo $pt_format_last
 
 #脚本路径
-shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_add_test_channel_info_report"
+shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_add_test_channel_info_rpt"
 
-#订单事实表dwd_fd_order_info
-hive -hiveconf pt=pt -f ${shell_path}/dwb_fd_goods_add_test_channel_info.hql
+#订单事实表
+#hive -hiveconf pt=pt -f ${shell_path}/dwb_fd_goods_add_test_channel_info.hql
+
+spark-sql \
+--conf "spark.app.name=dwb_fd_abtest_funnel_rate_rpt_yjzhang"   \
+--conf "spark.dynamicAllocation.maxExecutors=60" \
+-d pt=$pt \
+-f ${shell_path}/dwb_fd_goods_add_test_channel_info.hql
+
+#如果脚本失败，则报错
+if [ $? -ne 0 ];then
+  exit 1
+fi
+echo "goods_add_test_channel_info rpt table is finished !"

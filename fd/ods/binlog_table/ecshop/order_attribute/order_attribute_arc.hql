@@ -1,4 +1,6 @@
-INSERT overwrite table ods_fd_ecshop.ods_fd_order_attribute_arc PARTITION (pt = '${pt}')
+alter table ods_fd_ecshop.ods_fd_order_attribute_arc drop if exists partition (pt='$pt');
+
+INSERT into table ods_fd_ecshop.ods_fd_order_attribute_arc PARTITION (pt = '${pt}')
 select 
      attribute_id, order_id, attr_name, attr_value
 from (

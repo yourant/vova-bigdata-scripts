@@ -27,7 +27,7 @@ shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_newsletter_rpt"
 
 sql="
 insert overwrite table dwb.dwb_fd_newsletter_order_rpt partition (pt = '$pt_last')
-select /*+ REPARTITION(3) */ oi.project_name as project,
+select /*+ REPARTITION(1) */ oi.project_name as project,
 oi.order_date as order_date_utc,
 oi.order_id as order_id,
 nvl(oi.order_sn,oa.order_sn) as order_sn,

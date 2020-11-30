@@ -1,5 +1,6 @@
 INSERT overwrite table dwb.dwb_fd_country_order_rpt PARTITION (pt = '${hiveconf:pt}')
-select 
+select
+ /*+ REPARTITION(1) */
     nvl(tab1.project_name,'all') as project_name,
     nvl(tab1.platform,'all') as platform,
     nvl(tab1.country_code,'all') as country_code,

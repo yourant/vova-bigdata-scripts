@@ -1,5 +1,6 @@
 insert overwrite table dwb.dwb_fd_erp_unsale_detail  partition (pt = '${pt}')
 select
+     /*+ REPARTITION(1) */
 	case
 		when tab1.can_sale_days > tab1.back_days and tab1.can_sale_days <= 90 then 's1'
 		when tab1.14d_avg_sale > 0 and tab1.14d_avg_sale < 5 and tab1.can_sale_days > 90 and tab1.can_sale_days <= 180 then 's2'

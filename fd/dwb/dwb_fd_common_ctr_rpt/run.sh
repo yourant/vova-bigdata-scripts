@@ -28,4 +28,17 @@ echo $pt_format_last
 
 #hive -hiveconf pt=$pt -f /mnt/vova-bigdata-scripts/fd/dwb.dwb_fd_common_ctr_rpt/dwb_fd_common_ctr.hql
 
+shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_common_ctr_rpt"
+
 hive -hiveconf pt=$pt -f /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_common_ctr_rpt/dwb_fd_common_ctr_rpt.hql
+
+#spark-sql \
+#--conf "spark.app.name=dwb_fd_common_ctr_rpt_yjzhang"   \
+#--conf "spark.dynamicAllocation.maxExecutors=60" \
+#-d pt=$pt \
+#-f ${shell_path}/dwb_fd_common_ctr_rpt.hql
+
+if [ $? -ne 0 ];then
+  exit 1
+fi
+echo "step1: dwb_fd_common_ctr_rpt table is finished !"
