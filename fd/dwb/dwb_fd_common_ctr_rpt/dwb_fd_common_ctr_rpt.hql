@@ -1,5 +1,5 @@
 
-insert overwrite table dwb.dwb_fd_common_ctr_rpt  partition(pt='${pt}')
+insert overwrite table dwb.dwb_fd_common_ctr_rpt  partition(pt='${hiveconf:pt}')
 
 select
     nvl(platform_type,'all'),
@@ -34,7 +34,7 @@ SELECT
 from ods_fd_snowplow.ods_fd_snowplow_element_event
 where event_name in ('common_impression', 'common_click')
 and country is not null
-and pt='${pt}'
+and pt='${hiveconf:pt}'
 
 )tab1
 group by platform_type,app_version,country,language,project,page_code,
