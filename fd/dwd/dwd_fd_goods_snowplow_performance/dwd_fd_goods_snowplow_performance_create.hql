@@ -1,4 +1,4 @@
-create external table dwd.dwd_fd_goods_snowplow_performance
+create table if not exist dwd.dwd_fd_goods_snowplow_performance
 (
     project          STRING,
     country          STRING,

@@ -44,10 +44,10 @@ from (
                   LATERAL VIEW OUTER explode(goods_event_struct) goods_event_table as goods_event
                   LATERAL VIEW OUTER explode(ecommerce_product) ecommerce_product_table as ecommerce_product_info
          where pt = "${pt}"
-             and event_name in ('page_view', 'screen_view') and page_code = "product" and
+             and (event_name in ('page_view', 'screen_view') and page_code = "product" and
                url_virtual_goods_id is not null
             or event_name in ("goods_click", "goods_impression") and
                goods_event.list_type in ('list-category', 'list-pre-order')
             or event_name = "add" and page_code in ("product", "list")
-            or event_name = "checkout") event
+            or event_name = "checkout")) event
          left join dim.dim_fd_goods g on event.virtual_goods_id = g.virtual_goods_id
