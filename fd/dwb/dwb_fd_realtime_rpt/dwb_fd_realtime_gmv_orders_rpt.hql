@@ -1,4 +1,3 @@
-
 insert overwrite table dwb.dwb_fd_realtime_rpt partition(pt='${pt}',class='orders_number')
 SELECT
                nvl(paid_time,'all'),
@@ -30,36 +29,46 @@ SELECT
            sum(if(hour = 22, 1, 0))            as h22,
            sum(if(hour = 23, 1, 0))            as h23
 from
-(select 
-        date(paid_time) as paid_time,
-        hour(paid_time) as hour,
-        project,
-        country,
-	    platform,
-        gmv
-from
-(select          
-                 date_format(pay_time,'yyyy-MM-dd hh:mm:ss')      as paid_time,
-                 oi.project_name     as project,
-                 is_app,
-                 device_type,
-                 os_type,
-                 case
-                     when is_app = 0 and device_type = 'pc' then 'PC'
-                     when is_app = 0 and device_type = 'mobile' then 'H5'
-                     when is_app = 0 and device_type = 'pad' then 'Tablet'
-                     when is_app = 1 and os_type = 'android' then 'Android'
-                     when is_app = 1 and os_type = 'ios' then 'IOS'
-                     else 'Others'
-                 end                                                          as platform,
-                 r.region_code                                                as country,
-                 oi.goods_amount + oi.shipping_fee                            as gmv
-from (select  *  from ods_fd_vb.ods_fd_order_info  union ods_fd_vb.ods_fd_order_info_inc) oi
-left join  ods_fd_vb.ods_fd_user_agent_analysis uaa on oi.user_agent_id=uaa.user_agent_id
-left join dim.dim_fd_region r on r.region_id = oi.country
-where  date(pay_time) = date_add('${pt}',-1) and pay_status=2
-and  email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
-)tab1
+(
+        select
+            date(paid_time) as paid_time,
+            hour(paid_time) as hour,
+            project,
+            country,
+            platform,
+            gmv
+    from(
+
+        select
+                     date_format(pay_time,'yyyy-MM-dd hh:mm:ss')      as paid_time,
+                     oi.project_name     as project,
+                     is_app,
+                     device_type,
+                     os_type,
+                     case
+                         when is_app = 0 and device_type = 'pc' then 'PC'
+                         when is_app = 0 and device_type = 'mobile' then 'H5'
+                         when is_app = 0 and device_type = 'pad' then 'Tablet'
+                         when is_app = 1 and os_type = 'android' then 'Android'
+                         when is_app = 1 and os_type = 'ios' then 'IOS'
+                         else 'Others'
+                     end                                                          as platform,
+                     r.region_code                                                as country,
+                     oi.goods_amount + oi.shipping_fee                            as gmv
+        from (
+            select  pay_time,project_name,order_id,country,user_agent_id,email,goods_amount,shipping_fee,pay_status  from ods_fd_vb.ods_fd_order_info
+
+            union
+
+            select  pay_time,project_name,order_id,country,user_agent_id,email,goods_amount,shipping_fee,pay_status from ods_fd_vb.ods_fd_order_info_inc
+
+        ) oi
+
+        left join  ods_fd_vb.ods_fd_user_agent_analysis uaa on oi.user_agent_id=uaa.user_agent_id
+        left join dim.dim_fd_region r on r.region_id = oi.country
+        where  date(pay_time) = date_add('${pt}',-1) and pay_status=2
+        and  email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
+    )tab1
 )tab2
 
 group by paid_time, project, platform, country with cube;
@@ -98,36 +107,46 @@ SELECT
            sum(if(hour = 22, gmv, 0))            as h22,
            sum(if(hour = 23, gmv, 0))            as h23
 from
-(select
-        date(paid_time) as paid_time,
-        hour(paid_time) as hour,
-        project,
-        country,
-	    platform,
-        gmv
-from
-(select
-                 date_format(pay_time,'yyyy-MM-dd hh:mm:ss')      as paid_time,
-                 oi.project_name     as project,
-                 is_app,
-                 device_type,
-                 os_type,
-                 case
-                     when is_app = 0 and device_type = 'pc' then 'PC'
-                     when is_app = 0 and device_type = 'mobile' then 'H5'
-                     when is_app = 0 and device_type = 'pad' then 'Tablet'
-                     when is_app = 1 and os_type = 'android' then 'Android'
-                     when is_app = 1 and os_type = 'ios' then 'IOS'
-                     else 'Others'
-                 end                                                          as platform,
-                 r.region_code                                                as country,
-                 oi.goods_amount + oi.shipping_fee                            as gmv
-from (select  *  from ods_fd_vb.ods_fd_order_info  union ods_fd_vb.ods_fd_order_info_inc) oi
-left join  ods_fd_vb.ods_fd_user_agent_analysis uaa on oi.user_agent_id=uaa.user_agent_id
-left join dim.dim_fd_region r on r.region_id = oi.country
-where  date(pay_time) = date_add('${pt}',-1) and pay_status=2
-and  email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
-)tab1
+(
+        select
+            date(paid_time) as paid_time,
+            hour(paid_time) as hour,
+            project,
+            country,
+            platform,
+            gmv
+    from(
+
+        select
+                     date_format(pay_time,'yyyy-MM-dd hh:mm:ss')      as paid_time,
+                     oi.project_name     as project,
+                     is_app,
+                     device_type,
+                     os_type,
+                     case
+                         when is_app = 0 and device_type = 'pc' then 'PC'
+                         when is_app = 0 and device_type = 'mobile' then 'H5'
+                         when is_app = 0 and device_type = 'pad' then 'Tablet'
+                         when is_app = 1 and os_type = 'android' then 'Android'
+                         when is_app = 1 and os_type = 'ios' then 'IOS'
+                         else 'Others'
+                     end                                                          as platform,
+                     r.region_code                                                as country,
+                     oi.goods_amount + oi.shipping_fee                            as gmv
+        from (
+            select  pay_time,project_name,order_id,country,user_agent_id,email,goods_amount,shipping_fee,pay_status  from ods_fd_vb.ods_fd_order_info
+
+            union
+
+            select  pay_time,project_name,order_id,country,user_agent_id,email,goods_amount,shipping_fee,pay_status from ods_fd_vb.ods_fd_order_info_inc
+
+        ) oi
+
+        left join  ods_fd_vb.ods_fd_user_agent_analysis uaa on oi.user_agent_id=uaa.user_agent_id
+        left join dim.dim_fd_region r on r.region_id = oi.country
+        where  date(pay_time) = date_add('${pt}',-1) and pay_status=2
+        and  email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
+    )tab1
 )tab2
 
 group by paid_time, project, platform, country with cube;

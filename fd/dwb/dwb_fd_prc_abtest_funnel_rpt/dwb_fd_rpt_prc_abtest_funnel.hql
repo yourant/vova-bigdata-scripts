@@ -25,7 +25,6 @@ select
            sum(goods_amount),
            sum(bonus),
            sum(shipping_fee)
-
 from(
 select project,
        platform_type,
@@ -64,7 +63,7 @@ from (
            and abtest != ''
            and abtest != '-'
            and concat(pt,'-',hour) between concat('${pt_last}','-','16') and concat('${pt}','-','16')
-     ) fms LATERAL VIEW OUTER explode(split(fms.abtest, '&')) fms as abtest_info;
+     ) fms LATERAL VIEW OUTER explode(split(fms.abtest, '&')) fms as abtest_info
 
 union all
 
