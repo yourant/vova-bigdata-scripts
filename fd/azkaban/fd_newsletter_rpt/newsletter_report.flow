@@ -51,9 +51,18 @@ nodes:
     dependsOn:
       - judge_dwd_fd_order_goods
       - judge_ods_fd_ar_order_analytics
+  
+  - name: newsletter_order_sp_report_caculate
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_newsletter_rpt/sp_run.sh ${pt}
+    dependsOn:
+      - judge_dwd_fd_order_goods
+      - judge_ods_fd_ar_order_analytics
 
   - name: newsletter_report_end
     type: noop
     dependsOn:
       - newsletter_send_report_caculate
       - newsletter_order_report_caculate
+      - newsletter_order_sp_report_caculate
