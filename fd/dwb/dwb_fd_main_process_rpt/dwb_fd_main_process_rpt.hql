@@ -106,7 +106,7 @@ from (
                             goods_amount,
                             bonus,
                             shipping_fee
-                        from dwd.dwd_fd_order_info oi 
+                        from dwd.dwd_fd_order_info oi
                         where date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${pt}'
                         and pay_status = 2
                         and project_name is not NULL

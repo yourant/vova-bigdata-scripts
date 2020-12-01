@@ -1,5 +1,4 @@
 CREATE TABLE  if not exists dwb.dwb_fd_realtime_rpt (
-  `derived_date` string,
   `project` string,
   `platform` string,
   `country` string,
@@ -26,8 +25,9 @@ CREATE TABLE  if not exists dwb.dwb_fd_realtime_rpt (
   `h20` DOUBLE ,
   `h21` DOUBLE ,
   `h22` DOUBLE ,
-  `h23` DOUBLE
-)partitioned by(pt string,class string)
+  `h23` DOUBLE,
+   Flag string
+)partitioned by(pt string)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS parquet
 TBLPROPERTIES ("parquet.compress"="SNAPPY");

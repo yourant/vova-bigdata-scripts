@@ -19,4 +19,15 @@ echo $pt
 #脚本路径
 shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_order_coupon_rpt"
 
-hive -hiveconf pt=$pt -f ${shell_path}/dwb_fd_order_coupon.hql
+#hive -hiveconf pt=$pt -f ${shell_path}/dwb_fd_order_coupon.hql
+
+spark-sql \
+  --conf "spark.app.name=fd_order_coupon_rpt_gaohaitao" \
+  --conf "spark.dynamicAllocation.maxExecutors=10" \
+  -d pt=$pt \
+  -f ${shell_path}/dwb_fd_order_coupon.hql
+
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+echo "dwb_fd_order_coupon table is finished !"

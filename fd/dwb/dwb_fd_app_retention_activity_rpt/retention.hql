@@ -1,4 +1,4 @@
-insert overwrite table dwb.dwb_fd_app_retention_activity partition (pt='${pt}',classify='retention')
+insert overwrite table dwd.dwd_fd_app_retention_activity partition (pt='${pt}',classify='retention')
 select
  /*+ REPARTITION(1) */
 rewards_day1.project as project,
@@ -7,8 +7,8 @@ rewards_day1.country as country_code,
 null,null,
 rewards_day1.domain_userid as retention_domain_userid_2d,
 rewards_today.domain_userid as retention_domain_userid_1d,
-if(rewards_day1.user_id != '0' and rewards_day1.user_id is not null,rewards_day1.domain_userid,null) as login_domain_userid_2d,
-if(rewards_day1.user_id != '0' and rewards_day1.user_id is not null,rewards_today.domain_userid,null) as login_domain_userid_1d,
+if(rewards_day1.user_id != '0' and rewards_day1.user_id is not null and rewards_day1.user_id != '',rewards_day1.domain_userid,null) as login_domain_userid_2d,
+if(rewards_day1.user_id != '0' and rewards_day1.user_id is not null and rewards_day1.user_id != '',rewards_today.domain_userid,null) as login_domain_userid_1d,
 if(rewards_day1.list_name in ('check_in_success','my_rewards_check_success') and rewards_day1.event_name in('common_impression') and rewards_day1.element_name in('my_rewards_check_success','check_coupon'),rewards_day1.domain_userid,null) as checkin_domain_userid_2d,
 if(rewards_day1.list_name in ('check_in_success','my_rewards_check_success') and rewards_day1.event_name in('common_impression') and rewards_day1.element_name in('my_rewards_check_success','check_coupon'),rewards_today.domain_userid,null) as checkin_domain_userid_1d,
 if(rewards_day1.element_name in('free_play'),rewards_day1.domain_userid,null) as play_domain_userid_2d,

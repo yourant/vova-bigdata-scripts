@@ -1,5 +1,6 @@
 insert overwrite table dwb.dwb_fd_newsletter_snowplow_rpt  partition (pt = '${pt_last}')
 select
+ /*+ REPARTITION(1) */
   nvl(year,'all') as year,
   nvl(month,'all') as month,
   nvl(weekofyear,'all') as weekofyear,

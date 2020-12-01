@@ -11,7 +11,7 @@ element_event_struct.list_type list_name,
 element_event_struct.element_name element_name,
 session_id
 from ods_fd_snowplow.ods_fd_snowplow_element_event
-where pt='2020-11-28'
+where pt='${pt}'
 and event_name in ('common_impression', 'common_click')
 and platform_type is not null
 and country is not null

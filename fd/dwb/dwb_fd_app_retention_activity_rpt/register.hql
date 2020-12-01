@@ -1,4 +1,4 @@
-insert overwrite table dwb.dwb_fd_app_retention_activity partition (pt='${pt}',classify='register')
+insert overwrite table dwd.dwd_fd_app_retention_activity partition (pt='${pt}',classify='register')
 select
 /*+ REPARTITION(1) */
 t1.project as project,
@@ -9,7 +9,7 @@ t1.session_id as all_session,
 null,null,null,null,null,null,null,null,
 null,null,null,
 null,null,null,null,
-if(t1.user_id != '0' and t1.user_id is not null,t1.domain_userid,null) as user_login_domain_userid,
+if(t1.user_id != '0' and t1.user_id is not null and t1.user_id != '',t1.domain_userid,null) as user_login_domain_userid,
 null as user_register_domain_userid,
 null as user_new_domain_userid,
 null as user_new_register_domain_userid,
@@ -29,6 +29,7 @@ where  pt = '${pt}' and platform_type in ('android_app','ios_app') and project i
 
 union
 select
+ /*+ REPARTITION(1) */
 t1.project as project,
 t1.platform_type as platform_type,
 t1.country_code as country_code,
@@ -74,6 +75,7 @@ where date(TO_UTC_TIMESTAMP(reg_time, 'America/Los_Angeles')) = '${pt}'
 ) t2 on t1.user_id = t2.user_id
 
 union
+ /*+ REPARTITION(1) */
 select
 t1.project as project,
 t1.platform_type as platform_type,
@@ -112,6 +114,7 @@ and date(TO_UTC_TIMESTAMP(event_time,'America/Los_Angeles')) = '${pt}'
 
 union
 select
+ /*+ REPARTITION(1) */
 t1.project as project,
 t1.platform_type as platform_type,
 t1.country_code as country_code,
@@ -158,6 +161,7 @@ select user_id from ods_fd_vb.ods_fd_users where date(TO_UTC_TIMESTAMP(reg_time,
 
 union
 select
+ /*+ REPARTITION(1) */
 t1.project_name as project,
 t2.platform_type as platform_type,
 t3.region_code as country_code,
@@ -198,6 +202,7 @@ left join dim.dim_fd_region t3 on t3.region_id = t1.country
 
 union
 select
+ /*+ REPARTITION(1) */
 t3.project_name as project,
 t4.platform_type as platform_type,
 t5.region_code as country_code,

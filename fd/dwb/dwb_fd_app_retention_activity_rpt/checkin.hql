@@ -1,4 +1,4 @@
-insert overwrite table dwb.dwb_fd_app_retention_activity partition (pt='${pt}',classify='checkin')
+insert overwrite table dwd.dwd_fd_app_retention_activity partition (pt='${pt}',classify='checkin')
 select
  /*+ REPARTITION(1) */
 project as project,
@@ -21,6 +21,7 @@ and project is not null and project !='' and country is not null and country != 
 
 union
 select
+ /*+ REPARTITION(1) */
 ul.project as project,
 case when ul.type = 'android_ap' then 'android_app'
  when ul.type = 'ios_app' then 'ios_app' end as platform_type,
@@ -44,6 +45,7 @@ and ul.project is not null and ul.project !='' and r.region_code is not null and
 
 union
 select
+ /*+ REPARTITION(1) */
 t1.project,
 t1.platform_type,
 t1.country_code,

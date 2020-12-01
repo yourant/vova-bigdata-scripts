@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS dwb.dwb_fd_app_user_coupon_order
+CREATE TABLE IF NOT EXISTS dwd.dwd_fd_app_user_coupon_order
 (
     project_name     string comment '组织',
     platform_type    string COMMENT '平台',
@@ -15,8 +15,7 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_fd_app_user_coupon_order
 ) COMMENT 'appp用户优惠券使用指标报表'
 PARTITIONED BY (pt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS ORC
-TBLPROPERTIES ("orc.compress"="SNAPPY");
+STORED AS PARQUETFILE;
 
 
 CREATE TABLE IF NOT EXISTS dwb.dwb_fd_app_user_coupon_order_rpt
