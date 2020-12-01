@@ -1,15 +1,13 @@
 
 
 INSERT OVERWRITE TABLE dwb.dwb_fd_prc_abtest_funnel_rpt PARTITION (pt = '${pt}')
-
-select    /*+ REPARTITION(2) */
+select    /*+ REPARTITION(1) */
            nvl(project,'all'),
            nvl(platform_type,'all'),
            nvl(country,'all'),
            nvl(app_version,'all'),
            nvl(abtest_name,'all'),
            nvl(abtest_version,'all'),
-
            count(distinct session_id),
            count(distinct homepage_session_id),
            count(distinct list_session_id),
@@ -30,8 +28,8 @@ from(
            platform_type,
            country,
            app_version,
-           substr(abtest_info, 1, instr(abtest_info, '=') - 1)  as abtest_name,
-           substr(abtest_info, instr(abtest_info, '=') + 1)    as abtest_version,
+           nvl(substr(abtest_info, 1, instr(abtest_info, '=') - 1),'NALL')  as abtest_name,
+           nvl(substr(abtest_info, instr(abtest_info, '=') + 1) ,'NALL')   as abtest_version,
            session_id,
            IF(page_code = 'homepage', session_id, null)           as homepage_session_id,
            IF(page_code in ('list', 'landing'), session_id, null) as list_session_id,
@@ -49,32 +47,34 @@ from(
            0.0                                                  as bonus,
            0.0                                                  as shipping_fee
     from (
-             select project,
-                    platform_type,
+             select nvl(project,'NALL') as project,
+                    nvl(platform_type,'NALL') as platform_type,
                     event_name,
                     page_code,
                     referrer_page_code,
-                    country,
-                    app_version,
+                    nvl(country,'NALL') as country,
+                    nvl(app_version,'NALL') as app_version,
                     session_id,
                     abtest
              from ods_fd_snowplow.ods_fd_snowplow_all_event
              where event_name in ('page_view', 'screen_view', 'add', 'remove', 'checkout', 'checkout_option', 'purchase')
                and abtest != ''
                and abtest != '-'
-               and (pt='${pt_last}' and hour between 16 and 24)
-               or (pt='${pt}' and hour between 1 and 16)
+               and abtest is not null
+               and session_id is not null
+               and ((pt='2020-11-29' and hour >='16' and hour<='23')
+                 or (pt='2020-11-30' and hour >= '00' and hour<='15'))
 
          ) fms LATERAL VIEW OUTER explode(split(fms.abtest, '&')) fms as abtest_info
 
     union all
 
-    select fboi.project_name                                   as project,
-           fboi.platform_type                                  as platform_type,
-           fboi.country_code                                   as country,
-           fboi.version                                        as app_version,
-           substr(abtest_info, 1, instr(abtest_info, '=') - 1) as abtest_name,
-           substr(abtest_info, instr(abtest_info, '=') + 1)    as abtest_version,
+    select fboi.project_name                                 as project,
+           fboi.platform_type                               as platform_type,
+           fboi.country_code                                as country,
+           fboi.version                                   as app_version,
+           nvl(substr(abtest_info, 1, instr(abtest_info, '=') - 1),'NALL') as abtest_name,
+           nvl(substr(abtest_info, instr(abtest_info, '=') + 1),'NALL')   as abtest_version,
            NULL                                                as session_id,
            NULL                                                as homepage_session_id,
            NULL                                                as list_session_id,
@@ -105,31 +105,26 @@ from(
         from (
             select
                 order_id,
-                project_name,
+                nvl(project_name,'NALL') as project_name,
                 goods_amount,
                 pay_time,
                 bonus,
                 shipping_fee,
-                platform_type,
-                country_code,
-                version
+                nvl(platform_type,'NALL') as platform_type,
+                nvl(country_code,'NALL') as country_code,
+                nvl(version,'NALL') as version
             from dwd.dwd_fd_order_info
-            where date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '${pt}'
+            where   pay_time is not null
+            and date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '${pt}'
             and pay_status = 2
+            and order_id is not null
             and email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
         )oi
-        left join (select order_id,ext_value from ods_fd_vb.ods_fd_order_extension where ext_name = 'abtestInfo') oe on oi.order_id = oe.order_id
+        left join (select order_id,ext_value from ods_fd_vb.ods_fd_order_extension where ext_name = 'abtestInfo' and ext_value is not null) oe on oi.order_id = oe.order_id
 
     ) fboi LATERAL VIEW OUTER explode(split(fboi.ext_value, '&')) fboi as abtest_info
 
 )tab1
-where    project is not null
-        and  platform_type is not null
-        and  country is not null
-        and  app_version is not null
-        and  abtest_name is not null
-        and  abtest_version is not null
-
 
 group by              project,
                       platform_type,
