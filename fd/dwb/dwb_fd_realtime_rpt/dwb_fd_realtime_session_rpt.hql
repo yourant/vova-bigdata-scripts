@@ -1,7 +1,6 @@
 insert overwrite table dwb.dwb_fd_realtime_rpt partition(pt='${pt}',class='sessions')
 
 select
-    nvl(deriver_time,'all'),
     nvl(project,'all'),
     nvl(platform,'all'),
     nvl(country,'all'),
@@ -47,4 +46,4 @@ from
 from ods_fd_snowplow.ods_fd_snowplow_all_event
 where pt='${pt}'
 )tab1
-group by  deriver_time,project,platform,country with cube;
+group by  project,platform,country with cube;

@@ -1,5 +1,4 @@
 CREATE TABLE  if not exists dwb.dwb_fd_realtime_rpt (
-  `derived_date` string,
   `project` string,
   `platform` string,
   `country` string,
