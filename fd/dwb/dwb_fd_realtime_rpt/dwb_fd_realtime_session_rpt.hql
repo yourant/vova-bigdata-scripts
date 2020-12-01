@@ -40,7 +40,8 @@ from
         ELSE 'Others'
         END           as platform,
        country,
-       session_id
+       session_id,
+       hour
 from ods_fd_snowplow.ods_fd_snowplow_all_event
 where pt='${pt}'
 )tab1
