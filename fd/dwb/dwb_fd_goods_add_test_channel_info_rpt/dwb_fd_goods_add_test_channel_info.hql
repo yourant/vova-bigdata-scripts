@@ -33,7 +33,7 @@ select
        null as success_order_id,
        null as success_goods_amount
 from (
-select 
+select
         project_name,
         platform,
         country,
@@ -44,7 +44,7 @@ select
         add_session_id,
         pt
     from dwd.dwd_fd_goods_add_info
-    where pt <= '${pt}'
+    where pt = '${pt}'
     and cat_name is not null
 ) t
     left join
@@ -59,7 +59,7 @@ select nvl(project_name,'NALL') as project_name,
        case
            when platform = 'mob' then 'APP'
            when platform = 'web' and platform_type = 'pc_web' then 'PC'
-           when platform = 'others' and platform_type = 'others' then 'others'
+           when platform = 'other' and platform_type = 'others' then 'others'
            else 'H5' end as platform,
        nvl(country_code,'NALL') as country,
        nvl(cat_id,'NALL') as cat_id,
