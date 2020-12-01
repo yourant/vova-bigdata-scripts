@@ -1,4 +1,4 @@
-insert overwrite table dwb.dwb_fd_realtime_rpt partition(pt='${pt}',class='sessions')
+insert overwrite table dwb.dwb_fd_realtime_rpt partition(pt='${pt}')
 
 select
     /*+ REPARTITION(1) */
@@ -28,7 +28,8 @@ select
     count(distinct if(hour=20,session_id,null)) as h20,
     count(distinct if(hour=21,session_id,null)) as h21,
     count(distinct if(hour=22,session_id,null)) as h22,
-    count(distinct if(hour=23,session_id,null)) as h23
+    count(distinct if(hour=23,session_id,null)) as h23,
+    'sessions'
 from
 (select
     project,

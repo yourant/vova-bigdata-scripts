@@ -1,4 +1,4 @@
-insert overwrite table dwb.dwb_fd_realtime_rpt partition(pt='${pt}',class='orders_number')
+insert overwrite table dwb.dwb_fd_realtime_rpt partition(pt='${pt}')
 SELECT
          /*+ REPARTITION(1) */
                nvl(project,'all'),
@@ -27,7 +27,8 @@ SELECT
            sum(if(hour = 20, 1, 0))            as h20,
            sum(if(hour = 21, 1, 0))            as h21,
            sum(if(hour = 22, 1, 0))            as h22,
-           sum(if(hour = 23, 1, 0))            as h23
+           sum(if(hour = 23, 1, 0))            as h23,
+           'orders_number'
 from
 (
 
