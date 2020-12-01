@@ -47,13 +47,13 @@ from(
            0.0                                                  as bonus,
            0.0                                                  as shipping_fee
     from (
-             select nvl(project,'NALL'),
-                    nvl(platform_type,'NALL'),
+             select nvl(project,'NALL') as project,
+                    nvl(platform_type,'NALL') as platform_type,
                     event_name,
                     page_code,
                     referrer_page_code,
-                    nvl(country,'NALL'),
-                    nvl(app_version,'NALL'),
+                    nvl(country,'NALL') as country,
+                    nvl(app_version,'NALL') as app_version,
                     session_id,
                     abtest
              from ods_fd_snowplow.ods_fd_snowplow_all_event
@@ -61,7 +61,7 @@ from(
                and abtest != ''
                and abtest != '-'
                and abtest is not null
-               aand session_id is not null
+               and session_id is not null
                and (pt='${pt_last}' and hour between 16 and 24)
                or (pt='${pt}' and hour between 1 and 16)
 
@@ -105,14 +105,14 @@ from(
         from (
             select
                 order_id,
-                nvl(project_name,'NALL'),
+                nvl(project_name,'NALL') as project_name,
                 goods_amount,
                 pay_time,
                 bonus,
                 shipping_fee,
-                nvl(platform_type,'NALL'),
-                nvl(country_code,'NALL'),
-                nvl(version,'NALL')
+                nvl(platform_type,'NALL') as platform_type,
+                nvl(country_code,'NALL') as country_code,
+                nvl(version,'NALL') as version
             from dwd.dwd_fd_order_info
             where   pay_time is not null
             and date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '${pt}'
