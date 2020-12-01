@@ -6,11 +6,11 @@ CREATE TABLE IF NOT EXISTS `dwb.dwb_fd_goods_add_test_channel_info`(
   `ga_channel` string COMMENT '投放渠道',
   `add_uv` string COMMENT '加车 session数',
   `view_uv` string COMMENT 'view session数',
-  `order_id` bigint COMMENT '订单数',
+  `order_num` bigint COMMENT '订单数',
   `goods_amount` DECIMAL(15, 4) COMMENT '订单金额',
-  `goods_test_goods_id` bigint COMMENT '测款商品数',
-  `success_goods_test_goods_id` bigint COMMENT '测款成功商品数',
-  `success_order_id` bigint COMMENT '测款成功的订单数',
+  `test_goods_num` bigint COMMENT '测款商品数',
+  `test_success_goods_num` bigint COMMENT '测款成功商品数',
+  `success_order_num` bigint COMMENT '测款成功的订单数',
   `success_goods_amount` DECIMAL(15, 4) COMMENT '测款成功的订单金额')
 COMMENT '商品加购测款渠道信息表'
 PARTITIONED BY (
