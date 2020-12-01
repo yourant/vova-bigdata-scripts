@@ -1,4 +1,3 @@
-
 insert overwrite table dwb.dwb_fd_order_goods_rpt partition(pt='${hiveconf:pt}')
 select
     order_id,
