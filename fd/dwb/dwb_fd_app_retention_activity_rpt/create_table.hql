@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `dwb.dwb_fd_app_retention_activity`(
+CREATE TABLE IF NOT EXISTS `dwd.dwd_fd_app_retention_activity`(
   `project` string COMMENT '组织',
   `platform_type` string COMMENT '平台',
   `country_code` string COMMENT '国家',
@@ -57,8 +57,7 @@ PARTITIONED BY (
   `pt` string,
   `classify` string)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS ORC
-TBLPROPERTIES ("orc.compress"="SNAPPY");
+STORED AS PARQUETFILE;
 
 
 
