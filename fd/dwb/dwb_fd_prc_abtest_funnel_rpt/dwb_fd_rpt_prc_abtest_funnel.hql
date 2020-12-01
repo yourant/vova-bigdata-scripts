@@ -2,7 +2,7 @@
 
 INSERT OVERWRITE TABLE dwb.dwb_fd_prc_abtest_funnel_rpt PARTITION (pt = '${pt}')
 
-select    /*+ REPARTITION(2) */
+select    /*+ REPARTITION(1) */
            nvl(project,'all'),
            nvl(platform_type,'all'),
            nvl(country,'all'),
