@@ -62,8 +62,8 @@ from(
                and abtest != '-'
                and abtest is not null
                and session_id is not null
-               and ((pt='2020-11-29' and hour >='16' and hour<='23')
-                 or (pt='2020-11-30' and hour >= '00' and hour<='15'))
+               and ((pt='${pt_last}' and hour >='16' and hour<='23')
+                 or (pt='${pt}' and hour >= '00' and hour<='15'))
 
          ) fms LATERAL VIEW OUTER explode(split(fms.abtest, '&')) fms as abtest_info
 
