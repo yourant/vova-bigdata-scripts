@@ -64,7 +64,7 @@ from
         left join  ods_fd_vb.ods_fd_user_agent_analysis uaa on oi.user_agent_id=uaa.user_agent_id
         left join dim.dim_fd_region r on r.region_id = oi.country
 
-    )tab1
+    )tab1 where  date(paid_time)='${pt}'
 )tab2
 
 group by  project, platform, country with cube;
@@ -137,7 +137,7 @@ from
 
         left join  ods_fd_vb.ods_fd_user_agent_analysis uaa on oi.user_agent_id=uaa.user_agent_id
         left join dim.dim_fd_region r on r.region_id = oi.country
-    )tab1
+    )tab1 where  date(paid_time)='${pt}'
 )tab2
 
 group by  project, platform, country with cube;
