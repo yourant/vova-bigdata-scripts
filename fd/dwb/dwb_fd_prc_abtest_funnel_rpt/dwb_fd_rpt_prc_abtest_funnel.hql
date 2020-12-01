@@ -62,6 +62,8 @@ from(
              where event_name in ('page_view', 'screen_view', 'add', 'remove', 'checkout', 'checkout_option', 'purchase')
                and abtest != ''
                and abtest != '-'
+               and (pt='${pt_last}' and hour between 16 and 24)
+               or pt='${pt}' and hour between 1 and 16)
                and concat(pt,'-',hour) between concat('${pt_last}','-','16') and concat('${pt}','-','16')
          ) fms LATERAL VIEW OUTER explode(split(fms.abtest, '&')) fms as abtest_info
 
