@@ -17,11 +17,11 @@ select  /*+ REPARTITION(1) */
         sum(tab1.gmv) as gmv
 from (
     select
-        project_name,
+        project as project_name,
         upper(country) as country,
         platform_type,
         page_code,
-        list_type,
+        goods_event_struct.list_type,
         if(event_name = 'goods_impression', session_id, NULL) AS goods_impression_session_id,
         if(event_name = 'goods_click', session_id, NULL) AS goods_click_session_id,
         if(event_name = 'goods_impression', domain_userid, NULL) AS goods_impression_domain_id,
@@ -31,15 +31,19 @@ from (
         null as success_order_id,
         null as success_order_user_id,
         null as gmv
-    from dwd.dwd_fd_snowplow_click_impr
+    from ods_fd_snowplow.ods_fd_snowplow_goods_event
     where pt = '${pt}'
-    AND project_name is not null
+    AND project is not null
     AND country is not null
     AND country !=''
+    AND platform_type is not null
+    AND platform_type != ''
     AND page_code != '404'
     AND page_code != ''
-    AND list_type != ''
-    AND list_type is not null
+    AND goods_event_struct.list_type is not null
+    AND goods_event_struct.list_type != 'null'
+    AND goods_event_struct.list_type != 'NULL'
+    AND goods_event_struct.list_type != ''
 
     union all
     select
