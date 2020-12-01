@@ -57,13 +57,13 @@ from
                      oi.goods_amount + oi.shipping_fee                            as gmv
         from (
             select  pay_time,project_name,order_id,country,user_agent_id,email,goods_amount,shipping_fee,pay_status from ods_fd_vb.ods_fd_order_info_inc
-                                where pt='${pt}'
+            where pt='${pt}'  and  pay_status=2
+                        and  email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
         ) oi
 
         left join  ods_fd_vb.ods_fd_user_agent_analysis uaa on oi.user_agent_id=uaa.user_agent_id
         left join dim.dim_fd_region r on r.region_id = oi.country
-        where  date(pay_time) = date_add('${pt}',-1) and pay_status=2
-        and  email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
+
     )tab1
 )tab2
 
@@ -131,13 +131,12 @@ from
                      oi.goods_amount + oi.shipping_fee                            as gmv
         from (
             select  pay_time,project_name,order_id,country,user_agent_id,email,goods_amount,shipping_fee,pay_status from ods_fd_vb.ods_fd_order_info_inc
-
+                        where pt='${pt}'  and  pay_status=2
+                                    and  email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
         ) oi
 
         left join  ods_fd_vb.ods_fd_user_agent_analysis uaa on oi.user_agent_id=uaa.user_agent_id
         left join dim.dim_fd_region r on r.region_id = oi.country
-        where  date(pay_time) = date_add('${pt}',-1) and pay_status=2
-        and  email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
     )tab1
 )tab2
 
