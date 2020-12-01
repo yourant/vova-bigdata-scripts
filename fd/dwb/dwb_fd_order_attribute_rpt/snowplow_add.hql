@@ -27,41 +27,55 @@ left join (
     SELECT t0.project_name,t0.country,t0.platform_type,t0.page_code,t0.list_type,t0.domain_userid
     FROM (
         SELECT
-            project_name,
+            project AS project_name,
             upper(country) as country,
             platform_type,
             page_code,
-            list_type,
+            goods_event_struct.list_type,
             domain_userid,
-            row_number() over (partition by project_name,country,platform_type,platform_type,domain_userid order by derived_tstamp desc) as rn
-        FROM dwd.dwd_fd_snowplow_click_impr
+            row_number() over (partition by project,country,platform_type,platform_type,domain_userid order by derived_tstamp desc) as rn
+        FROM ods_fd_snowplow.ods_fd_snowplow_goods_event
         WHERE pt = '${pt}'
+        AND event_name = 'goods_click'
+        AND project is not null
+        AND project != ''
+        AND length(country) = 2
+        AND platform_type is not null
+        AND platform_type != ''
         AND page_code != '404'
         AND page_code != ''
-        AND list_type != ''
-        AND list_type is not null
-        AND event_name = 'goods_click'
+        AND goods_event_struct.list_type is not null
+        AND goods_event_struct.list_type != 'null'
+        AND goods_event_struct.list_type != 'NULL'
+        AND goods_event_struct.list_type != ''
     ) t0 WHERE t0.rn = 1
 
 ) tab2 on tab1.project_name = tab2.project_name AND tab1.country = tab2.country AND tab1.platform_type = tab2.platform_type AND tab1.domain_userid = tab2.domain_userid
 left join (
     SELECT t0.project_name,t0.country,t0.platform_type,t0.page_code,t0.list_type,t0.domain_userid
     FROM (
-        SELECT
-            project_name,
-            upper(country) as country,
-            platform_type,
-            page_code,
-            list_type,
-            domain_userid,
-            row_number() over (partition by project_name,country,platform_type,platform_type,domain_userid order by derived_tstamp desc) as rn
-        FROM dwd.dwd_fd_snowplow_click_impr
-        WHERE pt = '${pt}'
-        AND page_code != '404'
-        AND page_code != ''
-        AND list_type != ''
-        AND list_type is not null
-        AND event_name = 'goods_impression'
+          SELECT
+                project AS project_name,
+                upper(country) as country,
+                platform_type,
+                page_code,
+                goods_event_struct.list_type,
+                domain_userid,
+                row_number() over (partition by project,country,platform_type,platform_type,domain_userid order by derived_tstamp desc) as rn
+            FROM ods_fd_snowplow.ods_fd_snowplow_goods_event
+            WHERE pt = '${pt}'
+            AND event_name = 'goods_impression'
+            AND project is not null
+            AND project != ''
+            AND length(country) = 2
+            AND platform_type is not null
+            AND platform_type != ''
+            AND page_code != '404'
+            AND page_code != ''
+            AND goods_event_struct.list_type is not null
+            AND goods_event_struct.list_type != 'null'
+            AND goods_event_struct.list_type != 'NULL'
+            AND goods_event_struct.list_type != ''
     ) t0 WHERE t0.rn = 1
 
 ) tab3 on tab1.project_name = tab3.project_name AND tab1.country = tab3.country AND tab1.platform_type = tab3.platform_type AND tab1.domain_userid = tab3.domain_userid;

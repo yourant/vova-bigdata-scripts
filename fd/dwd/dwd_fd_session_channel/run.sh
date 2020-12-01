@@ -16,7 +16,7 @@ fi
 echo "now:  " $pt_now
 echo "pt:   " $pt
 
-shell_path="/mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_ga_channel"
+shell_path="/mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_session_channel"
 
 hive -f ${shell_path}/dwd_fd_session_channel.hql
 if [ $? -ne 0 ]; then
