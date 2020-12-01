@@ -40,7 +40,7 @@ from
     from(
 
         select
-                     date_format(pay_time,'yyyy-MM-dd HH:mm:ss')      as paid_time,
+                     date_format(to_utc_timestamp(pay_time, 'America/Los_Angeles'),'yyyy-MM-dd HH:mm:ss')      as paid_time,
                      oi.project_name     as project,
                      is_app,
                      device_type,
@@ -56,12 +56,8 @@ from
                      r.region_code                                                as country,
                      oi.goods_amount + oi.shipping_fee                            as gmv
         from (
-            select  pay_time,project_name,order_id,country,user_agent_id,email,goods_amount,shipping_fee,pay_status  from ods_fd_vb.ods_fd_order_info
-
-            union
-
             select  pay_time,project_name,order_id,country,user_agent_id,email,goods_amount,shipping_fee,pay_status from ods_fd_vb.ods_fd_order_info_inc
-
+                                where pt='${pt}'
         ) oi
 
         left join  ods_fd_vb.ods_fd_user_agent_analysis uaa on oi.user_agent_id=uaa.user_agent_id
@@ -118,7 +114,7 @@ from
     from(
 
         select
-                     date_format(pay_time,'yyyy-MM-dd HH:mm:ss')      as paid_time,
+                     date_format(to_utc_timestamp(pay_time, 'America/Los_Angeles'),'yyyy-MM-dd HH:mm:ss')      as paid_time,
                      oi.project_name     as project,
                      is_app,
                      device_type,
@@ -134,10 +130,6 @@ from
                      r.region_code                                                as country,
                      oi.goods_amount + oi.shipping_fee                            as gmv
         from (
-            select  pay_time,project_name,order_id,country,user_agent_id,email,goods_amount,shipping_fee,pay_status  from ods_fd_vb.ods_fd_order_info
-
-            union
-
             select  pay_time,project_name,order_id,country,user_agent_id,email,goods_amount,shipping_fee,pay_status from ods_fd_vb.ods_fd_order_info_inc
 
         ) oi
