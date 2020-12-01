@@ -1,6 +1,6 @@
 insert overwrite table dwb.dwb_fd_realtime_rpt partition(pt='${pt}',class='orders_number')
 SELECT
-
+         /*+ REPARTITION(1) */
                nvl(project,'all'),
                nvl(platform,'all'),
                nvl(country,'all'),
