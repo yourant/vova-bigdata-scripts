@@ -30,17 +30,10 @@ SELECT
            sum(if(hour = 23, 1, 0))            as h23
 from
 (
-        select
-            date(paid_time) as paid_time,
-            hour(paid_time) as hour,
-            project,
-            country,
-            platform,
-            gmv
-    from(
 
         select
-                     date_format(to_utc_timestamp(pay_time, 'America/Los_Angeles'),'yyyy-MM-dd HH:mm:ss')      as paid_time,
+                     paid_time,
+                     hour(paid_time) as hour,
                      oi.project_name     as project,
                      is_app,
                      device_type,
@@ -56,17 +49,17 @@ from
                      r.region_code                                                as country,
                      oi.goods_amount + oi.shipping_fee                            as gmv
         from (
-            select  pay_time,project_name,order_id,country,user_agent_id,email,goods_amount,shipping_fee,pay_status from ods_fd_vb.ods_fd_order_info_inc
-            where pt='${pt}'  and  pay_status=2
+            select  date_format(to_utc_timestamp(pay_time, 'America/Los_Angeles'),'yyyy-MM-dd HH:mm:ss') as paid_time,
+            project_name,order_id,country,user_agent_id,email,goods_amount,shipping_fee from ods_fd_vb.ods_fd_order_info_inc
+            where pt='${pt}'  and  pay_status=2 and pay_time is not null
+            and    to_date(date_format(to_utc_timestamp(pay_time, 'America/Los_Angeles'),'yyyy-MM-dd HH:mm:ss'))='${pt}'
                         and  email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
         ) oi
 
         left join  ods_fd_vb.ods_fd_user_agent_analysis uaa on oi.user_agent_id=uaa.user_agent_id
         left join dim.dim_fd_region r on r.region_id = oi.country
 
-    )tab1 where  date(paid_time)='${pt}'
-)tab2
-
+    )tab1
 group by  project, platform, country with cube;
 
 
@@ -104,17 +97,10 @@ SELECT
            sum(if(hour = 23, gmv, 0))            as h23
 from
 (
-        select
-            date(paid_time) as paid_time,
-            hour(paid_time) as hour,
-            project,
-            country,
-            platform,
-            gmv
-    from(
 
         select
-                     date_format(to_utc_timestamp(pay_time, 'America/Los_Angeles'),'yyyy-MM-dd HH:mm:ss')      as paid_time,
+                     paid_time,
+                     hour(paid_time) as hour,
                      oi.project_name     as project,
                      is_app,
                      device_type,
@@ -130,14 +116,15 @@ from
                      r.region_code                                                as country,
                      oi.goods_amount + oi.shipping_fee                            as gmv
         from (
-            select  pay_time,project_name,order_id,country,user_agent_id,email,goods_amount,shipping_fee,pay_status from ods_fd_vb.ods_fd_order_info_inc
-                        where pt='${pt}'  and  pay_status=2
-                                    and  email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
+            select  date_format(to_utc_timestamp(pay_time, 'America/Los_Angeles'),'yyyy-MM-dd HH:mm:ss') as paid_time,
+            project_name,order_id,country,user_agent_id,email,goods_amount,shipping_fee from ods_fd_vb.ods_fd_order_info_inc
+            where pt='${pt}'  and  pay_status=2 and pay_time is not null
+            and    to_date(date_format(to_utc_timestamp(pay_time, 'America/Los_Angeles'),'yyyy-MM-dd HH:mm:ss'))='${pt}'
+                        and  email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
         ) oi
 
         left join  ods_fd_vb.ods_fd_user_agent_analysis uaa on oi.user_agent_id=uaa.user_agent_id
         left join dim.dim_fd_region r on r.region_id = oi.country
-    )tab1 where  date(paid_time)='${pt}'
-)tab2
 
+    )tab1
 group by  project, platform, country with cube;
