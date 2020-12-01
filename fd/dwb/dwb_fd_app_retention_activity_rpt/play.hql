@@ -1,4 +1,4 @@
-insert overwrite table dwb.dwb_fd_app_retention_activity partition (pt='${pt}',classify='play')
+insert overwrite table dwd.dwd_fd_app_retention_activity partition (pt='${pt}',classify='play')
 select
  /*+ REPARTITION(1) */
 project as project,
@@ -20,6 +20,7 @@ where pt = '${pt}' and platform_type in ('android_app','ios_app') and page_code 
 and project is not null and project != ''
 union
 select
+ /*+ REPARTITION(1) */
 nvl(t2.project,t3.project) as project,
 nvl(t2.platform_type,t3.platform_type) as platform_type,
 nvl(t2.country_code,t3.country_code) as country_code,
@@ -76,6 +77,7 @@ from ods_fd_vb.ods_fd_app_install_record
 
 union
 select
+ /*+ REPARTITION(1) */
 nvl(t2.project,t3.project) as project,
 nvl(t2.platform_type,t3.platform_type) as platform_type,
 nvl(t2.country_code,t3.country_code) as country_code,

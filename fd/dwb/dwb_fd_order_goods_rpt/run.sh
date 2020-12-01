@@ -24,8 +24,15 @@ echo $pt_last
 shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_order_goods_rpt"
 
 #报表
-hive -hiveconf pt=$pt -f ${shell_path}/dwb_fd_order_goods_rpt.hql
+#hive -hiveconf pt=$pt -f ${shell_path}/dwb_fd_order_goods_rpt.hql
 
-if [ $? -ne 0 ];then
+spark-sql \
+  --conf "spark.app.name=order_goods_rpt_gaohaitao" \
+  --conf "spark.dynamicAllocation.maxExecutors=10" \
+  -d pt=$pt \
+  -f ${shell_path}/dwb_fd_order_goods_rpt.hql
+
+if [ $? -ne 0 ]; then
   exit 1
 fi
+echo "order_goods_rpt table is finished !"
