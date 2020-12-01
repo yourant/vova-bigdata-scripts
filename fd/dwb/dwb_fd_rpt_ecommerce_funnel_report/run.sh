@@ -1,5 +1,5 @@
 #bin/sh
-table="dwb_fd_landing_check"
+table="dwb_fd_rpt_ecommerce_funnel_report"
 user="lujiaheng"
 
 base_path="/mnt/vova-bigdata-scripts/dwb"
