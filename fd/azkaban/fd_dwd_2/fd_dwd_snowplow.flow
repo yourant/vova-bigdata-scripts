@@ -67,7 +67,7 @@ nodes:
   - name: dwd_fd_goods_performance_monthly
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_goods_performance_monthly/run.sh "${pt}"
+      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_goods_performance_monthly/run.sh "${mt}"
     dependsOn:
       - dwd_fd_goods_snowplow_performance
       - judge_dwd_fd_order_goods
@@ -75,7 +75,7 @@ nodes:
   - name: dwd_fd_category_sales_monthly
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_category_sales_monthly/run.sh "${pt}"
+      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_category_sales_monthly/run.sh "${mt}"
     dependsOn:
       - judge_dwd_fd_order_goods
 

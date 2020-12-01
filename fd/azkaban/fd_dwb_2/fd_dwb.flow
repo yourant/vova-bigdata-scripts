@@ -91,7 +91,7 @@ nodes:
   - name: dwb_fd_goods_test_sales_ratio
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_test_sales_ratio/run.sh "${pt}"
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_test_sales_ratio/run.sh "${mt}"
     dependsOn:
       - judge_dwd_fd_finished_goods_test
       - judge_dwd_fd_category_sales_monthly
