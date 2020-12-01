@@ -26,7 +26,7 @@ from (
                 null                                                                            as sales_num,
                 null                                                                            as sales_amount
          from dwd.dwd_fd_goods_snowplow_performance gsp
-         where pt like '2020-10'
+         where pt like '${mt}'
            and goods_event_name in ('add', 'view')
          group by goods_id,
                   virtual_goods_id,

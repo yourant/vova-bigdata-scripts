@@ -5,8 +5,8 @@ base_path="/mnt/vova-bigdata-scripts/fd/ods/snowplow"
 home=$(dirname "$0")
 cd $home
 
-hour_delta=1
-hour_range=2
+hour_delta=0
+hour_range=1
 
 if [ ! -n "$1" ]; then
   pt_now=$(date +"%Y-%m-%d %H")
