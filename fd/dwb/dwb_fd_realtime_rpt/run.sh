@@ -37,7 +37,7 @@ spark-sql \
 --conf "spark.app.name=dwb_fd_realtime_gmv_orders_rpt_yjzhang"   \
 --conf "spark.dynamicAllocation.maxExecutors=60" \
 -d pt=$pt \
--f ${shell_path}/dwb_fd_realtime_gmv_orders_rpt.hql
+-f ${shell_path}/dwb_fd_realtime_rpt.hql
 
 
 #如果脚本失败，则报错
