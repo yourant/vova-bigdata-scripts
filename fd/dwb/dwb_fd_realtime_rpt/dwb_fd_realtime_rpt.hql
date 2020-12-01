@@ -68,7 +68,7 @@ group by  project, platform, country with cube;
 
 insert into table dwb.dwb_fd_realtime_rpt partition(pt='${pt}')
 SELECT
-
+            /*+ REPARTITION(1) */
               nvl(project,'all'),
               nvl(platform,'all'),
               nvl(country,'all'),
@@ -178,8 +178,8 @@ from
        country,
        session_id,
        hour
-from ods_fd_snowplow.ods_fd_snowplow_all_event
-where pt='${pt}'
+from ods_fd_snowplow.ods_fd_snowplow_view_event
+where pt='${pt}' and session_id is not null
 )tab1
 group by  project,platform,country with cube;
 
