@@ -30,8 +30,6 @@ select
     count(distinct if(hour=23,session_id,null)) as h23
 from
 (select
-    date(derived_ts) as deriver_time,
-    hour(derived_ts)  as hour,
     project,
     CASE platform_type
         WHEN 'pc_web' THEN 'PC'
