@@ -24,7 +24,7 @@ echo $pt_last
 sql="
 set hive.exec.dynamic.partition.mode=nonstrict;
 set hive.exec.dynamic.partition=true;
-INSERT overwrite table dwb.dwb_fd_app_user_coupon_order PARTITION (pt)
+INSERT overwrite table dwd.dwd_fd_app_user_coupon_order PARTITION (pt)
 select
  /*+ REPARTITION(1) */
 t1.project_name as project_name,
