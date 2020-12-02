@@ -75,8 +75,8 @@ where date(TO_UTC_TIMESTAMP(reg_time, 'America/Los_Angeles')) = '${pt}'
 ) t2 on t1.user_id = t2.user_id
 
 union
- /*+ REPARTITION(1) */
 select
+ /*+ REPARTITION(1) */
 t1.project as project,
 t1.platform_type as platform_type,
 t1.country_code as country_code,
