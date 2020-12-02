@@ -23,7 +23,7 @@ select    /*+ REPARTITION(1) */
            sum(goods_amount),
            sum(bonus),
            sum(shipping_fee)
-from(:q!:q：:
+from(
     select project,
            platform_type,
            country,
