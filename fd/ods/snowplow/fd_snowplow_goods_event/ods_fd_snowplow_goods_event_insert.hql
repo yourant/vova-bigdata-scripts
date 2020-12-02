@@ -64,5 +64,6 @@ SELECT
        ge
 from ods_fd_snowplow.ods_fd_snowplow_all_event
          LATERAL VIEW OUTER explode(goods_event_struct) goods_event as ge
-where ${pt_filter}
+where pt = "${pt}"
+  and hour = "${hour}"
   and event_name in ("goods_click", "goods_impression");

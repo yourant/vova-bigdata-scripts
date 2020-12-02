@@ -62,5 +62,6 @@ SELECT
        url_route_sn,
        url_virtual_goods_id
 from ods_fd_snowplow.ods_fd_snowplow_all_event
-where ${pt_filter}
+where pt = "${pt}"
+  and hour = "${hour}"
   and event_name in ("screen_view","page_view")

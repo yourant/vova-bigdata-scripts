@@ -65,5 +65,6 @@ SELECT
        ep
 from ods_fd_snowplow.ods_fd_snowplow_all_event
          LATERAL VIEW OUTER explode(ecommerce_product) ecommerce_product_info as ep
-where ${pt_filter}
+where pt = "${pt}"
+  and hour = "${hour}"
   and raw_event_name in ("action");
