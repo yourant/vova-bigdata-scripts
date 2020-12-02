@@ -25,7 +25,7 @@ end=$(date -d "$pt_now" +"%Y-%m-%d %H:00:00")
 
 #filter
 pt_filter=""
-for ((i = hour_range + hour_delta; i >= 0; i--)); do
+for ((i = hour_range + hour_delta; i > 0; i--)); do
   pt_filter=$pt_filter" pt = \"$(date -d "$pt_now - $i hours" +"%Y-%m-%d")\" and hour = \"$(date -d "$pt_now - $i hours" +"%H")\" or"
 done
 #去掉多余 or
