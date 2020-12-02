@@ -82,7 +82,7 @@ nodes:
   - name: dwd_fd_finished_goods_test
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_finished_goods_test/run.sh "${pt}"
+      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_finished_goods_test/run.sh
     dependsOn:
       - judge_ods_fd_vb_goods_test_goods
       - judge_ods_fd_vb_goods_test_pipeline
