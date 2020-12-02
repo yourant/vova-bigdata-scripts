@@ -9,9 +9,9 @@ SELECT /*+ REPARTITION(2) */
     if(tab2.domain_userid is not null,tab2.list_type,tab3.list_type) as list_type
 from (
     SELECT
-        project AS project_name, /* 组织 */
-        upper(country) as country, /* 国家 */
-        platform_type, /* 平台 */
+        project AS project_name,
+        upper(country) as country,
+        platform_type,
         domain_userid,
         event_name,
         page_code,

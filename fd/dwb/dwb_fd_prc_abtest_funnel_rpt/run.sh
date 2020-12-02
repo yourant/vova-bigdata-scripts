@@ -27,7 +27,7 @@ shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_prc_abtest_funnel_rpt"
 
 
 sql="
-INSERT OVERWRITE TABLE dwb.dwb_fd_prc_abtest_funnel_rpt PARTITION (pt = '${pt}')
+INSERT OVERWRITE TABLE dwb.dwb_fd_prc_abtest_funnel_rpt PARTITION (pt = '$pt')
 select    /*+ REPARTITION(1) */
            nvl(project,'all'),
            nvl(platform_type,'all'),
@@ -89,8 +89,8 @@ from(
                and abtest != '-'
                and abtest is not null
                and session_id is not null
-               and ((pt='${pt_last}' and hour >='16' and hour<='23')
-                 or (pt='${pt}' and hour >= '00' and hour<='15'))
+               and ((pt='$pt_last' and hour >='16' and hour<='23')
+                 or (pt='$pt' and hour >= '00' and hour<='15'))
 
          ) fms LATERAL VIEW OUTER explode(split(fms.abtest, '&')) fms as abtest_info
 
@@ -142,24 +142,31 @@ from(
                 nvl(version,'NALL') as version
             from dwd.dwd_fd_order_info
             where   pay_time is not null
-            and date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '${pt}'
+            and date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '$pt'
             and pay_status = 2
             and order_id is not null
-            and email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
+            and email NOT REGEXP 'tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com'
         )oi
         left join (select order_id,ext_value from ods_fd_vb.ods_fd_order_extension where ext_name = 'abtestInfo' and ext_value is not null) oe on oi.order_id = oe.order_id
 
     ) fboi LATERAL VIEW OUTER explode(split(fboi.ext_value, '&')) fboi as abtest_info
 
 )tab1
+group by
+    project,
+    platform_type,
+    country,
+    app_version,
+    abtest_name,
+    abtest_version
+     with cube;
+"
 
-group by              project,
-                      platform_type,
-                      country,
-                      app_version,
-                      abtest_name,
-                      abtest_version
-                       with cube;"
+echo "----------------------"
+echo $sql
+echo "--------------"
+
+exit 1
 
 spark-sql \
 --conf "spark.app.name=dwb_fd_rpt_prc_abtest_funnel_yjzhang"   \
