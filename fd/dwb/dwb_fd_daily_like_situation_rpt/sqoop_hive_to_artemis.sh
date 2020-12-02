@@ -23,17 +23,17 @@ echo $pt11
 #脚本路径
 shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_main_process_rpt"
 
-#主流程事实表
+#打版数据
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=default \
 --connect jdbc:mysql://artemis-data.cpbbe5ehgjpf.us-east-1.rds.amazonaws.com:3306/data_report \
 --username data-report --password C27PoowhAZIU$LHeI%Gs \
---table rpt_daily_like_situation \
---update-key "dt, batch, goods_id, project, country, platform_type" \
+--table daily_like_situation_rpt \
+--update-key "pt, batch, virtual_goods_id, project, country, platform_type" \
 --update-mode allowinsert \
 --hcatalog-database dwb \
---hcatalog-table dwb_fd_rpt_main_process_rpt \
+--hcatalog-table dwb_fd_daily_like_situation_rpt \
 --hcatalog-partition-keys pt \
 --hcatalog-partition-values 2020-11-29 \
 --fields-terminated-by '\001'
