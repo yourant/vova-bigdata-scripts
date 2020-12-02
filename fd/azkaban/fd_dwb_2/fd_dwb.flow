@@ -97,6 +97,13 @@ nodes:
       - judge_dwd_fd_category_sales_monthly
       - judge_dwd_fd_goods_performance_monthly
 
+  - name: dwb_fd_120_position_impression_uv_7d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_120_position_impression_uv_7d/run.sh "${pt}"
+    dependsOn:
+      - judge_ods_fd_snowplow_goods_event
+
   - name: fd_hour_job_end
     type: noop
     dependsOn:
