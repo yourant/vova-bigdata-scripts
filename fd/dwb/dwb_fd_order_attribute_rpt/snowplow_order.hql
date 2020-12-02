@@ -99,7 +99,7 @@ left join (
             page_code,
             goods_event_struct.list_type,
             domain_userid,
-            row_number() over (partition by domain_userid order by derived_tstamp desc) as rn
+            row_number() over (partition by domain_userid order by derived_ts desc) as rn
         FROM ods_fd_snowplow.ods_fd_snowplow_goods_event
         WHERE pt >= date_sub('${pt}',20) and pt <= '${pt}'
         AND event_name = 'goods_click'
@@ -128,7 +128,7 @@ left join (
             page_code,
             goods_event_struct.list_type,
             domain_userid,
-            row_number() over (partition by domain_userid order by derived_tstamp desc) as rn
+            row_number() over (partition by domain_userid order by derived_ts desc) as rn
         FROM ods_fd_snowplow.ods_fd_snowplow_goods_event
         WHERE pt >= date_sub('${pt}',20) and pt <= '${pt}'
         AND event_name = 'goods_impression'
