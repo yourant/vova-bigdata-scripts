@@ -162,12 +162,6 @@ group by
      with cube;
 "
 
-echo "----------------------"
-echo $sql
-echo "--------------"
-
-exit 1
-
 spark-sql \
 --conf "spark.app.name=dwb_fd_rpt_prc_abtest_funnel_yjzhang"   \
 -d pt=$pt \
