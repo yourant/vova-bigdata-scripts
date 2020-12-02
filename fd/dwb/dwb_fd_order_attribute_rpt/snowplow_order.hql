@@ -93,34 +93,57 @@ left join (
     SELECT t0.project_name,t0.country,t0.platform_type,t0.page_code,t0.list_type,t0.domain_userid
     from (
         SELECT
-            project_name,
+            project AS project_name,
             upper(country) as country,
             platform_type,
             page_code,
-            list_type,
+            goods_event_struct.list_type,
             domain_userid,
-            row_number() over (partition by domain_userid order by derived_tstamp desc) as rn
-        from dwd.dwd_fd_snowplow_click_impr
-        where pt >= date_sub('${pt}',60) and pt <= '${pt}'
+            row_number() over (partition by domain_userid order by derived_ts desc) as rn
+        FROM ods_fd_snowplow.ods_fd_snowplow_goods_event
+        WHERE pt >= date_sub('${pt}',20) and pt <= '${pt}'
         AND event_name = 'goods_click'
+        AND project is not null
+        AND project != ''
+        AND length(country) = 2
+        AND platform_type is not null
+        AND platform_type != ''
+        AND page_code != '404'
+        AND page_code != ''
         AND page_code != 'afterPay'
+        AND goods_event_struct.list_type is not null
+        AND goods_event_struct.list_type != 'null'
+        AND goods_event_struct.list_type != 'NULL'
+        AND goods_event_struct.list_type != ''
+
     ) t0 where t0.rn = 1
 )t2 on t1.domain_userid = t2.domain_userid
 left join (
     SELECT t0.project_name,t0.country,t0.platform_type,t0.page_code,t0.list_type,t0.domain_userid
     from (
         SELECT
-            project_name,
+            project AS project_name,
             upper(country) as country,
             platform_type,
             page_code,
-            list_type,
+            goods_event_struct.list_type,
             domain_userid,
-            row_number() over (partition by domain_userid order by derived_tstamp desc) as rn
-        from dwd.dwd_fd_snowplow_click_impr
-        where pt = '${pt}'
+            row_number() over (partition by domain_userid order by derived_ts desc) as rn
+        FROM ods_fd_snowplow.ods_fd_snowplow_goods_event
+        WHERE pt >= date_sub('${pt}',20) and pt <= '${pt}'
         AND event_name = 'goods_impression'
+        AND project is not null
+        AND project != ''
+        AND length(country) = 2
+        AND platform_type is not null
+        AND platform_type != ''
+        AND page_code != '404'
+        AND page_code != ''
         AND page_code != 'afterPay'
+        AND goods_event_struct.list_type is not null
+        AND goods_event_struct.list_type != 'null'
+        AND goods_event_struct.list_type != 'NULL'
+        AND goods_event_struct.list_type != ''
     ) t0 where t0.rn = 1
 )t3 on t1.domain_userid = t3.domain_userid
 where length(if(t2.domain_userid is not null,t2.project_name,t3.project_name)) > 0 ;

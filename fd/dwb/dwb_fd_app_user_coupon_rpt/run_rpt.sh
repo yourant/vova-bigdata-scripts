@@ -69,7 +69,7 @@ from (
         (cast(count(distinct coupon_used_48h) as float) / cast(count(distinct coupon_used) as float)) as coupon_used_48h_per,
         (cast(count(distinct coupon_used_72h) as float) / cast(count(distinct coupon_used) as float)) as coupon_used_72h_per,
         (cast(count(distinct coupon_used_greater_72h) as float) / cast(count(distinct coupon_used) as float)) as coupon_used_greater_72h_per
-    from dwb.dwb_fd_app_user_coupon_order
+    from dwd.dwd_fd_app_user_coupon_order
     where pt >= date_sub('$pt',10)
     group by
         pt,
