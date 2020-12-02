@@ -1,9 +1,4 @@
----
-set hive.exec.dynamic.partition.mode=nonstrict;
----
-
-
-INSERT OVERWRITE table ods_fd_snowplow.ods_fd_snowplow_element_event partition (pt, hour)
+INSERT OVERWRITE table ods_fd_snowplow.ods_fd_snowplow_element_event partition (pt="${pt}", hour="${hour}")
 SELECT
 /*+ REPARTITION(40) */
        app_id,
@@ -66,10 +61,9 @@ SELECT
        referrer_page_code,
        url_route_sn,
        url_virtual_goods_id,
-       ee,
-       pt,
-       hour
+       ee
 from ods_fd_snowplow.ods_fd_snowplow_all_event
          LATERAL VIEW OUTER explode(element_event_struct) element_event as ee
-where ${pt_filter}
+where pt = "${pt}"
+  and hour = "${hour}"
   and event_name in ("common_click", "common_impression");

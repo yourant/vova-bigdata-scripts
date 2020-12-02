@@ -1,6 +1,4 @@
-set hive.exec.dynamic.partition.mode=nonstrict;
-
-INSERT OVERWRITE table ods_fd_snowplow.ods_fd_snowplow_ecommerce_event partition (pt, hour)
+INSERT OVERWRITE table ods_fd_snowplow.ods_fd_snowplow_ecommerce_event partition ((pt="${pt}", hour="${hour}")
 SELECT
 /*+ REPARTITION(1) */
        app_id,
@@ -64,10 +62,9 @@ SELECT
        url_route_sn,
        url_virtual_goods_id,
        ecommerce_action,
-       ep,
-       pt,
-       hour
+       ep
 from ods_fd_snowplow.ods_fd_snowplow_all_event
          LATERAL VIEW OUTER explode(ecommerce_product) ecommerce_product_info as ep
-where ${pt_filter}
+where pt = "${pt}"
+  and hour = "${hour}"
   and raw_event_name in ("action");
