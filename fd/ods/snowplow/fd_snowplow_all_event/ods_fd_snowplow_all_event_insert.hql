@@ -1,6 +1,4 @@
-set hive.exec.dynamic.partition.mode=nonstrict;
-
-INSERT OVERWRITE table ods_fd_snowplow.ods_fd_snowplow_all_event partition (pt, hour)
+INSERT OVERWRITE table ods_fd_snowplow.ods_fd_snowplow_all_event partition (pt="${pt}", hour="${hour}")
 SELECT
 /*+ REPARTITION(30) */
        common_struct.app_id,
@@ -67,9 +65,7 @@ SELECT
        element_event_struct,
        data_event_struct,
        ecommerce_action,
-       ecommerce_product,
-       date(common_struct.collector_ts),
-       lpad(cast(hour(common_struct.collector_ts) as STRING), 2, "0")
+       ecommerce_product
 from (select common_struct,
              goods_event_struct,
              element_event_struct,

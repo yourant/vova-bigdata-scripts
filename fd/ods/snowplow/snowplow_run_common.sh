@@ -16,12 +16,14 @@ else
     echo "接收的时间格式${1}不符合:%Y-%m-%d %H:%M:%S，请输入正确的格式!"
     exit
   fi
-   pt_now=$(date -d "$1" +"%Y-%m-%d %H")
+  pt_now=$(date -d "$1" +"%Y-%m-%d %H")
 fi
 
 #collector开始时间
 start=$(date -d "$pt_now - $hour_range hours" +"%Y-%m-%d %H:00:00")
 end=$(date -d "$pt_now" +"%Y-%m-%d %H:00:00")
+pt=$(date -d "$pt_now - 1 hours" +"%Y-%m-%d")
+hour=$(date -d "$pt_now - 1 hours" +"%H")
 
 #filter
 pt_filter=""
@@ -35,4 +37,5 @@ pt_filter="("${pt_filter:0:-2}")"
 echo "now:    " $pt_now
 echo "start:  " $start
 echo "end:    " $end
+echo "pt:     (pt: ${pt},hour: ${hour})"
 echo "filter: " $pt_filter

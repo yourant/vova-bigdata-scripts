@@ -1,5 +1,5 @@
 #!/bin/sh
-path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+path="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source $path/../snowplow_run_common.sh
 
 table=ods_fd_snowplow_view_event
@@ -13,6 +13,8 @@ spark-sql \
   --conf "spark.app.name=${table}_${user}" \
   --conf "spark.dynamicAllocation.maxExecutors=60" \
   -d pt_filter="$pt_filter" \
+  -d pt="${pt}" \
+  -d hour="${hour}" \
   -f ${shell_path}/${table}_insert.hql
 
 if [ $? -ne 0 ]; then
