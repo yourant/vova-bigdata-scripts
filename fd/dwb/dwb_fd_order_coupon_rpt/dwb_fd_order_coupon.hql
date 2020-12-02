@@ -1,4 +1,4 @@
-INSERT overwrite table dwb.dwb_fd_order_coupon_rpt PARTITION (pt)
+INSERT overwrite table dwb.dwb_fd_order_coupon_rpt PARTITION (pt = '${pt}')
 select
 /*+ REPARTITION(1) */
 	project_name,
@@ -9,14 +9,13 @@ select
 	(order_amount - shipping_fee) as gmv,
 	shipping_fee as shipping_fee,
 	-bonus as true_bonus,
-	from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss') as order_time_utc,/*utc时间*/
-	from_utc_timestamp(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss'),'PST') as order_time_pst, /* 洛杉矶时间*/
+	from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss') as order_time_utc,
+	from_utc_timestamp(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss'),'PST') as order_time_pst,
 	order_status,
 	pay_status,
 	platform_type,
 	country_code,
-	language_code,
-	date(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss')) as pt
+	language_code
 from dwd.dwd_fd_order_info 
 where 
 coupon_code !='' 
