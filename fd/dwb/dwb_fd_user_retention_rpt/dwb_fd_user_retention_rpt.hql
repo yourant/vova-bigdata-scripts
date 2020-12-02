@@ -43,10 +43,9 @@ end  as is_new_user, platform_type, country
                     where pt = '${pt}'
                       and project = 'tendaisy'
 ) t2 on t1.domain_userid = t2.domain_userid
-group by t1.platform_type, t1.country with cube
+group by t1.platform_type, t1.country with cube;
 
-    union all
-
+insert into table dwb.dwb_fd_user_retention_rpt partition (pt='${pt}')
 select
        '${pt}',
        nvl(t1.platform_type,'all'),
@@ -87,10 +86,10 @@ end  as is_new_user, platform_type, country
                     where pt = '${pt}'
                       and project = 'tendaisy'
 ) t2 on t1.domain_userid = t2.domain_userid
-group by t1.platform_type, t1.country with cube
+group by t1.platform_type, t1.country with cube;
 
-    union all
 
+insert into table dwb.dwb_fd_user_retention_rpt partition (pt='${pt}')
 select
        '${pt}',
        nvl(t1.platform_type,'all'),
@@ -130,10 +129,10 @@ end  as is_new_user, platform_type, country
                     where pt = '${pt}'
                       and project = 'tendaisy'
 ) t2 on t1.domain_userid = t2.domain_userid
-group by t1.platform_type, t1.country with cube
+group by t1.platform_type, t1.country with cube;
 
-        union all
 
+insert into table dwb.dwb_fd_user_retention_rpt partition (pt='${pt}')
     SELECT
            '${pt}',
             nvl(platform_type,'all'),
@@ -164,10 +163,10 @@ group by t1.platform_type, t1.country with cube
   and pay_status=2
   and email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
   and project_name='tendaisy'
-  group by platform_type,country_code with cube
+  group by platform_type,country_code with cube;
 
-  union all
 
+insert into table dwb.dwb_fd_user_retention_rpt partition (pt='${pt}')
 select
         '${pt}',
         nvl(platform_type,'all'),
@@ -217,12 +216,12 @@ from(
                       and oi.project_name = 'tendaisy'
                       AND oi.email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
 ) t2 on t1.domain_userid = t2.sp_duid
-group by platform_type,country with cube
+group by platform_type,country with cube;
 
 
-union all
 
 
+insert into table dwb.dwb_fd_user_retention_rpt partition (pt='${pt}')
 SELECT
       '${pt}',
       nvl(platform_type,'all'),
