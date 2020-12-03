@@ -35,7 +35,8 @@ from(
     if(event_name == 'checkout', session_id, NULL)        as checkout_session_id,
     if(event_name == 'checkout_option', session_id, NULL) as checkout_option_session_id,
     if(event_name == 'purchase', session_id, NULL)        as purchase_session_id
-from ods_fd_snowplow.ods_fd_snowplow_all_event where concat(pt,'-',hour) between concat('${pt_last}','-','16') and concat('${pt}','-','16')
+from ods_fd_snowplow.ods_fd_snowplow_all_event
+where ((pt='${pt_last}' and hour >='16' and hour<='23') or (pt='${pt}' and hour >= '00' and hour<='15'))
 and event_name in('page_view','screen_view','add','checkout','checkout_option','purchase')
 )fms
   left join (select session_id,collect_set(ga_channel)[0] as ga_channel from dwd.dwd_fd_session_channel where ga_channel is not null and  pt between date_add('${pt}',-3) and date_add('${pt}',1)  group by session_id)sc on fms.session_id=sc.session_id
@@ -54,7 +55,7 @@ left JOIN
   from 
   (select project_name,platform_type,country_code,order_id
   from dwd.dwd_fd_order_info 
-  where  pay_time is not null and date_format(from_utc_timestamp(pay_time, 'PRC'), 'yyyy-MM-dd') = '${pt}'
+  where  pay_time is not null and date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '${pt}'
   and pay_status=2   
   and email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
   )oi
