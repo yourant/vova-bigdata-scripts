@@ -2,6 +2,7 @@
 insert overwrite table dwb.dwb_fd_banner_ctr_rpt partition (pt='${pt}')
 
 select
+        /*+ REPARTITION(1) */
         nvl(project,'all'),
         nvl(platform,'all'),
         nvl(country,'all'),
@@ -13,7 +14,7 @@ select
        count(distinct impression_session_id)
 from (
          select nvl(project,'NALL') as project,
-                nvl(platform,''NALL) as platform,
+                nvl(platform,'NALL') as platform,
                 nvl(country,'NALL') as country,
                 nvl(app_version,'NALL') as app_version,
                 nvl(dvce_type,'NALL')as dvce_type,
