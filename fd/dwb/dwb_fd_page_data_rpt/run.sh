@@ -26,16 +26,60 @@ echo $dt_last
 echo $dt_format
 echo $dt_format_last
 
-shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_page_data_rpt"
+#shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_page_data_rpt"
 
 #计算留存数据
 #hive -hiveconf dt=$dt -f ${shell_path}/dwb_fd_page_data_rpt.hql
 
+
+
+
+sql="
+drop table tmp.tmp_fd_page_data_rpt;
+create table tmp.tmp_fd_page_data_rpt as
+SELECT
+/*+ REPARTITION(10) */
+nvl(project,'NALL'),
+nvl(country,'NALL'),
+nvl(platform_type,'NALL'),
+nvl(os_name,'NALL'),
+nvl(app_version,'NALL'),
+case
+       when platform = 'web' and session_idx = 1 then 'new'
+       when platform = 'web' and session_idx > 1 then 'old'
+       when platform = 'mob' and session_idx = 1 then 'new'
+       when platform = 'mob' and session_idx > 1 then 'old'
+end  as is_new_user,
+nvl(page_code,'NALL'),
+session_id
+from ods_fd_snowplow.ods_fd_snowplow_view_event
+where pt='$pt'
+and session_id is not null;
+
+
+insert overwrite table  dwb.dwb_fd_page_data_rpt partition (pt='$pt')
+
+select  /*+ REPARTITION(1) */
+       project,
+       country,
+       platform_type,
+       os_name,
+       app_version,
+       is_new_user,
+       page_code,
+       count(session_id),
+       count(distinct session_id)
+from tmp.tmp_fd_page_data_rpt;
+
+
+
+
+"
+
 spark-sql \
 --conf "spark.app.name=dwb_fd_page_data_rpt_yjzhang"   \
---conf "spark.dynamicAllocation.maxExecutors=60" \
 -d pt=$pt \
--f ${shell_path}/dwb_fd_page_data_rpt.hql
+-e "$sql"
 
 
 #如果脚本失败，则报错
