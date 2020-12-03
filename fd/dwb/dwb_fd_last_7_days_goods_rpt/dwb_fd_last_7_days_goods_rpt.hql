@@ -1,7 +1,7 @@
 
 insert overwrite table dwb.dwb_fd_last_7_days_goods_rpt
 SELECT 
-    from_utc_timestamp('${pt}','America/Los_Angeles'),
+    to_date(from_utc_timestamp('${pt}','America/Los_Angeles')),
     oi.project_name,
     og.goods_id,
     sum(og.goods_number) as goods_num
