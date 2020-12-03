@@ -38,7 +38,7 @@ sql="
 drop table tmp.tmp_fd_page_data_rpt;
 create table tmp.tmp_fd_page_data_rpt as
 SELECT
-/*+ REPARTITION(10) */
+/*+ REPARTITION(5) */
 nvl(project,'NALL'),
 nvl(country,'NALL'),
 nvl(platform_type,'NALL'),
@@ -69,10 +69,14 @@ select  /*+ REPARTITION(1) */
        page_code,
        count(session_id),
        count(distinct session_id)
-from tmp.tmp_fd_page_data_rpt;
-
-
-
+from tmp.tmp_fd_page_data_rpt
+group by  project,
+                country,
+                platform_type,
+                os_name,
+                app_version,
+                is_new_user,
+                page_code with cube;
 
 "
 

@@ -1,7 +1,7 @@
 drop table tmp.tmp_fd_common_ctr;
 create table tmp.tmp_fd_common_ctr as
 SELECT
-/*+ REPARTITION(10) */
+/*+ REPARTITION(5) */
 event_name,
 nvl(platform_type,'NALL'),
 nvl(country,'NALL'),
