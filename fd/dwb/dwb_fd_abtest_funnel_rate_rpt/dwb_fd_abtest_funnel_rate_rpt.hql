@@ -15,10 +15,10 @@ select   /*+ REPARTITION(1) */
     count(distinct purchase_session_id)
 from
 (
-select project,
-       platform_type,
-       country,
-       app_version,
+select nvl(project,'NALL') as project,
+       nvl(platform_type,'NALL') as platform_type,
+       nvl(country,'NALL') as country,
+       nvl(app_version,'NALL') as app_version,
        substr(abtest_info, 1, instr(abtest_info, '=') - 1) as abtest_name,
        substr(abtest_info, instr(abtest_info, '=') + 1)   as abtest_version,
        session_id,
@@ -42,12 +42,8 @@ from (
            and abtest != ''
            and abtest != '-'
            and pt = '${pt}'
+           and session_id is not null
      ) fms LATERAL VIEW OUTER explode(split(fms.abtest, '&')) fms as abtest_info
 
-     )tab1 where project is not null
-         and platform_type is not null
-         and country is not null
-          and app_version is not null
-           and abtest_name is not null
-           and abtest_version is not null
+     )tab1
      group by project,platform_type,country,app_version,abtest_name,abtest_version with cube;
