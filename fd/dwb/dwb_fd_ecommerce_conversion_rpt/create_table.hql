@@ -1,7 +1,7 @@
 CREATE TABLE  if not exists dwb.dwb_fd_ecommerce_conversion_rpt (
-  `project_name` string ,
+  `project` string ,
+   `country` string,
   `platform_type`  string,
-  `country` string,
   `ga_channel` string,
   `add_uv` bigint ,
   `checkout_uv` bigint,
@@ -9,7 +9,7 @@ CREATE TABLE  if not exists dwb.dwb_fd_ecommerce_conversion_rpt (
   `checkout_option_uv` bigint,
   `purchase_uv` bigint,
   `product_view_uv` bigint,
-  `orders` bigint
+  `order_num` bigint
 )comment '打点数据session转化报表'
 partitioned by(pt string)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
