@@ -2,7 +2,7 @@
 table="dwd_fd_category_sales_monthly"
 user="lujiaheng"
 
-base_path="/mnt/vova-bigdata-scripts/dwd"
+base_path="/mnt/vova-bigdata-scripts/fd/dwd"
 
 if [ ! -n "$1" ]; then
   pt=$(date +"%Y-%m-%d")
@@ -14,7 +14,10 @@ else
   fi
   pt=$1
 fi
+mt=$(date -d "${pt}" +"%Y-%m")
+
 echo "pt: ${pt}"
+echo "mt: ${mt}"
 
 shell_path="${base_path}/${table}"
 
@@ -23,7 +26,7 @@ hive -f ${shell_path}/${table}_create.hql
 spark-sql \
   --conf "spark.app.name=${table}_${user}" \
   --conf "spark.dynamicAllocation.maxExecutors=60" \
-  -d pt="${pt}" \
+  -d mt="${mt}" \
   -f ${shell_path}/${table}_insert.hql
 
 if [ $? -ne 0 ]; then
