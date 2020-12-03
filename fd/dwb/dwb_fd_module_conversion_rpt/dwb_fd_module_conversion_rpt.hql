@@ -1,36 +1,25 @@
-CREATE TABLE if not EXISTS `dwb.dwb_fd_module_order_interact_rpt`(
-    `module_name` string COMMENT '', 
-    `platform` string COMMENT '', 
-    `project_name` string COMMENT '', 
-    `country_code` string COMMENT '', 
-    `cat_id` int COMMENT '', 
-    `cat_name` string COMMENT '', 
-    `domain_userid` string COMMENT 'domainID', 
-    `virtual_goods_id` bigint COMMENT 'ID', 
-    `goods_id` bigint COMMENT 'ID', 
-    `order_id` bigint COMMENT 'ID', 
-    `impression_domain_userid` string COMMENT 'impression', 
-    `click_domain_userid` string COMMENT 'click', 
-    `pageview_domain_userid` string COMMENT 'pv', 
-    `action_domain_userid` string COMMENT 'action', 
-    `goods_number` int COMMENT '', 
-    `shop_price` decimal(10,2) COMMENT '', 
-    `order_amount` decimal(10,2) COMMENT '', 
-    `shipping_fee` decimal(10,2) COMMENT '', 
-    `goods_price` decimal(10,2) COMMENT '')
-COMMENT 'banner'
-PARTITIONED BY ( 
-`pt` string)
-ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS orc
-TBLPROPERTIES ("orc.compress"="SNAPPY");
 
+INSERT overwrite table dwb.dwb_fd_module_conversion_rpt partition (pt = '${pt}')
+select
+    nvl(module_name,'all') as module_name,
+    nvl(platform,'all') as platform,
+    nvl(project,'all') as project,
+    nvl(country,'all') as country,
+    nvl(cat_name,'all') as cat_name,
+    count(distinct impression_duid),
+    count(distinct click_duid),
+    count(distinct action_duid),
+    count(distinct order_id),
+    sum(goods_number),
+    sum(goods_price),
+    concat(cast(100*count(distinct click_duid)*1.0000 / count(distinct impression_duid)  as string),'%'),
+    concat(cast(100*count(distinct action_duid)*1.0000 / count(distinct impression_duid)  as string),'%'),
+    concat(cast(100*count(distinct order_id)*1.0000 / count(distinct impression_duid) as string),'%')
 
-
-INSERT overwrite table dwb.dwb_fd_module_order_interact_rpt partition (pt = '${hiveconf:pt}')
+from(
 SELECT s.module_name,
        s.platform_type,
-       s.project                     as project_name,
+       s.project,
        s.country,
        t.cat_id,
        t.cat_name,
@@ -48,7 +37,7 @@ SELECT s.module_name,
        t.shipping_fee,
        t.goods_number * t.shop_price as goods_price
 FROM (
-         SELECT module_name,
+         SELECT  module_name,
                 domain_userid,
                 collect_set(project)[0]                                                        as project,
                 collect_set(platform_type)[0]                                                  as platform_type,
@@ -57,8 +46,10 @@ FROM (
                 IF(sum(IF(event_step = 'module_click', 1, 0)) > 0, domain_userid, '')          as click_duid,
                 IF(sum(IF(event_step = 'module_pv', 1, 0)) > 0, domain_userid, '')             as pv_duid,
                 IF(sum(IF(event_step in ('add', 'goods_click'), 1, 0)) > 0, domain_userid, '') as action_duid
-         FROM dwb.dwb_fd_common_module_interact
-         WHERE pt = '${hiveconf:pt}' AND module_name IS NOT NULL AND module_name <> ''
+         FROM dwd.dwd_fd_common_module_interact
+         WHERE pt = '${pt}' AND module_name IS NOT NULL AND module_name <> ''
+         and project is not null and platform is not null and country is not null
+         and domain_userid is not null
          group by module_name, domain_userid
      ) s
          LEFT JOIN (
@@ -81,10 +72,10 @@ FROM (
                     goods_id,
                     collect_set(platform_type)[0]  as platform_type,
                     collect_set(country)[0]        as country
-             FROM dwb.dwb_fd_common_module_interact
+             FROM dwd.dwd_fd_common_module_interact
              WHERE event_name IN ('goods_click', 'add')
-               and pt >= date_add('${hiveconf:pt}',-3)
-               and pt <= '${hiveconf:pt}'
+               and pt >= date_add('${pt}',-3)
+               and pt <= '${pt}'
              GROUP BY module_name, domain_userid, goods_id
          ) interact_duids
              INNER JOIN (
@@ -100,9 +91,17 @@ FROM (
                shipping_fee,
                project_name
         FROM dwd.dwd_fd_order_goods_info
-        WHERE pt = '${hiveconf:pt}' and (date(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss')) = '${hiveconf:pt}'
-or date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${hiveconf:pt}'
-or date(from_unixtime(event_date,'yyyy-MM-dd HH:mm:ss')) = '${hiveconf:pt}')
+        WHERE pt = '${pt}' and date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${pt}'
+
     ) order_duids ON order_duids.sp_duid = interact_duids.domain_userid
         AND order_duids.virtual_goods_id = interact_duids.goods_id
-) t ON t.module_name = s.module_name AND t.domain_userid = s.domain_userid;
+) t ON t.module_name = s.module_name AND t.domain_userid = s.domain_userid
+
+)result
+    group by     module_name,
+                 platform,
+                 project,
+                 country,
+                 cat_name with cube
+    having count(distinct impression_duid) >0
+;

@@ -30,6 +30,7 @@ from (
                              and virtual_goods_id is not null
                              and goods_id is not null
                              and cat_name is not null
+                             and email not regexp '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
                            group by virtual_goods_id, goods_id,cat_name
                        ) ogi
               ) ogio where ogio.rn <= 300
@@ -54,6 +55,7 @@ from (
                                    and virtual_goods_id is not null
                                    and goods_id is not null
                                    and cat_name is not null
+                                   and email not regexp '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
                                  group by virtual_goods_id, goods_id,cat_name
                              ) ogi2
               ) ogio2 where ogio2.rn <= 100

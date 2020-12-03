@@ -34,7 +34,6 @@ shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_banner_ctr_rpt"
 
 spark-sql \
 --conf "spark.app.name=dwb_fd_common_ctr_rpt_yjzhang"   \
---conf "spark.dynamicAllocation.maxExecutors=60" \
 -d pt=$pt \
 -f ${shell_path}/dwb_fd_banner_ctr_rpt.hql
 

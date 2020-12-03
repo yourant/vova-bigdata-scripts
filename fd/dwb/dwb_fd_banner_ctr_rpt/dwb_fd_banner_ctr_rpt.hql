@@ -2,18 +2,20 @@
 insert overwrite table dwb.dwb_fd_banner_ctr_rpt partition (pt='${pt}')
 
 select
+        /*+ REPARTITION(1) */
         nvl(project,'all'),
         nvl(platform,'all'),
         nvl(country,'all'),
         nvl(app_version,'all'),
         nvl(dvce_type,'all'),
         nvl(list_type,'all'),
+        nvl(element_name,'all'),
         nvl(absolute_position,'all'),
        count(distinct click_session_id),
        count(distinct impression_session_id)
 from (
          select nvl(project,'NALL') as project,
-                nvl(platform,''NALL) as platform,
+                nvl(platform,'NALL') as platform,
                 nvl(country,'NALL') as country,
                 nvl(app_version,'NALL') as app_version,
                 nvl(dvce_type,'NALL')as dvce_type,
@@ -28,5 +30,5 @@ from (
            and event_name in ('common_click', 'common_impression')
            and element_event_struct.list_type regexp 'banner'
      ) tab1
-group by project,platform,country,app_version,dvce_type,list_type,absolute_position with cube
+group by project,platform,country,app_version,dvce_type,list_type,element_name,absolute_position with cube
 ;
