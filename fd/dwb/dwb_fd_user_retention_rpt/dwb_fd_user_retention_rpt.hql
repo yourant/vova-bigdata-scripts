@@ -208,8 +208,7 @@ from(
                   select ud.sp_duid
                     from
 		 	(select user_id,pay_status,project_name,email from dwd.dwd_fd_order_info
-                      	where  date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '${pt}' or
-                          date_format(from_utc_timestamp(from_unixtime(order_time), 'PRC'), 'yyyy-MM-dd') = '${pt}'
+                      	where  date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '${pt}'
                     )oi
                     inner join ods_fd_vb.ods_fd_user_duid ud on oi.user_id = ud.user_id
                     where oi.pay_status = 2
