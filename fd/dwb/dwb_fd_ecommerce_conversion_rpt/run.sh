@@ -26,7 +26,7 @@ echo $pt_last
 echo $pt_format
 echo $pt_format_last
 
-shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_ecommerce_conversion_rpt"
+#shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_ecommerce_conversion_rpt"
 
 #计算数据
 #hive -hiveconf pt=$pt   -f ${shell_path}/dwb_fd_ecommerce_conversion_rpt.hql
@@ -101,7 +101,7 @@ from
       from dwd.dwd_fd_order_info
       where  pay_time is not null  and pay_status=2
       and date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '$pt'
-      and email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
+      and email NOT REGEXP 'tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com'
       )oi
       left join (select order_id,sp_session_id
           from ods_fd_vb.ods_fd_order_marketing_data
@@ -128,7 +128,7 @@ from
 spark-sql \
 --conf "spark.app.name=dwb_fd_ecommerce_conversion_rpt_yjzhang"   \
 -d pt=$pt \
--e $sql
+-e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
