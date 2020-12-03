@@ -61,13 +61,13 @@ and session_id is not null;
 insert overwrite table  dwb.dwb_fd_page_data_rpt partition (pt='$pt')
 
 select  /*+ REPARTITION(1) */
-       project,
-       country,
-       platform_type,
-       os_name,
-       app_version,
-       is_new_user,
-       page_code,
+       nvl(project,'all'),
+       nvl(country,'all'),
+       nvl(platform_type,'all'),
+       nvl(os_name,'all'),
+       nvl(app_version,'all'),
+       nvl(is_new_user,'all'),
+       nvl(page_code,'all'),
        count(session_id),
        count(distinct session_id)
 from tmp.tmp_fd_page_data_rpt
