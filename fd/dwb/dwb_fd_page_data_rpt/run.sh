@@ -38,20 +38,19 @@ sql="
 drop table if exists tmp.tmp_fd_page_data_rpt;
 
 create table tmp.tmp_fd_page_data_rpt as
-SELECT
-/*+ REPARTITION(5) */
-nvl(project,'NALL'),
-nvl(country,'NALL'),
-nvl(platform_type,'NALL'),
-nvl(os_name,'NALL'),
-nvl(app_version,'NALL'),
+SELECT /*+ REPARTITION(5) */
+nvl(project,'NALL') as project,
+nvl(country,'NALL') as country,
+nvl(platform_type,'NALL') as platform_type,
+nvl(os_name,'NALL') as os_name,
+nvl(app_version,'NALL') as app_version,
 case
        when platform = 'web' and session_idx = 1 then 'new'
        when platform = 'web' and session_idx > 1 then 'old'
        when platform = 'mob' and session_idx = 1 then 'new'
        when platform = 'mob' and session_idx > 1 then 'old'
 end  as is_new_user,
-nvl(page_code,'NALL'),
+nvl(page_code,'NALL') as page_code,
 session_id
 from ods_fd_snowplow.ods_fd_snowplow_view_event
 where pt='$pt'
