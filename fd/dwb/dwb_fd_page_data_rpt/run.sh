@@ -36,6 +36,7 @@ echo $dt_format_last
 
 sql="
 drop table tmp.tmp_fd_page_data_rpt;
+
 create table tmp.tmp_fd_page_data_rpt as
 SELECT
 /*+ REPARTITION(5) */
@@ -70,7 +71,7 @@ select  /*+ REPARTITION(1) */
        count(session_id),
        count(distinct session_id)
 from tmp.tmp_fd_page_data_rpt
-group by  project,
+group by        project,
                 country,
                 platform_type,
                 os_name,
