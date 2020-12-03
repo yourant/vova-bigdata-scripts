@@ -12,9 +12,9 @@ select
     count(distinct order_id),
     sum(goods_number),
     sum(goods_price),
-    concat(cast(100*count(distinct click_duid)*1.0000 / count(distinct impression_duid)  as varchar),'%'),
-    concat(cast(100*count(distinct action_duid)*1.0000 / count(distinct impression_duid)  as varchar),'%'),
-    concat(cast(100*count(distinct order_id)*1.0000 / count(distinct impression_duid) as varchar),'%')
+    concat(cast(100*count(distinct click_duid)*1.0000 / count(distinct impression_duid)  as string),'%'),
+    concat(cast(100*count(distinct action_duid)*1.0000 / count(distinct impression_duid)  as string),'%'),
+    concat(cast(100*count(distinct order_id)*1.0000 / count(distinct impression_duid) as string),'%')
 
 from(
 SELECT s.module_name,
