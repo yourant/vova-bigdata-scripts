@@ -26,14 +26,31 @@ echo $pt_last
 echo $pt_format
 echo $pt_format_last
 
-hive -hiveconf pt=$pt -f /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_module_conversion_report/dwb_fd_common_module_interact.hql
+#hive -hiveconf pt=$pt -f /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_module_conversion_report/dwd_fd_common_module_interact.hql
+
+shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_module_conversion_rpt"
+
+spark-sql \
+--conf "spark.app.name=dwd_fd_common_module_interact_yjzhang"   \
+-d pt=$pt \
+-f ${shell_path}/dwd_fd_common_module_interact.hql
+
+
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
 fi
 echo "step1: common_module_interact table is finished !"
 
-hive -hiveconf pt=$pt -f  /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_module_conversion_report/dwb_fd_module_order_interact_rpt.hql
+#hive -hiveconf pt=$pt -f  /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_module_conversion_report/dwb_fd_module_conversion_rpt.hql
+
+
+spark-sql \
+--conf "spark.app.name=dwb_fd_module_conversion_rpt_yjzhang"   \
+-d pt=$pt \
+-f ${shell_path}/dwb_fd_module_conversion_rpt.hql
+
+
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
