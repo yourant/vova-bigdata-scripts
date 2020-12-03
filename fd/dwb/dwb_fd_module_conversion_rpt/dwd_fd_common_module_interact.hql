@@ -1,22 +1,3 @@
-use dwd;
-
-CREATE TABLE  if not exists `dwd.dwd_fd_common_module_interact`(
-`project` string,
-`domain_userid` string,
-`session_id` string,
-`event_name` string,
-`event_step` string,
-`platform_type` string,
-`country` string,
-`app_version` string,
-`module_name` string,
-`goods_id` string)
-PARTITIONED BY ( 
-  `pt` string)
-ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS orc
-TBLPROPERTIES ("orc.compress"="SNAPPY");
-
 
 INSERT OVERWRITE TABLE dwd.dwd_fd_common_module_interact PARTITION (pt = '${pt}')
 select project,

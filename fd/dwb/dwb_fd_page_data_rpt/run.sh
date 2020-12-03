@@ -35,7 +35,7 @@ echo $dt_format_last
 
 
 sql="
-drop table tmp.tmp_fd_page_data_rpt;
+drop table if exists tmp.tmp_fd_page_data_rpt;
 
 create table tmp.tmp_fd_page_data_rpt as
 SELECT

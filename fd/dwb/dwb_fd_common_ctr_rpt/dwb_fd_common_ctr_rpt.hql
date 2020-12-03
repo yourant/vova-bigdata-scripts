@@ -1,4 +1,4 @@
-drop table tmp.tmp_fd_common_ctr;
+drop table  if exists tmp.tmp_fd_common_ctr;
 create table tmp.tmp_fd_common_ctr as
 SELECT
 /*+ REPARTITION(5) */
