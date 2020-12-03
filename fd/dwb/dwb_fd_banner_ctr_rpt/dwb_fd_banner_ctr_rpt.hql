@@ -9,6 +9,7 @@ select
         nvl(app_version,'all'),
         nvl(dvce_type,'all'),
         nvl(list_type,'all'),
+        nvl(element_name,'all'),
         nvl(absolute_position,'all'),
        count(distinct click_session_id),
        count(distinct impression_session_id)
@@ -29,5 +30,5 @@ from (
            and event_name in ('common_click', 'common_impression')
            and element_event_struct.list_type regexp 'banner'
      ) tab1
-group by project,platform,country,app_version,dvce_type,list_type,absolute_position with cube
+group by project,platform,country,app_version,dvce_type,list_type,element_name,absolute_position with cube
 ;

@@ -23,17 +23,17 @@ and session_id is not null;
 insert overwrite table  dwb.dwb_fd_page_data_rpt partition (pt='${pt}')
 
 select  /*+ REPARTITION(1) */
-       project,
-       country,
-       platform_type,
-       os_name,
-       app_version,
-       is_new_user,
-       page_code,
+       nvl(project,'all') as project,
+       nvl(country,'all') as country,
+       nvl(platform_type,'all') as platform_type,
+       nvl(os_name,'all')as os_name,
+       nvl(app_version,'all')as app_version,
+       nvl(is_new_user,'all')as is_new_user,
+       nvl(page_code,'all')as page_code,
        count(session_id),
        count(distinct session_id)
 from tmp.tmp_fd_page_data_rpt
-group by  project,
+group by        project,
                 country,
                 platform_type,
                 os_name,
