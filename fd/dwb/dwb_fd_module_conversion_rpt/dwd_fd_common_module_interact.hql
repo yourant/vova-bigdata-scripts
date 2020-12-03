@@ -65,7 +65,7 @@ select project,
 from ods_fd_snowplow.ods_fd_snowplow_ecommerce_event
 where pt ='${pt}'
 and   event_name ='add'
-and   REGEXP_EXTRACT(page_url, 'm_jump=(.*?)(&.*?)?$', 1) != ''
+and   REGEXP_EXTRACT(page_url, 'm_jump=(.*?)(&.*?)?$', 1) != '';
 
 
 INSERT INTO TABLE dwd.dwd_fd_common_module_interact PARTITION (pt = '${pt}')

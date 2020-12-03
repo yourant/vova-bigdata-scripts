@@ -10,7 +10,7 @@ CREATE TABLE if not EXISTS `dwb.dwb_fd_module_conversion_rpt`(
     `order_num` bigint COMMENT '订单量',
     `goods_num` bigint COMMENT '销量',
     `goods_amount` decimal(10,2) COMMENT '销售额',
-    `ctr` decimal(10,2) COMMENT 'ctr',
+    `ctr` string COMMENT 'ctr',
     `impression of action` string COMMENT '',
     `impression of orders` string COMMENT ''
 )
