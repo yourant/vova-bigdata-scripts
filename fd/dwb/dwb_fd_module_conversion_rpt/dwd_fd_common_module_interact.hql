@@ -42,7 +42,7 @@ select project,
        app_version,
        REGEXP_EXTRACT(page_url, 'm_jump=(.*?)(&.*?)?$', 1) as module_name,
        url_virtual_goods_id as goods_id
-from ods_fd_snowplow.ods_fd_snowplow_other_event
+from ods_fd_snowplow.ods_fd_snowplow_view_event
 where pt ='${pt}'
   and event_name in ( 'page_view'
     , 'screen_view' )
