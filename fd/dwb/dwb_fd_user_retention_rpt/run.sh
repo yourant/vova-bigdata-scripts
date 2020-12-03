@@ -32,7 +32,6 @@ shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_user_retention_rpt"
 
 spark-sql \
 --conf "spark.app.name=dwb_fd_user_retention_rpt_yjzhang"   \
---conf "spark.dynamicAllocation.maxExecutors=60" \
 -d pt=$pt \
 -f ${shell_path}/dwb_fd_user_retention_rpt.hql
 
