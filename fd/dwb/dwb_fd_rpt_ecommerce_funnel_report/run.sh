@@ -2,7 +2,7 @@
 table="dwb_fd_rpt_ecommerce_funnel_report"
 user="lujiaheng"
 
-base_path="/mnt/vova-bigdata-scripts/dwb"
+base_path="/mnt/vova-bigdata-scripts/fd/dwb"
 
 if [ ! -n "$1" ]; then
   pt=$(date +"%Y-%m-%d")

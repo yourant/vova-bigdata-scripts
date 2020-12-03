@@ -2,7 +2,7 @@
 table="dwd_fd_finished_goods_test"
 user="lujiaheng"
 
-base_path="/mnt/vova-bigdata-scripts/dwd"
+base_path="/mnt/vova-bigdata-scripts/fd/dwd"
 
 if [ ! -n "$1" ]; then
   pt=$(date +"%Y-%m-%d")

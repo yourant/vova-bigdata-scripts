@@ -1,4 +1,4 @@
-INSERT OVERWRITE table ods_fd_snowplow.ods_fd_snowplow_ecommerce_event partition ((pt="${pt}", hour="${hour}")
+INSERT OVERWRITE table ods_fd_snowplow.ods_fd_snowplow_ecommerce_event partition (pt="${pt}", hour="${hour}")
 SELECT
 /*+ REPARTITION(1) */
        app_id,

@@ -101,7 +101,7 @@ left join (
             domain_userid,
             row_number() over (partition by domain_userid order by derived_ts desc) as rn
         FROM ods_fd_snowplow.ods_fd_snowplow_goods_event
-        WHERE pt >= date_sub('${pt}',20) and pt <= '${pt}'
+        WHERE pt >= date_sub('${pt}',30) and pt <= '${pt}'
         AND event_name = 'goods_click'
         AND project is not null
         AND project != ''
@@ -130,7 +130,7 @@ left join (
             domain_userid,
             row_number() over (partition by domain_userid order by derived_ts desc) as rn
         FROM ods_fd_snowplow.ods_fd_snowplow_goods_event
-        WHERE pt >= date_sub('${pt}',20) and pt <= '${pt}'
+        WHERE pt = '${pt}'
         AND event_name = 'goods_impression'
         AND project is not null
         AND project != ''
