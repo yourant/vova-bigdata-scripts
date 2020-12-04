@@ -15,12 +15,16 @@ select   /*+ REPARTITION(1) */
     count(distinct purchase_session_id)
 from
 (
+
+
+if(sc.ga_channel is null or sc.ga_channel = '', 'Others', sc.ga_channel)
+
 select nvl(project,'NALL') as project,
        nvl(platform_type,'NALL') as platform_type,
        nvl(country,'NALL') as country,
        nvl(app_version,'NALL') as app_version,
-       substr(abtest_info, 1, instr(abtest_info, '=') - 1) as abtest_name,
-       substr(abtest_info, instr(abtest_info, '=') + 1)   as abtest_version,
+       nvl(substr(abtest_info, 1, instr(abtest_info, '=') - 1),'NALL')  as abtest_name,
+       nvl(substr(abtest_info, instr(abtest_info, '=') + 1),'NALL')   as abtest_version,
        session_id,
        IF(event_name in('page_view', 'screen_view') and page_code = 'product', session_id, null)   as product_session_id,
        IF(event_name = 'add', session_id, null)               as add_session_id,
@@ -38,8 +42,7 @@ from (
                 session_id,
                 abtest
          from ods_fd_snowplow.ods_fd_snowplow_all_event
-         where event_name in ('page_view', 'screen_view', 'add', 'checkout', 'checkout_option', 'purchase')
-           and abtest != ''
+           where abtest != ''
            and abtest != '-'
            and pt = '${pt}'
            and session_id is not null
