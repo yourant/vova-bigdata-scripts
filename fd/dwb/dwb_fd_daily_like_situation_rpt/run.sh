@@ -1,12 +1,7 @@
 #!/bin/sh
-home=`dirname "$0"`
-cd $home
-
 if [ ! -n "$1" ] ;then
-    pt=`date -d "-1 days" +%Y-%m-%d`
-    pt_last=`date -d "-2 days" +%Y-%m-%d`
-    pt_format=`date -d "-1 days" +%Y%m%d`
-    pt_format_last=`date -d "-2 days" +%Y%m%d`
+    #获取前一小时所属的日期
+    pt=`date -d "1 hour ago" +"%Y-%m-%d"`
 else
     echo $1 | grep -Eq "[0-9]{4}-[0-9]{2}-[0-9]{2}" && date -d $1 +%Y-%m-%d > /dev/null
     if [[ $? -ne 0 ]]; then
@@ -14,22 +9,11 @@ else
         exit
     fi
     pt=$1
-    pt_last=`date -d "$1 -1 days" +%Y-%m-%d`
-    pt_format=`date -d "$1" +%Y%m%d`
-    pt_format_last=`date -d "$1 -1 days" +%Y%m%d`
 
 fi
 
 #hive sql中使用的变量
-echo $pt
-echo $pt_last
-echo $pt_format
-echo $pt_format_last
-
-shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_banner_ctr_rpt"
-
-#计算留存数据
-#hive -hiveconf pt=$pt -f ${shell_path}/dwb_fd_banner_ctr_rpt.hql
+echo '当前脚本执行时间:' $pt
 
 sql="
 insert overwrite table dwb.dwb_fd_daily_like_situation_rpt partition(pt='$pt')
@@ -88,6 +72,9 @@ group by batch, virtual_goods_id, project, country, platform_type
     ( batch, virtual_goods_id, project, platform_type )
     );
 "
+
+echo '当前执行的sql:' $sql
+
 spark-sql --conf "spark.app.name=dwb_fd_daily_like_situation_gaohaitao"  --conf "spark.dynamicAllocation.maxExecutors=60" -e "$sql"
 
 #如果脚本失败，则报错
