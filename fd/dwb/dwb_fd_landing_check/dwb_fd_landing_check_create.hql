@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS `dwb`.`dwb_fd_landing_check`
     `url_virtual_goods_id` string,
     `absolute_position`    string,
     `virtual_goods_id`     string,
-    `impression_uv`        int,
-    `impression`           int
+    `impression_uv`        bigint,
+    `impression`           bigint
 )
     PARTITIONED BY (
         `pt` string)
