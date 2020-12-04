@@ -16,7 +16,7 @@ null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
 null,null,null,null,null,null,
 null,null,null,null
 from ods_fd_snowplow.ods_fd_snowplow_all_event
-where pt = '${pt}' and platform_type in ('android_app','ios_app') and page_code = 'myrewards'
+where pt = '${pt}' and platform_type in ('android_app','ios_app')
 and project is not null and project !='' and country is not null and country != ''
 
 union
