@@ -1,7 +1,7 @@
 #!/bin/sh
 if [ ! -n "$1" ] ;then
-    pt=`date  +%Y-%m-%d`
-    pt_last=`date -d "-1 days" +%Y-%m-%d`
+    #获取前一小时所属的日期
+    pt=`date -d "1 hour ago" +"%Y-%m-%d"`
 else
     echo $1 | grep -Eq "[0-9]{4}-[0-9]{2}-[0-9]{2}" && date -d $1 +%Y-%m-%d > /dev/null
     if [[ $? -ne 0 ]]; then
@@ -9,13 +9,11 @@ else
         exit
     fi
     pt=$1
-    pt_last=`date -d "$1 -1 days" +%Y-%m-%d`
 
 fi
 
 #hive sql中使用的变量
-echo $pt
-echo $pt_last
+echo '当前脚本执行时间:' $pt
 
 #打版数据
 sqoop export \
