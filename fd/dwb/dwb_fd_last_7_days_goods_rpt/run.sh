@@ -65,7 +65,7 @@ select
 
 
 spark-sql \
---conf "spark.app.name=dwb_fd_abtest_funnel_rate_rpt_yjzhang"   \
+--conf "spark.app.name=dwb_fd_last_7_days_goods_rpt_yjzhang"   \
 -d pt=$pt \
 -e "$sql"
 
