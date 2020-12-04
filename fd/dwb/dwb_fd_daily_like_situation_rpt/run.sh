@@ -3,10 +3,8 @@ home=`dirname "$0"`
 cd $home
 
 if [ ! -n "$1" ] ;then
-    pt=`date -d "-1 days" +%Y-%m-%d`
-    pt_last=`date -d "-2 days" +%Y-%m-%d`
-    pt_format=`date -d "-1 days" +%Y%m%d`
-    pt_format_last=`date -d "-2 days" +%Y%m%d`
+    pt=`date  +%Y-%m-%d`
+    pt_last=`date -d "-1 days" +%Y-%m-%d`
 else
     echo $1 | grep -Eq "[0-9]{4}-[0-9]{2}-[0-9]{2}" && date -d $1 +%Y-%m-%d > /dev/null
     if [[ $? -ne 0 ]]; then
@@ -15,21 +13,12 @@ else
     fi
     pt=$1
     pt_last=`date -d "$1 -1 days" +%Y-%m-%d`
-    pt_format=`date -d "$1" +%Y%m%d`
-    pt_format_last=`date -d "$1 -1 days" +%Y%m%d`
 
 fi
 
 #hive sql中使用的变量
 echo $pt
 echo $pt_last
-echo $pt_format
-echo $pt_format_last
-
-shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_banner_ctr_rpt"
-
-#计算留存数据
-#hive -hiveconf pt=$pt -f ${shell_path}/dwb_fd_banner_ctr_rpt.hql
 
 sql="
 insert overwrite table dwb.dwb_fd_daily_like_situation_rpt partition(pt='$pt')
