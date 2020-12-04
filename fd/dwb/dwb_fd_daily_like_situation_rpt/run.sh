@@ -72,6 +72,9 @@ group by batch, virtual_goods_id, project, country, platform_type
     ( batch, virtual_goods_id, project, platform_type )
     );
 "
+
+echo '当前执行的sql:' $sql
+
 spark-sql --conf "spark.app.name=dwb_fd_daily_like_situation_gaohaitao"  --conf "spark.dynamicAllocation.maxExecutors=60" -e "$sql"
 
 #如果脚本失败，则报错
