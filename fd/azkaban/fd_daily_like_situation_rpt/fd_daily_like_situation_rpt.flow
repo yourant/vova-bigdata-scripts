@@ -37,7 +37,7 @@ nodes:
       - name: sqoop_daily_like_situation_rpt
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_daily_like_situation_rpt/run.sh ${pt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_daily_like_situation_rpt/sqoop_hive_to_artemis.sh ${pt}
         dependsOn:
           - fd_daily_like_situation_flow_run
 
