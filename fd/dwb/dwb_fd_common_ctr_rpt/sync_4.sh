@@ -2,13 +2,13 @@
 #以天循环
 #sh x.sh 20200401 20200609
 stime='20201001'
-etime='20201125'
+etime='20201205'
 
 while :
 do
 ptdate=$(date -d "${stime:0:8}" +%Y-%m-%d)
 echo "$ptdate"
-sh run2.sh ${ptdate};sh run.sh ${ptdate}
+sh run.sh ${ptdate}
 stime=$(date -d "${stime:0:8} 1day" +%Y%m%d)
 if [[ $stime -gt $etime ]]
 then
