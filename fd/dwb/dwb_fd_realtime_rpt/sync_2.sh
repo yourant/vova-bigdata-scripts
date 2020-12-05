@@ -1,8 +1,8 @@
 #!/bin/bash
 #以天循环
 #sh x.sh 20200401 20200609
-stime='20201001'
-etime='20201124'
+stime='20201012'
+etime='20201121'
 
 while :
 do
