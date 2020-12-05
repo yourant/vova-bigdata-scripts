@@ -3,7 +3,7 @@ home=`dirname "$0"`
 cd $home
 
 if [ ! -n "$1" ] ;then
-    pt=`date  +%Y-%m-%d`
+    pt=`date -d"-1 hour" +%Y-%m-%d`
    #pt_last=`date -d "-2 days" +%Y-%m-%d`
     #pt_format=`date -d "-1 days" +%Y%m%d`
     #pt_format_last=`date -d "-2 days" +%Y%m%d`

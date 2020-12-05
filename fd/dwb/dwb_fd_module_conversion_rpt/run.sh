@@ -55,4 +55,4 @@ spark-sql \
 if [ $? -ne 0 ];then
   exit 1
 fi
-echo "step2: report table is finished !"
+echo "step2: module_conversion rpt is finished !"
