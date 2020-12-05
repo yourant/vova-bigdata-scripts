@@ -36,7 +36,6 @@ shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_realtime_rpt"
 
 spark-sql \
 --conf "spark.app.name=dwb_fd_realtime_gmv_orders_rpt_yjzhang"   \
---conf "spark.dynamicAllocation.maxExecutors=60" \
 -d pt=$pt \
 -f ${shell_path}/order_info_inc.hql
 
