@@ -158,8 +158,8 @@ insert into table dwb.dwb_fd_user_retention_rpt partition (pt='${pt}')
            0
 
   from dwd.dwd_fd_order_goods
-  where  (date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '${pt}' or
-     date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '${pt}')
+  where
+     date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '${pt}'
   and pay_status=2
   and email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
   and project_name='tendaisy'

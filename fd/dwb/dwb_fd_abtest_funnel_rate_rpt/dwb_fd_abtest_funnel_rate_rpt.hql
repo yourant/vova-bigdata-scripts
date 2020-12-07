@@ -16,9 +16,6 @@ select   /*+ REPARTITION(1) */
 from
 (
 
-
-if(sc.ga_channel is null or sc.ga_channel = '', 'Others', sc.ga_channel)
-
 select nvl(project,'NALL') as project,
        nvl(platform_type,'NALL') as platform_type,
        nvl(country,'NALL') as country,
