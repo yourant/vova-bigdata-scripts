@@ -33,10 +33,10 @@ from (
                     end as goods_event_name,
                 session_id,
                 case
-                    when event_name in ('page_view', 'screen_view') then cast(url_virtual_goods_id as int)
+                    when event_name in ('page_view', 'screen_view') then cast(url_virtual_goods_id as bigint)
                     when event_name in ("goods_click", "goods_impression")
-                        then cast(goods_event.virtual_goods_id as int)
-                    when event_name in ("add", "checkout") then cast(ecommerce_product_info.id as int)
+                        then cast(goods_event.virtual_goods_id as bigint)
+                    when event_name in ("add", "checkout") then cast(ecommerce_product_info.id as bigint)
                     else null
                     end as virtual_goods_id
 
