@@ -170,3 +170,5 @@ spark-sql \
 if [ $? -ne 0 ];then
   exit 1
 fi
+
+echo " prc abtest rpt  is finished !"

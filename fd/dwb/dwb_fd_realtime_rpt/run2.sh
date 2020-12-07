@@ -3,7 +3,7 @@ home=`dirname "$0"`
 cd $home
 
 if [ ! -n "$1" ] ;then
-    pt=`date  +%Y-%m-%d`
+    pt=`date -d"-1 hour" +%Y-%m-%d`
    #pt_last=`date -d "-2 days" +%Y-%m-%d`
     #pt_format=`date -d "-1 days" +%Y%m%d`
     #pt_format_last=`date -d "-2 days" +%Y%m%d`
@@ -36,7 +36,6 @@ shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_realtime_rpt"
 
 spark-sql \
 --conf "spark.app.name=dwb_fd_realtime_gmv_orders_rpt_yjzhang"   \
---conf "spark.dynamicAllocation.maxExecutors=60" \
 -d pt=$pt \
 -f ${shell_path}/order_info_inc.hql
 
