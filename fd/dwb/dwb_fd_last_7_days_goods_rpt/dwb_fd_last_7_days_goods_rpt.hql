@@ -1,6 +1,7 @@
 
 insert overwrite table dwb.dwb_fd_last_7_days_goods_rpt
 SELECT
+    '${pt}',
     project_name,
     goods_id,
     sum(goods_number) as goods_num
