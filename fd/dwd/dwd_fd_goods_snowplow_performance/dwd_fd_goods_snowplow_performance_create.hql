@@ -1,4 +1,4 @@
-create table if not exist dwd.dwd_fd_goods_snowplow_performance
+create table if not exists dwd.dwd_fd_goods_snowplow_performance
 (
     project          STRING,
     country          STRING,
@@ -8,8 +8,8 @@ create table if not exist dwd.dwd_fd_goods_snowplow_performance
     event_name       STRING,
     page_code        STRING,
     goods_event_name STRING,
-    goods_id         int,
-    virtual_goods_id int,
+    goods_id         bigint,
+    virtual_goods_id bigint,
     session_id       STRING
 ) partitioned by (pt string)
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'

@@ -1,5 +1,9 @@
-select project_name,
+insert overwrite table dwb.dwb_fd_goods_test_finder_summary
+select
+/*+ REPARTITION(1) */
+       finder_test.project_name,
        finder,
+       finder_test.cat_id,
        cat_name,
        test_type,
        preorder_plan_name,
@@ -19,13 +23,13 @@ from (
                 count(distinct if(result = 1, virtual_goods_id, null)) as success_goods_num,
                 sum(goods_sales_7d)                                    as success_goods_sales_amount_7d
          from (
-                  select nvl(project_name, 'NALL')       as project_name,
-                         nvl(cat_name, 'NALL')           as cat_name,
-                         nvl(test_type, 'NALL')          as test_type,
-                         nvl(preorder_plan_name, 'NALL') as preorder_plan_name,
-                         nvl(f.finder, 'NALL')           as finder,
+                  select nvl(goods_test.project_name, 'NALL') as project_name,
+                         nvl(cat_name, 'NALL')                as cat_name,
+                         nvl(test_type, 'NALL')               as test_type,
+                         nvl(preorder_plan_name, 'NALL')      as preorder_plan_name,
+                         nvl(f.finder, 'NALL')                as finder,
                          cat_id,
-                         goods_test.virtual_goods_id     as virtual_goods_id,
+                         goods_test.virtual_goods_id          as virtual_goods_id,
                          result,
                          goods_sales_7d
                   from (
@@ -58,7 +62,7 @@ from (
                              sum(goods_number * shop_price) as goods_sales_7d
                       from dwd.dwd_fd_order_goods
                       where pay_status = 2
-                        and pay_time between date_sub('${pt}', 6) and date_add('${pt}', 1)
+                        and from_unixtime(pay_time) between date_sub('${pt}', 6) and date_add('${pt}', 1)
                       group by virtual_goods_id
                   ) goods_sales on goods_sales.virtual_goods_id = goods_test.virtual_goods_id
               ) goods
@@ -70,9 +74,11 @@ from (
              )) finder_test
          left join (
     select cat_id,
+           project_name,
            sum(goods_number * shop_price) as category_sales_7d
     from dwd.dwd_fd_order_goods
     where pay_status = 2
-      and pay_time between date_sub('${pt}', 6) and date_add('${pt}', 1)
-    group by cat_id
-) category_sales on category_sales.cat_id = finder_test.cat_id;
+      and from_unixtime(pay_time) between date_sub('${pt}', 6) and date_add('${pt}', 1)
+    group by cat_id, project_name
+) category_sales on category_sales.cat_id = finder_test.cat_id and
+                    category_sales.project_name = finder_test.project_name;
