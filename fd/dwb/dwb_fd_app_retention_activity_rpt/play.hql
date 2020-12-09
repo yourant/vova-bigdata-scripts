@@ -18,7 +18,7 @@ null,null,null,null
 from ods_fd_snowplow.ods_fd_snowplow_element_event
 where pt = '${pt}' and platform_type in ('android_app','ios_app') and page_code = 'big_wheel'
 and project is not null and project != ''
-union
+union all
 select
  /*+ REPARTITION(1) */
 nvl(t2.project,t3.project) as project,
@@ -75,7 +75,7 @@ from ods_fd_vb.ods_fd_app_install_record
 ) t0 where t0.rank = 1
 ) t3 on t1.device_id = t3.device_id
 
-union
+union all
 select
  /*+ REPARTITION(1) */
 nvl(t2.project,t3.project) as project,
