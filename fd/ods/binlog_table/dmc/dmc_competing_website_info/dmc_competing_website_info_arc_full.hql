@@ -5,13 +5,13 @@ CREATE TABLE IF NOT EXISTS ods_fd_erp.dmc_competing_website_info_arc (
     `site_name` string comment '网站名称',
     `note` string comment '备注'
 ) COMMENT 'erp 增量同步dmc_competing_website_info'
-PARTITIONED BY (dt STRING)
+PARTITIONED BY (pt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 
 set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite table ods_fd_erp.dmc_competing_website_info_arc PARTITION (dt = '${hiveconf:dt}')
+INSERT overwrite table ods_fd_erp.dmc_competing_website_info_arc PARTITION (pt = '${hiveconf:pt}')
 select 
      site_id, created_at, updated_at, site_name, note
 from (

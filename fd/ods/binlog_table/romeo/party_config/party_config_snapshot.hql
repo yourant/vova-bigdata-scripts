@@ -28,4 +28,4 @@ STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_romeo.ods_fd_romeo_party_config
-select `(dt)?+.+` from ods_fd_romeo.ods_fd_romeo_party_config_arc where dt = '${hiveconf:dt}';
+select `(pt)?+.+` from ods_fd_romeo.ods_fd_romeo_party_config_arc where pt = '${hiveconf:pt}';

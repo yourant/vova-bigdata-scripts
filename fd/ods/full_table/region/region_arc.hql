@@ -13,12 +13,12 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_region_arc
   `chinese_region_name` bigint COMMENT '',
   `prefix` string COMMENT '国家的手机号前缀'
  )comment '区域'
-PARTITIONED BY (dt STRING ) 
+PARTITIONED BY (pt STRING )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 
-INSERT overwrite table ods_fd_vb.ods_fd_region_arc PARTITION (dt='${hiveconf:dt}')
+INSERT overwrite table ods_fd_vb.ods_fd_region_arc PARTITION (pt='${hiveconf:pt}')
 select  
     region_id,
     parent_id,

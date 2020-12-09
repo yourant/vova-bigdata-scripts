@@ -20,23 +20,23 @@ CREATE TABLE IF NOT EXISTS ods_fd_dmc.ods_fd_dmc_sheIf_goods_org_arc (
     `test_location` string comment '测试坑位',
     `test_note` string comment '测试备注'
 ) COMMENT '上架商品对应组织'
-PARTITIONED BY (dt STRING)
+PARTITIONED BY (pt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 
 set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite table ods_fd_dmc.ods_fd_dmc_sheIf_goods_org_arc PARTITION (dt = '${hiveconf:dt}')
+INSERT overwrite table ods_fd_dmc.ods_fd_dmc_sheIf_goods_org_arc PARTITION (pt = '${hiveconf:pt}')
 select 
      id, org_name, virtual_id, sheIf_goods_id, updated_at, created_at, deleted_at, party_id, is_sheIf, operate_price_user_email, operate_price_user, sheIf_time, sheIf_user_email, sheIf_user, sheIf_note, extend_goods_id, pg_id, status, test_location, test_note
 from (
 
     select 
-        dt,id, org_name, virtual_id, sheIf_goods_id, updated_at, created_at, deleted_at, party_id, is_sheIf, operate_price_user_email, operate_price_user, sheIf_time, sheIf_user_email, sheIf_user, sheIf_note, extend_goods_id, pg_id, status, test_location, test_note,
-        row_number () OVER (PARTITION BY id ORDER BY dt DESC) AS rank
+        pt,id, org_name, virtual_id, sheIf_goods_id, updated_at, created_at, deleted_at, party_id, is_sheIf, operate_price_user_email, operate_price_user, sheIf_time, sheIf_user_email, sheIf_user, sheIf_note, extend_goods_id, pg_id, status, test_location, test_note,
+        row_number () OVER (PARTITION BY id ORDER BY pt DESC) AS rank
     from (
 
-        select  '2020-01-01' as dt
+        select  '2020-01-01' as pt
                 ,id
                 ,org_name
                 ,virtual_id
@@ -61,10 +61,10 @@ from (
 
         UNION
 
-        select dt,id, org_name, virtual_id, sheIf_goods_id, updated_at, created_at, deleted_at, party_id, is_sheIf, operate_price_user_email, operate_price_user, sheIf_time, sheIf_user_email, sheIf_user, sheIf_note, extend_goods_id, pg_id, status, test_location, test_note
+        select pt,id, org_name, virtual_id, sheIf_goods_id, updated_at, created_at, deleted_at, party_id, is_sheIf, operate_price_user_email, operate_price_user, sheIf_time, sheIf_user_email, sheIf_user, sheIf_note, extend_goods_id, pg_id, status, test_location, test_note
         from (
 
-            select  dt,
+            select  pt,
                     id,
                     org_name,
                     virtual_id,
@@ -86,7 +86,7 @@ from (
                     test_location,
                     test_note, 
                     row_number() OVER (PARTITION BY id ORDER BY event_id DESC) AS rank
-            from ods_fd_dmc.ods_fd_dmc_sheIf_goods_org_inc where dt='${hiveconf:dt}'
+            from ods_fd_dmc.ods_fd_dmc_sheIf_goods_org_inc where pt='${hiveconf:pt}'
 
         ) inc where inc.rank = 1
     ) arc 

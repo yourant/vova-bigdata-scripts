@@ -5,28 +5,28 @@ home=`dirname "$0"`
 cd $home
 
 if [ ! -n "$1" ] ;then
-    dt=`date -d "-1 days" +%Y-%m-%d`
-    dt_last=`date -d "-2 days" +%Y-%m-%d`
-    dt_format=`date -d "-1 days" +%Y%m%d`
-    dt_format_last=`date -d "-2 days" +%Y%m%d`
+    pt=`date -d "-1 days" +%Y-%m-%d`
+    pt_last=`date -d "-2 days" +%Y-%m-%d`
+    pt_format=`date -d "-1 days" +%Y%m%d`
+    pt_format_last=`date -d "-2 days" +%Y%m%d`
 else
     echo $1 | grep -Eq "[0-9]{4}-[0-9]{2}-[0-9]{2}" && date -d $1 +%Y-%m-%d > /dev/null
     if [[ $? -ne 0 ]]; then
         echo "接收的时间格式${1}不符合:%Y-%m-%d，请输入正确的格式!"
         exit
     fi
-    dt=$1
-    dt_last=`date -d "$1 -1 days" +%Y-%m-%d`
-    dt_format=`date -d "$1" +%Y%m%d`
-    dt_format_last=`date -d "$1 -1 days" +%Y%m%d`
+    pt=$1
+    pt_last=`date -d "$1 -1 days" +%Y-%m-%d`
+    pt_format=`date -d "$1" +%Y%m%d`
+    pt_format_last=`date -d "$1 -1 days" +%Y%m%d`
 
 fi
 
 #hive sql中使用的变量
-echo $dt
-echo $dt_last
-echo $dt_format
-echo $dt_format_last
+echo $pt
+echo $pt_last
+echo $pt_format
+echo $pt_format_last
 
 #mysql配置信息
 db_host=${artemis_db[db_host]}
@@ -57,15 +57,15 @@ sqoop import \
 --connect "jdbc:mysql://${db_host}:${db_port}/${db_databases}?tinyInt1isBit=false" \
 --username ${db_user_name} \
 --password ${db_password} \
---query "select ${hive_columns} from ${db_table_name} where ${inc_column} >= '${dt} 00:00:00' and ${inc_column} <= '${dt} 23:59:59' and \$CONDITIONS" \
---target-dir ${s3_hive_path}${dt} \
+--query "select ${hive_columns} from ${db_table_name} where ${inc_column} >= '${pt} 00:00:00' and ${inc_column} <= '${pt} 23:59:59' and \$CONDITIONS" \
+--target-dir ${s3_hive_path}${pt} \
 --delete-target-dir \
 --hive-import \
 --hive-overwrite \
 --hive-database ${hive_db_name} \
 --hive-table tmp_fd_${db_table_name} \
---hive-partition-key dt \
---hive-partition-value ${dt} \
+--hive-partition-key pt \
+--hive-partition-value ${pt} \
 --fields-terminated-by '\001' \
 --split-by ${primary_key} \
 -m ${hive_mappers}
@@ -78,7 +78,7 @@ echo "step1: ${db_table_name} table is finished !"
 rm -r *.java
 
 #inc 表
-hive -hiveconf dt=$dt -f ${shell_path}/${db_table_name}_inc.hql
+hive -hiveconf pt=$pt -f ${shell_path}/${db_table_name}_inc.hql
 
 if [ $? -ne 0 ];then
   exit 1
@@ -86,10 +86,10 @@ fi
 echo "step2: ${db_table_name}_inc table is finished !"
 
 #arc 表
-#hive -hiveconf dt=$dt -hiveconf dt_last=$dt_last -f ${shell_path}/${db_table_name}_arc.hql
+#hive -hiveconf pt=$pt -hiveconf pt_last=$pt_last -f ${shell_path}/${db_table_name}_arc.hql
 
 #arc 全量补全表
-hive -hiveconf dt=$dt -f ${shell_path}/${db_table_name}_arc_full.hql
+hive -hiveconf pt=$pt -f ${shell_path}/${db_table_name}_arc_full.hql
 
 if [ $? -ne 0 ];then
   exit 1
@@ -97,7 +97,7 @@ fi
 echo "step3: ${db_table_name}_arc table is finished !"
 
 #snapshot表
-hive -hiveconf dt=$dt -f ${shell_path}/${db_table_name}_snapshot.hql
+hive -hiveconf pt=$pt -f ${shell_path}/${db_table_name}_snapshot.hql
 
 if [ $? -ne 0 ];then
   exit 1

@@ -9,13 +9,13 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_route_arc(
   `project_name` string,
   `sitemap` bigint
  )comment '币种'
-PARTITIONED BY (dt STRING ) 
+PARTITIONED BY (pt STRING )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 
 
-INSERT overwrite table ods_fd_vb.ods_fd_route_arc PARTITION (dt='${hiveconf:dt}')
+INSERT overwrite table ods_fd_vb.ods_fd_route_arc PARTITION (pt='${hiveconf:pt}')
 select  
 	route_id,
 	route_sn,

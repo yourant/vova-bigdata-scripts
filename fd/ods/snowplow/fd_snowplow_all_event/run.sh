@@ -1,53 +1,57 @@
 #!/bin/sh
-home=$(dirname "$0")
-cd $home
+path="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source $path/../snowplow_run_common.sh
 
-hour_delta=1
-hour_range=6
+table=ods_fd_snowplow_all_event
+user=lujiaheng
 
-if [ ! -n "$1" ]; then
-  dt_now=$(date +"%Y-%m-%d %H")
-else
-  echo $1 | grep -Eq "[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}" && date -d "$1" +"%Y-%m-%d %H:%M:%S" >/dev/null
-  if [[ $? -ne 0 ]]; then
-    echo "接收的时间格式${1}不符合:%Y-%m-%d %H:%M:%S，请输入正确的格式!"
-    exit
-  fi
-  dt_now=$1
-fi
+shell_path="$base_path/fd_snowplow_all_event"
 
-#collector开始时间
-start=$(date -d "$dt_now - $hour_range hours" +"%Y-%m-%d %H:00:00")
-end=$(date -d "$dt_now" +"%Y-%m-%d %H:00:00")
+saprk_pt=$(date -d "$pt_now - 1 hours" +"%Y/%m/%d/%H")
 
-#filter
-dt_filter=""
-for ((i = hour_range + hour_delta; i >= 0; i--)); do
-  dt_filter=$dt_filter" dt = \"$(date -d "$dt_now - $i hours" +"%Y-%m-%d")\" and hour = \"$(date -d "$dt_now - $i hours" +"%H")\" or"
-done
-#去掉多余 or
-dt_filter="("${dt_filter:0:-2}")"
+echo "saprk_pt: $saprk_pt"
+echo "partition: (pt='${pt}',hour='${hour}')"
 
-#hive sql中使用的变量
-echo "now:    " $dt_now
-echo "start:  " $start
-echo "end:    " $end
-echo "filter: " $dt_filter
+#hive -e "alter table pdb.pdb_fd_snowplow_offline drop if exist partition(pt='${pdb_pt}',hour='${pdb_hour}')"
 
-shell_path="/mnt/vova-bigdata-scripts/fd/ods/snowplow/fd_snowplow_all_event"
-#flume搜集的binlog日志路径
-flume_path="s3a://vova-bd-test/flume"
+spark-submit \
+  --master yarn \
+  --deploy-mode cluster \
+  --conf "spark.dynamicAllocation.maxExecutors=120" \
+  --conf spark.executor.memory=4096M \
+  --conf spark.yarn.appMasterEnv.sparkMaster=yarn \
+  --conf spark.yarn.appMasterEnv.appName=FDSnowplowOffline \
+  --conf spark.yarn.appMasterEnv.rawDataPath=s3://artemis-evt/enrich-good \
+  --conf spark.yarn.appMasterEnv.savePath=s3://bigdata-offline/warehouse/pdb/fd/snowplow/snowplow_batch \
+  --conf spark.yarn.appMasterEnv.start=$saprk_pt \
+  --conf spark.app.name=FDSnowplowOffline \
+  --class com.fd.bigdata.sparkbatch.log.jobs.SnowplowOffline \
+  s3://vomkt-emr-rec/jar/warehouse/fd/snowplow_offline_1.4.jar
 
-#将flume收集的数据存到tmp表中
-hive -hiveconf flume_path=$flume_path -f ${shell_path}/tmp_fd_snowplow_all_event.hql
+echo "spark finished"
+
+hive -e "MSCK REPAIR TABLE pdb.pdb_fd_snowplow_offline;"
+#hive -e "alter table pdb.pdb_fd_snowplow_offline add partition(pt='${pdb_pt}',hour='${pdb_hour}')"
+
 if [ $? -ne 0 ]; then
   exit 1
 fi
-echo "step1: tmp_fd_snowplow_all_event table is finished !"
+echo "step1: pdb_fd_snowplow_offline table is finished !"
 
 #将打点数据放到对应的小时里面
-hive -hiveconf "start=$start" -hiveconf "end=$end" -hiveconf "dt_filter=$dt_filter" -f ${shell_path}/ods_fd_snowplow_all_event.hql
+hive -f ${shell_path}/${table}_create.hql
+
+spark-sql \
+  --conf "spark.app.name=${table}_${user}" \
+  --conf "spark.dynamicAllocation.maxExecutors=60" \
+  -d start="$start" \
+  -d end="$end" \
+  -d pt_filter="$pt_filter" \
+  -d pt="${pt}" \
+  -d hour="${hour}" \
+  -f ${shell_path}/${table}_insert.hql
+
 if [ $? -ne 0 ]; then
   exit 1
 fi
-echo "step2: ods_fd_snowplow_all_event table is finished !"
+echo "step2: $table table is finished !"

@@ -25,4 +25,4 @@ STORED AS PARQUETFILE;
 
 set hive.support.quoted.identifiers=None;
 INSERT overwrite table ods_fd_dmc.ods_fd_dmc_sheIf_goods_org
-select `(dt)?+.+` from ods_fd_dmc.ods_fd_dmc_sheIf_goods_org_arc where dt = '${hiveconf:dt}';
+select `(pt)?+.+` from ods_fd_dmc.ods_fd_dmc_sheIf_goods_org_arc where pt = '${hiveconf:pt}';

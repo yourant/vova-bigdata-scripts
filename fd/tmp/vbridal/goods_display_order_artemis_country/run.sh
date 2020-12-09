@@ -5,8 +5,8 @@ home=`dirname "$0"`
 cd $home
 
 if [ ! -n "$1" ] ;then
-    #hive 表的dt
-    dt=`date -d "$dt -1 days" +%Y-%m-%d`
+    #hive 表的pt
+    pt=`date -d "$dt -1 days" +%Y-%m-%d`
 else
     dt=$1
 fi

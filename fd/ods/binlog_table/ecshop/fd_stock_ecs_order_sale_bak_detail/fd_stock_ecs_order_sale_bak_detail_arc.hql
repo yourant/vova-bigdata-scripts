@@ -1,31 +1,16 @@
-CREATE TABLE IF NOT EXISTS ods_fd_ecshop.ods_fd_ecs_fd_stock_ecs_order_sale_bak_detail_arc (
-    id bigint comment '自增id',
-	bak_id bigint comment '',
-	bak_order_date bigint comment '',
-	external_goods_id bigint comment '',
-	on_sale_time bigint comment '',
-	7d_sale decimal(15, 4) comment '',
-	14d_sale decimal(15, 4) comment '',
-	28d_sale decimal(15, 4) comment '',
-	uniq_sku string comment ''
-) comment '同步的近14天日销数据表'
-PARTITIONED BY (dt STRING)
-ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE;
+alter table ods_fd_ecshop.ods_fd_fd_stock_ecs_order_sale_bak_detail_arc drop if exists partition (pt='$pt');
 
-
-set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_fd_stock_ecs_order_sale_bak_detail_arc PARTITION (dt = '${hiveconf:dt}')
+INSERT into table ods_fd_ecshop.ods_fd_fd_stock_ecs_order_sale_bak_detail_arc PARTITION (pt = '${pt}')
 select 
      id,bak_id,bak_order_date,external_goods_id,on_sale_time,7d_sale,14d_sale,28d_sale,uniq_sku
 from (
 
     select 
-        dt,id,bak_id,bak_order_date,external_goods_id,on_sale_time,7d_sale,14d_sale,28d_sale,uniq_sku,
-        row_number () OVER (PARTITION BY id ORDER BY dt DESC) AS rank
+        pt,id,bak_id,bak_order_date,external_goods_id,on_sale_time,7d_sale,14d_sale,28d_sale,uniq_sku,
+        row_number () OVER (PARTITION BY id ORDER BY pt DESC) AS rank
     from (
 
-        select  dt
+        select  pt,
                 id,
                 bak_id,
                 bak_order_date,
@@ -35,26 +20,20 @@ from (
                 14d_sale,
                 28d_sale,
                 uniq_sku
-        from ods_fd_ecshop.ods_fd_ecs_fd_stock_ecs_order_sale_bak_detail_arc where dt = '${hiveconf:dt_last}'
+        from ods_fd_ecshop.ods_fd_fd_stock_ecs_order_sale_bak_detail_arc where pt = '${pt_last}'
 
-        UNION
+        UNION ALL
 
-        select dt,id,bak_id,bak_order_date,external_goods_id,on_sale_time,7d_sale,14d_sale,28d_sale,uniq_sku
-        from (
-
-            select  dt
-                    id,
-                    bak_id,
-                    bak_order_date,
-                    external_goods_id,
-                    on_sale_time,
-                    7d_sale,
-                    14d_sale,
-                    28d_sale,
-                    uniq_sku,
-                    row_number() OVER (PARTITION BY id ORDER BY event_id DESC) AS rank
-            from ods_fd_ecshop.ods_fd_ecs_fd_stock_ecs_order_sale_bak_detail_inc where dt='${hiveconf:dt}'
-
-        ) inc where inc.rank = 1
+        select  pt,
+                id,
+                bak_id,
+                bak_order_date,
+                external_goods_id,
+                on_sale_time,
+                7d_sale,
+                14d_sale,
+                28d_sale,
+                uniq_sku
+        from ods_fd_ecshop.ods_fd_fd_stock_ecs_order_sale_bak_detail_inc where pt='${pt}'
     )  arc 
 ) tab where tab.rank = 1;

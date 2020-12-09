@@ -1,80 +1,4 @@
-CREATE TABLE IF NOT EXISTS dwd.dwd_fd_order_goods (
-    sp_duid STRING COMMENT '来自打点数据',
-    rec_id bigint,
-    order_id bigint COMMENT '订单id',
-    goods_style_id bigint COMMENT '@see goods_style.goods_style_id',
-    sku string COMMENT '@see gods_style.sku',
-    sku_id bigint COMMENT '@see goods_sku.sku_id',
-    goods_id bigint COMMENT '商品id',
-    goods_name string COMMENT '商品名',
-    goods_sn string COMMENT '商品sn',
-    goods_sku string COMMENT '商品 sku',
-    goods_number bigint COMMENT '商品件数',
-    market_price decimal(15, 4) COMMENT '商品市场价',
-    shop_price decimal(15, 4) COMMENT '商品售价',
-    shop_price_exchange decimal(15, 4) COMMENT '价格转换后的数额',
-    shop_price_amount_exchange decimal(15, 4) COMMENT '总额的转换后数值',
-    coupon_goods_id bigint,
-    goods_price_original decimal(15, 4) COMMENT '商品未添加任何附加费的价格',
-    party_id bigint,
-    order_sn string COMMENT '订单sn',
-    user_id bigint COMMENT '用户id',
-    order_time_original timestamp COMMENT '转化之前的值',
-    order_time bigint COMMENT '转化之后的订单时间',
-    order_status bigint COMMENT '订单状态',
-    shipping_status bigint,
-    pay_status bigint COMMENT '支付状态',
-    consignee string,
-    gender string COMMENT '性别',
-    country bigint COMMENT '国家id',
-    email string COMMENT '邮箱',
-    goods_amount decimal(15, 4),
-    goods_amount_exchange decimal(15, 4) COMMENT '商品转换后的数额',
-    shipping_fee decimal(15, 4) COMMENT '运费',
-    integral bigint COMMENT '已经抵用欧币',
-    integral_money decimal(15, 4),
-    bonus decimal(15, 4) COMMENT '优惠费用，负值',
-    bonus_exchange decimal(15, 4),
-    order_amount decimal(15, 4) COMMENT '订单金额',
-    base_currency_id bigint COMMENT '币种ID',
-    order_currency_id bigint COMMENT '生成订单时用户选择的币种',
-    order_currency_code string COMMENT '货币单位',
-    order_currency_symbol string COMMENT 'like US$ HK$',
-    order_amount_exchange decimal(15, 4) COMMENT '转换后的数额',
-    pay_time_original timestamp COMMENT '转化之前的值',
-    pay_time bigint COMMENT '转换之后的支付时间',
-    coupon_code string COMMENT '优惠券代码',
-    ga_track_id string COMMENT 'ga跟踪ID',
-    taobao_order_sn string,
-    distribution_purchase_order_sn string COMMENT '分销采购单号',
-    language_id bigint COMMENT '语言id',
-    from_domain string COMMENT '订单来源',
-    project_name string COMMENT '组织',
-    user_agent_id bigint COMMENT '下单时的 user agent',
-    platform_type string COMMENT '',
-    version string COMMENT 'APP版本号',
-    is_app bigint COMMENT '是否APP',
-    device_type string COMMENT '设备类型',
-    os_type string COMMENT '操作系统类型',
-    country_code string COMMENT '国家code',
-    language_code string COMMENT '语言code',
-    virtual_goods_id bigint COMMENT '商品虚拟ID',
-    cp_goods_id      bigint COMMENT '克隆商品ID',
-    brand_id         bigint COMMENT '侵权商品',
-    is_on_sale       bigint COMMENT '真实是否在售,1:已上架，0：已下架',
-    is_complete      bigint comment '编辑是否完成',
-    is_new           bigint COMMENT '是否是新品',
-    cat_id           bigint COMMENT '商品类目ID',
-    cat_name         string COMMENT '商品类目名',
-    first_cat_id     bigint COMMENT '商品一级类目',
-    first_cat_name   string COMMENT '商品一级类目',
-    goods_weight     decimal(15, 4) comment '商品重量'
-) COMMENT '订单商品事实表'
-PARTITIONED BY (pt string)
-ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE;
-
-INSERT overwrite table dwd.dwd_fd_order_goods PARTITION (pt='${hiveconf:pt}')
+INSERT overwrite table dwd.dwd_fd_order_goods
 select 
     ud.sp_duid,
     og.rec_id,
@@ -138,7 +62,6 @@ select
     g.virtual_goods_id,
     g.cp_goods_id,
     g.brand_id,
-    g.is_on_sale,
     g.is_complete,
     g.is_new,
     g.cat_id,
@@ -147,7 +70,6 @@ select
     g.first_cat_name,
     g.goods_weight
 from (
-    /*订单商品表字段*/
     select 
         rec_id,
         order_id,
@@ -178,7 +100,6 @@ from (
     from ods_fd_vb.ods_fd_order_goods
 )og
 LEFT JOIN (
-    /*订单表字段*/
     select  
         order_id,
         party_id,
@@ -220,8 +141,17 @@ LEFT JOIN (
         project_name,
         user_agent_id
     from ods_fd_vb.ods_fd_order_info
+    where email not regexp '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
 ) oi ON og.order_id = oi.order_id
-left join (select user_id, sp_duid from ods_fd_vb.ods_fd_user_duid where sp_duid IS NOT NULL group by user_id, sp_duid) ud ON oi.user_id = ud.user_id
+left join (
+    select du.user_id,du.sp_duid
+    from (
+        select user_id, sp_duid,row_number () OVER (PARTITION BY user_id ORDER BY last_update_time DESC) AS rank
+          from ods_fd_vb.ods_fd_user_duid
+         where sp_duid IS NOT NULL
+    )du where du.rank = 1
+
+) ud ON oi.user_id = ud.user_id
 LEFT JOIN  dim.dim_fd_user_agent ua ON oi.user_agent_id = ua.user_agent_id
 LEFT JOIN  dim.dim_fd_region r ON oi.country_id = r.region_id
 LEFT JOIN  dim.dim_fd_language l ON oi.language_id = l.language_id

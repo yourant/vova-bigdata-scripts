@@ -1,0 +1,59 @@
+---
+config:
+  failure.emails: ekko.zhang@i9i8.com
+  retries: 2
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_daily_like_situation_rpt_start
+    type: noop
+
+  - name: fd_daily_like_situation_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_daily_like_situation_flow_start
+        type: noop
+        
+      - name: judge_ods_fd_snowplow_goods_event
+        type: noop
+        dependsOn:
+          - fd_daily_like_situation_flow_start
+
+      - name: judge_ods_fd_snowplow_element_event
+        type: noop
+        dependsOn:
+          - fd_daily_like_situation_flow_start
+
+      - name: fd_daily_like_situation_flow_run
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_daily_like_situation_rpt/run.sh ${pt}
+        dependsOn:
+          - judge_ods_fd_snowplow_goods_event
+          - judge_ods_fd_snowplow_element_event
+      
+      - name: sqoop_daily_like_situation_rpt
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_daily_like_situation_rpt/sqoop_hive_to_artemis.sh ${pt}
+        dependsOn:
+          - fd_daily_like_situation_flow_run
+
+
+      - name: fd_daily_like_situation_flow_end
+        type: noop
+        dependsOn:
+          - sqoop_daily_like_situation_rpt
+
+    dependsOn:
+      - fd_daily_like_situation_rpt_start
+
+  - name: fd_daily_like_situation_rpt_end
+    type: noop
+    dependsOn:
+      - fd_daily_like_situation_flow
+
+
+ 

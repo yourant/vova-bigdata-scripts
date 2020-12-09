@@ -21,5 +21,5 @@ from (
 		created_time,
 		last_update_time,
 		Row_Number() OVER (partition by user_id ORDER BY last_update_time desc) rank 
-	from ods_fd_vb.ods_fd_user_duid_arc where dt = '${hiveconf:dt}'
+	from ods_fd_vb.ods_fd_user_duid_arc where pt = '${hiveconf:pt}'
 )du where du.rank =1;

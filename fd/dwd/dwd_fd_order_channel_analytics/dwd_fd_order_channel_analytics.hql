@@ -1,64 +1,4 @@
-CREATE TABLE IF NOT EXISTS `dwd.dwd_fd_order_channel_analytics`(
-  `order_id` bigint COMMENT '订单id',
-  `order_sn` bigint COMMENT '订单sn',
-  `user_id` string COMMENT '数据库注册用户id',
-  `user_agent_id` bigint COMMENT '用户代理id',
-  `platform` string COMMENT '用户代理下单平台(web or mob)',
-  `platform_type` string COMMENT 'platform type in (pc_web,mobile_web,tablet_web,ios_app,android_app)',
-  `device_type` string COMMENT '用户代理下单设备类型',
-  `order_time` bigint COMMENT '下单时间',
-  `pay_status` bigint COMMENT '支付状态',
-  `pay_time` bigint COMMENT '支付时间',
-  `country_id` bigint COMMENT '国家id',
-  `country_code` string COMMENT '国家代码',
-  `language_id` bigint COMMENT '语言id',
-  `language_code` string COMMENT '语言代码',
-  `payment_id` bigint COMMENT '支付方式id',
-  `payment_name` string COMMENT '支付方式名称',
-  `order_currency_id` bigint COMMENT '支付货币id',
-  `order_currency_name` string COMMENT '支付货币名称',
-  `party_id` bigint COMMENT '站点id',
-  `project_name` string COMMENT '站点名称',
-  `goods_id` bigint COMMENT '商品id',
-  `goods_name` string COMMENT '商品名称',
-  `goods_sn` string COMMENT 'goods_sn',
-  `goods_sku` string COMMENT 'goods_sku',
-  `cat_id` bigint COMMENT '品类id',
-  `cat_name` string COMMENT '品类名称',
-  `goods_number` bigint COMMENT '商品下单数量',
-  `market_price` decimal(15, 4) COMMENT '商品市场价',
-  `shop_price` decimal(15, 4) COMMENT '商品销售价',
-  `bonus` decimal(15, 4) COMMENT '该商品的折扣，负值；可能来自分类折扣或该商品折扣',
-  `app_version` string COMMENT 'app version number',
-  `virtual_goods_id` string COMMENT 'virtual gooods id display in the web',
-  `integral` bigint COMMENT '已经抵用欧币',
-  `email` string COMMENT '下单用户邮箱',
-  `coupon_code` string COMMENT '优惠券代码',
-  `oa_id` bigint COMMENT '渠道数据自增id',
-  `source` string COMMENT '来源',
-  `keyword` string COMMENT '关键词',
-  `landing_page` string COMMENT '着陆页',
-  `country` string COMMENT '来源订单分析表国家',
-  `region` string COMMENT '地区',
-  `city` string COMMENT '城市',
-  `campaign` string COMMENT '活动',
-  `adformat` string COMMENT '广告类型',
-  `adgroup` string COMMENT '',
-  `adwordscampaignid` string COMMENT '',
-  `adwordsadgroupid` string COMMENT '',
-  `devicecategory` string COMMENT '',
-  `order_sn_an` string COMMENT '来源订单分析表订单编号',
-  `origin_source` string COMMENT '来源',
-  `origin_medium` string COMMENT '投放类型',
-  `ga_channel` string COMMENT '投放渠道',
-  `last_update_time` string COMMENT '渠道数据更新时间')
-COMMENT '订单渠道分析基础表'
-PARTITIONED BY (pt string)
-ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUET;
-
-
-INSERT OVERWRITE table  dwd.dwd_fd_order_channel_analytics PARTITION (pt='${hiveconf:pt}')
+INSERT OVERWRITE table  dwd.dwd_fd_order_channel_analytics
 SELECT 
 ogi.order_id, 
 ogi.order_sn,
@@ -93,7 +33,6 @@ ogi.virtual_goods_id,
 ogi.integral, 
 ogi.email, 
 ogi.coupon_code,
-
 ooa.oa_id, 
 ooa.source, 
 ooa.keyword, 
@@ -112,9 +51,5 @@ ooa.origin_source,
 ooa.origin_medium, 
 ooa.ga_channel, 
 ooa.last_update_time
-
-FROM (
-    select  order_id, order_sn, user_id, user_agent_id, is_app, platform_type, device_type, order_time, pay_status, pay_time, country, country_code, language_id, language_code, order_currency_id, order_currency_code, party_id, project_name, goods_id, goods_name, goods_sn, goods_sku, cat_id, cat_name, goods_number, market_price, shop_price, bonus, version, virtual_goods_id, integral, email, coupon_code
-    from dwd.dwd_fd_order_goods where pt = '${hiveconf:pt}'
-) ogi
+FROM dwd.dwd_fd_order_goods ogi
 LEFT JOIN ods_fd_ar.ods_fd_order_analytics ooa ON ooa.order_id = ogi.order_id;

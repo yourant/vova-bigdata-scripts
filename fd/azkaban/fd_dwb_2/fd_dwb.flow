@@ -1,0 +1,113 @@
+---
+config:
+  failure.emails: jhlu@i9i8.com
+  retries: 10
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_daily_job_start
+    type: noop
+
+  - name: judge_ods_fd_snowplow_goods_event
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_snowplow_goods_event_hour
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: dwb_fd_landing_check
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_landing_check/run.sh "${pt}"
+    dependsOn:
+      - judge_ods_fd_snowplow_goods_event
+
+  - name: judge_ods_fd_snowplow_view_event
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_snowplow_view_event_hour
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: judge_ods_fd_snowplow_all_event
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_snowplow_all_event_hour
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: judge_dwd_fd_session_channel
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_session_channel
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: judge_ods_fd_vb_order_marketing_data
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_order_marketing_data
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: judge_dwd_fd_order_info
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_info
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: dwb_fd_rpt_ecommerce_funnel_report
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_rpt_ecommerce_funnel_report/run.sh "${pt}"
+    dependsOn:
+      - judge_ods_fd_snowplow_view_event
+      - judge_dwd_fd_session_channel
+      - judge_ods_fd_vb_order_marketing_data
+      - judge_dwd_fd_order_info
+
+  - name: judge_dwd_fd_finished_goods_test
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_finished_goods_test
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: judge_dwd_fd_category_sales_monthly
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_category_sales_monthly
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: judge_dwd_fd_goods_performance_monthly
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_goods_performance_monthly
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: dwb_fd_goods_test_sales_ratio
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_test_sales_ratio/run.sh "${mt}"
+    dependsOn:
+      - judge_dwd_fd_finished_goods_test
+      - judge_dwd_fd_category_sales_monthly
+      - judge_dwd_fd_goods_performance_monthly
+
+  - name: dwb_fd_120_position_impression_uv_7d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_120_position_impression_uv_7d/run.sh "${pt}"
+    dependsOn:
+      - judge_ods_fd_snowplow_goods_event
+
+  - name: fd_hour_job_end
+    type: noop
+    dependsOn:
+      - dwb_fd_landing_check
+      - dwb_fd_rpt_ecommerce_funnel_report
+      - dwb_fd_goods_test_sales_ratio
+

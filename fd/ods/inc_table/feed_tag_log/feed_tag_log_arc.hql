@@ -16,11 +16,11 @@ CREATE TABLE IF NOT EXISTS ods_fd_ar.ods_fd_feed_tag_log_arc (
     `custom_label_4` string COMMENT 'label value of custom_label_4',
     `last_update_time` string COMMENT 'log time when insert'
 ) COMMENT ''
-PARTITIONED BY (dt STRING )
+PARTITIONED BY (pt STRING )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
-INSERT overwrite table ods_fd_ar.ods_fd_feed_tag_log_arc PARTITION (dt='${hiveconf:dt}')
+INSERT overwrite table ods_fd_ar.ods_fd_feed_tag_log_arc PARTITION (pt='${hiveconf:pt}')
 select 
     feed_name,
     goods_id,
@@ -56,10 +56,10 @@ from (
         custom_label_3,
         custom_label_4,
         last_update_time,
-        row_number () OVER (PARTITION BY goods_id ORDER BY dt DESC) AS rank
+        row_number () OVER (PARTITION BY goods_id ORDER BY pt DESC) AS rank
     from(
         select
-            dt
+            pt
             feed_name,
             goods_id,
             log_date,
@@ -76,12 +76,12 @@ from (
             custom_label_3,
             custom_label_4,
             last_update_time
-        from ods_fd_ar.ods_fd_feed_tag_log_arc where dt = '${hiveconf:dt_last}'
+        from ods_fd_ar.ods_fd_feed_tag_log_arc where pt = '${hiveconf:pt_last}'
 
         UNION
 
         select
-            dt
+            pt
             feed_name,
             goods_id,
             log_date,
@@ -98,6 +98,6 @@ from (
             custom_label_3,
             custom_label_4,
             last_update_time
-        from ods_fd_ar.ods_fd_feed_tag_log_inc where dt = '${hiveconf:dt}'
+        from ods_fd_ar.ods_fd_feed_tag_log_inc where pt = '${hiveconf:pt}'
     )inc
 ) arc where arc.rank =1;

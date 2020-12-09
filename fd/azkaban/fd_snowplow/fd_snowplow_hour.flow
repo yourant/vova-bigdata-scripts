@@ -1,0 +1,63 @@
+---
+config:
+  failure.emails: jhlu@i9i8.com
+  retries: 10
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_hour_job_start
+    type: noop
+
+  - name: fd_snowplow_hour_flow_start
+    type: noop
+    dependsOn:
+      - fd_hour_job_start
+
+  - name: ods_fd_snowplow_all_event_hour
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ods/snowplow/fd_snowplow_all_event/run.sh "${datetime}"
+    dependsOn:
+      - fd_snowplow_hour_flow_start
+
+  - name: ods_fd_snowplow_ecommerce_event_hour
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ods/snowplow/fd_snowplow_ecommerce_event/run.sh "${datetime}"
+    dependsOn:
+      - ods_fd_snowplow_all_event_hour
+
+  - name: ods_fd_snowplow_element_event_hour
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ods/snowplow/fd_snowplow_element_event/run.sh "${datetime}"
+    dependsOn:
+      - ods_fd_snowplow_all_event_hour
+
+  - name: ods_fd_snowplow_goods_event_hour
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ods/snowplow/fd_snowplow_goods_event/run.sh "${datetime}"
+    dependsOn:
+      - ods_fd_snowplow_all_event_hour
+
+  - name: ods_fd_snowplow_view_event_hour
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ods/snowplow/fd_snowplow_view_event/run.sh "${datetime}"
+    dependsOn:
+      - ods_fd_snowplow_all_event_hour
+
+  - name: fd_snowplow_hour_flow_end
+    type: noop
+    dependsOn:
+      - ods_fd_snowplow_ecommerce_event_hour
+      - ods_fd_snowplow_element_event_hour
+      - ods_fd_snowplow_goods_event_hour
+      - ods_fd_snowplow_view_event_hour
+
+  - name: fd_hour_job_end
+    type: noop
+    dependsOn:
+      - fd_snowplow_hour_flow_end
+

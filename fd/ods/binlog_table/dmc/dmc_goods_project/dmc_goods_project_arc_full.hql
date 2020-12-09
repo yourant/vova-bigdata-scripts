@@ -18,23 +18,23 @@ CREATE TABLE IF NOT EXISTS ods_fd_dmc.ods_fd_dmc_goods_project_arc (
     `virtual_goods_id` string comment '虚拟id',
     `goods_selector` string comment '选款人'
 ) COMMENT '商品组织信息表'
-PARTITIONED BY (dt STRING)
+PARTITIONED BY (pt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 
 set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite table ods_fd_dmc.ods_fd_dmc_goods_project_arc PARTITION (dt = '${hiveconf:dt}')
+INSERT overwrite table ods_fd_dmc.ods_fd_dmc_goods_project_arc PARTITION (pt = '${hiveconf:pt}')
 select 
      id, goods_id, party_id, created_at, updated_at, deleted_at, on_sale_time, on_sale_staff, off_sale_time, shop_price, market_price, is_tort, risk_level, is_on_sale, is_delete, is_display, virtual_goods_id, goods_selector
 from (
 
     select 
-        dt,id, goods_id, party_id, created_at, updated_at, deleted_at, on_sale_time, on_sale_staff, off_sale_time, shop_price, market_price, is_tort, risk_level, is_on_sale, is_delete, is_display, virtual_goods_id, goods_selector,
-        row_number () OVER (PARTITION BY id ORDER BY dt DESC) AS rank
+        pt,id, goods_id, party_id, created_at, updated_at, deleted_at, on_sale_time, on_sale_staff, off_sale_time, shop_price, market_price, is_tort, risk_level, is_on_sale, is_delete, is_display, virtual_goods_id, goods_selector,
+        row_number () OVER (PARTITION BY id ORDER BY pt DESC) AS rank
     from (
 
-        select  '2020-01-01' as dt,
+        select  '2020-01-01' as pt,
                 id,
                 goods_id,
                 party_id,
@@ -57,10 +57,10 @@ from (
 
         UNION
 
-        select dt,id, goods_id, party_id, created_at, updated_at, deleted_at, on_sale_time, on_sale_staff, off_sale_time, shop_price, market_price, is_tort, risk_level, is_on_sale, is_delete, is_display, virtual_goods_id, goods_selector
+        select pt,id, goods_id, party_id, created_at, updated_at, deleted_at, on_sale_time, on_sale_staff, off_sale_time, shop_price, market_price, is_tort, risk_level, is_on_sale, is_delete, is_display, virtual_goods_id, goods_selector
         from (
 
-            select  dt,
+            select  pt,
                     id,
                     goods_id,
                     party_id,
@@ -80,7 +80,7 @@ from (
                     virtual_goods_id,
                     goods_selector,
                     row_number() OVER (PARTITION BY id ORDER BY event_id DESC) AS rank
-            from ods_fd_dmc.ods_fd_dmc_goods_project_inc where dt='${hiveconf:dt}'
+            from ods_fd_dmc.ods_fd_dmc_goods_project_inc where pt='${hiveconf:pt}'
 
         ) inc where inc.rank = 1
     ) arc 

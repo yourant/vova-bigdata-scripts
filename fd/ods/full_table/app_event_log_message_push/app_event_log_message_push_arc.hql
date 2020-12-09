@@ -22,12 +22,12 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_app_event_log_message_push_arc(
     `system` string COMMENT '',
     `bundle_id` string COMMENT ''
 ) COMMENT 'app message 推送信息表'
-PARTITIONED BY (dt STRING )
+PARTITIONED BY (pt STRING )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 
-INSERT overwrite table ods_fd_vb.ods_fd_app_event_log_message_push_arc PARTITION (dt='${hiveconf:dt}')
+INSERT overwrite table ods_fd_vb.ods_fd_app_event_log_message_push_arc PARTITION (pt='${hiveconf:pt}')
 select
 	id,
         event_type,

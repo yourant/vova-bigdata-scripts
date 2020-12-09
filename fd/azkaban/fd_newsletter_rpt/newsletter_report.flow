@@ -1,0 +1,68 @@
+---
+config:
+  failure.emails: qwang@i9i8.com
+  retries: 6
+  retry.backoff: 300000
+
+nodes:
+  - name: newsletter_report_start
+    type: noop
+
+  - name: judge_ods_fd_vb_newsletters
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_newsletters
+    dependsOn:
+      - newsletter_report_start
+
+  - name: judge_ods_fd_vb_email_unsubscribe
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_email_unsubscribe
+    dependsOn:
+      - newsletter_report_start
+  
+  - name: judge_dwd_fd_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_goods
+    dependsOn:
+      - newsletter_report_start
+  
+  - name: judge_ods_fd_ar_order_analytics
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_ar_order_analytics
+    dependsOn:
+      - newsletter_report_start
+
+  - name: newsletter_send_report_caculate
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_newsletter_rpt/send_run.sh ${pt}
+    dependsOn:
+      - judge_ods_fd_vb_newsletters
+      - judge_ods_fd_vb_email_unsubscribe
+  
+  - name: newsletter_order_report_caculate
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_newsletter_rpt/order_run.sh ${pt}
+    dependsOn:
+      - judge_dwd_fd_order_goods
+      - judge_ods_fd_ar_order_analytics
+  
+  - name: newsletter_order_sp_report_caculate
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_newsletter_rpt/sp_run.sh ${pt}
+    dependsOn:
+      - judge_dwd_fd_order_goods
+      - judge_ods_fd_ar_order_analytics
+
+  - name: newsletter_report_end
+    type: noop
+    dependsOn:
+      - newsletter_send_report_caculate
+      - newsletter_order_report_caculate
+      - newsletter_order_sp_report_caculate

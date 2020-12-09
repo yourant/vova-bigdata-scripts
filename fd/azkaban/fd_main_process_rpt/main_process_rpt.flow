@@ -1,0 +1,64 @@
+---
+config:
+  failure.emails: yunling@i9i8.com
+  retries: 5
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_main_process_report_start
+    type: noop
+
+  - name: main_process_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: main_process_report_start
+        type: noop
+        
+      - name: judge_snowplow_all_event
+        type: noop
+        dependsOn:
+          - main_process_report_start
+      
+      - name: judge_session_channel
+        type: noop
+        dependsOn:
+          - main_process_report_start
+      
+      - name: judge_ods_fd_vb_order_marketing_data
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_order_marketing_data
+        dependsOn:
+          - main_process_report_start
+      
+      - name: judge_dwd_fd_order_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_info
+        dependsOn:
+          - main_process_report_start
+
+      - name: main_process_report_caculate
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_main_process_rpt/run.sh ${pt}
+        dependsOn:
+          - judge_snowplow_all_event
+          - judge_session_channel
+          - judge_ods_fd_vb_order_marketing_data
+          - judge_dwd_fd_order_info
+
+      - name: main_process_report_end
+        type: noop
+        dependsOn:
+          - main_process_report_caculate
+
+    dependsOn:
+      - fd_main_process_report_start
+
+  - name: fd_main_process_report_end
+    type: noop
+    dependsOn:
+      - main_process_flow

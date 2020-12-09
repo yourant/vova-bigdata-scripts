@@ -32,23 +32,23 @@ CREATE TABLE IF NOT EXISTS ods_fd_dmc.ods_fd_dmc_sheIf_goods_arc (
     `submit_time` bigint comment '贸综提交时间',
     `task_time` bigint comment '找款任务开始时间'
 ) COMMENT '上架商品对应组织'
-PARTITIONED BY (dt STRING)
+PARTITIONED BY (pt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 
 set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite table ods_fd_dmc.ods_fd_dmc_sheIf_goods_arc PARTITION (dt = '${hiveconf:dt}')
+INSERT overwrite table ods_fd_dmc.ods_fd_dmc_sheIf_goods_arc PARTITION (pt = '${hiveconf:pt}')
 select 
      id, goods_sn, extend_goods_id, status, up_sheIf_time, supplier_image_url, modify_image_url, cat_id, pg_id, supplier_goods_sn, purchase_price, market_price, weight, note, exception, source_type, fill_in, source_desc, source_link, source_name, risk_level, is_tort, test_location, is_sort, supplier_remark, updated_at, created_at, deleted_at, find_consignor, is_modify_image, submit_time, task_time
 from (
 
     select 
-        dt,id, goods_sn, extend_goods_id, status, up_sheIf_time, supplier_image_url, modify_image_url, cat_id, pg_id, supplier_goods_sn, purchase_price, market_price, weight, note, exception, source_type, fill_in, source_desc, source_link, source_name, risk_level, is_tort, test_location, is_sort, supplier_remark, updated_at, created_at, deleted_at, find_consignor, is_modify_image, submit_time, task_time,
-        row_number () OVER (PARTITION BY id ORDER BY dt DESC) AS rank
+        pt,id, goods_sn, extend_goods_id, status, up_sheIf_time, supplier_image_url, modify_image_url, cat_id, pg_id, supplier_goods_sn, purchase_price, market_price, weight, note, exception, source_type, fill_in, source_desc, source_link, source_name, risk_level, is_tort, test_location, is_sort, supplier_remark, updated_at, created_at, deleted_at, find_consignor, is_modify_image, submit_time, task_time,
+        row_number () OVER (PARTITION BY id ORDER BY pt DESC) AS rank
     from (
 
-        select  '2020-01-01' as dt
+        select  '2020-01-01' as pt
                 ,id
                 ,goods_sn
                 ,extend_goods_id
@@ -85,7 +85,7 @@ from (
 
         UNION
 
-        select dt,id, goods_sn, extend_goods_id, status, up_sheIf_time, supplier_image_url, modify_image_url, cat_id, pg_id, supplier_goods_sn, purchase_price, market_price, weight, note, exception, source_type, fill_in, source_desc, source_link, source_name, risk_level, is_tort, test_location, is_sort, supplier_remark, updated_at, created_at, deleted_at, find_consignor, is_modify_image, submit_time, task_time
+        select pt,id, goods_sn, extend_goods_id, status, up_sheIf_time, supplier_image_url, modify_image_url, cat_id, pg_id, supplier_goods_sn, purchase_price, market_price, weight, note, exception, source_type, fill_in, source_desc, source_link, source_name, risk_level, is_tort, test_location, is_sort, supplier_remark, updated_at, created_at, deleted_at, find_consignor, is_modify_image, submit_time, task_time
         from (
 
             select  dt,
