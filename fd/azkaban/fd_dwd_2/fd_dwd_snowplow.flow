@@ -51,25 +51,25 @@ nodes:
       - fd_daily_job_start
 
   - name: judge_ods_dmc_goods_project
-      type: command
-      config:
-        command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_dmc_goods_project
-      dependsOn:
-        - fd_daily_job_start
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_dmc_goods_project
+    dependsOn:
+      - fd_daily_job_start
 
   - name: judge_ods_dmc_goods
-      type: command
-      config:
-        command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_dmc_goods
-      dependsOn:
-        - fd_daily_job_start
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_dmc_goods
+    dependsOn:
+      - fd_daily_job_start
 
   - name: judge_ods_fam_party
-      type: command
-      config:
-        command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fam_party
-      dependsOn:
-        - fd_daily_job_start
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fam_party
+    dependsOn:
+      - fd_daily_job_start
 
   - name: dwd_fd_session_channel
     type: command
@@ -109,14 +109,14 @@ nodes:
       - judge_ods_fd_vb_goods_test_pipeline
       - judge_fd_dim_goods
 
-  - name: dwb_fd_on_sale_goods_price
-      type: command
-      config:
-        command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwb_fd_on_sale_goods_price/run.sh "${pt}"
-      dependsOn:
-        - judge_ods_fam_party
-        - judge_ods_dmc_goods_project
-        - judge_ods_dmc_goods
+  - name: dwd_fd_goods_purchase_shop_price
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_goods_purchase_shop_price/run.sh "${pt}"
+    dependsOn:
+      - judge_ods_fam_party
+      - judge_ods_dmc_goods_project
+      - judge_ods_dmc_goods
 
   - name: fd_hour_job_end
     type: noop

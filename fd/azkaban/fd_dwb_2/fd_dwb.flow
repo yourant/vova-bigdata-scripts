@@ -57,10 +57,10 @@ nodes:
     dependsOn:
       - fd_daily_job_start
 
-  - name: judge_dwb_fd_on_sale_goods_price
+  - name: judge_dwd_fd_goods_purchase_shop_price
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwb_fd_on_sale_goods_price
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_goods_purchase_shop_price
     dependsOn:
       - fd_daily_job_start
 
@@ -112,11 +112,11 @@ nodes:
       - judge_ods_fd_snowplow_goods_event
 
   - name: dwb_fd_on_sale_goods_price
-      type: command
-      config:
-        command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_on_sale_goods_price/run.sh "${pt}"
-      dependsOn:
-        - judge_dwb_fd_on_sale_goods_price
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_on_sale_goods_price/run.sh "${pt}"
+    dependsOn:
+      - judge_dwd_fd_goods_purchase_shop_price
 
   - name: fd_hour_job_end
     type: noop
