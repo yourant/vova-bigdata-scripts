@@ -1,22 +1,53 @@
-**/.classpath
-**/.project
-**/.settings/
-**/target/
-**/*.class
-**/logs/
-.project
-.settings/
+.DS_Store
+azkaban/.DS_Store
+azkaban/ods_etl_d/.DS_Store
+ods/.DS_Store
+*.zip
+
+venv/
+.idea/
+*.pyc
+__pycache__/
+/script/order_source/test/
+.Rproj.user
+.RData
+.Rhistory
+
+# Created by https://www.gitignore.io/api/sbt,scala,intellij
+
+### Intellij ###
+.idea/
+
+### Intellij Patch ###
+# Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
+
+# *.iml
+# modules.xml
+# .idea/misc.xml
+# *.ipr
+
+# Sonarlint plugin
+.idea/sonarlint
+
+### SBT ###
+# Simple Build Tool
+# http://www.scala-sbt.org/release/docs/Getting-Started/Directories.html#configuring-version-control
+
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+.history
+.cache
+.lib/
+
+### Scala ###
 *.class
 *.log
-#*.jar
-*.iml
-*.war
-*.DS_Store
-*.project
-*.classpath
-*.settings
-*dependency-reduced-pom.xml
-.idea
-bin
-target
-.attach_pid*
+
+*.zip
+
+
+# End of https://www.gitignore.io/api/sbt,scala,intellij
