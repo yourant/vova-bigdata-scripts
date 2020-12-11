@@ -270,7 +270,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=paypal_txn --mapers=1 --etl_type=ALL  --period_type=day --partition_num=1
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=paypal_txn --inc_column=txn_datetime --etl_type=INCTIMENOMERGE --period_type=day --partition_num=400 --split_id=txn_datetime
         dependsOn:
           - themis_trd_start
 
@@ -461,7 +461,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=goods_sku --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=200
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=goods_sku --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=400
         dependsOn:
           - themis_goods_start
 
@@ -1803,3 +1803,150 @@ nodes:
           command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=risk_user_list --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=2
         dependsOn:
           - themis_risk_start
+
+
+# flow: fn
+  - name: trigram_fn_flow
+    type: flow
+    config:
+      retries: 4
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+    nodes:
+      - name: trigram_fn_start
+        type: noop
+
+      - name: trigram_fn_end
+        type: noop
+        dependsOn:
+          - fn_order_extension
+          - fn_order_info
+          - fn_order_goods
+          - fn_users
+          - fn_goods
+          - fn_category
+          - fn_goods_project
+          - fn_virtual_goods
+          - fn_goods_gallery
+          - fn_site_domain_config
+          - trigram_vega_goods_info_relation
+          - trigram_prettyy_product_map
+
+      - name: fn_order_extension
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=order_extension --etl_type=ALL  --mapers=1 --period_type=day --partition_num=1
+        dependsOn:
+          - trigram_fn_start
+
+      - name: fn_order_info
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=order_info --etl_type=ALL --mapers=1 --period_type=day --partition_num=1
+        dependsOn:
+          - trigram_fn_start
+
+      - name: fn_order_goods
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=order_goods --etl_type=ALL --mapers=1 --period_type=day --partition_num=1
+        dependsOn:
+          - trigram_fn_start
+
+      - name: fn_goods
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=goods --etl_type=ALL --mapers=2 --period_type=day --partition_num=2
+        dependsOn:
+          - trigram_fn_start
+
+      - name: fn_users
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=users --etl_type=ALL --mapers=1 --period_type=day --partition_num=1
+        dependsOn:
+          - trigram_fn_start
+
+      - name: fn_goods_gallery
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=goods_gallery --mapers=1 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=5
+        dependsOn:
+          - trigram_fn_start
+
+      - name: fn_category
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=category --etl_type=ALL  --mapers=1 --period_type=day --partition_num=1
+        dependsOn:
+          - trigram_fn_start
+
+      - name: fn_goods_project
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=goods_project --etl_type=ALL  --mapers=1 --period_type=day --partition_num=1 --primary_key=goods_id
+        dependsOn:
+          - trigram_fn_start
+
+      - name: fn_virtual_goods
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=virtual_goods --etl_type=ALL  --mapers=1 --period_type=day --partition_num=1
+        dependsOn:
+          - trigram_fn_start
+
+      - name: fn_site_domain_config
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=site_domain_config --etl_type=ALL  --mapers=1 --period_type=day --partition_num=1
+        dependsOn:
+          - trigram_fn_start
+
+      - name: fn_site
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=site --etl_type=ALL  --mapers=1 --period_type=day --partition_num=1
+        dependsOn:
+          - trigram_fn_start
+
+# trigram_vega
+      - name: trigram_vega_goods_info_relation
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=gvg --table_name=goods_info_relation --etl_type=ALL  --mapers=10 --period_type=day --partition_num=10
+        dependsOn:
+          - trigram_fn_start
+
+      - name: trigram_prettyy_product_map
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=gpt --table_name=product_map --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
+        dependsOn:
+          - trigram_fn_start
