@@ -7,55 +7,55 @@ cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 ###更新用户首单
 sql="
-drop table if exists ods_vova_themis.ods_vova_user_mission_record;
-create table if not exists ods_vova_themis.ods_vova_user_mission_record as
+drop table if exists ods_vova_vts.ods_vova_user_mission_record;
+create table if not exists ods_vova_vts.ods_vova_user_mission_record as
 select *
-from ods_vova_themis.ods_vova_user_mission_record_0
+from ods_vova_vts.ods_vova_user_mission_record_0
 union
 select *
-from ods_vova_themis.ods_vova_user_mission_record_1
+from ods_vova_vts.ods_vova_user_mission_record_1
 union
 select *
-from ods_vova_themis.ods_vova_user_mission_record_2
+from ods_vova_vts.ods_vova_user_mission_record_2
 union
 select *
-from ods_vova_themis.ods_vova_user_mission_record_3
+from ods_vova_vts.ods_vova_user_mission_record_3
 union
 select *
-from ods_vova_themis.ods_vova_user_mission_record_4
+from ods_vova_vts.ods_vova_user_mission_record_4
 union
 select *
-from ods_vova_themis.ods_vova_user_mission_record_5
+from ods_vova_vts.ods_vova_user_mission_record_5
 union
 select *
-from ods_vova_themis.ods_vova_user_mission_record_6
+from ods_vova_vts.ods_vova_user_mission_record_6
 union
 select *
-from ods_vova_themis.ods_vova_user_mission_record_7
+from ods_vova_vts.ods_vova_user_mission_record_7
 union
 select *
-from ods_vova_themis.ods_vova_user_mission_record_8
+from ods_vova_vts.ods_vova_user_mission_record_8
 union
 select *
-from ods_vova_themis.ods_vova_user_mission_record_9
+from ods_vova_vts.ods_vova_user_mission_record_9
 union
 select *
-from ods_vova_themis.ods_vova_user_mission_record_10
+from ods_vova_vts.ods_vova_user_mission_record_10
 union
 select *
-from ods_vova_themis.ods_vova_user_mission_record_11
+from ods_vova_vts.ods_vova_user_mission_record_11
 union
 select *
-from ods_vova_themis.ods_vova_user_mission_record_12
+from ods_vova_vts.ods_vova_user_mission_record_12
 union
 select *
-from ods_vova_themis.ods_vova_user_mission_record_13
+from ods_vova_vts.ods_vova_user_mission_record_13
 union
 select *
-from ods_vova_themis.ods_vova_user_mission_record_14
+from ods_vova_vts.ods_vova_user_mission_record_14
 union
 select *
-from ods_vova_themis.ods_vova_user_mission_record_15;
+from ods_vova_vts.ods_vova_user_mission_record_15;
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
 spark-sql --conf "spark.dynamicAllocation.maxExecutors=100"   --conf "spark.dynamicAllocation.minExecutors=20"  --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.app.name=merge_vova_user_mission_record" -e "$sql"
