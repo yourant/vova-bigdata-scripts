@@ -1,11 +1,11 @@
 #bin/sh
-table="dwb_fd_goods_test_finder_summary"
+table="dwd_fd_goods_purchase_shop_price"
 user="lujiaheng"
 
-base_path="/mnt/vova-bigdata-scripts/fd/dwb"
+base_path="/mnt/vova-bigdata-scripts/fd/dwd"
 
 if [ ! -n "$1" ]; then
-  pt=$(date +"%Y-%m-%d")
+  pt=$(date -d "- 1 days" +"%Y-%m-%d")
 else
   echo $1 | grep -Eq "[0-9]{4}-[0-9]{2}-[0-9]{2}" && date -d "$1" +"%Y-%m-%d" >/dev/null
   if [[ $? -ne 0 ]]; then
@@ -14,7 +14,10 @@ else
   fi
   pt=$1
 fi
+mt=$(date -d "${pt}" +"%Y-%m")
+
 echo "pt: ${pt}"
+echo "mt: ${mt}"
 
 shell_path="${base_path}/${table}"
 

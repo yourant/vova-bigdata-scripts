@@ -1,7 +1,7 @@
 create table if not exists dwd.dwd_fd_finished_preorder
 (
     preorder_plan_id   bigint comment '商品预售计划ID',
-    preorder_plan_name STRING comment '商品预售计划ID',
+    preorder_plan_name STRING comment '商品预售计划名称',
     goods_id           bigint comment '商品id',
     virtual_goods_id   bigint comment '商品虚拟ID',
     project_name       string comment '组织',

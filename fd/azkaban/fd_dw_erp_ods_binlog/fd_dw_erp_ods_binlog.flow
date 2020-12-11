@@ -5,7 +5,7 @@ config:
   retry.backoff: 300000
 
 nodes:
-  - name: fd_dw_erp_ods_inc_start
+  - name: fd_erp_ods_inc_start
     type: noop
 
   - name: fd_ecshop_inc_flow
@@ -175,7 +175,7 @@ nodes:
           - ods_fd_ecs_goods
 
     dependsOn:
-      - fd_dw_erp_ods_inc_start
+      - fd_erp_ods_inc_start
 
   - name: fd_romeo_inc_flow
     type: flow
@@ -212,7 +212,7 @@ nodes:
           - ods_fd_inventory_summary
 
     dependsOn:
-      - fd_dw_erp_ods_inc_start
+      - fd_erp_ods_inc_start
 
   - name: fd_dmc_flow
     type: flow
@@ -240,9 +240,10 @@ nodes:
         type: noop
         dependsOn:
           - ods_dmc_goods
+          - ods_dmc_goods_project
     
     dependsOn:
-      - fd_dw_erp_ods_inc_start
+      - fd_erp_ods_inc_start
     
   - name: fd_fam_flow
     type: flow
@@ -265,9 +266,9 @@ nodes:
           - ods_fam_party
     
     dependsOn:
-      - fd_dw_erp_ods_inc_start
+      - fd_erp_ods_inc_start
 
-  - name: fd_dw_erp_ods_inc_end
+  - name: fd_erp_ods_inc_end
     type: noop
     dependsOn:
       - fd_ecshop_inc_flow

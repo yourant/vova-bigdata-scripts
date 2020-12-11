@@ -1,5 +1,7 @@
 insert overwrite table dwb.dwb_fd_on_sale_goods_price partition (pt = '${pt}')
-select gpsp.goods_id,
+select
+       /*+ REPARTITION(1) */
+       gpsp.goods_id,
        gpsp.virtual_goods_id,
        gpsp.project_name,
        gpsp.cat_id,

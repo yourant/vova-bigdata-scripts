@@ -16,10 +16,10 @@ resp=`curl -s -H "Content-Type:application/json" -X POST -d '{
     "date":"'${exec_date}'",
     "jobName":"'${exec_job}'",
     "flowName":"'${flow_name}'"
-}' http://api_url/job/judgeJobStatus`
+}' http://$api_url/job/judgeJobStatus`
 code=`echo $resp |jq '.code'`
 echo "$resp"
-if [[ "0" == "$code" ]];then
+if [[ "1" == "$code" ]];then
    exit 0
 fi
    exit 1
