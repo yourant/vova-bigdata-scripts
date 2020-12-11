@@ -1,11 +1,11 @@
 #bin/sh
-table="dwb_fd_goods_test_finder_summary"
+table="dim_fd_goods_finder"
 user="lujiaheng"
 
-base_path="/mnt/vova-bigdata-scripts/fd/dwb"
+base_path="/mnt/vova-bigdata-scripts/fd/dim"
 
 if [ ! -n "$1" ]; then
-  pt=$(date +"%Y-%m-%d")
+  pt=$(date -d "- 1 days" +"%Y-%m-%d")
 else
   echo $1 | grep -Eq "[0-9]{4}-[0-9]{2}-[0-9]{2}" && date -d "$1" +"%Y-%m-%d" >/dev/null
   if [[ $? -ne 0 ]]; then
@@ -23,7 +23,6 @@ hive -f ${shell_path}/${table}_create.hql
 spark-sql \
   --conf "spark.app.name=${table}_${user}" \
   --conf "spark.dynamicAllocation.maxExecutors=60" \
-  -d pt="${pt}" \
   -f ${shell_path}/${table}_insert.hql
 
 if [ $? -ne 0 ]; then

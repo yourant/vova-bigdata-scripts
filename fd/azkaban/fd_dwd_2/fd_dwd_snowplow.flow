@@ -71,6 +71,27 @@ nodes:
     dependsOn:
       - fd_daily_job_start
 
+  - name: judge_ods_fd_vb_goods_test_preorder_result
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_goods_test_preorder_result
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: judge_ods_fd_vb_goods_preorder_plan
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_goods_preorder_plan
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: judge_fd_dim_category
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fd_dim_category
+    dependsOn:
+      - fd_daily_job_start
+
   - name: dwd_fd_session_channel
     type: command
     config:
@@ -118,11 +139,22 @@ nodes:
       - judge_ods_dmc_goods_project
       - judge_ods_dmc_goods
 
-  - name: fd_hour_job_end
+  - name: dwd_fd_finished_preorder
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_finished_preorder/run.sh "${pt}"
+    dependsOn:
+      - judge_ods_fd_vb_goods_test_preorder_result
+      - judge_ods_fd_vb_goods_preorder_plan
+      - judge_fd_dim_category
+
+  - name: fd_daily_job_end
     type: noop
     dependsOn:
       - dwd_fd_session_channel
       - dwd_fd_goods_performance_monthly
       - dwd_fd_category_sales_monthly
       - dwd_fd_finished_goods_test
+      - dwd_fd_goods_purchase_shop_price
+      - dwd_fd_finished_preorder
 

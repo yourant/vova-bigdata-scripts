@@ -64,6 +64,27 @@ nodes:
     dependsOn:
       - fd_daily_job_start
 
+  - name: judge_dwd_fd_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_goods
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: judge_dwd_fd_finished_preorder
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_finished_preorder
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: judge_dim_fd_goods_finder
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_fd_goods_finder
+    dependsOn:
+      - fd_daily_job_start
+
   - name: dwb_fd_rpt_ecommerce_funnel_report
     type: command
     config:
@@ -118,10 +139,22 @@ nodes:
     dependsOn:
       - judge_dwd_fd_goods_purchase_shop_price
 
-  - name: fd_hour_job_end
+  - name: dwb_fd_goods_test_finder_summary
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_test_finder_summary/run.sh "${pt}"
+    dependsOn:
+      - judge_dwd_fd_order_goods
+      - judge_dwd_fd_finished_goods_test
+      - judge_dwd_fd_finished_preorder
+      - judge_dim_fd_goods_finder
+
+  - name: fd_daily_job_end
     type: noop
     dependsOn:
       - dwb_fd_landing_check
       - dwb_fd_rpt_ecommerce_funnel_report
       - dwb_fd_goods_test_sales_ratio
+      - dwb_fd_120_position_impression_uv_7d
+      - dwb_fd_on_sale_goods_price
 
