@@ -50,7 +50,7 @@ from
            platform_type,
             country,
             app_version,
-           if(abtest_name regexp 'amp;',substr(abtest_name,5),abtest_name) as abtest_name,
+           if(abtest_name regexp 'amp',substr(abtest_name,5),abtest_name) as abtest_name,
            abtest_version,
            session_id,
            product_session_id,
