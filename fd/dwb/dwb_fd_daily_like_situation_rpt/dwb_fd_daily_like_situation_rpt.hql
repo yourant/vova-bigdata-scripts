@@ -51,5 +51,6 @@ group by batch, virtual_goods_id, project, country, platform_type
     grouping sets (
     ( batch, virtual_goods_id, project, country, platform_type),
     ( batch, virtual_goods_id, project, country),
-    ( batch, virtual_goods_id, project, platform_type )
+    ( batch, virtual_goods_id, project, platform_type ),
+    ( batch, virtual_goods_id, project)
     );
