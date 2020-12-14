@@ -8,7 +8,8 @@ create table if not exists dwd.dwd_fd_finished_preorder
     cat_id             bigint comment '品类id',
     cat_name           string comment '品类名字',
     result             bigint comment '测款结果',
-    finish_time        string comment '线程结束时间'
+    finish_time        string comment '线程结束时间',
+    test_time          string comment '入测时间'
 )
     comment "已经结束的预售信息"
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
