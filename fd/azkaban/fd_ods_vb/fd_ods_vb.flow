@@ -223,7 +223,7 @@ nodes:
       - name: ods_fd_ar_feed_tag_log
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=INCTIME --inc_column=last_update_time --table_name=feed_tag_log  --partition_num=1 --period_type=day  --split_id=goods_id
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=INCTIME --inc_column=last_update_time --table_name=feed_tag_log  --partition_num=100 --period_type=day  --split_id=goods_id
         dependsOn:
           - fd_ods_order_flow_start
 
