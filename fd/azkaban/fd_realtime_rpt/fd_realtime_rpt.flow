@@ -1,0 +1,55 @@
+---
+config:
+  failure.emails: ekkozhang@i9i8.com
+  retries: 6
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_realtime_start
+    type: noop
+
+  - name: judge_ods_fd_order_info
+    type: noop
+    dependsOn:
+      - fd_realtime_start
+  
+
+  - name: judge_ods_fd_user_agent_analysis
+    type: noop
+    dependsOn:
+      - fd_realtime_start
+  
+  - name: judge_dim_fd_region
+    type: noop
+    dependsOn:
+      - fd_realtime_start
+  
+  - name: judge_ods_fd_snowplow_all_event
+    type: noop
+    dependsOn:
+      - fd_realtime_start
+
+  - name: fd_realtime_run2
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_realtime_rpt/run2.sh ${pt}
+    dependsOn:
+      - fd_realtime_start
+
+  - name: fd_realtime_run
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_realtime_rpt/run.sh ${pt}
+    dependsOn:
+      - fd_realtime_run2
+      - judge_ods_fd_order_info
+      - judge_ods_fd_user_agent_analysis
+      - judge_dim_fd_region
+      - judge_ods_fd_snowplow_all_event
+  
+
+
+  - name: fd_realtime_end
+    type: noop
+    dependsOn:
+      - fd_realtime_run
