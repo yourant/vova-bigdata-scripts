@@ -300,7 +300,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=paypal_txn --inc_column=txn_datetime --etl_type=INCTIMENOMERGE --period_type=day --partition_num=400 --split_id=txn_id
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=paypal_txn --inc_column=txn_datetime --etl_type=INCTIMENOMERGE --period_type=day --partition_num=400 --split_id=txn_datetime
         dependsOn:
           - themis_trd_start
 
