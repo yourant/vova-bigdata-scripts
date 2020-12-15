@@ -1,0 +1,100 @@
+---
+config:
+  retries: 10
+  retry.backoff: 120000
+
+
+nodes:
+  - name: end_flag
+    type: noop
+    dependsOn:
+      - trd_flow
+      - goods_flow
+
+  - name: start_flag
+    type: noop
+
+
+
+# flow: 交易域数据抽取
+  - name: trd_flow
+    type: flow
+    config:
+      retries: 10
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+    nodes:
+      - name: trd_start
+        type: noop
+
+      - name: trd_end
+        type: noop
+        dependsOn:
+          - vova_order_info_h
+          - vova_order_relation_h
+          - vova_order_goods_h
+          - fn_order_info_h
+
+
+      - name: vova_order_info_h
+        type: command
+        config:
+          retries: 10
+          retry.backoff: 120000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=order_info --inc_column=last_update_time --mapers=5 --etl_type=INCTIME --period_type=hour --partition_num=100
+        dependsOn:
+          - trd_start
+
+      - name: vova_order_relation_h
+        type: command
+        config:
+          retries: 10
+          retry.backoff: 120000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=order_relation --inc_column=order_id --etl_type=INCID --period_type=hour --partition_num=50
+        dependsOn:
+          - trd_start
+
+      - name: vova_order_goods_h
+        type: command
+        config:
+          retries: 10
+          retry.backoff: 120000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=order_goods --inc_column=rec_id --etl_type=INCID --period_type=hour --partition_num=700
+        dependsOn:
+          - trd_start
+
+      - name: fn_order_info_h
+        type: command
+        config:
+          retries: 10
+          retry.backoff: 120000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=order_info --mapers=1 --etl_type=INIT  --period_type=hour --partition_num=1
+        dependsOn:
+          - trd_start
+
+# flow: 商品域数据抽取
+  - name: goods_flow
+    type: flow
+    config:
+      retries: 10
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+    nodes:
+      - name: goods_end
+        type: noop
+        dependsOn:
+          - vova_virtual_goods_h
+
+      - name: goods_start
+        type: noop
+
+      - name: vova_virtual_goods_h
+        type: command
+        config:
+          retries: 10
+          retry.backoff: 120000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=virtual_goods --inc_column=virtual_goods_id --etl_type=INCID --period_type=hour --partition_num=10
+        dependsOn:
+          - goods_start
