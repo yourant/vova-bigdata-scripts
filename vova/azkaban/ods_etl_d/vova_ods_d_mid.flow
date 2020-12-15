@@ -1,0 +1,1303 @@
+---
+config:
+  retries: 4
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: noop
+    dependsOn:
+      - themis_fin_flow
+      - themis_risk_flow
+      - themis_mktcpn_flow
+      - trigram_fn_flow
+      - other_mktcpn_flow
+
+  - name: start_flag
+    type: noop
+
+
+# flow: 财务域数据抽取
+  - name: themis_fin_flow
+    type: flow
+    config:
+      retries: 4
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+    nodes:
+      - name: themis_fin_start
+        type: noop
+
+      - name: themis_fin_end
+        type: noop
+        dependsOn:
+          - vova_currency
+          - vova_user_withdraw_detail
+          - vova_adyen_klarna_capture_record
+
+#财务域数据抽取
+      - name: vova_currency
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=currency --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
+        dependsOn:
+          - themis_fin_start
+
+      - name: vova_user_withdraw_detail
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_withdraw_detail --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_fin_start
+
+      - name: vova_adyen_klarna_capture_record
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=adyen_klarna_capture_record --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - themis_fin_start
+
+
+# flow: 风控域数据抽取
+  - name: themis_risk_flow
+    type: flow
+    config:
+      retries: 4
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+    nodes:
+      - name: themis_risk_start
+        type: noop
+
+      - name: themis_risk_end
+        type: noop
+        dependsOn:
+          - vova_risk_user_list
+
+#风控域数据抽取
+      - name: vova_risk_user_list
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=risk_user_list --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_risk_start
+
+
+# flow: fn
+  - name: trigram_fn_flow
+    type: flow
+    config:
+      retries: 4
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+    nodes:
+      - name: trigram_fn_start
+        type: noop
+
+      - name: trigram_fn_end
+        type: noop
+        dependsOn:
+          - fn_order_extension
+          - fn_order_info
+          - fn_order_goods
+          - fn_users
+          - fn_goods
+          - fn_category
+          - fn_goods_project
+          - fn_virtual_goods
+          - fn_goods_gallery
+          - fn_site_domain_config
+          - trigram_vega_goods_info_relation
+          - trigram_prettyy_product_map
+
+      - name: fn_order_extension
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=order_extension --etl_type=ALL  --mapers=1 --period_type=day --partition_num=3
+        dependsOn:
+          - trigram_fn_start
+
+      - name: fn_order_info
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=order_info --etl_type=ALL --mapers=1 --period_type=day --partition_num=3
+        dependsOn:
+          - trigram_fn_start
+
+      - name: fn_order_goods
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=order_goods --etl_type=ALL --mapers=1 --period_type=day --partition_num=3
+        dependsOn:
+          - trigram_fn_start
+
+      - name: fn_goods
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=goods --etl_type=ALL --mapers=2 --period_type=day --partition_num=10
+        dependsOn:
+          - trigram_fn_start
+
+      - name: fn_users
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=users --etl_type=ALL --mapers=1 --period_type=day --partition_num=3
+        dependsOn:
+          - trigram_fn_start
+
+      - name: fn_goods_gallery
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=goods_gallery --mapers=1 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - trigram_fn_start
+
+      - name: fn_category
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=category --etl_type=ALL  --mapers=1 --period_type=day --partition_num=3
+        dependsOn:
+          - trigram_fn_start
+
+      - name: fn_goods_project
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=goods_project --etl_type=ALL  --mapers=1 --period_type=day --partition_num=3 --primary_key=goods_id
+        dependsOn:
+          - trigram_fn_start
+
+      - name: fn_virtual_goods
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=virtual_goods --etl_type=ALL  --mapers=1 --period_type=day --partition_num=3
+        dependsOn:
+          - trigram_fn_start
+
+      - name: fn_site_domain_config
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=site_domain_config --etl_type=ALL  --mapers=1 --period_type=day --partition_num=3
+        dependsOn:
+          - trigram_fn_start
+
+      - name: fn_site # test 表不存在
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=site --etl_type=ALL  --mapers=1 --period_type=day --partition_num=3
+        dependsOn:
+          - trigram_fn_start
+
+# trigram_vega
+      - name: trigram_vega_goods_info_relation
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=gvg --table_name=goods_info_relation --etl_type=ALL  --mapers=10 --period_type=day --partition_num=10
+        dependsOn:
+          - trigram_fn_start
+
+      - name: trigram_prettyy_product_map
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=gpt --table_name=product_map --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
+        dependsOn:
+          - trigram_fn_start
+
+
+
+# flow: other 营销活动域数据抽取
+  - name: other_mktcpn_flow
+    type: flow
+    config:
+      retries: 4
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+    nodes:
+      - name: other_mktcpn_start
+        type: noop
+
+      - name: other_mktcpn_end
+        type: noop
+        dependsOn:
+          - vova_channel_mapping
+          - vova_appsflyer_record
+          - ac_appsflyer_record
+          - vova_app_push_logs_02
+          - vova_ac_app_event_log_message_push
+          - vova_app_event_log_message_push
+          - vova_app_push_tag
+          - vova_app_push_task
+          - vova_app_push_task_config
+          - vova_user_tags
+          - vova_app_install_record
+          - vova_email_task_config
+          - vova_email_send_log_a
+          - vova_email_send_log_b
+          - vova_email_send_log_c
+
+      - name: vova_channel_mapping
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vtlr --table_name=channel_mapping --etl_type=ALL  --mapers=1 --period_type=day --partition_num=3
+        dependsOn:
+          - other_mktcpn_start
+
+      - name: vova_goods_img_mapping
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vbts --table_name=goods_img_mapping --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
+        dependsOn:
+          - other_mktcpn_start
+
+      - name: vova_appsflyer_record
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vtl --table_name=appsflyer_record --inc_column=id --etl_type=INCID --period_type=day --partition_num=200
+        dependsOn:
+          - other_mktcpn_start
+
+      - name: ac_appsflyer_record # test 无库
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=acl --table_name=appsflyer_record --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - other_mktcpn_start
+
+      - name: vova_app_push_logs_02
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/vova/ods/push_click/update.sh
+        dependsOn:
+          - other_mktcpn_start
+
+#推送 mktcpn_start
+      - name: vova_ac_app_event_log_message_push
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vtp --table_name=ac_app_event_log_message_push --etl_type=ALL  --mapers=1 --period_type=day --partition_num=3
+        dependsOn:
+          - other_mktcpn_start
+
+      - name: vova_app_event_log_message_push
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vtp --table_name=app_event_log_message_push --inc_column=id --etl_type=INCID --period_type=day --partition_num=25
+        dependsOn:
+          - other_mktcpn_start
+
+      - name: vova_app_push_tag
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vtp --table_name=app_push_tag --etl_type=ALL  --mapers=1 --period_type=day --partition_num=3
+        dependsOn:
+          - other_mktcpn_start
+
+      - name: vova_app_push_task
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vtp --table_name=app_push_task --etl_type=ALL --mapers=1 --period_type=day --partition_num=3
+        dependsOn:
+          - other_mktcpn_start
+
+      - name: vova_app_push_task_config
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vtp --table_name=app_push_task_config --etl_type=ALL --mapers=1 --period_type=day --partition_num=3
+        dependsOn:
+          - other_mktcpn_start
+
+      - name: vova_user_tags
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vtp --table_name=user_tags --inc_column=update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - other_mktcpn_start
+
+      - name: vova_app_install_record
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vtp --table_name=app_install_record --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=100
+        dependsOn:
+          - other_mktcpn_start
+
+      - name: vova_email_task_config
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vtp --table_name=email_task_config --etl_type=ALL  --mapers=1 --period_type=day --partition_num=3
+        dependsOn:
+          - other_mktcpn_start
+
+      - name: vova_email_send_log_a # test 表不存在
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vtp --table_name=email_send_log_a --inc_column=update_time --mapers=5 --etl_type=INCTIME --period_type=day --partition_num=40
+        dependsOn:
+          - other_mktcpn_start
+
+      - name: vova_email_send_log_b # test 表不存在
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vtp --table_name=email_send_log_b --inc_column=update_time --mapers=5 --etl_type=INCTIME --period_type=day --partition_num=30
+        dependsOn:
+          - other_mktcpn_start
+
+      - name: vova_email_send_log_c # test 表不存在
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vtp --table_name=email_send_log_c --inc_column=update_time --mapers=5 --etl_type=INCTIME --period_type=day --partition_num=50
+        dependsOn:
+          - other_mktcpn_start
+
+
+# flow: 营销活动域数据抽取
+  - name: themis_mktcpn_flow
+    type: flow
+    config:
+      retries: 4
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+    nodes:
+      - name: themis_mktcpn_start
+        type: noop
+
+      - name: themis_mktcpn_end
+        type: noop
+        dependsOn:
+          - vova_activity_valid_goods_record
+          - vova_activity_participate_record
+          - vova_lottery_log
+          - vova_shop_config
+          - vova_order_bonus_detail
+          - vova_luckystar_lottery_yards
+          - vova_luckystar_winning_record
+          - vova_luckystar_winning_config
+          - vova_luckystar_group
+          - vova_luckystar_activity_group_config
+          - vova_luckystar_activity_prize
+          - vova_luckystar_activity_config
+          - vova_luckystar_activity
+          - vova_luckystar_group_member
+          - vova_user_wallet_part
+          - vova_check_in_step_exchange_log
+          - vova_user_check_in_log
+          - vova_missions
+          - vova_ok_coupon_config
+          - vova_ok_coupon_config_type
+          - vova_coins_lucky_game_record
+          - vova_flash_sale_apply
+          - vova_app_message_push
+          - vova_activity_auction_mission
+          - vova_activity_auction_mission_log
+          - vova_luckystar_order_info
+          - vova_user_wallet_ops_log
+          - vova_user_mission_record
+          - vova_short_links
+          - vova_activity_invite_record
+          - vova_free_sale_invite_record
+          - vova_free_sale_qualification
+          - vova_free_sale_cost_history
+          - vova_free_sale_cost_relation
+          - vova_ok_coupon
+          - vova_activity_coupon_tag
+          - vova_activity
+          - vova_activity_coupon
+
+#营销活动域数据抽取
+      - name: vova_activity_valid_goods_record
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=activity_valid_goods_record --mapers=5 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_activity_participate_record
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=activity_participate_record --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_lottery_log
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=lottery_log --mapers=5 --inc_column=lottery_log_id --etl_type=INCID --period_type=day --partition_num=60
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_shop_config
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=shop_config --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_order_bonus_detail
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=order_bonus_detail --mapers=10 --etl_type=ALL  --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_luckystar_lottery_yards
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=luckystar_lottery_yards --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_luckystar_winning_record
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=luckystar_winning_record --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_luckystar_winning_config
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=luckystar_winning_config --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_luckystar_group
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=luckystar_group --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_luckystar_activity_group_config
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=luckystar_activity_group_config --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_luckystar_activity_prize
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=luckystar_activity_prize --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_luckystar_activity_config
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=luckystar_activity_config --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_luckystar_activity
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=luckystar_activity --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_luckystar_group_member
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=luckystar_group_member --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+# user_wallet_part 0-15
+      - name: vova_user_wallet_part_0
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_part_0 --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_part_1
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_part_1 --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_part_2
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_part_2 --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_part_3
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_part_3 --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_part_4
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_part_4 --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_part_5
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_part_5 --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_part_6
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_part_6 --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_part_7
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_part_7 --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_part_8
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_part_8 --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_part_9
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_part_9 --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_part_10
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_part_10 --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_part_11
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_part_11 --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_part_12
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_part_12 --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_part_13
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_part_13 --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_part_14
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_part_14 --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_part_15
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_part_15 --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_part
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/vova/ods/merge/vova_user_wallet_part.sh
+        dependsOn:
+          - themis_mktcpn_start
+          - vova_user_wallet_part_0
+          - vova_user_wallet_part_1
+          - vova_user_wallet_part_2
+          - vova_user_wallet_part_3
+          - vova_user_wallet_part_4
+          - vova_user_wallet_part_5
+          - vova_user_wallet_part_6
+          - vova_user_wallet_part_7
+          - vova_user_wallet_part_8
+          - vova_user_wallet_part_9
+          - vova_user_wallet_part_10
+          - vova_user_wallet_part_11
+          - vova_user_wallet_part_12
+          - vova_user_wallet_part_13
+          - vova_user_wallet_part_14
+          - vova_user_wallet_part_15
+
+      - name: vova_check_in_step_exchange_log
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=check_in_step_exchange_log --mapers=5 --inc_column=log_id --etl_type=INCID --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_check_in_log
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_check_in_log --mapers=10 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=40
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_missions
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=missions --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_ok_coupon_config
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=ok_coupon_config --mapers=5 --inc_column=coupon_config_id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_ok_coupon_config_type
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=ok_coupon_config_type --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_coins_lucky_game_record
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=coins_lucky_game_record --mapers=2 --etl_type=ALL  --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_flash_sale_apply
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=flash_sale_apply --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+#推送
+      - name: vova_app_message_push
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=app_message_push --inc_column=push_time --etl_type=INCTIME --period_type=day --partition_num=200
+        dependsOn:
+          - themis_mktcpn_start
+
+#拍卖场
+      - name: vova_activity_auction_mission
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=activity_auction_mission --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=90
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_activity_auction_mission_log
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=activity_auction_mission_log --inc_column=id --etl_type=INCID --period_type=day --partition_num=90
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_luckystar_order_info
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=luckystar_order_info --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+# user_wallet_ops_log 0-15
+      - name: vova_user_wallet_ops_log_0
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_ops_log_0 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=90
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_ops_log_1
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_ops_log_1 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=90
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_ops_log_2
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_ops_log_2 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=90
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_ops_log_3
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_ops_log_3 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=90
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_ops_log_4
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_ops_log_4 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=90
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_ops_log_5
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_ops_log_5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=90
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_ops_log_6
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_ops_log_6 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=90
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_ops_log_7
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_ops_log_7 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=90
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_ops_log_8
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_ops_log_8 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=90
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_ops_log_9
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_ops_log_9 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=90
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_ops_log_10
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_ops_log_10 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=90
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_ops_log_11
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_ops_log_11 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=90
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_ops_log_12
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_ops_log_12 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=90
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_ops_log_13
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_ops_log_13 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=90
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_ops_log_14
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_ops_log_14 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=90
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_ops_log_15
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_wallet_ops_log_15 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=90
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_wallet_ops_log
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/vova/ods/merge/vova_user_wallet_ops_log.sh
+        dependsOn:
+          - themis_mktcpn_start
+          - vova_user_wallet_ops_log_0
+          - vova_user_wallet_ops_log_1
+          - vova_user_wallet_ops_log_2
+          - vova_user_wallet_ops_log_3
+          - vova_user_wallet_ops_log_4
+          - vova_user_wallet_ops_log_5
+          - vova_user_wallet_ops_log_6
+          - vova_user_wallet_ops_log_7
+          - vova_user_wallet_ops_log_8
+          - vova_user_wallet_ops_log_9
+          - vova_user_wallet_ops_log_10
+          - vova_user_wallet_ops_log_11
+          - vova_user_wallet_ops_log_12
+          - vova_user_wallet_ops_log_13
+          - vova_user_wallet_ops_log_14
+          - vova_user_wallet_ops_log_15
+
+# user_mission_record 0-15
+      - name: vova_user_mission_record_0
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_mission_record_0 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=50
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_mission_record_1
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_mission_record_1 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=50
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_mission_record_2
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_mission_record_2 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=50
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_mission_record_3
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_mission_record_3 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=50
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_mission_record_4
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_mission_record_4 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=50
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_mission_record_5
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_mission_record_5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=50
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_mission_record_6
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_mission_record_6 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=50
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_mission_record_7
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_mission_record_7 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=50
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_mission_record_8
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_mission_record_8 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=50
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_mission_record_9
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_mission_record_9 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=50
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_mission_record_10
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_mission_record_10 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=50
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_mission_record_11
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_mission_record_11 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=50
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_mission_record_12
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_mission_record_12 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=50
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_mission_record_13
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_mission_record_13 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=50
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_mission_record_14
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_mission_record_14 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=50
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_mission_record_15
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_mission_record_15 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=50
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_user_mission_record
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/vova/ods/merge/vova_user_mission_record.sh
+        dependsOn:
+          - themis_mktcpn_start
+          - vova_user_mission_record_0
+          - vova_user_mission_record_1
+          - vova_user_mission_record_2
+          - vova_user_mission_record_3
+          - vova_user_mission_record_4
+          - vova_user_mission_record_5
+          - vova_user_mission_record_6
+          - vova_user_mission_record_7
+          - vova_user_mission_record_8
+          - vova_user_mission_record_9
+          - vova_user_mission_record_10
+          - vova_user_mission_record_11
+          - vova_user_mission_record_12
+          - vova_user_mission_record_13
+          - vova_user_mission_record_14
+          - vova_user_mission_record_15
+
+
+      - name: vova_short_links
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=short_links --mapers=10 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=60
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_activity_invite_record
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=activity_invite_record --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_free_sale_invite_record
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=free_sale_invite_record --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=20
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_free_sale_qualification
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=free_sale_qualification --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=15
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_free_sale_cost_history
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=free_sale_cost_history --inc_column=free_sale_cost_history_id --etl_type=INCID --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_free_sale_cost_relation
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=free_sale_cost_relation --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_ok_coupon
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=ok_coupon --etl_type=ALL  --mapers=50 --period_type=day --partition_num=60
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_activity_coupon_tag
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=activity_coupon_tag --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_activity
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=activity --etl_type=ALL --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_activity_coupon
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=activity_coupon --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
