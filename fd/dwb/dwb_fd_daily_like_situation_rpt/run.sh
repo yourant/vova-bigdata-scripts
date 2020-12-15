@@ -1,7 +1,7 @@
 #!/bin/sh
 if [ ! -n "$1" ] ;then
     #获取前一小时所属的日期
-    pt=`date -d "1 hour ago" +"%Y-%m-%d"`
+    pt=`date -d "- 1 days" +"%Y-%m-%d"`
 else
     echo $1 | grep -Eq "[0-9]{4}-[0-9]{2}-[0-9]{2}" && date -d $1 +%Y-%m-%d > /dev/null
     if [[ $? -ne 0 ]]; then
