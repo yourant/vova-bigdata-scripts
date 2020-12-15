@@ -33,14 +33,6 @@ nodes:
         dependsOn:
           - judge_ods_fd_snowplow_goods_event
           - judge_ods_fd_snowplow_element_event
-      
-      - name: sqoop_daily_like_situation_rpt
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_daily_like_situation_rpt/sqoop_hive_to_artemis.sh ${pt}
-        dependsOn:
-          - fd_daily_like_situation_flow_run
-
 
       - name: fd_daily_like_situation_flow_end
         type: noop
