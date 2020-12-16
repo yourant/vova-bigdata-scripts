@@ -1,64 +1,66 @@
-
 insert overwrite table dwb.dwb_fd_goods_test_finder_rpt
 
-SELECT
-
-    t1.project_name,
-    t1.finder,
-    t1.test_time,
-    t1.cat_name,
-    t1.test_type,
-    t1.preorder_plan_name,
-    finished_goods_num,
-    success_goods_num,
-    success_goods_sales_amount_7d,
-    cat_sales_amount_7d,
-    hot_style_num
-
-from(
 
 select
-    test_goods_sales.project_name,
-    finder,
-    test_time,
-    test_goods_sales.cat_name,
-    test_type,
-    preorder_plan_name,
-    finished_goods_num,
-    success_goods_num,
-    success_goods_sales_amount_7d,
-    cat_sales_amount_7d
+            goods_table.project_name,
+            finder,
+            test_time,
+            three_cat_name,
+            test_type,
+            preorder_plan_name,
+            finished_goods_num,
+            success_goods_num,
+            success_goods_sales_amount_7d,
+            hot_style_num,
+            success_month_amount,
+            cat_sales_amount_7d_all
 from
 (
-
 select project_name,
        finder,
        test_time,
-       nvl(cat_name,'all')                                    as cat_name,
+       nvl(cat_id,'all')                                    as cat_id,
        nvl(test_type, 'all')                                  as test_type,
        nvl(preorder_plan_name, 'all')                         as preorder_plan_name,
        count(distinct virtual_goods_id)                       as finished_goods_num,
        count(distinct if(result = 1, virtual_goods_id, null)) as success_goods_num,
-       sum(if(result = 1, goods_sales_7d, 0))                 as success_goods_sales_amount_7d
+       sum(if(result = 1, goods_sales_7d, 0))                 as success_goods_sales_amount_7d,
+       count(distinct if( result=1 and (round(goods_sales_7d,4)/cat_sales_amount_7d)>0.01,virtual_goods_id,null)) as hot_style_num,
+       sum(success_month_amount) as success_month_amount
 
-from
+from(
+
+        select project_name,
+                cat_id,
+                virtual_goods_id,
+                result,
+                test_type,
+                preorder_plan_name,
+               finder,
+               test_time,
+               success_month_amount,
+                goods_sales_7d,
+                cat_sales_amount_7d
+ from
 (
      select
         test_time,
         nvl(goods_test.project_name,'NALL') as project_name,
-        nvl(cat_name,'NALL')           as cat_name,
+        nvl(goods_test.cat_id,'NALL')           as cat_id,
         goods_test.virtual_goods_id    as virtual_goods_id,
         result,
         nvl(test_type,'NALL')          as test_type,
         nvl(preorder_plan_name,'NALL') as preorder_plan_name,
         nvl(f.finder,'NALL')           as finder,
-        goods_sales_7d
+        sum(og.goods_number*og.shop_price) as success_month_amount,
+        sum(goods_sales_7d) as goods_sales_7d,
+        sum(cat_sales_amount_7d)  as cat_sales_amount_7d
 
 from
 (
             SELECT
                 project_name,
-                cat_name,
+                cat_id,
                 virtual_goods_id,
                 result,
                 '快速测款' as test_type,
@@ -70,7 +72,7 @@ from
 
             SELECT
                 project_name,
-                cat_name,
+                cat_id,
                 virtual_goods_id,
                 result,
                 '预售测款' as test_type,
@@ -89,112 +91,53 @@ left join(
     group by virtual_goods_id
     ) goods_sales on goods_sales.virtual_goods_id = goods_test.virtual_goods_id
 
-
-)goods
-group by test_time,project_name, finder,cat_name, test_type, preorder_plan_name
-grouping sets(
-    (test_time,project_name,finder,cat_name,test_type, preorder_plan_name),
-    (test_time,project_name,finder,cat_name,test_type),
-    (test_time,project_name,finder,cat_name),
-    (test_time,project_name,finder))
-)test_goods_sales
-
-left join
-(
-            select cat_name,
-                   project_name,
-                   sum(goods_number * shop_price) as cat_sales_amount_7d
-            from dwd.dwd_fd_order_goods
-            where pay_status = 2
-            and date(from_unixtime(pay_time)) between date_add('${pt}', -6) and date_add('${pt}', 1)
-            group by cat_name,project_name
-
-)cat_sales  on test_goods_sales.cat_name=cat_sales.cat_name
-                and test_goods_sales.project_name=cat_sales.project_name
-
-)t1
-
-
-left join
-
-(
-SELECT
-    nvl(success_goods_sales.project_name,'all') as project_name,
-    test_time,
-    nvl(finder,'all')                           as finder,
-    nvl(success_goods_sales.cat_name,'all')     as cat_name,
-    nvl(test_type,'all')                        as test_type,
-    nvl(preorder_plan_name,'all')               as preorder_plan_name,
-    count(distinct if( round(goods_sales_7d,4)/cat_sales_amount_7d >0.01,virtual_goods_id,null)) as hot_style_num
-
-from(
-
-    SELECT
-        nvl(success_goods_test.project_name,'NALL') as project_name,
-        nvl(finder,'NALL')                          as finder,
-        nvl(test_time,'NALL')                       as test_time,
-        nvl(success_goods_test.cat_name,'NALL')     as cat_name,
-        nvl(test_type,'NALL')                       as  test_type,
-        nvl(preorder_plan_name,'NALL')              as preorder_plan_name,
-        success_goods_test.virtual_goods_id,
-        goods_sales_7d
-    FROM
+    left join
     (
-    SELECT
-        project_name,
-        cat_name,
-        virtual_goods_id,
-        '快速测款' as test_type,
-        null   as preorder_plan_name,
-        date(test_time) as test_time
-    from dwd.dwd_fd_finished_goods_test where test_time is not null and result=1
+                select cat_id,
+                       project_name,
+                       sum(goods_number * shop_price) as cat_sales_amount_7d
+                from dwd.dwd_fd_order_goods
+                where pay_status = 2
+                and date(from_unixtime(pay_time)) between date_add('${pt}', -6) and date_add('${pt}', 1)
+                group by cat_id,project_name
 
-    union ALL
+    )cat_sales  on goods_test.cat_id=cat_sales.cat_id
+                    and goods_test.project_name=cat_sales.project_name
 
-    SELECT
-        project_name,
-        cat_name,
-        virtual_goods_id,
-        '预售测款' as test_type,
-        preorder_plan_name,
-        date(test_time) as test_time
-    from dwd.dwd_fd_finished_preorder where result=1
-    )success_goods_test
 
-    left join dim.dim_fd_goods_finder f
-    on f.virtual_goods_id = success_goods_test.virtual_goods_id
     left join(
-        select virtual_goods_id,
-            sum(goods_number * shop_price) as goods_sales_7d
+            select virtual_goods_id,
+                    goods_number,
+                    shop_price,
+                    pay_time
         from dwd.dwd_fd_order_goods
         where pay_status = 2
-        and date(from_unixtime(pay_time)) between date_add('${pt}', -6) and date_add('${pt}', 1)
-        group by virtual_goods_id
-        ) goods_sales on goods_sales.virtual_goods_id = success_goods_test.virtual_goods_id
+    )og on goods_test.virtual_goods_id=og.virtual_goods_id
+     and   date_format(from_unixtime(pay_time),'yyyy-MM')=date_format(goods_test.test_time,'yyyy-MM') and result=1
+     group by test_time, goods_test.project_name,result, finder,goods_test.cat_id, test_type, preorder_plan_name,goods_test.virtual_goods_id
+        )tmp_table
+)detail_table
+    group by test_time, project_name, finder,cat_id, test_type, preorder_plan_name
+    grouping sets(
+        (test_time,project_name,finder,cat_id,test_type, preorder_plan_name),
+        (test_time,project_name,finder,cat_id,test_type),
+        (test_time,project_name,finder,cat_id),
+        (test_time,project_name,finder))
+)goods_table
 
-)success_goods_sales
- left join (
-    select cat_name,
-           project_name,
-           sum(goods_number * shop_price) as cat_sales_amount_7d
-    from dwd.dwd_fd_order_goods
-    where pay_status = 2
-    and date(from_unixtime(pay_time)) between date_add('${pt}', -6) and date_add('${pt}', 1)
-    group by cat_name,project_name
+left join
+(
+            select nvl(cat_id,'NALL') as cat_id,
+                   project_name,
+                   sum(goods_number * shop_price) as cat_sales_amount_7d_all
+            FROM dwd.dwd_fd_order_goods
+            where pay_status = 2
+             and date(from_unixtime(pay_time)) between date_add('${pt}', -6) and date_add('${pt}', 1)
+            group by cat_id,project_name
+            grouping sets(
+            (project_name,cat_id),
+            (project_name))
+)cat_table  on goods_table.cat_id=cat_table.cat_id and goods_table.project_name and cat_table.project_name
 
- )cat_sales   on success_goods_sales.project_name=cat_sales.project_name and success_goods_sales.cat_name=cat_sales.cat_name
- group by       test_time,
-                success_goods_sales.project_name,
-                finder,
-                success_goods_sales.cat_name,
-                test_type,
-                preorder_plan_name
-grouping sets(
-    (test_time,success_goods_sales.project_name,finder,success_goods_sales.cat_name,test_type,preorder_plan_name),
-    (test_time,success_goods_sales.project_name,finder,success_goods_sales.cat_name,test_type),
-    (test_time,success_goods_sales.project_name,finder,success_goods_sales.cat_name),
-    (test_time,success_goods_sales.project_name,finder))
-
-)t2   on t1.project_name=t2.project_name and t1.cat_name=t2.cat_name and t1.test_type=t2.test_type
-         and  t1.preorder_plan_name=t2.preorder_plan_name
-         and t1.test_time=t2.test_time and t1.finder=t2.finder;
+left join dim.dim_fd_category dfc on dfc.cat_id=goods_table.cat_id
+;

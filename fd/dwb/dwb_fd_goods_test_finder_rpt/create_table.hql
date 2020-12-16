@@ -11,7 +11,8 @@ create table if not exists dwb.dwb_fd_goods_test_finder_rpt
     success_goods_num             BIGINT comment "测款成功商品数",
     success_goods_sales_amount_7d DECIMAL(15, 4) comment "测款成功商品近7日的销售额",
     cat_sales_amount_7d           DECIMAL(15, 4) comment "近7日同品类所有商品销售额",
-    hot_style_num                 bigint     comment '爆款商品数量'
+    hot_style_num                 bigint     comment '爆款商品数量',
+    success_month_amount          DECIMAL(15,4) comment '入测且当月测款成功的销售额'
 )
     comment "选款人测款成功商品报表"
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
