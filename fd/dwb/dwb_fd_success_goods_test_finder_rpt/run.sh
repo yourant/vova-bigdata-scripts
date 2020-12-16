@@ -1,5 +1,5 @@
 #bin/sh
-table="dwb_fd_goods_test_finder_rpt"
+table="dwb_fd_success_goods_test_finder_rpt"
 user="yjzhang"
 
 base_path="/mnt/vova-bigdata-scripts/fd/dwb"
