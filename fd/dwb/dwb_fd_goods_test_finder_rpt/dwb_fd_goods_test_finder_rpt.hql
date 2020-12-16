@@ -5,7 +5,7 @@ select
     goods_table.project_name,
     finder,
     test_time,
-    nvl(three_cat_name, 'all'),
+    nvl(cat_name, 'all'),
     test_type,
     preorder_plan_name,
     finished_goods_num,
@@ -26,7 +26,7 @@ from (
                 count(distinct if(result = 1, virtual_goods_id, null)) as success_goods_num,
                 sum(if(result = 1, goods_sales_7d, 0))                 as success_goods_sales_amount_7d,
                 count(distinct
-                      if(result = 1 and (round(goods_sales_7d, 4) / cat_sales_amount_7d) > 0.01, virtual_goods_id,
+                      if(result = 1 and cat_sales_amount_7d>0  and (round(goods_sales_7d, 4) / cat_sales_amount_7d) > 0.01, virtual_goods_id,
                          null))                                        as hot_style_num,
                 sum(success_month_amount)                              as success_month_amount
 
@@ -39,9 +39,9 @@ from (
                          nvl(test_type, 'NALL')               as test_type,
                          nvl(preorder_plan_name, 'NALL')      as preorder_plan_name,
                          nvl(f.finder, 'NALL')                as finder,
-                         success_month_amount,
-                          goods_sales_7d,
-                         cat_sales_amount_7d
+                         nvl(success_month_amount,0)          as success_month_amount,
+                         nvl(goods_sales_7d,0)                as goods_sales_7d,
+                         nvl(cat_sales_amount_7d,0)           as cat_sales_amount_7d
 
                   from (
                            SELECT project_name,
@@ -96,7 +96,7 @@ from (
                       where pay_status = 2
                       group by virtual_goods_id, date_format(from_unixtime(pay_time), 'yyyy-MM')
                   ) og on goods_test.virtual_goods_id = og.virtual_goods_id
-                           and  date_format(goods_test.test_time, 'yyyy-MM')=og.pay_month
+                           and  date_format(goods_test.test_time, 'yyyy-MM')=og.pay_month and goods_test.result=1
 
               ) detail_table
          group by test_time, project_name, finder, cat_id, test_type, preorder_plan_name
