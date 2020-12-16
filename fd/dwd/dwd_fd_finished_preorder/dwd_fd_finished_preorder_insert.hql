@@ -10,7 +10,7 @@ select
        c.cat_name,
        pr.status                  as result,
        from_unixtime(pr.create_time) as test_time,
-       from_unixtime(update_time) as finish_time
+       from_unixtime(pr.update_time) as finish_time
 from ods_fd_vb.ods_fd_goods_test_preorder_result pr
          left join ods_fd_vb.ods_fd_goods_preorder_plan pp
                    on pr.preorder_plan_id = pp.id
