@@ -1,5 +1,5 @@
 
-create table if not exists dwb.dwb_fd_goods_test_finder_rpt
+create table if not exists dwb.dwb_fd_success_goods_test_finder_rpt
 (
     project_name                  STRING comment "组织",
     finder                        STRING comment "选款人",

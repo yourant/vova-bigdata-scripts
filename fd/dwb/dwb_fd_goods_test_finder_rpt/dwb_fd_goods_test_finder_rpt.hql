@@ -1,11 +1,11 @@
 
-insert overwrite table dwb.dwb_fd_goods_test_finder_rpt
+insert overwrite table dwb.dwb_fd_success_goods_test_finder_rpt
 select
     /*+ REPARTITION(1) */
     goods_table.project_name,
     finder,
     test_time,
-    nvl(cat_name, 'all'),
+    nvl(cat_name, 'all') as cat_name,
     test_type,
     preorder_plan_name,
     finished_goods_num,
