@@ -6,7 +6,7 @@ select
             goods_table.project_name,
             finder,
             test_time,
-            three_cat_name,
+            nvl(three_cat_name,'all'),
             test_type,
             preorder_plan_name,
             finished_goods_num,
