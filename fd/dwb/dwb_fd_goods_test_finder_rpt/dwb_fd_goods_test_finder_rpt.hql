@@ -11,9 +11,10 @@ select
     finished_goods_num,
     success_goods_num,
     success_goods_sales_amount_7d,
+    cat_sales_amount_7d_all,
     hot_style_num,
-    success_month_amount,
-    cat_sales_amount_7d_all
+    success_month_amount
+
 from (
          select project_name,
                 finder,
@@ -118,6 +119,6 @@ from (
              grouping sets (
              ( project_name, cat_id),
              ( project_name))
-     ) cat_table on goods_table.cat_id = cat_table.cat_id and goods_table.project_name and cat_table.project_name
+     ) cat_table on goods_table.cat_id = cat_table.cat_id and goods_table.project_name=cat_table.project_name
 
          left join dim.dim_fd_category dfc on dfc.cat_id = goods_table.cat_id;

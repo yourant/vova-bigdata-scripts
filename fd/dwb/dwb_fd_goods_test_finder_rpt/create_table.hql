@@ -16,4 +16,5 @@ create table if not exists dwb.dwb_fd_goods_test_finder_rpt
 )
     comment "选款人测款成功商品报表"
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-    STORED AS PARQUET;
+    STORED AS parquet
+    TBLPROPERTIES ("parquet.compress"="SNAPPY");
