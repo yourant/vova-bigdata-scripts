@@ -2,6 +2,7 @@ insert overwrite table dwb.dwb_fd_goods_test_finder_rpt
 
 
 select
+            /*+ REPARTITION(1) */
             goods_table.project_name,
             finder,
             test_time,
@@ -127,7 +128,7 @@ left join(
 
 left join
 (
-            select nvl(cat_id,'NALL') as cat_id,
+            select   cat_id,
                    project_name,
                    sum(goods_number * shop_price) as cat_sales_amount_7d_all
             FROM dwd.dwd_fd_order_goods
