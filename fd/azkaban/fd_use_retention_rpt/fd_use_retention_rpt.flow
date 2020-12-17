@@ -1,0 +1,64 @@
+---
+config:
+  failure.emails: ekko.zhang@i9i8.com
+  retries: 5
+  retry.backoff: 300000
+
+nodes:
+  - name: dwb_fd_user_retention_rpt_start
+    type: noop
+
+  - name: fd_user_retention_rpt_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_user_retention_rpt_start
+        type: noop
+        
+      
+      - name: judge_ods_fd_snowplow_all_event
+        type: noop
+        dependsOn:
+          - fd_user_retention_rpt_start
+
+      - name: judge_dwd_fd_order_goods
+        type: noop
+        dependsOn:
+          - fd_user_retention_rpt_start
+
+      - name: judge_dwd_fd_order_info
+        type: noop
+        dependsOn:
+          - fd_user_retention_rpt_start
+
+      - name: judge_ods_fd_user_duid
+        type: noop
+        dependsOn:
+          - fd_user_retention_rpt_start
+
+
+      - name: fd_user_retention_rpt_run
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_user_retention_rpt/run.sh ${pt}
+        dependsOn:
+          - judge_ods_fd_snowplow_all_event
+          - judge_dwd_fd_order_goods
+          - judge_dwd_fd_order_info
+          - judge_ods_fd_user_duid
+
+      - name: fd_user_retention_rpt_end
+        type: noop
+        dependsOn:
+          - fd_user_retention_rpt_run
+
+    dependsOn:
+      - dwb_fd_user_retention_rpt_start
+
+
+  - name: dwb_fd_user_retention_rpt_end
+    type: noop
+    dependsOn:
+      - fd_user_retention_rpt_flow
+

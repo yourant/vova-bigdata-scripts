@@ -1,0 +1,58 @@
+---
+config:
+  failure.emails: ekko.zhang@i9i8.com
+  retries: 5
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_prc_abtest_funnel_rpt_start 
+    type: noop
+
+  - name: fd_prc_abtest_funnel_rpt_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_prc_abtest_funnel_rpt_flow_start
+        type: noop
+        
+      - name: judge_ods_fd_snowplow_all_event
+        type: noop
+        dependsOn:
+          - fd_prc_abtest_funnel_rpt_flow_start
+      
+      - name: judge_dwd_fd_order_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_info
+        dependsOn:
+          - fd_prc_abtest_funnel_rpt_flow_start
+
+      - name: judge_ods_fd_order_extension
+        type: noop
+        dependsOn:
+          - fd_prc_abtest_funnel_rpt_flow_start
+
+
+      - name: fd_prc_abtest_funnel_rpt_flow_run
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_prc_abtest_funnel_rpt/run.sh ${pt}
+        dependsOn:
+          - judge_ods_fd_snowplow_all_event
+          - judge_dwd_fd_order_info
+          - judge_ods_fd_order_extension
+
+
+      - name: fd_prc_abtest_funnel_rpt_flow_end
+        type: noop
+        dependsOn:
+          - fd_prc_abtest_funnel_rpt_flow_run
+
+    dependsOn:
+      - fd_prc_abtest_funnel_rpt_start
+
+  - name: fd_prc_abtest_funnel_rpt_end
+    type: noop
+    dependsOn:
+      - fd_prc_abtest_funnel_rpt_flow
