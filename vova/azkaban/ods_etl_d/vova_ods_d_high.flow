@@ -75,7 +75,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=fisher_order_info_product --mapers=5 --inc_column=id --etl_type=INCID --period_type=day --partition_num=10
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=fisher_order_info_product --mapers=5 --inc_column=id --etl_type=INCID --period_type=day --partition_num=10
         dependsOn:
           - themis_trd_start
 
@@ -84,7 +84,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=collection_order_goods --mapers=10 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=collection_order_goods --mapers=10 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_trd_start
 
@@ -93,7 +93,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=merchant_region --mapers=10 --etl_type=ALL  --period_type=day --partition_num=10
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_region --mapers=10 --etl_type=ALL  --period_type=day --partition_num=10
         dependsOn:
           - themis_trd_start
 
@@ -102,7 +102,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=goods_warehouse_limit --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=goods_warehouse_limit --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_trd_start
 
@@ -111,7 +111,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=goods_warehouse_limit_pre --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=goods_warehouse_limit_pre --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_trd_start
 
@@ -120,7 +120,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=brand --inc_column=last_update_time --mapers=1 --etl_type=INCTIME --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=brand --inc_column=last_update_time --mapers=1 --etl_type=INCTIME --period_type=day --partition_num=3
         dependsOn:
           - themis_trd_start
 
@@ -129,7 +129,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=client_payer_id_blacklist --inc_column=last_update_time --mapers=1 --etl_type=INCTIME --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=client_payer_id_blacklist --inc_column=last_update_time --mapers=1 --etl_type=INCTIME --period_type=day --partition_num=3
         dependsOn:
           - themis_trd_start
 
@@ -138,7 +138,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=credit_card_blacklist --inc_column=last_update_time --mapers=1 --etl_type=INCTIME --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=credit_card_blacklist --inc_column=last_update_time --mapers=1 --etl_type=INCTIME --period_type=day --partition_num=3
         dependsOn:
           - themis_trd_start
 
@@ -147,7 +147,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=client_ip_blacklist --inc_column=last_update_time --mapers=1 --etl_type=INCTIME --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=client_ip_blacklist --inc_column=last_update_time --mapers=1 --etl_type=INCTIME --period_type=day --partition_num=3
         dependsOn:
           - themis_trd_start
 
@@ -156,7 +156,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=domain_user_id_blacklist --inc_column=last_update_time --mapers=1 --etl_type=INCTIME --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=domain_user_id_blacklist --inc_column=last_update_time --mapers=1 --etl_type=INCTIME --period_type=day --partition_num=3
         dependsOn:
           - themis_trd_start
 
@@ -165,7 +165,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=address_tel_name_blacklist --inc_column=last_update_time --mapers=1 --etl_type=INCTIME --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=address_tel_name_blacklist --inc_column=last_update_time --mapers=1 --etl_type=INCTIME --period_type=day --partition_num=3
         dependsOn:
           - themis_trd_start
 
@@ -174,7 +174,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=pay_credit_card_history --inc_column=last_update_time --mapers=4 --etl_type=INCTIME --period_type=day --partition_num=50
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=pay_credit_card_history --inc_column=last_update_time --mapers=4 --etl_type=INCTIME --period_type=day --partition_num=50
         dependsOn:
           - themis_trd_start
 
@@ -183,7 +183,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=cms_shopping_blacklist --inc_column=last_update_time --mapers=1 --etl_type=INCTIME --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=cms_shopping_blacklist --inc_column=last_update_time --mapers=1 --etl_type=INCTIME --period_type=day --partition_num=3
         dependsOn:
           - themis_trd_start
 
@@ -192,7 +192,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=order_info --inc_column=last_update_time --mapers=5 --etl_type=INCTIME --period_type=day --partition_num=100
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_info --inc_column=last_update_time --mapers=5 --etl_type=INCTIME --period_type=day --partition_num=100
         dependsOn:
           - themis_trd_start
 
@@ -201,7 +201,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=order_extension --mapers=50 --etl_type=ALL  --period_type=day --partition_num=50
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_extension --mapers=50 --etl_type=ALL  --period_type=day --partition_num=50
         dependsOn:
           - themis_trd_start
 
@@ -210,7 +210,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=order_goods --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_goods --mapers=3 --etl_type=ALL  --period_type=day --partition_num=200
         dependsOn:
           - themis_trd_start
 
@@ -219,7 +219,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=order_goods_status --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=25
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_goods_status --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=25
         dependsOn:
           - themis_trd_start
 
@@ -228,7 +228,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=order_relation --mapers=10 --etl_type=ALL  --period_type=day --partition_num=20
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_relation --mapers=10 --etl_type=ALL  --period_type=day --partition_num=20
         dependsOn:
           - themis_trd_start
 
@@ -237,7 +237,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=order_goods_extra --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_goods_extra --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
         dependsOn:
           - themis_trd_start
 
@@ -246,7 +246,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=order_goods_extension --inc_column=abs_id --etl_type=INCID --period_type=day --partition_num=70
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_goods_extension --inc_column=abs_id --etl_type=INCID --period_type=day --mapper=10 --partition_num=70
         dependsOn:
           - themis_trd_start
 
@@ -255,7 +255,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=refund_type --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=refund_type --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_trd_start
 
@@ -264,7 +264,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=refund_reason_type --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=refund_reason_type --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_trd_start
 
@@ -273,7 +273,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=refund_reason --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=20
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=refund_reason --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=20
         dependsOn:
           - themis_trd_start
 
@@ -282,7 +282,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=refund_audit_txn --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=20
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=refund_audit_txn --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=20
         dependsOn:
           - themis_trd_start
 
@@ -291,7 +291,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=payment --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=payment --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_trd_start
 
@@ -300,7 +300,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=paypal_txn --inc_column=txn_datetime --etl_type=INCTIMENOMERGE --period_type=day --partition_num=400 --split_id=txn_datetime
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=paypal_txn --inc_column=txn_datetime --etl_type=INCTIMENOMERGE --period_type=day --partition_num=400 --split_id=txn_datetime
         dependsOn:
           - themis_trd_start
 
@@ -309,7 +309,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=chargeback_code_reason --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=chargeback_code_reason --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_trd_start
 
@@ -318,7 +318,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=checkout_chargeback_reporting --mapers=2 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=checkout_chargeback_reporting --mapers=2 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_trd_start
 
@@ -327,7 +327,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=order_card_installments_record --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_card_installments_record --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_trd_start
 
@@ -336,7 +336,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=sc_warehouse_goods --mapers=2 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=sc_warehouse_goods --mapers=2 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_trd_start
 
@@ -345,7 +345,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=sc_shipping_order --mapers=2 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=sc_shipping_order --mapers=2 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_trd_start
 
@@ -354,7 +354,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=sc_goods_shipping --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=sc_goods_shipping --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
         dependsOn:
           - themis_trd_start
 
@@ -363,7 +363,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=sc_order_goods --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=sc_order_goods --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
         dependsOn:
           - themis_trd_start
 
@@ -372,7 +372,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=sc_goods_shipping_detail --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=sc_goods_shipping_detail --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
         dependsOn:
           - themis_trd_start
 
@@ -421,7 +421,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=gsn_reduce_valid_goods --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=gsn_reduce_valid_goods --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_goods_start
 
@@ -430,7 +430,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=gsn_reduce_valid_goods --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=gsn_reduce_valid_goods --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_goods_start
 
@@ -439,7 +439,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=warehouse_shipping_order_detail --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=warehouse_shipping_order_detail --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_goods_start
 
@@ -448,7 +448,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=sku_warehouse_storage --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=sku_warehouse_storage --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_goods_start
 
@@ -457,7 +457,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=sku_warehouse_storage_log --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=sku_warehouse_storage_log --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_goods_start
 
@@ -466,7 +466,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=goods --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=120
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=goods --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=120
         dependsOn:
           - themis_goods_start
 
@@ -475,7 +475,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=virtual_goods --inc_column=virtual_goods_id --etl_type=INCID --period_type=day --partition_num=10
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=virtual_goods --inc_column=virtual_goods_id --etl_type=INCID --period_type=day --partition_num=10
         dependsOn:
           - themis_goods_start
 
@@ -484,7 +484,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=goods_on_sale_record --inc_column=goods_on_sale_record_id --etl_type=INCID --period_type=day --partition_num=30
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=goods_on_sale_record --inc_column=goods_on_sale_record_id --etl_type=INCID --period_type=day --partition_num=30
         dependsOn:
           - themis_goods_start
 
@@ -493,7 +493,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=goods_display_sort --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=goods_display_sort --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
         dependsOn:
           - themis_goods_start
 
@@ -502,7 +502,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=category --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=category --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_goods_start
 
@@ -511,7 +511,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=goods_sku --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=400
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=goods_sku --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=400
         dependsOn:
           - themis_goods_start
 
@@ -520,7 +520,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=fbv_sku_display_storage --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=fbv_sku_display_storage --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_goods_start
 
@@ -529,7 +529,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=fbv_goods_shipping_fee --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=fbv_goods_shipping_fee --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_goods_start
 
@@ -538,7 +538,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=fbv_sku_display_storage_log --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=fbv_sku_display_storage_log --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_goods_start
 
@@ -547,7 +547,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=fbv_sku_merchant_storage_log --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=fbv_sku_merchant_storage_log --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_goods_start
 
@@ -556,7 +556,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=fbv_sku_warehouse_storage_log --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=fbv_sku_warehouse_storage_log --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_goods_start
 
@@ -565,7 +565,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=goods_attached_attribute --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=goods_attached_attribute --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
         dependsOn:
           - themis_goods_start
 
@@ -574,7 +574,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=collection_goods_no_join --mapers=2 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=collection_goods_no_join --mapers=2 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_goods_start
 
@@ -583,7 +583,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=goods_gallery --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=150
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=goods_gallery --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=150
         dependsOn:
           - themis_goods_start
 
@@ -592,7 +592,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=sku_style --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=120
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=sku_style --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=120
         dependsOn:
           - themis_goods_start
 
@@ -601,7 +601,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=style_value --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=style_value --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_goods_start
 
@@ -610,7 +610,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=style_name --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=style_name --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_goods_start
 
@@ -619,7 +619,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=route --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=route --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_goods_start
 
@@ -649,7 +649,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=shipping_carrier --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=shipping_carrier --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_lgtcs_start
 
@@ -658,7 +658,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=order_shipping_tracking --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_shipping_tracking  --inc-column=last_update_time  --mapers=3 --etlType=INCTIME --partition_num=30
         dependsOn:
           - themis_lgtcs_start
 
@@ -667,7 +667,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=order_shipping_tracking_detail --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=25
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_shipping_tracking_detail --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=25
         dependsOn:
           - themis_lgtcs_start
 
@@ -676,7 +676,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=sku_ops_log --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=90
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=sku_ops_log --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=90
         dependsOn:
           - themis_lgtcs_start
 
@@ -726,7 +726,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=merchant_register_coupon --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_register_coupon --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_mbrmct_start
 
@@ -735,7 +735,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=sponsor --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=sponsor --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_mbrmct_start
 
@@ -744,7 +744,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=merchant_sponsor --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_sponsor --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_mbrmct_start
 
@@ -753,7 +753,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=merchant --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_mbrmct_start
 
@@ -762,7 +762,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=merchant_register_deposit_payment --etl_type=ALL  --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_register_deposit_payment --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_mbrmct_start
 
@@ -771,7 +771,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=users --inc_column=last_time --etl_type=INCTIME --period_type=day --partition_num=100
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=users --inc_column=last_time --etl_type=INCTIME --period_type=day --partition_num=100
         dependsOn:
           - themis_mbrmct_start
 
@@ -780,7 +780,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=users_extension --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=40
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=users_extension --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=40
         dependsOn:
           - themis_mbrmct_start
 
@@ -789,7 +789,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_agent --inc_column=user_agent_id --etl_type=INCID --period_type=day --partition_num=100
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=user_agent --inc_column=user_agent_id --etl_type=INCID --period_type=day --partition_num=100
         dependsOn:
           - themis_mbrmct_start
 
@@ -798,7 +798,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_login_record --inc_column=user_agent_id --etl_type=INCID --period_type=day --partition_num=100
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=user_login_record --inc_column=user_agent_id --etl_type=INCID --period_type=day --partition_num=100
         dependsOn:
           - themis_mbrmct_start
 
@@ -807,7 +807,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=ban_sell_history --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=ban_sell_history --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
         dependsOn:
           - themis_mbrmct_start
 
@@ -816,7 +816,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=languages --etl_type=ALL  --mapers=1 --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=languages --etl_type=ALL  --mapers=1 --period_type=day --partition_num=3
         dependsOn:
           - themis_mbrmct_start
 
@@ -825,7 +825,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=region --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=region --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
         dependsOn:
           - themis_mbrmct_start
 
@@ -834,7 +834,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=merchant_detail --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_detail --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
         dependsOn:
           - themis_mbrmct_start
 
@@ -843,7 +843,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=merchant_payment_account_info --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_payment_account_info --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
         dependsOn:
           - themis_mbrmct_start
 
@@ -852,7 +852,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=merchant_login_log --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_login_log --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
         dependsOn:
           - themis_mbrmct_start
 
@@ -861,7 +861,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=product_upload_excel --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=15
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=product_upload_excel --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=15
         dependsOn:
           - themis_mbrmct_start
 
@@ -870,7 +870,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=merchant_coupon_config --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_coupon_config --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
         dependsOn:
           - themis_mbrmct_start
 
@@ -879,7 +879,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=merchant_coupon --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_coupon --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
         dependsOn:
           - themis_mbrmct_start
 
@@ -888,7 +888,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=merchant_sale --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_sale --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
         dependsOn:
           - themis_mbrmct_start
 
@@ -897,7 +897,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=merchant_assessment_score --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_assessment_score --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
         dependsOn:
           - themis_mbrmct_start
 
@@ -906,7 +906,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=merchant_assessment_score_log --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_assessment_score_log --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
         dependsOn:
           - themis_mbrmct_start
 
@@ -915,6 +915,6 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=bonus_card --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=bonus_card --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
         dependsOn:
           - themis_mbrmct_start
