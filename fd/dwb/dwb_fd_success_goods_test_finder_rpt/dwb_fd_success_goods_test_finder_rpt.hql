@@ -16,19 +16,19 @@ select
     success_month_amount
 
 from (
-         select project_name,
-                finder,
-                test_time,
+         select nvl(project_name,'all')                                as project_name,
+                nvl(finder,'all')                                      as finder,
+                nvl(test_time,'all')                                   as test_time,
                 nvl(cat_id, 'all')                                     as cat_id,
                 nvl(test_type, 'all')                                  as test_type,
-                nvl(preorder_plan_name, 'all')                         as preorder_plan_name,
+                nvl(preorder_plan_name,'all')                          as preorder_plan_name,
                 count(distinct virtual_goods_id)                       as finished_goods_num,
                 count(distinct if(result = 1, virtual_goods_id, null)) as success_goods_num,
                 sum(if(result = 1, goods_sales_7d, 0))                 as success_goods_sales_amount_7d,
                 count(distinct
                       if(result = 1 and cat_sales_amount_7d>0  and (round(goods_sales_7d, 4) / cat_sales_amount_7d) > 0.01, virtual_goods_id,
                          null))                                        as hot_style_num,
-                sum(success_month_amount)                              as success_month_amount
+                sum(if(result=1,success_month_amount,0))               as success_month_amount
 
          from (
                   select test_time,
@@ -96,29 +96,23 @@ from (
                       where pay_status = 2
                       group by virtual_goods_id, date_format(from_unixtime(pay_time), 'yyyy-MM')
                   ) og on goods_test.virtual_goods_id = og.virtual_goods_id
-                           and  date_format(goods_test.test_time, 'yyyy-MM')=og.pay_month and goods_test.result=1
+                           and  date_format(goods_test.test_time, 'yyyy-MM')=og.pay_month
 
               ) detail_table
          group by test_time, project_name, finder, cat_id, test_type, preorder_plan_name
-             grouping sets (
-             ( test_time, project_name, finder, cat_id, test_type, preorder_plan_name),
-             ( test_time, project_name, finder, cat_id, test_type),
-             ( test_time, project_name, finder, cat_id),
-             ( test_time, project_name, finder))
+          with cube
      ) goods_table
 
          left join
      (
          select nvl(cat_id, 'all') as cat_id,
-                project_name,
+                nvl(project_name,'all') as project_name,
                 sum(goods_number * shop_price) as cat_sales_amount_7d_all
          FROM dwd.dwd_fd_order_goods
          where pay_status = 2
            and date(from_unixtime(pay_time)) between date_add('${pt}', -6) and date_add('${pt}', 1)
          group by cat_id, project_name
-             grouping sets (
-             ( project_name, cat_id),
-             ( project_name))
+          with cube
      ) cat_table on goods_table.cat_id = cat_table.cat_id and goods_table.project_name=cat_table.project_name
 
          left join dim.dim_fd_category dfc on dfc.cat_id = goods_table.cat_id;
