@@ -23,17 +23,23 @@ nodes:
           - fd_user_retention_rpt_start
 
       - name: judge_dwd_fd_order_goods
-        type: noop
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_goods
         dependsOn:
           - fd_user_retention_rpt_start
 
       - name: judge_dwd_fd_order_info
-        type: noop
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_info
         dependsOn:
           - fd_user_retention_rpt_start
 
       - name: judge_ods_fd_user_duid
-        type: noop
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_user_duid
         dependsOn:
           - fd_user_retention_rpt_start
 
