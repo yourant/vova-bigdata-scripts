@@ -29,7 +29,9 @@ nodes:
           - fd_prc_abtest_funnel_rpt_flow_start
 
       - name: judge_ods_fd_order_extension
-        type: noop
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_order_extension
         dependsOn:
           - fd_prc_abtest_funnel_rpt_flow_start
 
