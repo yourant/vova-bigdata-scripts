@@ -52,7 +52,7 @@ from (
                                   null                              as preorder_plan_name,
                                   date(test_time)                   as test_time
                            from dwd.dwd_fd_finished_goods_test
-                           where test_time is not null
+                           where test_time is not null and date(test_time)<='${pt}'
 
                            union ALL
 
@@ -64,6 +64,7 @@ from (
                                   preorder_plan_name,
                                   date(test_time)                   as test_time
                            from dwd.dwd_fd_finished_preorder
+                           where test_time is not null and date(test_time)<='${pt}'
                        ) goods_test
                            left join dim.dim_fd_goods_finder f
                                      on f.virtual_goods_id = goods_test.virtual_goods_id
