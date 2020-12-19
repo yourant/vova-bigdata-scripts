@@ -186,7 +186,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table=order_goods --inc-column=rec_id --mapers=10 --etlType=INCID
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=order_goods --inc-column=rec_id --mapers=10 --etlType=INCID --partition_num=400
         dependsOn:
           - themis_trd_start
 
@@ -1632,7 +1632,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_login_record --inc_column=user_agent_id --etl_type=INCID --period_type=day --partition_num=100
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=user_login_record --inc_column=login_id --etl_type=INCID --period_type=day --partition_num=100
         dependsOn:
           - themis_mbrmct_start
 
