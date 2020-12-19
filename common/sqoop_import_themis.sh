@@ -175,6 +175,7 @@ if [ "$etl_type" == "INCTIME" ]; then
     --hive-delims-replacement ' ' \
     --target-dir $tmp_path \
     --fetch-size 10000 \
+    --boundary-query "select min($split_id),max($split_id) from ${table_name}" \
     --query "select ${hiveColumns} from ${table_name} where ${inc_column} >= '${pt}' and \$CONDITIONS" \
     --split-by ${split_id} -m ${mapers}
 fi
@@ -202,6 +203,7 @@ if [ "$etl_type" == "INCTIMENOMERGE" ]; then
     --hive-delims-replacement ' ' \
     --target-dir $tmp_path \
     --fetch-size 10000 \
+    --boundary-query "select min($split_id),max($split_id) from ${table_name}" \
     --query "select ${hiveColumns} from ${table_name} where ${inc_column} >= '${pt} 00:00:00' and ${inc_column} <= '${pt} 23:59:59'  and \$CONDITIONS" \
     --split-by ${split_id} -m ${mapers}
 fi
@@ -243,6 +245,7 @@ if [ "$etl_type" == "INCID" ]; then
     --hive-delims-replacement ' ' \
     --fetch-size 10000 \
     --target-dir $tmp_path \
+    --boundary-query "select min($split_id),max($split_id) from ${table_name}" \
     --query "select ${hiveColumns} from ${table_name} where ${inc_column}  > ${idValue} and \$CONDITIONS" \
     --split-by ${split_id} -m ${mapers}
 fi

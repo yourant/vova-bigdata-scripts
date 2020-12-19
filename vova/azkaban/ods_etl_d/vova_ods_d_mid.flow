@@ -212,7 +212,7 @@ nodes:
         dependsOn:
           - trigram_fn_start
 
-      - name: fn_site # test 表不存在
+      - name: fn_site
         type: command
         config:
           retries: 4
@@ -369,7 +369,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vtp --table_name=user_tags --inc_column=update_time --etl_type=INCTIME --period_type=day --partition_num=10
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vtp --table_name=user_tags --inc_column=update_time --etl_type=INCTIME --period_type=day --partition_num=50
         dependsOn:
           - other_mktcpn_start
 
@@ -391,7 +391,7 @@ nodes:
         dependsOn:
           - other_mktcpn_start
 
-      - name: vova_email_send_log_a # test 表不存在
+      - name: vova_email_send_log_a
         type: command
         config:
           retries: 4
@@ -400,7 +400,7 @@ nodes:
         dependsOn:
           - other_mktcpn_start
 
-      - name: vova_email_send_log_b # test 表不存在
+      - name: vova_email_send_log_b
         type: command
         config:
           retries: 4
@@ -409,7 +409,7 @@ nodes:
         dependsOn:
           - other_mktcpn_start
 
-      - name: vova_email_send_log_c # test 表不存在
+      - name: vova_email_send_log_c
         type: command
         config:
           retries: 4

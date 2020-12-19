@@ -210,7 +210,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_goods --mapers=3 --etl_type=ALL  --period_type=day --partition_num=200
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_goods --inc_column=rec_id --mapers=10 --etl_type=INCID  --period_type=day --partition_num=200
         dependsOn:
           - themis_trd_start
 
@@ -757,7 +757,7 @@ nodes:
         dependsOn:
           - themis_mbrmct_start
 
-      - name: vova_merchant_register_deposit_payment # test 表不存在
+      - name: vova_merchant_register_deposit_payment #
         type: command
         config:
           retries: 4
@@ -798,7 +798,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=user_login_record --inc_column=user_agent_id --etl_type=INCID --period_type=day --partition_num=100
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=user_login_record --inc_column=login_id --etl_type=INCID --period_type=day --partition_num=100
         dependsOn:
           - themis_mbrmct_start
 
@@ -838,7 +838,7 @@ nodes:
         dependsOn:
           - themis_mbrmct_start
 
-      - name: vova_merchant_payment_account_info # test 表不存在
+      - name: vova_merchant_payment_account_info #
         type: command
         config:
           retries: 4
