@@ -39,8 +39,8 @@ select 'vova' as datasource,
        got.last_on_time,
        got.last_off_time,
        g.goods_thumb
-from ods_vova_themis.ods_vova_goods g
-         inner join ods_vova_themis.ods_vova_virtual_goods vg on g.goods_id = vg.goods_id
+from ods_vova_vts.ods_vova_goods g
+         inner join ods_vova_vts.ods_vova_virtual_goods vg on g.goods_id = vg.goods_id
          inner join dim.dim_vova_category c on c.cat_id = g.cat_id
          left join
 -- 新增商品（最早、最晚）上线时间、下线时间
@@ -51,7 +51,7 @@ from ods_vova_themis.ods_vova_goods g
       max( IF ( action = 'on', create_time, NULL ) ) last_on_time,
       max( IF ( action = 'off', create_time, NULL ) ) last_off_time
 FROM
-      ( SELECT goods_id, CASE WHEN action = 'on' THEN 'on' ELSE 'off' END AS action, create_time FROM ods_vova_themis.ods_vova_goods_on_sale_record )
+      ( SELECT goods_id, CASE WHEN action = 'on' THEN 'on' ELSE 'off' END AS action, create_time FROM ods_vova_vts.ods_vova_goods_on_sale_record )
       GROUP BY
       goods_id) got
       on g.goods_id = got.goods_id

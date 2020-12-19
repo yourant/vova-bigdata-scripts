@@ -14,7 +14,7 @@ from (select
         merchant_id mct_id,
         key_type shield_type,
         create_time
-    from ods_vova_themis.ods_vova_merchant_region
+    from ods_vova_vts.ods_vova_merchant_region
     where key_type = 'goods'
     union all
     select
@@ -23,8 +23,8 @@ from (select
         m.key_id mct_id,
         m.key_type shield_type,
         m.create_time
-    from ods_vova_themis.ods_vova_merchant_region m
-    left join ods_vova_themis.ods_vova_goods g on m.key_id = g.merchant_id
+    from ods_vova_vts.ods_vova_merchant_region m
+    left join ods_vova_vts.ods_vova_goods g on m.key_id = g.merchant_id
     where key_type = 'merchant'
     ) t
 group by goods_id,

@@ -22,14 +22,14 @@ select
        from_unixtime(oc.coupon_ctime) as cpn_create_time,
        oc.extend_day,
        oc.can_use_times
-from ods_vova_themis.ods_vova_ok_coupon oc
+from ods_vova_vts.ods_vova_ok_coupon oc
          inner join dim.dim_vova_buyers byr on byr.buyer_id = oc.user_id
-         inner join ods_vova_themis.ods_vova_ok_coupon_config occ on oc.coupon_config_id = occ.coupon_config_id
-         inner join ods_vova_themis.ods_vova_ok_coupon_config_type occt on occt.coupon_config_type_id = occ.coupon_config_type_id
+         inner join ods_vova_vts.ods_vova_ok_coupon_config occ on oc.coupon_config_id = occ.coupon_config_id
+         inner join ods_vova_vts.ods_vova_ok_coupon_config_type occt on occt.coupon_config_type_id = occ.coupon_config_type_id
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
 spark-sql --conf "spark.app.name=dim_vova_coupon"  --conf "spark.sql.parquet.writeLegacyFormat=true"  --conf "spark.dynamicAllocation.minExecutors=30" --conf "spark.dynamicAllocation.initialExecutors=60" -e "$sql"
-#如果脚本失败，则报错
+#如果脚本失败，则报错;
 if [ $? -ne 0 ];then
   exit 1
 fi

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #指定日期和引擎
 cur_date=$1
 #默认日期为昨天
@@ -8,7 +8,7 @@ fi
 
 ### 2.定义执行HQL
 sql="
-INSERT OVERWRITE TABLE dim.dim_vova_category
+INSERT OVERWRITE TABLE dim.dim_fn_category
 SELECT
 c.cat_id,
 c.cat_name,
@@ -108,21 +108,15 @@ CASE
         c_th.cat_name
     WHEN c_fou.depth = 4 THEN
         c_fou.cat_name
-    END AS four_cat_name,
-CASE
-    WHEN c.depth > 0 THEN
-        1
-    ELSE
-        0
-    END AS is_leaf
-FROM ods_vova_vts.ods_vova_category c
-LEFT JOIN ods_vova_vts.ods_vova_category c_pri ON c.parent_id = c_pri.cat_id
-LEFT JOIN ods_vova_vts.ods_vova_category c_ga ON c_pri.parent_id = c_ga.cat_id
-LEFT JOIN ods_vova_vts.ods_vova_category c_th ON c_ga.parent_id = c_th.cat_id
-LEFT JOIN ods_vova_vts.ods_vova_category c_fou ON c_th.parent_id = c_fou.cat_id;
+    END AS four_cat_name
+FROM ods_zq_zsp.ods_zq_category c
+LEFT JOIN ods_zq_zsp.ods_zq_category c_pri ON c.parent_id = c_pri.cat_id
+LEFT JOIN ods_zq_zsp.ods_zq_category c_ga ON c_pri.parent_id = c_ga.cat_id
+LEFT JOIN ods_zq_zsp.ods_zq_category c_th ON c_ga.parent_id = c_th.cat_id
+LEFT JOIN ods_zq_zsp.ods_zq_category c_fou ON c_th.parent_id = c_fou.cat_id;
 "
 #执行hql
-spark-sql --conf "spark.app.name=dim_vova_vovacategory"  --conf "spark.sql.parquet.writeLegacyFormat=true" -e "$sql"
+spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"  --conf "spark.app.name=dim_fn_category" -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1

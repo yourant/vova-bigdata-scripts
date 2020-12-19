@@ -17,11 +17,11 @@ select by.datasource,
        from_unixtime(oc.used_timestamp) as used_time,
        oc.used_times,
        oc.coupon_status                 as cpn_status
-from ods_vova_themis.ods_vova_ok_coupon oc
+from ods_vova_vts.ods_vova_ok_coupon oc
     inner join dim.dim_vova_buyers by on by.buyer_id = oc.user_id;
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
-spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"  --conf "spark.app.name=dwd_vova_fact_coupon" --conf "spark.dynamicAllocation.initialExecutors=40" -e "$sql"
+spark-sql --conf "spark.sql.parquet.writeLeg acyFormat=true"  --conf "spark.app.name=dwd_vova_fact_coupon" --conf "spark.dynamicAllocation.initialExecutors=40" -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1

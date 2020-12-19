@@ -52,15 +52,15 @@ select case
        ogs.shipping_time,
        ogs.shipping_abnormal_status,
        ogs.sku_collecting_status
-from ods_vova_themis.ods_vova_order_info oi
-         left join ods_vova_themis.ods_vova_order_goods og on og.order_id = oi.order_id
-         left join ods_vova_themis.ods_vova_order_goods_status ogs on ogs.order_goods_id = og.rec_id
-         left join ods_vova_themis.ods_vova_order_goods_extra oge on oge.order_goods_id = og.rec_id
+from ods_vova_vts.ods_vova_order_info oi
+         left join ods_vova_vts.ods_vova_order_goods og on og.order_id = oi.order_id
+         left join ods_vova_vts.ods_vova_order_goods_status ogs on ogs.order_goods_id = og.rec_id
+         left join ods_vova_vts.ods_vova_order_goods_extra oge on oge.order_goods_id = og.rec_id
       -- AND oge.collection_plan_id IN (1, 2)
-         left join ods_vova_themis.ods_vova_order_shipping_tracking ost on ost.order_goods_id = og.rec_id
-         left join ods_vova_themis.ods_vova_order_shipping_tracking_detail ostd on ost.tracking_id = ostd.tracking_id
+         left join ods_vova_vts.ods_vova_order_shipping_tracking ost on ost.order_goods_id = og.rec_id
+         left join ods_vova_vts.ods_vova_order_shipping_tracking_detail ostd on ost.tracking_id = ostd.tracking_id
          left join (select sol.order_goods_id, max(sol.create_time) AS custom_delivered_time
-                    from ods_vova_themis.ods_vova_sku_ops_log sol
+                    from ods_vova_vts.ods_vova_sku_ops_log sol
                     WHERE sol.ops = 'sku_shipping_status'
                       AND sol.status = 2
                       AND sol.old_status = 1

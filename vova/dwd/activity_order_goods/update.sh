@@ -36,10 +36,10 @@ select byr.datasource                               as datasource,
        byr.platform                                 as platform,
        byr.gender                                   as gender,
        loi.last_update_time                         as last_update_time
-from ods_vova_themis.ods_vova_luckystar_order_info loi
-         inner join ods_vova_themis.ods_vova_luckystar_group_member lgm on loi.luckystar_order_id = lgm.luckystar_order_id
+from ods_vova_vts.ods_vova_luckystar_order_info loi
+         inner join ods_vova_vts.ods_vova_luckystar_group_member lgm on loi.luckystar_order_id = lgm.luckystar_order_id
          inner join dim.dim_vova_buyers byr on byr.buyer_id = loi.user_id
-         left join ods_vova_themis.ods_vova_order_goods og on og.order_id = lgm.order_id
+         left join ods_vova_vts.ods_vova_order_goods og on og.order_id = lgm.order_id
 ;
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e

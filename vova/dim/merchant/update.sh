@@ -6,14 +6,6 @@ if [ ! -n "$1" ]; then
   cur_date=$(date -d "-1 day" +%Y-%m-%d)
 fi
 ###逻辑sql
-##以来的表，ods.vova_merchant_detail,
-# ods.vova_merchant_payment_account_info,
-# ods.vova_merchant_register_deposit_payment,
-# ods.vova_merchant_login_log
-# ods.vova_merchant_sponsor
-# ods.vova_sponsor
-# ods.vova_merchant
-# ods.vova_merchant_register_coupon
 sql="
 insert overwrite table dim.dim_vova_merchant
 select 'vova' as datasource,
@@ -67,57 +59,57 @@ select 'vova' as datasource,
          WHEN t3.pay_time IS NOT NULL THEN t3.pay_time
          ELSE NULL
          END AS pay_or_verify_time
-FROM ods_vova_themis.ods_vova_merchant m
+FROM ods_vova_vts.ods_vova_merchant m
 LEFT JOIN
   (select g.merchant_id,
           min(gosr.create_time) AS first_publish_time
-   FROM ods_vova_themis.ods_vova_goods g
-   LEFT JOIN ods_vova_themis.ods_vova_goods_on_sale_record gosr ON gosr.goods_id = g.goods_id and gosr.action='on'
+   FROM ods_vova_vts.ods_vova_goods g
+   LEFT JOIN ods_vova_vts.ods_vova_goods_on_sale_record gosr ON gosr.goods_id = g.goods_id and gosr.action='on'
    GROUP BY g.merchant_id) t1 ON m.merchant_id = t1.merchant_id
 LEFT JOIN (SELECT g.merchant_id, min(oi.pay_time) AS first_customer_buy_time
-FROM ods_vova_themis.ods_vova_order_info oi
-         INNER JOIN ods_vova_themis.ods_vova_order_goods og ON oi.order_id = og.order_id
-         INNER JOIN ods_vova_themis.ods_vova_goods g ON og.goods_id = g.goods_id
+FROM ods_vova_vts.ods_vova_order_info oi
+         INNER JOIN ods_vova_vts.ods_vova_order_goods og ON oi.order_id = og.order_id
+         INNER JOIN ods_vova_vts.ods_vova_goods g ON og.goods_id = g.goods_id
 WHERE oi.pay_status >= 1
   AND oi.parent_order_id = 0
   AND oi.email NOT REGEXP '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
 GROUP BY g.merchant_id) order_temp ON m.merchant_id = order_temp.merchant_id
 ----取出身份证号、注册ip
 left outer join
-ods_vova_themis.ods_vova_merchant_detail vmd
+ods_vova_vts.ods_vova_merchant_detail vmd
 on m.merchant_id=vmd.merchant_id
 left outer join
 --取银行卡号
 (
 select merchant_id,collect_set(receiver_bank_account) bank_nbr
-from ods_vova_themis.ods_vova_merchant_payment_account_info group by merchant_id
+from ods_vova_vts.ods_vova_merchant_payment_account_info group by merchant_id
 ) t2
 on m.merchant_id=t2.merchant_id
 left outer join
 --取paypal,缴纳押金时间
 (
-select  merchant_id,min(pay_time) pay_time,collect_set(pay_email) pay_email from ods_vova_themis.ods_vova_merchant_register_deposit_payment group by merchant_id
+select  merchant_id,min(pay_time) pay_time,collect_set(pay_email) pay_email from ods_vova_vts.ods_vova_merchant_register_deposit_payment group by merchant_id
 ) t3
 on m.merchant_id=t3.merchant_id
 left outer join
 --取设备号
 (
-select  merchant_id,collect_set(equipment) as eqmnt from ods_vova_themis.ods_vova_merchant_login_log group by merchant_id
+select  merchant_id,collect_set(equipment) as eqmnt from ods_vova_vts.ods_vova_merchant_login_log group by merchant_id
 ) t4
 on m.merchant_id=t4.merchant_id
 --填写邀请码时间
 left outer join
 (
-select  used_merchant_id merchant_id,used_time,coupon_code from  ods_vova_themis.ods_vova_merchant_register_coupon where coupon_code is not null and used_time > '1970-01-01 00:00:01'
+select  used_merchant_id merchant_id,used_time,coupon_code from  ods_vova_vts.ods_vova_merchant_register_coupon where coupon_code is not null and used_time > '1970-01-01 00:00:01'
 ) t5
 on m.merchant_id=t5.merchant_id
 --招商人姓名
 left join
 (
 SELECT  ms.merchant_id, s.nick from
-(select merchant_id,max(merchant_sponsor_id) merchant_sponsor_id from ods_vova_themis.ods_vova_merchant_sponsor group by merchant_id) temp
-inner join ods_vova_themis.ods_vova_merchant_sponsor ms on ms.merchant_sponsor_id = temp.merchant_sponsor_id and ms.merchant_id = temp.merchant_id
-JOIN ods_vova_themis.ods_vova_sponsor s ON s.sponsor_id = ms.sponsor_id
+(select merchant_id,max(merchant_sponsor_id) merchant_sponsor_id from ods_vova_vts.ods_vova_merchant_sponsor group by merchant_id) temp
+inner join ods_vova_vts.ods_vova_merchant_sponsor ms on ms.merchant_sponsor_id = temp.merchant_sponsor_id and ms.merchant_id = temp.merchant_id
+JOIN ods_vova_vts.ods_vova_sponsor s ON s.sponsor_id = ms.sponsor_id
 ) t6
 on m.merchant_id=t6.merchant_id
 "

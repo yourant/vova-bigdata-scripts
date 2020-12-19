@@ -23,7 +23,7 @@ select 'vova' as datasource,
        sc.carrier_category        carrier_cat,
        vovapost_is_active,
        tracking_source
-from ods_vova_themis.ods_vova_shipping_carrier sc;
+from ods_vova_vts.ods_vova_shipping_carrier sc;
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
 spark-sql --conf "spark.app.name=dim_vova_shipping_carrier"  --conf "spark.sql.parquet.writeLegacyFormat=true" -e "$sql"

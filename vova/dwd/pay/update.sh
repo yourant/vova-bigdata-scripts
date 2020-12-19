@@ -50,12 +50,12 @@ select case
        og.mct_shipping_fee,
        r.region_id,
        r.region_code
-from ods_vova_themis.ods_vova_order_goods og
-         left join ods_vova_themis.ods_vova_order_info oi on oi.order_id = og.order_id
+from ods_vova_vts.ods_vova_order_goods og
+         left join ods_vova_vts.ods_vova_order_info oi on oi.order_id = og.order_id
          left join dim.dim_vova_goods g on g.goods_id = og.goods_id
-         left join ods_vova_themis.ods_vova_order_goods_status ogs on ogs.order_goods_id = og.rec_id
-         left join ods_vova_themis.ods_vova_order_relation ore on ore.order_id = oi.order_id
-         left join ods_vova_themis.ods_vova_region r on r.region_id = oi.country
+         left join ods_vova_vts.ods_vova_order_goods_status ogs on ogs.order_goods_id = og.rec_id
+         left join ods_vova_vts.ods_vova_order_relation ore on ore.order_id = oi.order_id
+         left join ods_vova_vts.ods_vova_region r on r.region_id = oi.country
 where oi.pay_status >= 1
   and oi.email not regexp '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
   and oi.parent_order_id = 0;

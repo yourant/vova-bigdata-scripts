@@ -24,8 +24,8 @@ FROM (
                 oi.order_id,
                 oi.order_time,
                 oi.pay_time
-         FROM ods_vova_themis.ods_vova_order_info oi
-                  INNER JOIN ods_vova_themis.ods_vova_order_relation ore ON oi.order_id = ore.order_id
+         FROM ods_vova_vts.ods_vova_order_info oi
+                  INNER JOIN ods_vova_vts.ods_vova_order_relation ore ON oi.order_id = ore.order_id
          WHERE oi.pay_status >= 1
            AND ore.device_id IS NOT NULL) temp
 GROUP BY device_id, datasource;
@@ -80,8 +80,8 @@ SELECT 'vova'                                                AS datasource,
        fp.first_order_time,
        fp.first_pay_time,
        ar.click_url as clk_url
-FROM ods_vova_tl.ods_vova_appsflyer_record ar
-         LEFT JOIN ods_vova_tlr.ods_vova_channel_mapping cm ON cm.child_channel = ar.media_source
+FROM ods_vova_vtl.ods_vova_appsflyer_record ar
+         LEFT JOIN ods_vova_vtlr.ods_vova_channel_mapping cm ON cm.child_channel = ar.media_source
          LEFT JOIN tmp.tmp_vova_device_first_pay fp ON fp.device_id = ar.device_id AND fp.datasource = 'vova'
     FULL JOIN (SELECT device_id
    , app_version
@@ -118,8 +118,8 @@ SELECT 'airyclub'                                            AS datasource,
        fp.first_order_time,
        fp.first_pay_time,
        ar.click_url as clk_url
-FROM ods_vova_cl.ods_vova_ac_appsflyer_record ar
-         LEFT JOIN ods_vova_tlr.ods_vova_channel_mapping cm ON cm.child_channel = ar.media_source
+FROM ods_vova_acl.ods_vova_ac_appsflyer_record ar
+         LEFT JOIN ods_vova_vtlr.ods_vova_channel_mapping cm ON cm.child_channel = ar.media_source
          LEFT JOIN tmp.tmp_vova_device_first_pay fp ON fp.device_id = ar.device_id AND fp.datasource = 'airyclub'
     FULL JOIN (SELECT device_id
    , app_version
