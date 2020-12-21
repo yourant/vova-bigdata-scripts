@@ -40,7 +40,7 @@ nodes:
       - name: ods_fd_vb_goods_project
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCTIME --inc_column=last_update_time --table_name=goods_project --partition_num=1 --primary_key=goods_id --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_project --partition_num=1 --period_type=day  --split_id=goods_id    
         dependsOn:
           - fd_ods_goods_flow_start
 
@@ -121,6 +121,57 @@ nodes:
         dependsOn:
           - fd_ods_goods_flow_start
 
+
+      - name: ods_fd_vb_goods_gallery_goods_region
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_gallery_goods_region --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_ods_goods_flow_start
+
+      - name: ods_fd_vb_goods_gallery_group_map
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_gallery_group_map --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_ods_goods_flow_start
+
+      - name: ods_fd_vb_goods_gallery
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_gallery --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_ods_goods_flow_start
+
+      - name: ods_fd_vb_goods_gallery_goods_test_queue
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_gallery_goods_test_queue --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_ods_goods_flow_start
+
+      - name: ods_fd_vb_goods_style_off_sale
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_style_off_sale --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_ods_goods_flow_start
+
+      - name: ods_fd_vb_goods_gallery_groups
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_gallery_groups --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_ods_goods_flow_start
+  
+      - name: ods_fd_vb_goods_style_black_white
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_style_black_white --partition_num=100 --period_type=day
+        dependsOn:
+          - fd_ods_goods_flow_start
+
+
     dependsOn:
       - fd_ods_vb_start
 
@@ -185,13 +236,6 @@ nodes:
         dependsOn:
           - fd_ods_order_flow_start
 
-      - name: ods_fd_vb_order_status_change_history
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCTIME --inc_column=create_time --table_name=order_status_change_history  --partition_num=1  --period_type=day
-        dependsOn:
-          - fd_ods_order_flow_start
-
       - name: ods_fd_vb_languages
         type: command
         config:
@@ -223,7 +267,7 @@ nodes:
       - name: ods_fd_ar_feed_tag_log
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=INCTIME --inc_column=last_update_time --table_name=feed_tag_log  --partition_num=100 --period_type=day  --split_id=goods_id
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=INCTIME --inc_column=last_update_time --table_name=feed_tag_log  --partition_num=1 --period_type=day  --split_id=goods_id
         dependsOn:
           - fd_ods_order_flow_start
 

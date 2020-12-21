@@ -99,27 +99,6 @@ nodes:
           command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/order_marketing_data/spt_run.sh order_marketing_data
         dependsOn:
           - ods_fd_vb_order_marketing_data_arc
-      
-      - name: ods_fd_vb_order_status_change_history_inc
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/inc_run.sh order_status_change_history
-        dependsOn:
-          - fd_ods_vb_blg_flow_start
-      
-      - name: ods_fd_vb_order_status_change_history_arc
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/order_status_change_history/arc_run.sh order_status_change_history
-        dependsOn:
-          - ods_fd_vb_order_status_change_history_inc
-      
-      - name: ods_fd_vb_order_status_change_history
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/order_status_change_history/spt_run.sh order_status_change_history
-        dependsOn:
-          - ods_fd_vb_order_status_change_history_arc
 
     dependsOn:
       - fd_ods_vb_blg_start
