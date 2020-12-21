@@ -13,7 +13,7 @@ select 'vova' as datasource,
     min(order_id) as first_order_id,
     min(order_time) as first_order_time,
     min(pay_time) as first_pay_time
-from ods_vova_themis.ods_vova_order_info oi
+from ods_vova_vts.ods_vova_order_info oi
 where oi.pay_status >= 1
 group by user_id;
 
@@ -21,9 +21,9 @@ insert overwrite table tmp.tmp_vova_buyer_first_refund
 select 'vova' as datasource,
     oi.user_id          AS buyer_id,
     min(rr.create_time) AS first_refund_time
-FROM ods_vova_themis.ods_vova_refund_reason rr
-         INNER JOIN ods_vova_themis.ods_vova_order_goods og ON og.rec_id = rr.order_goods_id
-         INNER JOIN ods_vova_themis.ods_vova_order_info oi ON oi.order_id = og.order_id
+FROM ods_vova_vts.ods_vova_refund_reason rr
+         INNER JOIN ods_vova_vts.ods_vova_order_goods og ON og.rec_id = rr.order_goods_id
+         INNER JOIN ods_vova_vts.ods_vova_order_info oi ON oi.order_id = og.order_id
 GROUP BY oi.user_id;
 
 drop table if exists tmp.tmp_vova_buyer_app_version;
@@ -73,12 +73,12 @@ SELECT u.reg_site_name   as datasource,
        bv.app_version as current_app_version,
        last_start_up_date,
        u.bind_time
-from ods_vova_themis.ods_vova_users as u
-         left join ods_vova_themis.ods_vova_region r on r.region_id = u.country
-         left join ods_vova_themis.ods_vova_languages l on l.languages_id = u.language_id
+from ods_vova_vts.ods_vova_users as u
+         left join ods_vova_vts.ods_vova_region r on r.region_id = u.country
+         left join ods_vova_vts.ods_vova_languages l on l.languages_id = u.language_id
          left join tmp.tmp_vova_buyer_first_pay fp on fp.buyer_id = u.user_id
          left join tmp.tmp_vova_buyer_first_refund fr on fr.buyer_id = u.user_id
-         left join ods_vova_themis.ods_vova_users_extension oe on oe.user_id = u.user_id and oe.ext_name = 'user_age_group'
+         left join ods_vova_vts.ods_vova_users_extension oe on oe.user_id = u.user_id and oe.ext_name = 'user_age_group'
          left join tmp.tmp_vova_buyer_app_version bv on bv.buyer_id = u.user_id and bv.datasource = u.reg_site_name;
 "
 spark-sql --conf "spark.app.name=dim_vova_buyers"  --conf "spark.sql.parquet.writeLegacyFormat=true" -e "$sql"

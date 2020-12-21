@@ -17,7 +17,7 @@ select 'vova' as datasource,
     p.disabled,
     p.is_cod,
     p.is_gc
-FROM ods_vova_themis.ods_vova_payment p
+FROM ods_vova_vts.ods_vova_payment p
 "
 #如果使用spark-sql运行，则执行hdfs:///
 spark-sql  --conf "spark.app.name=dim_vova_payment"  --conf "spark.sql.parquet.writeLegacyFormat=true" -e "$sql"

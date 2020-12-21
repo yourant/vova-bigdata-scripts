@@ -77,38 +77,38 @@ SELECT CASE
        if(ogex.storage_type != 2, 'not_fbv', 'is_fbv')                        AS lgst_way,
        ogex.collection_plan_id,
        temp_transportation_shipping_fee.container_transportation_shipping_fee AS container_transportation_shipping_fee
-FROM ods_vova_themis.ods_vova_order_goods og
-         LEFT JOIN ods_vova_themis.ods_vova_order_info oi ON oi.order_id = og.order_id
+FROM ods_vova_vts.ods_vova_order_goods og
+         LEFT JOIN ods_vova_vts.ods_vova_order_info oi ON oi.order_id = og.order_id
          LEFT JOIN dim.dim_vova_goods g ON g.goods_id = og.goods_id
-         LEFT JOIN ods_vova_themis.ods_vova_order_goods_status ogs ON ogs.order_goods_id = og.rec_id
-         LEFT JOIN ods_vova_themis.ods_vova_order_relation ore ON ore.order_id = oi.order_id
-         LEFT JOIN ods_vova_themis.ods_vova_region r ON r.region_id = oi.country
+         LEFT JOIN ods_vova_vts.ods_vova_order_goods_status ogs ON ogs.order_goods_id = og.rec_id
+         LEFT JOIN ods_vova_vts.ods_vova_order_relation ore ON ore.order_id = oi.order_id
+         LEFT JOIN ods_vova_vts.ods_vova_region r ON r.region_id = oi.country
          LEFT JOIN (SELECT collect_set(oe.ext_name) AS order_tag,
                            oe.order_id
-                    FROM ods_vova_themis.ods_vova_order_extension oe
+                    FROM ods_vova_vts.ods_vova_order_extension oe
                     WHERE oe.ext_name IN
                           ('daily_gift_activity_id', 'is_free_sale', 'affiliate_activity_id', 'luckystar_activity_id',
                            'auction_activity_id')
                     GROUP BY oe.order_id) ot ON ot.order_id = og.order_id
          LEFT JOIN (SELECT collect_set(oge.ext_name) AS order_goods_tag,
                            oge.rec_id
-                    FROM ods_vova_themis.ods_vova_order_goods_extension oge
+                    FROM ods_vova_vts.ods_vova_order_goods_extension oge
                     WHERE oge.ext_name IN ('is_flash_sale', 'ranking_list_id')
                     GROUP BY oge.rec_id) temp_order_goods_extension_tag
                    ON temp_order_goods_extension_tag.rec_id = og.rec_id
          LEFT JOIN (SELECT oge.rec_id, collect_set(oge.extension_info)[0] AS extension_info
-                    FROM ods_vova_themis.ods_vova_order_goods_extension oge
+                    FROM ods_vova_vts.ods_vova_order_goods_extension oge
                     WHERE oge.ext_name = 'max'
                     GROUP BY oge.rec_id) temp_order_goods_extension ON temp_order_goods_extension.rec_id = og.rec_id
          LEFT JOIN (SELECT oe.order_id, collect_set(oe.ext_value)[0] AS ext_value
-                    FROM ods_vova_themis.ods_vova_order_extension oe
+                    FROM ods_vova_vts.ods_vova_order_extension oe
                     WHERE oe.ext_name = 'delivery_time'
                     GROUP BY oe.order_id) temp_order_extension ON temp_order_extension.order_id = og.order_id
-         LEFT JOIN ods_vova_themis.ods_vova_order_goods_extra ogex ON ogex.order_goods_id = og.rec_id AND ogex.collection_plan_id IN (1, 2)
+         LEFT JOIN ods_vova_vts.ods_vova_order_goods_extra ogex ON ogex.order_goods_id = og.rec_id AND ogex.collection_plan_id IN (1, 2)
          LEFT JOIN (
          SELECT oget.rec_id,
                 first(oget.extension_info) as container_transportation_shipping_fee
-                FROM ods_vova_themis.ods_vova_order_goods_extension oget
+                FROM ods_vova_vts.ods_vova_order_goods_extension oget
                 WHERE oget.ext_name = 'container_transportation_shipping_fee'
                 group by oget.rec_id
          ) temp_transportation_shipping_fee ON temp_transportation_shipping_fee.rec_id = og.rec_id

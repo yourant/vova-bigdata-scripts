@@ -26,10 +26,10 @@ select 'vova'                       as datasource,
        lac.activity_group_config_id as act_grp_cfg_id,
        lac.is_rapid                 as is_rapid,
        lagc.need_number             as need_cnt
-from ods_vova_themis.ods_vova_luckystar_activity la
-         inner join ods_vova_themis.ods_vova_luckystar_activity_config lac on la.activity_config_id = lac.activity_config_id
-         inner join ods_vova_themis.ods_vova_luckystar_activity_prize lap on lap.prize_id = lac.prize_id
-         inner join ods_vova_themis.ods_vova_luckystar_activity_group_config lagc on lagc.activity_group_config_id = lac.activity_group_config_id;
+from ods_vova_vts.ods_vova_luckystar_activity la
+         inner join ods_vova_vts.ods_vova_luckystar_activity_config lac on la.activity_config_id = lac.activity_config_id
+         inner join ods_vova_vts.ods_vova_luckystar_activity_prize lap on lap.prize_id = lac.prize_id
+         inner join ods_vova_vts.ods_vova_luckystar_activity_group_config lagc on lagc.activity_group_config_id = lac.activity_group_config_id;
 
 insert overwrite table dwd.dwd_vova_fact_luk_grp_act
 select 'vova'                  as datasource,
@@ -50,11 +50,11 @@ select 'vova'                  as datasource,
        lap.market_price        as mkt_prz,
        lwc.winning_status      as win_sts,
        lwr.lottery_source      as lty_src
-from ods_vova_themis.ods_vova_luckystar_group lg
-         left join ods_vova_themis.ods_vova_luckystar_group_member lgm on lg.group_id = lgm.group_id
-         left join ods_vova_themis.ods_vova_luckystar_winning_config lwc on lwc.group_member_id = lgm.group_member_id
-         left join ods_vova_themis.ods_vova_luckystar_activity_prize lap on lap.prize_id = lwc.prize_id
-         left join ods_vova_themis.ods_vova_luckystar_winning_record lwr on lwr.group_member_id = lgm.group_member_id;
+from ods_vova_vts.ods_vova_luckystar_group lg
+         left join ods_vova_vts.ods_vova_luckystar_group_member lgm on lg.group_id = lgm.group_id
+         left join ods_vova_vts.ods_vova_luckystar_winning_config lwc on lwc.group_member_id = lgm.group_member_id
+         left join ods_vova_vts.ods_vova_luckystar_activity_prize lap on lap.prize_id = lwc.prize_id
+         left join ods_vova_vts.ods_vova_luckystar_winning_record lwr on lwr.group_member_id = lgm.group_member_id;
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
 #spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e "$sql"

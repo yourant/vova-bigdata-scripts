@@ -12,7 +12,7 @@ select 'vova' as datasource,
         languages_id,
         name as languages_name,
         code as languages_code
-FROM    ods_vova_themis.ods_vova_languages;
+FROM  ods_vova_vts.ods_vova_languages;
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
 spark-sql  --conf "spark.app.name=dim_vova_languages" --conf "spark.sql.parquet.writeLegacyFormat=true"  -e "$sql"

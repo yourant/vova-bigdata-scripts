@@ -37,7 +37,7 @@ select
        rat.audit_time,
        ogs.sku_pay_status,
        rat.recheck_type
-from ods_vova_themis.ods_vova_refund_reason rr
+from ods_vova_vts.ods_vova_refund_reason rr
          left join (select *
                     FROM (select rrt.value as refund_reason,
                                  rat.order_goods_id,
@@ -47,13 +47,13 @@ from ods_vova_themis.ods_vova_refund_reason rr
                                  rat.recheck_type,
                                  row_number()
                                          over (partition by rat.order_goods_id order by rat.last_update_time desc) as rank
-                          from ods_vova_themis.ods_vova_refund_audit_txn rat
-                                   LEFT JOIN ods_vova_themis.ods_vova_refund_reason_type rrt ON rrt.id = rat.refund_reason_type_id) as rat
+                          from ods_vova_vts.ods_vova_refund_audit_txn rat
+                                   LEFT JOIN ods_vova_vts.ods_vova_refund_reason_type rrt ON rrt.id = rat.refund_reason_type_id) as rat
                     where rat.rank = 1
          ) rat on rat.order_goods_id = rr.order_goods_id
-left join ods_vova_themis.ods_vova_order_goods_status ogs on ogs.order_goods_id = rr.order_goods_id
-left join ods_vova_themis.ods_vova_order_goods og on og.rec_id = rr.order_goods_id
-LEFT JOIN ods_vova_themis.ods_vova_order_info oi ON oi.order_id = og.order_id
+left join ods_vova_vts.ods_vova_order_goods_status ogs on ogs.order_goods_id = rr.order_goods_id
+left join ods_vova_vts.ods_vova_order_goods og on og.rec_id = rr.order_goods_id
+LEFT JOIN ods_vova_vts.ods_vova_order_info oi ON oi.order_id = og.order_id
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
 spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.app.name=dwd_vova_fact_refund" -e "$sql"
