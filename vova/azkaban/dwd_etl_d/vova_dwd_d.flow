@@ -1,0 +1,759 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - vova_fact_start_up
+      - vova_fact_pay
+      - vova_fact_refund
+      - vova_fact_logistics
+      - vova_fact_comment
+      - vova_fact_coupon
+      - vova_fact_buyer_portrait_base
+      - vova_fact_push_click
+      - vova_fact_mbrmct_mct_cd
+      - vova_fact_order_cause_v2
+      - vova_fact_cart_cause_v2
+      - vova_fact_activity_order_goods
+      - vova_fact_luckystar
+      - vova_fact_buyer_device_releation
+      - vova_fact_web_start_up
+      - vova_fact_rec_search_log
+      - vova_fact_shield_goods
+      - vova_fact_supply_order_goods
+      - vova_fact_search_word
+      - vova_fact_ab
+      - vova_fact_log_bonus_card
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: vova_fact_shield_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/fact/shield_goods/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_merchant_region
+
+  - name: vova_fact_log_bonus_card
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/fact/bonus_card/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_coupon
+
+  - name: judge_dim_vova_coupon
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dim_vova_coupon
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: vova_fact_ab
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/fact/ab/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_fact_log_goods_impression
+      - judge_fact_log_goods_click
+      - vova_fact_cart_cause_v2
+      - vova_fact_order_cause_v2
+      - judge_dim_vova_devices
+      - vova_fact_pay
+
+
+  - name: judge_dim_vova_devices
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dim_vova_devices
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_merchant_region
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_merchant_region
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_fact_luckystar
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/fact/luckystar/luckystar_update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_vova_luckystar_group
+      - judge_vova_luckystar_group_member
+      - judge_vova_luckystar_winning_config
+      - judge_vova_luckystar_activity_prize
+      - judge_vova_luckystar_winning_record
+      - judge_vova_luckystar_activity
+      - judge_vova_luckystar_activity_config
+      - judge_vova_luckystar_activity_group_config
+
+  - name: vova_fact_activity_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/fact/activity_order_goods/activity_order_goods_update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_vova_luckystar_order_info
+      - judge_vova_luckystar_group_member
+      - judge_vova_order_goods
+      - judge_dim_vova_buyers
+
+  - name: judge_vova_luckystar_order_info
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_luckystar_order_info
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_luckystar_activity_group_config
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_luckystar_activity_group_config
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_luckystar_activity_config
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_luckystar_activity_config
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_luckystar_activity
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_luckystar_activity
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_luckystar_winning_record
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_luckystar_winning_record
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_luckystar_activity_prize
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_luckystar_activity_prize
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_luckystar_winning_config
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_luckystar_winning_config
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_luckystar_group_member
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_luckystar_group_member
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_luckystar_group
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_luckystar_group
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: vova_fact_push_click
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/fact/push_click/push_click_update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_vova_app_event_log_message_push
+      - judge_vova_app_push_task
+      - judge_vova_app_push_task_config
+      - judge_vova_user_tags
+      - judge_vova_app_push_tag
+
+  - name: judge_vova_app_push_task
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_app_push_task
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_app_push_task_config
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_app_push_task_config
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_user_tags
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_user_tags
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_app_push_tag
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_app_push_tag
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_app_event_log_message_push
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_app_event_log_message_push
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+
+  - name: vova_fact_order_cause_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/fact/order_cause_v2/order_cause_update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_fact_log_goods_click
+      - judge_fact_log_goods_impression
+      - judge_dim_vova_order_goods
+      - judge_dim_vova_goods
+
+  - name: judge_dim_vova_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dim_vova_order_goods
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dim_vova_goods
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: vova_fact_cart_cause_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/fact/cart_cause_v2/cart_cause_update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_fact_log_goods_click
+      - judge_fact_log_goods_impression
+      - judge_fact_log_common_click
+
+  - name: judge_fact_log_page_view
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dwd_vova_fact_log_page_view
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_fact_log_goods_impression
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dwd_vova_fact_log_goods_impression
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: vova_fact_coupon
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/fact/coupon/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_vova_ok_coupon
+      - judge_dim_vova_buyers
+
+  - name: judge_dim_vova_buyers
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dim_vova_buyers
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_vova_ok_coupon
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_ok_coupon
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_vova_order_info
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_order_info
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_region
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_region
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+
+  - name: judge_vova_merchant_login_log
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_merchant_login_log
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_fact_logistics
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/fact/logistics/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_vova_order_shipping_tracking_detail
+      - judge_vova_order_shipping_tracking
+      - judge_vova_order_goods_status
+      - judge_vova_order_goods_extra
+      - judge_vova_sku_ops_log
+      - judge_vova_order_info
+      - judge_vova_order_goods
+    condition: all_success
+
+  - name: judge_vova_order_goods_extra
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_order_goods_extra
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_order_shipping_tracking_detail
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_order_shipping_tracking_detail
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_order_shipping_tracking
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_order_shipping_tracking
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_sku_ops_log
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_sku_ops_log
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+
+  - name: vova_fact_refund
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/fact/refund/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_vova_refund_audit_txn
+      - judge_vova_order_goods_status
+      - judge_vova_refund_reason_type
+      - judge_vova_refund_reason
+      - judge_vova_order_goods
+    condition: all_success
+
+
+  - name: judge_vova_refund_audit_txn
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_refund_audit_txn
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_refund_reason_type
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_refund_reason_type
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_refund_reason
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_refund_reason
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: vova_fact_pay
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/fact/pay/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_vova_order_goods
+      - judge_vova_order_goods_status
+      - judge_vova_order_info
+      - judge_vova_order_relation
+      - judge_dim_vova_goods
+      - judge_vova_region
+    condition: all_success
+
+  - name: judge_vova_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_order_goods
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_order_goods_status
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_order_goods_status
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_vova_order_relation
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_order_relation
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_goods
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: vova_fact_start_up
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/fact/start_up/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_fact_log_screen_view
+    condition: all_success
+
+  - name: judge_fact_log_screen_view
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh fact_log_screen_view
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_goods_comment
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_goods_comment
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: vova_fact_comment
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/fact/comment/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_vova_goods_comment
+    condition: all_success
+
+  - name: vova_fact_buyer_portrait_base
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/fact/portrait/buyer_portrait_d.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_category
+      - vova_fact_pay
+      - judge_fact_log_goods_click
+      - judge_fact_log_common_click
+      - vova_fact_comment
+      - vova_fact_refund
+    condition: all_success
+
+  - name: judge_dim_vova_category
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dim_vova_category
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_fact_log_goods_click
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dwd_vova_fact_log_goods_click
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+
+  - name: judge_fact_log_common_click
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dwd_vova_fact_log_common_click
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+
+  - name: judge_vova_product_upload_excel
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_product_upload_excel
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: vova_fact_mbrmct_mct_cd
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/fact/mbrmct/vova_fact_mbrmct_mct_cd.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_vova_product_upload_excel
+      - judge_vova_merchant_login_log
+    condition: all_success
+
+  - name: vova_fact_buyer_device_releation
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/fact/buyer_device_releation/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - vova_fact_start_up
+    condition: all_success
+
+  - name: vova_fact_web_start_up
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/fact/web_start_up/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_fact_log_page_view
+      - judge_dim_vova_buyers
+
+  - name: vova_fact_rec_search_log
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/fact/rec_log/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+
+  - name: vova_fact_supply_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/fact/supply_order_goods/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_trigram_pangu_order_goods
+      - judge_trigram_pangu_order_info
+      - judge_trigram_pangu_order_goods_purchase_plan
+      - judge_trigram_pangu_purchase_order_goods
+      - judge_trigram_pangu_purchase_order_info
+      - judge_trigram_pangu_waybill_info
+      - judge_trigram_pangu_outbound_waybill_info
+
+  - name: judge_trigram_pangu_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh trigram_pangu_order_goods
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_trigram_pangu_order_info
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh trigram_pangu_order_info
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_trigram_pangu_order_goods_purchase_plan
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh trigram_pangu_order_goods_purchase_plan
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_trigram_pangu_purchase_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh trigram_pangu_purchase_order_goods
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_trigram_pangu_purchase_order_info
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh trigram_pangu_purchase_order_info
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_trigram_pangu_waybill_info
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh trigram_pangu_waybill_info
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_trigram_pangu_outbound_waybill_info
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh trigram_pangu_outbound_waybill_info
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_fact_search_word
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/fact/search_words/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_fact_log_common_click
+      - judge_dim_vova_buyers
+
+
