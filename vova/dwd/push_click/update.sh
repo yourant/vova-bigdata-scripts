@@ -39,13 +39,13 @@ select 'vova'                          as datasource,
        nvl(vapt2.push_country, 'NA')                          as push_region_code,
        nvl(vapt2.task_status, 'NA')                           as task_status,
        nvl(vapt2.push_time, 'NA')                             as push_time
-from ods_vova_tp.ods_vova_app_event_log_message_push vaelmp
-         left join ods_vova_tp.ods_vova_app_push_task vapt2 on vapt2.id = vaelmp.task_id
-         left join ods_vova_tp.ods_vova_app_push_task_config vaptc on vaptc.id = vapt2.config_id
+from ods_vova_vtp.ods_vova_app_event_log_message_push vaelmp
+         left join ods_vova_vtp.ods_vova_app_push_task vapt2 on vapt2.id = vaelmp.task_id
+         left join ods_vova_vtp.ods_vova_app_push_task_config vaptc on vaptc.id = vapt2.config_id
          left join (select vut.user_id                            as buyer_id,
                            concat_ws(',', collect_set(vapt.code)) as user_tag
-                    from ods_vova_tp.ods_vova_user_tags vut
-                             inner join ods_vova_tp.ods_vova_app_push_tag vapt on vut.tag_id = vapt.id
+                    from ods_vova_vtp.ods_vova_user_tags vut
+                             inner join ods_vova_vtp.ods_vova_app_push_tag vapt on vut.tag_id = vapt.id
                     group by vut.user_id) as ug on ug.buyer_id = vaelmp.uid
 union all
 select 'airyclub'                          as datasource,
@@ -79,13 +79,13 @@ select 'airyclub'                          as datasource,
        nvl(vapt2.push_country, 'NA')                          as push_region_code,
        nvl(vapt2.task_status, 'NA')                           as task_status,
        nvl(vapt2.push_time, 'NA')                             as push_time
-from ods_vova_tp.ods_vova_ac_app_event_log_message_push vaelmp
-         left join ods_vova_tp.ods_vova_app_push_task vapt2 on vapt2.id = vaelmp.task_id
-         left join ods_vova_tp.ods_vova_app_push_task_config vaptc on vaptc.id = vapt2.config_id
+from ods_vova_vtp.ods_vova_ac_app_event_log_message_push vaelmp
+         left join ods_vova_vtp.ods_vova_app_push_task vapt2 on vapt2.id = vaelmp.task_id
+         left join ods_vova_vtp.ods_vova_app_push_task_config vaptc on vaptc.id = vapt2.config_id
          left join (select vut.user_id                            as buyer_id,
                            concat_ws(',', collect_set(vapt.code)) as user_tag
-                    from ods_vova_tp.ods_vova_user_tags vut
-                             inner join ods_vova_tp.ods_vova_app_push_tag vapt on vut.tag_id = vapt.id
+                    from ods_vova_vtp.ods_vova_user_tags vut
+                             inner join ods_vova_vtp.ods_vova_app_push_tag vapt on vut.tag_id = vapt.id
                     group by vut.user_id) as ug on ug.buyer_id = vaelmp.uid;
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
