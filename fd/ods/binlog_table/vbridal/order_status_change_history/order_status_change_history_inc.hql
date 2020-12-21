@@ -19,5 +19,5 @@ from (
     FROM    pdb.fd_vb_order_status_change_history
     LATERAL VIEW json_tuple(value, 'kafka_table', 'kafka_ts', 'kafka_commit', 'kafka_xid','kafka_type', 'kafka_old','id', 'order_sn', 'field_name', 'old_value', 'new_value', 'create_time') o_raw
     AS `table`, ts, `commit`, xid, type, old, id, order_sn, field_name, old_value, new_value, create_time
-    WHERE pt = '${hiveconf:pt}'
+    WHERE pt in ('${hiveconf:pt}',date_add('${hiveconf:pt}',1))
 )inc where inc.rank = 1;
