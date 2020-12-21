@@ -28,7 +28,7 @@ from(
            o_raw.owner_party_id,
            o_raw.party_id,
            o_raw.unit_cost,
-           row_number () OVER (PARTITION BY o_raw.inventory_summary_id ORDER BY o_raw.xid DESC) AS rank
+           row_number () OVER (PARTITION BY o_raw.inventory_summary_id ORDER BY cast(o_raw.xid as BIGINT) DESC) AS rank
     from pdb.fd_romeo_inventory_summary
     LATERAL VIEW json_tuple(value, 'kafka_table', 'kafka_ts', 'kafka_commit', 'kafka_xid','kafka_type' , 'kafka_old' , 'inventory_summary_id','status_id','facility_id','container_id','product_id','stock_quantity','available_to_reserved',
     'demand_quantity','making_quantity','created_stamp','last_updated_stamp','last_updated_tx_stamp','created_tx_stamp','comments','currency_uom_id','uom_id','owner_party_id','party_id','unit_cost') o_raw

@@ -38,7 +38,7 @@ echo $pt_last
 sql="
 alter table ods_fd_vb.ods_fd_order_status_change_history_arc drop if exists partition (pt='$pt');
 
-INSERT INTO table ods_fd_vb.ods_fd_order_status_change_history_arc PARTITION (pt='$pt')
+INSERT OVERWRITE table ods_fd_vb.ods_fd_order_status_change_history_arc PARTITION (pt='$pt')
 select /*+ REPARTITION(10) */ id, order_sn, field_name, old_value, new_value, create_time
 from (
 select pt, id, order_sn, field_name, old_value, new_value, create_time,
