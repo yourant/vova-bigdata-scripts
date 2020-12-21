@@ -14,7 +14,7 @@ from (
             create_time
         from ods_fd_vb.ods_fd_order_status_change_history_arc where pt='${hiveconf:pt_last}'
 
-        UNION
+        UNION ALL
         select
             pt,
             id,
