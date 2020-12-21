@@ -69,7 +69,7 @@ from(
             cast(o_raw.heel_type_price AS DECIMAL(10, 2)) AS heel_type_price,
             cast(o_raw.heel_type_price_exchange AS DECIMAL(10, 2)) AS heel_type_price_exchange,
             cast(o_raw.display_heel_type_price_exchange AS DECIMAL(10, 2)) AS display_heel_type_price_exchange,
-            row_number () OVER (PARTITION BY o_raw.rec_id ORDER BY o_raw.xid DESC) AS rank,
+            row_number () OVER (PARTITION BY o_raw.rec_id ORDER BY cast(o_raw.xid as BIGINT) DESC) AS rank,
             pt,
             hour
     FROM    pdb.fd_vb_order_goods

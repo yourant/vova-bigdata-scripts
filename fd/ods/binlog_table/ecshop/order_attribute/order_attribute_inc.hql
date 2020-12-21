@@ -11,7 +11,7 @@ from(
         ,o_raw.order_id
         ,o_raw.attr_name
         ,o_raw.attr_value
-        ,row_number () OVER (PARTITION BY o_raw.attribute_id ORDER BY o_raw.xid DESC) AS rank
+        ,row_number () OVER (PARTITION BY o_raw.attribute_id ORDER BY cast(o_raw.xid as BIGINT) DESC) AS rank
     from pdb.fd_ecshop_order_attribute
     LATERAL VIEW json_tuple(value, 'kafka_table', 'kafka_ts', 'kafka_commit', 'kafka_xid','kafka_type' , 'kafka_old' , 'attribute_id', 'order_id', 'attr_name', 'attr_value') o_raw
     AS `table`, ts, `commit`, xid, type, old, attribute_id, order_id, attr_name, attr_value

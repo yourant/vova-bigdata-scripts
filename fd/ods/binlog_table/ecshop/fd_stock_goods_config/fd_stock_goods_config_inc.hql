@@ -23,7 +23,7 @@ from(
         o_raw.audit_submit_time,
         o_raw.audit_action_id,
         o_raw.status,
-        row_number () OVER (PARTITION BY o_raw.id ORDER BY o_raw.xid DESC) AS rank
+        row_number () OVER (PARTITION BY o_raw.id ORDER BY cast(o_raw.xid as BIGINT) DESC) AS rank
     from pdb.fd_ecshop_fd_stock_goods_config
     LATERAL VIEW json_tuple(value, 'kafka_table', 'kafka_ts', 'kafka_commit', 'kafka_xid','kafka_type' , 'kafka_old' , 'id', 'goods_id', 'min_quantity', 'produce_days', 'change_provider', 'change_provider_days', 'change_provider_reason', 'pms_purchase', 'pms_purchase_days', 'is_delete', 'update_date', 'fabric', 'provider_type', 'audit_submit_time', 'audit_action_id', 'status') o_raw
     AS `table`, ts, `commit`, xid, type, old, id, goods_id, min_quantity, produce_days, change_provider, change_provider_days, change_provider_reason, pms_purchase, pms_purchase_days, is_delete, update_date, fabric, provider_type, audit_submit_time, audit_action_id, status
