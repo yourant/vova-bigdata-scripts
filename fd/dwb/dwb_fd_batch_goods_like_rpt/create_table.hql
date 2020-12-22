@@ -9,6 +9,6 @@ CREATE  TABLE IF NOT EXISTS dwb.dwb_fd_batch_goods_like_rpt
     like_num         bigint comment '喜欢数量',
     unlike_num       bigint comment '不喜欢数量',
     impressions      bigint comment '曝光数'
-) COMMENT '近30天各批次号下商品表现报表'
+) COMMENT '近60天各批次号下商品表现报表'
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
     STORED AS orc;
