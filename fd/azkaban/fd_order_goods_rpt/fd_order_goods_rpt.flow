@@ -1,0 +1,48 @@
+---
+config:
+  failure.emails: ekko.zhang@i9i8.com
+  retries: 5
+  retry.backoff: 300000
+
+nodes:
+  - name: dwb_fd_order_goods_rpt
+    type: noop
+
+  - name: fd_order_goods_rpt_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_order_goods_rpt_start
+        type: noop
+        
+      
+      - name: judge_dwd_fd_order_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_goods
+        dependsOn:
+          - fd_order_goods_rpt_start
+
+
+      - name: fd_order_goods_rpt_run
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_order_goods_rpt/run.sh ${pt}
+        dependsOn:
+          - judge_dwd_fd_order_goods
+
+      - name: fd_order_goods_rpt_end
+        type: noop
+        dependsOn:
+          - fd_order_goods_rpt_run
+
+    dependsOn:
+      - dwb_fd_order_goods_rpt
+
+
+  - name: dwb_fd_order_goods_end
+    type: noop
+    dependsOn:
+      - fd_order_goods_rpt_flow
+
