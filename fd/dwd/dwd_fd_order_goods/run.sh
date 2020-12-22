@@ -168,6 +168,7 @@ from_domain,
 project_name,
 user_agent_id
 from ods_fd_vb.ods_fd_order_info
+where email not regexp 'tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com'
 ) oi ON og.order_id = oi.order_id
 left join (
 select du.user_id,du.sp_duid

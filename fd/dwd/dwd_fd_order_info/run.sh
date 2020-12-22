@@ -212,6 +212,7 @@ display_bonus_exchange,
 token,
 payer_id
 from ods_fd_vb.ods_fd_order_info
+where email not regexp 'tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com'
 )oi
 left join (
 select du.user_id,du.sp_duid
