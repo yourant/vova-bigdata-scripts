@@ -1,4 +1,4 @@
-create external table if not exists dwd.dwd_fd_users_purchase_week
+create table if not exists dwd.dwd_fd_users_repurchase_weekly
 (
     current_week      string comment '统计时间-周，第一次出现在第几周-存放的是每周的第一天',
     user_id           bigint comment '用户ID',

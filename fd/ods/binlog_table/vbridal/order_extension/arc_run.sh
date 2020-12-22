@@ -38,7 +38,7 @@ echo $pt_last
 sql="
 alter table ods_fd_vb.ods_fd_order_extension_arc drop if exists partition (pt='$pt');
 
-INSERT OVERWRITE table ods_fd_vb.ods_fd_order_extension_arc PARTITION (pt='$pt')
+INSERT into table ods_fd_vb.ods_fd_order_extension_arc PARTITION (pt='$pt')
 select /*+ REPARTITION(10) */ id, order_id, ext_name, ext_value, is_delete, last_update_time
 from (
 select pt, id, order_id, ext_name, ext_value, is_delete, last_update_time,

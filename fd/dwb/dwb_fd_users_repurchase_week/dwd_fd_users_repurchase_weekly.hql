@@ -1,4 +1,4 @@
-insert overwrite table dwd.dwd_fd_users_purchase_week
+insert overwrite table dwd.dwd_fd_users_repurchase_weekly
 SELECT 
     tab1.first_day_week as current_week,
     tab1.user_id as user_id,
@@ -26,10 +26,12 @@ FROM(
             ('EDM') THEN 'EDM'
             WHEN ooa.ga_channel in
             ('direct') THEN 'direct'
+            WHEN ooa.ga_channel in
+            ('seo') THEN 'seo'
             ELSE 'others' end as ga_channel
     FROM dwd.dwd_fd_order_info oi
     LEFT JOIN ods_fd_ar.ods_fd_order_analytics ooa ON ooa.order_id = oi.order_id
-    where date(from_unixtime(oi.pay_time,'yyyy-MM-dd HH:mm:ss')) >= date_sub('2020-12-20',56)
+    where date(from_unixtime(oi.pay_time,'yyyy-MM-dd HH:mm:ss')) >= date_sub('${pt}',56)
     and length(oi.project_name) > 0
     and oi.pay_status = 2
 ) tab1
@@ -49,11 +51,9 @@ LEFT JOIN
 (   
         SELECT user_id,date_sub(reg_first,cast(date_format(reg_first,'u') as int)-1) as reg_at_first /*第一次出现在第几周-存放的是每周的第一天*/
         from(
-            select user_id, date(min(TO_UTC_TIMESTAMP(reg_time, 'America/Los_Angeles'))) as reg_first 
+            select user_id, date(TO_UTC_TIMESTAMP(reg_time, 'America/Los_Angeles')) as reg_first
             from ods_fd_vb.ods_fd_users
-            where email
-            NOT REGEXP  'tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com'
-            group by user_id
+            where email NOT REGEXP  'tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com'
         )tab1
         
 )u on tab1.user_id = u.user_id
