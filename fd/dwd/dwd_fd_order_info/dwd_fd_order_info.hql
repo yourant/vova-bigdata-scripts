@@ -185,7 +185,7 @@ from(
         token,
         payer_id
     from ods_fd_vb.ods_fd_order_info
-    where email not regexp '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
+    where email not regexp 'tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com'
 )oi
 left join (
     select du.user_id,du.sp_duid
