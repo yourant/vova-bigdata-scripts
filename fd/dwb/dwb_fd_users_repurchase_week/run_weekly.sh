@@ -20,11 +20,12 @@ echo $pt_last
 shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_users_repurchase_weekly"
 
 spark-sql \
---conf "spark.app.name=dwb_fd_users_repurchase_weekly_rpt_htgao"   \
--f ${shell_path}/dwb_fd_users_repurchase_weekly_rpt.hql
+--conf "spark.app.name=dwd_fd_users_repurchase_weekly_htgao"   \
+-d pt=$pt \
+-f ${shell_path}/dwd_fd_users_repurchase_weekly.hql
 
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
 fi
-echo "dwb_fd_users_repurchase_weekly_rpt table is finished !"
+echo "dwd_fd_users_repurchase_weekly table is finished !"
