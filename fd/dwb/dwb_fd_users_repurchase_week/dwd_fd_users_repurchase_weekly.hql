@@ -1,5 +1,6 @@
-insert overwrite table dwd.dwd_fd_users_repurchase_weekly
-SELECT 
+insert overwrite table dwd.dwd_fd_user_repurchase_weekly partition (pt = '${pt}')
+SELECT
+    /*+ REPARTITION(1) */
     tab1.first_day_week as current_week,
     tab1.user_id as user_id,
     tab1.order_id as order_id,
@@ -30,7 +31,8 @@ FROM(
             ('seo') THEN 'seo'
             ELSE 'others' end as ga_channel
     FROM dwd.dwd_fd_order_channel_analytics oi
-    where date(from_unixtime(oi.pay_time,'yyyy-MM-dd HH:mm:ss')) >= date_sub('${pt}',56)
+    where date(from_unixtime(oi.pay_time,'yyyy-MM-dd HH:mm:ss')) >= date_sub('${pt}',63)
+    and date(from_unixtime(oi.pay_time,'yyyy-MM-dd HH:mm:ss')) < '${pt}'
     and length(oi.project_name) > 0
     and oi.pay_status = 2
 ) tab1

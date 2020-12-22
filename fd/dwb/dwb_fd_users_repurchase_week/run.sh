@@ -17,10 +17,12 @@ fi
 echo $pt
 echo $pt_last
 
-shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_users_repurchase_weekly"
+shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_users_repurchase_week"
 
 spark-sql \
 --conf "spark.app.name=dwb_fd_users_repurchase_weekly_rpt_htgao"   \
+--conf "spark.dynamicAllocation.initialExecutors=60"  \
+--driver-memory 4g \
 -f ${shell_path}/dwb_fd_users_repurchase_weekly_rpt.hql
 
 #如果脚本失败，则报错
