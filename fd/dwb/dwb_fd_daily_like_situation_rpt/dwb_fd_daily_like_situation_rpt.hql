@@ -25,6 +25,7 @@ from (
                          session_id
                   from ods_fd_snowplow.ods_fd_snowplow_goods_event
                   where pt = '${hiveconf:pt}'
+                    and length(country)<=2
                     and event_name = "goods_impression"
                     and goods_event_struct.list_type = '/InspiredList'
                   union all
@@ -42,6 +43,7 @@ from (
                          session_id
                   from ods_fd_snowplow.ods_fd_snowplow_element_event
                   where pt = '${hiveconf:pt}'
+                    and length(country)<=2
                     and event_name in ("common_click")
                     and lower(element_event_struct.element_name) in
                         (lower("InspiredGoodsLike"), lower("InspiredGoodsDisLike"))
