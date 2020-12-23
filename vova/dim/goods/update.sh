@@ -24,6 +24,7 @@ select 'vova' as datasource,
        g.is_complete,
        g.is_new,
        g.cat_id,
+       c.cat_name,
        c.first_cat_id,
        c.first_cat_name,
        c.second_cat_id,
@@ -31,6 +32,7 @@ select 'vova' as datasource,
        c.three_cat_id,
        c.three_cat_name as third_cat_name,
        g.merchant_id    as mct_id,
+       m.store_name as mct_name,
        g.shop_price,
        g.shipping_fee,
        g.goods_weight,
@@ -55,6 +57,7 @@ FROM
       GROUP BY
       goods_id) got
       on g.goods_id = got.goods_id
+  left join ods_vova_vts.ods_vova_merchant m on g.merchant_id = m.merchant_id
 
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
