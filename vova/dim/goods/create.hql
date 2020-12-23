@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS dim.dim_vova_goods
     is_complete      BIGINT comment '编辑是否完成',
     is_new           BIGINT COMMENT '是否是新品',
     cat_id           BIGINT COMMENT '商品类目ID',
+    cat_name         string COMMENT '商品类目name',
     first_cat_id     BIGINT COMMENT '商品一级类目',
     first_cat_name   string COMMENT '商品一级类目',
     second_cat_id    BIGINT COMMENT '商品二级类目',
@@ -23,6 +24,7 @@ CREATE TABLE IF NOT EXISTS dim.dim_vova_goods
     third_cat_id     BIGINT COMMENT '商品三级类目',
     third_cat_name   string COMMENT '商品三级类目',
     mct_id           BIGINT COMMENT '商品所属商家',
+    mct_name           string COMMENT '商品所属商家',
     shop_price       DECIMAL(14, 4) comment '商品价格',
     shipping_fee     DECIMAL(14, 4) comment '商品运费',
     goods_weight     DECIMAL(14, 4) comment '商品重量',
@@ -30,7 +32,8 @@ CREATE TABLE IF NOT EXISTS dim.dim_vova_goods
     first_off_time   timestamp COMMENT '第一次下线时间',
     last_on_time     timestamp COMMENT '最后一次上线时间',
     last_off_time    timestamp COMMENT '最后一次下线时间',
-    goods_thumb      string COMMENT '商品主图'
+    goods_thumb      string COMMENT '商品主图',
+    old_goods_id      string COMMENT '来源平台的ID'
 ) COMMENT '商品维度'
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
