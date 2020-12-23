@@ -15,7 +15,7 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
 
 
-create table if not exists dwb.dwb_fd_user_repurchase_weekly_rpt
+create table if not exists dwb.dwb_fd_user_repurchase_weekly
 (
     project string comment '组织',
     country_code string comment '国家',

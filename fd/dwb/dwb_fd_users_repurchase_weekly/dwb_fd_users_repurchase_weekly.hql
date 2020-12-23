@@ -1,6 +1,6 @@
 set hive.exec.dynamic.partition.mode=nonstrict;
 set hive.new.job.grouping.set.cardinality = 256;
-insert overwrite table dwb.dwb_fd_user_repurchase_weekly_rpt partition (pt)
+insert overwrite table dwb.dwb_fd_user_repurchase_weekly partition (pt)
 select
     /*+ REPARTITION(1) */
     project,
