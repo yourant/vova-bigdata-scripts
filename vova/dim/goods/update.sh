@@ -40,7 +40,8 @@ select 'vova' as datasource,
        got.first_off_time,
        got.last_on_time,
        got.last_off_time,
-       g.goods_thumb
+       g.goods_thumb,
+       g.old_goods_id
 from ods_vova_vts.ods_vova_goods g
          inner join ods_vova_vts.ods_vova_virtual_goods vg on g.goods_id = vg.goods_id
          inner join dim.dim_vova_category c on c.cat_id = g.cat_id
