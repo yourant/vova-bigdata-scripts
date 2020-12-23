@@ -12,7 +12,7 @@ from (
             created_time,
             last_update_time
         from ods_fd_vb.ods_fd_order_marketing_data_arc where pt='${hiveconf:pt_last}'
-        UNION
+        UNION ALL
         select
             pt,
             id,

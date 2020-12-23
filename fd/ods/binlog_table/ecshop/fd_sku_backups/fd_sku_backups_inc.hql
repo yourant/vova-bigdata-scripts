@@ -12,7 +12,7 @@ from(
         o_raw.sale_region,
         o_raw.color,
         o_raw.size,
-        row_number() OVER (PARTITION BY o_raw.id ORDER BY o_raw.xid DESC) AS rank
+        row_number() OVER (PARTITION BY o_raw.id ORDER BY cast(o_raw.xid as BIGINT) DESC) AS rank
     from pdb.fd_ecshop_fd_sku_backups
     LATERAL VIEW json_tuple(value, 'kafka_table', 'kafka_ts', 'kafka_commit', 'kafka_xid','kafka_type' , 'kafka_old' , 'id', 'uniq_sku', 'sale_region', 'color', 'size') o_raw
     AS `table`, ts, `commit`, xid, type, old, id,uniq_sku,sale_region,color,size

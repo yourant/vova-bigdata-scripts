@@ -1,4 +1,4 @@
-a'sINSERT overwrite table dwd.dwd_fd_order_info
+INSERT overwrite table dwd.dwd_fd_order_info
 select 
     ud.sp_duid,
     oi.order_id,
