@@ -17,7 +17,7 @@ fi
 echo '当前时间  ：'$pt
 echo '前一天时间：'$pt_last
 
-shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_users_repurchase_week"
+shell_path="/mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_users_repurchase_weekly"
 
 spark-sql \
 --conf "spark.app.name=dwd_fd_users_repurchase_weekly_htgao"   \
