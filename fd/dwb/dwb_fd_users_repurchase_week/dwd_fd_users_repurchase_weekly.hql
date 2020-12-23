@@ -12,7 +12,7 @@ SELECT
     if(u.reg_at_first = tab1.first_day_week, 'yes', 'no') as user_is_first_reg
 FROM(
     SELECT
-        date_sub(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss'),cast(date_format(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss'),'u') as int)-1) as first_day_week,/*第一次出现在第几周-存放的是每周的第一天*/
+        date_sub(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss'),cast(date_format(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss'),'u') as int)-1) as first_day_week,
         oi.user_id as user_id,
         oi.order_id as order_id,
         oi.project_name as project_name,
@@ -38,7 +38,7 @@ FROM(
 ) tab1
 LEFT JOIN
 (
-        SELECT  user_id,date_sub(pay_first,cast(date_format(pay_first,'u') as int)-1) as pay_at_first /*第一次出现在第几周-存放的是每周的第一天*/
+        SELECT  user_id,date_sub(pay_first,cast(date_format(pay_first,'u') as int)-1) as pay_at_first
         from(
             select user_id, date(min(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss'))) as pay_first
             from dwd.dwd_fd_order_info
@@ -49,7 +49,7 @@ LEFT JOIN
 )voi on tab1.user_id = voi.user_id
 LEFT JOIN
 (   
-        SELECT user_id,date_sub(reg_first,cast(date_format(reg_first,'u') as int)-1) as reg_at_first /*第一次出现在第几周-存放的是每周的第一天*/
+        SELECT user_id,date_sub(reg_first,cast(date_format(reg_first,'u') as int)-1) as reg_at_first
         from(
             select user_id, date(TO_UTC_TIMESTAMP(reg_time, 'America/Los_Angeles')) as reg_first
             from ods_fd_vb.ods_fd_users
