@@ -35,43 +35,23 @@ echo $pt
 echo $pt_last
 
 #脚本路径
-sql="
-alter table ods_fd_vb.ods_fd_order_extension_arc drop if exists partition (pt='$pt');
+shell_path="/mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal/order_goods"
+#flume搜集的binlog日志路径
+flume_path="s3a://bigdata-offline/warehouse/pdb/fd/vbridal"
 
-INSERT INTO table ods_fd_vb.ods_fd_order_extension_arc PARTITION (pt='$pt')
-select /*+ REPARTITION(10) */ id, order_id, ext_name, ext_value, is_delete, last_update_time
-from (
-select pt, id, order_id, ext_name, ext_value, is_delete, last_update_time,
-row_number () OVER (PARTITION BY id ORDER BY pt DESC) AS rank
-from (
-select
-pt,
-id,
-order_id,
-ext_name,
-ext_value,
-is_delete,
-last_update_time
-from ods_fd_vb.ods_fd_order_extension_arc where pt='$pt_last'
-UNION ALL
-select
-pt,
-id,
-order_id,
-ext_name,
-ext_value,
-is_delete,
-last_update_time
-from ods_fd_vb.ods_fd_order_extension_binlog_inc where pt = '$pt'
-)arc
-) tab where tab.rank = 1;
-"
-
-
-spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"  --conf "spark.app.name=fd_order_extension_arc_gaohaitao"   --conf "spark.sql.output.coalesceNum=40" --conf "spark.dynamicAllocation.minExecutors=40" --conf "spark.dynamicAllocation.initialExecutors=60" -e "$sql"
+#将flume收集的数据存到pdb表中
+hive -hiveconf flume_path=$flume_path  -f ${shell_path}/pdb_${table_name}.hql
 
 if [ $? -ne 0 ];then
   exit 1
 fi
-echo "step: ${table_name}_arc table is finished !"
+echo "step1: pdb_${table_name} table is finished !"
+
+#inc表
+hive -hiveconf pt=$pt -hiveconf mapred.job.name=fd_${table_name}_binlog_gaohaitao -f ${shell_path}/${table_name}_binlog_inc.hql
+
+if [ $? -ne 0 ];then
+  exit 1
+fi
+echo "step2: ${table_name}_binlog_inc table is finished !"
 
