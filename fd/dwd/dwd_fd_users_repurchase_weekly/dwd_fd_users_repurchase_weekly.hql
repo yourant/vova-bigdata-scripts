@@ -53,7 +53,7 @@ LEFT JOIN
         from(
             select user_id, date(TO_UTC_TIMESTAMP(reg_time, 'America/Los_Angeles')) as reg_first
             from ods_fd_vb.ods_fd_users
-            where email NOT REGEXP  'tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com'
+            where email NOT REGEXP  '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
         )tab1
         
 )u on tab1.user_id = u.user_id
