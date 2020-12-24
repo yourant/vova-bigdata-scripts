@@ -1,4 +1,4 @@
-INSERT overwrite TABLE ods_fd_vb.ods_fd_order_extension_inc PARTITION (pt= '${hiveconf:pt}')
+INSERT overwrite TABLE ods_fd_vb.ods_fd_order_extension_binlog_inc PARTITION (pt= '${hiveconf:pt}')
 select id, order_id, ext_name, ext_value, is_delete, last_update_time
 from(
     SELECT  o_raw.xid AS event_id,
