@@ -271,6 +271,6 @@ from (
                 display_bonus_exchange ,
                 token ,
                 payer_id
-        from ods_fd_vb.ods_fd_order_info_inc where pt = '${hiveconf:pt}'
+        from ods_fd_vb.ods_fd_order_info_binlog_inc where pt = '${hiveconf:pt}'
     ) arc 
 ) tab where tab.rank = 1;
