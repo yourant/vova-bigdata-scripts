@@ -20,7 +20,7 @@ echo '前一天时间：'$pt_last
 shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_users_repurchase_weekly"
 
 spark-sql \
---conf "spark.app.name=dwb_fd_users_repurchase_weekly_htgao"   \
+--conf "spark.app.name=dwb_fd_users_repurchase_weekly_gaohaitao"   \
 --conf "spark.dynamicAllocation.initialExecutors=60"  \
 --driver-memory 4g \
 -d pt=$pt \
