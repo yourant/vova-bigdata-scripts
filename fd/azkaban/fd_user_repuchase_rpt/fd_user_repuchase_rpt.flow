@@ -1,0 +1,52 @@
+---
+config:
+  failure.emails: htgao@i9i8.com
+  retries: 5
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_user_repuchase_rpt_start
+    type: noop
+
+  - name: judge_dwd_fd_order_channel_analytics
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_channel_analytics
+    dependsOn:
+      - fd_user_repuchase_rpt_start
+
+  - name: judge_dwd_fd_order_info
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_info
+    dependsOn:
+      - fd_user_repuchase_rpt_start 
+
+  - name: judge_ods_fd_vb_users
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_users
+    dependsOn:
+      - fd_user_repuchase_rpt_start
+
+  - name: dwd_fd_user_repurchase_weekly
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_users_repurchase_weekly/run.sh ${pt}
+    dependsOn:
+      - judge_dwd_fd_order_channel_analytics
+      - judge_dwd_fd_order_info
+      - judge_ods_fd_vb_users
+
+  - name: dwb_fd_user_repurchase_weekly_rpt
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_users_repurchase_week/run.sh ${pt}
+    dependsOn:
+      - dwd_fd_user_repurchase_weekly
+
+  - name: fd_user_repuchase_rpt_end
+    type: noop
+    dependsOn:
+      - dwb_fd_user_repurchase_weekly_rpt
+

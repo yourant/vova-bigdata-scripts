@@ -17,17 +17,17 @@ fi
 echo '当前时间  ：'$pt
 echo '前一天时间：'$pt_last
 
-shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_users_repurchase_week"
+shell_path="/mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_users_repurchase_weekly"
 
 spark-sql \
---conf "spark.app.name=dwb_fd_users_repurchase_weekly_rpt_htgao"   \
---conf "spark.dynamicAllocation.initialExecutors=60"  \
+--conf "spark.app.name=dwd_fd_users_repurchase_weekly_gaohaitao"   \
+--conf "spark.dynamicAllocation.initialExecutors=30"  \
 --driver-memory 4g \
 -d pt=$pt \
--f ${shell_path}/dwb_fd_users_repurchase_weekly_rpt.hql
+-f ${shell_path}/dwd_fd_users_repurchase_weekly.hql
 
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
 fi
-echo "dwb_fd_users_repurchase_weekly_rpt table is finished !"
+echo "dwd_fd_users_repurchase_weekly table is finished !"

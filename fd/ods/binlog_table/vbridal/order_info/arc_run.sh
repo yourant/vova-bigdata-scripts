@@ -308,7 +308,7 @@ display_goods_amount_exchange ,
 display_bonus_exchange ,
 token ,
 payer_id
-from ods_fd_vb.ods_fd_order_info_inc where pt >= '$pt'
+from ods_fd_vb.ods_fd_order_info_binlog_inc where pt = '$pt'
 ) arc
 ) tab where tab.rank = 1;
 "
