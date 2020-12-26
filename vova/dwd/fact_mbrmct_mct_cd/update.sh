@@ -58,7 +58,7 @@ on t1.mct_id=t2.mct_id and t1.id=t2.id ;
 "
 
 #如果使用spark-sql运行，则执行spark-sql -e
-spark-sql --name fact_mbrmct_mct_cd -e "$sql"
+spark-sql --conf "spark.app.name=dwd_vova_fact_mbrmct_mct_cd" -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1

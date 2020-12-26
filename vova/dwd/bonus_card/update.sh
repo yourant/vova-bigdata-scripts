@@ -14,7 +14,7 @@ job_name="dwd_vova_fact_log_bonus_card"
 
 ###逻辑sql
 sql="
-msck repair table ods.vova_bonus_card_status;
+msck repair table ods_vova_ext.ods_vova_bonus_card_status;
 
 insert OVERWRITE TABLE dwd.dwd_vova_fact_log_bonus_card PARTITION (pt='${cur_date}')
 select
@@ -34,7 +34,7 @@ from
     get_json_object(data, '$.update_time') update_time,
     from_unixtime(get_json_object(data, '$.update_time'), 'yyyy-MM-dd') pt
   from
-  ods.vova_bonus_card_status
+  ods_vova_ext.ods_vova_bonus_card_status
   where pt >= date_sub('${cur_date}', 1) and pt <= date_sub('${cur_date}', -1)
 )
 where pt = '${cur_date}'
