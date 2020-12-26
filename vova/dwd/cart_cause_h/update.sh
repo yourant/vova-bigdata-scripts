@@ -304,7 +304,7 @@ select /*+ REPARTITION(2) */
 from tmp.tmp_vova_fact_cart_cause_h_expre_cause;
 "
 #如果使用spark-sql运行，则执行spark-sql -e
-spark-sql --queue important --conf "spark.app.name=cart_cause_h" -e "$sql"
+spark-sql --queue important --conf "spark.app.name=vova_fact_cart_cause_h" -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
