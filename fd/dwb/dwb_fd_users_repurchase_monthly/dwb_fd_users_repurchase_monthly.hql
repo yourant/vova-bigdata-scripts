@@ -82,7 +82,7 @@ from(
              left join (
                  select user_id, collect_set(current_month) as all_months
                  from dwd.dwd_fd_user_repurchase_monthly
-                 where pt  '${pt}'
+                 where pt='${pt}'
                  group by user_id
              ) t2 on t1.user_id = t2.user_id
              where t1.pt = '${pt}'

@@ -32,8 +32,8 @@ FROM(
             ('seo') THEN 'seo'
             ELSE 'others' end as ga_channel
     FROM dwd.dwd_fd_order_channel_analytics oi
-    where date(from_unixtime(oi.pay_time,'yyyy-MM-dd HH:mm:ss')) >= add_months('{pt}}',-13)
-    and date(from_unixtime(oi.pay_time,'yyyy-MM-dd HH:mm:ss')) < '{pt}}'
+    where date(from_unixtime(oi.pay_time,'yyyy-MM-dd HH:mm:ss')) >= add_months('{pt}',-13)
+    and date(from_unixtime(oi.pay_time,'yyyy-MM-dd HH:mm:ss')) < '{pt}'
     and length(oi.project_name) > 0
     and oi.pay_status = 2
 ) tab1
