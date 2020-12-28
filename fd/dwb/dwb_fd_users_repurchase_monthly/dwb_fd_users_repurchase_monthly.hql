@@ -66,26 +66,26 @@ from(
                     t1.user_is_first_reg,
                     t1.ga_channel,
                     t1.user_id           as purchase_current_month,
-                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),-1),1,7)),t1.user_id, null) as p1m,
-                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),-2),1,7)),t1.user_id, null) as p2m,
-                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),-3),1,7)),t1.user_id, null) as p3m,
-                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),-4),1,7)),t1.user_id, null) as p4m,
-                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),-5),1,7)),t1.user_id, null) as p5m,
-                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),-6),1,7)),t1.user_id, null) as p6m,
-                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),-7),1,7)),t1.user_id, null) as p7m,
-                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),-8),1,7)),t1.user_id, null) as p8m,
-                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),-9),1,7)),t1.user_id, null) as p9m,
-                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),-10),1,7)),t1.user_id, null) as p10m,
-                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),-11),1,7)),t1.user_id, null) as p11m,
-                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),-12),1,7)),t1.user_id, null) as p12m
+                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),1),1,7)),t1.user_id, null) as p1m,
+                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),2),1,7)),t1.user_id, null) as p2m,
+                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),3),1,7)),t1.user_id, null) as p3m,
+                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),4),1,7)),t1.user_id, null) as p4m,
+                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),5),1,7)),t1.user_id, null) as p5m,
+                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),6),1,7)),t1.user_id, null) as p6m,
+                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),7),1,7)),t1.user_id, null) as p7m,
+                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),8),1,7)),t1.user_id, null) as p8m,
+                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),9),1,7)),t1.user_id, null) as p9m,
+                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),10),1,7)),t1.user_id, null) as p10m,
+                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),11),1,7)),t1.user_id, null) as p11m,
+                    if(ARRAY_CONTAINS(t2.all_months,substr(add_months(concat(current_month,'-01'),12),1,7)),t1.user_id, null) as p12m
              from dwd.dwd_fd_user_repurchase_monthly t1
              left join (
                  select user_id, collect_set(current_month) as all_months
                  from dwd.dwd_fd_user_repurchase_monthly
-                 where pt = '2020-12-01'
+                 where pt = '${pt}'
                  group by user_id
              ) t2 on t1.user_id = t2.user_id
-             where t1.pt = '2020-12-01'
+             where t1.pt = '${pt}'
                and t1.ga_channel is not null
                and t1.project is not null
                and t1.country_code is not null
