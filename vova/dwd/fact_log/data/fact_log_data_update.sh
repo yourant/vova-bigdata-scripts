@@ -54,10 +54,10 @@ SELECT /*+ REPARTITION(5) */ event_fingerprint,
        element_id,
        landing_page,
        imsi
-FROM dwd.dwd_vova_fact_log_data_arc
+FROM dwd.dwd_vova_log_data_arc
 WHERE pt='${pt}'
 "
-spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.sql.adaptive.shuffle.targetPostShuffleInputSize=128000000" --conf "spark.sql.adaptive.enabled=true" --conf "spark.app.name=dwd_vova_fact_log_data" -e "$sql"
+spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.sql.adaptive.shuffle.targetPostShuffleInputSize=128000000" --conf "spark.sql.adaptive.enabled=true" --conf "spark.app.name=dwd_vova_log_data" -e "$sql"
 if [ $? -ne 0 ];then
   exit 1
 fi

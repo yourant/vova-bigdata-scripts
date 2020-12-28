@@ -7,7 +7,7 @@ if [ ! -n "$1" ];then
 pt=`date -d "-1 day" +%Y-%m-%d`
 fi
 sql="
-INSERT OVERWRITE TABLE dwd.dwd_vova_fact_log_impressions PARTITION(pt='${pt}')
+INSERT OVERWRITE TABLE dwd.dwd_vova_log_impressions PARTITION(pt='${pt}')
 SELECT /*+ REPARTITION(40) */ event_fingerprint,
        datasource,
        event_name,
@@ -57,7 +57,7 @@ SELECT /*+ REPARTITION(40) */ event_fingerprint,
        extra,
        landing_page,
        imsi
-FROM dwd.dwd_vova_fact_log_impressions_arc
+FROM dwd.dwd_vova_log_impressions_arc
 WHERE pt='${pt}' and event_type='normal'
 union all
 select /*+ REPARTITION(40) */ event_fingerprint,
@@ -109,7 +109,7 @@ select /*+ REPARTITION(40) */ event_fingerprint,
        null extra,
        landing_page,
        imsi
-FROM dwd.dwd_vova_fact_log_common_impression_arc
+FROM dwd.dwd_vova_log_common_impression_arc
 WHERE pt='${pt}'
 union all
 select /*+ REPARTITION(5) */ event_fingerprint,
@@ -161,10 +161,10 @@ select /*+ REPARTITION(5) */ event_fingerprint,
        null extra,
        landing_page,
        imsi
-FROM dwd.dwd_vova_fact_log_impression_arc
+FROM dwd.dwd_vova_log_impression_arc
 WHERE pt='${pt}'
 "
-spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.sql.adaptive.shuffle.targetPostShuffleInputSize=128000000" --conf "spark.sql.adaptive.enabled=true" --conf "spark.app.name=dwd_vova_fact_log_impressions" -e "$sql"
+spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.sql.adaptive.shuffle.targetPostShuffleInputSize=128000000" --conf "spark.sql.adaptive.enabled=true" --conf "spark.app.name=dwd_vova_log_impressions" -e "$sql"
 if [ $? -ne 0 ];then
   exit 1
 fi

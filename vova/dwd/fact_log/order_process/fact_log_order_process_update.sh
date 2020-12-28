@@ -7,7 +7,7 @@ if [ ! -n "$1" ];then
 pt=`date -d "-1 day" +%Y-%m-%d`
 fi
 sql="
-INSERT OVERWRITE TABLE dwd.dwd_vova_fact_log_order_process PARTITION (pt='${pt}')
+INSERT OVERWRITE TABLE dwd.dwd_vova_log_order_process PARTITION (pt='${pt}')
 SELECT /*+ REPARTITION(2) */ event_fingerprint,
        datasource,
        event_name,
@@ -58,9 +58,9 @@ SELECT /*+ REPARTITION(2) */ event_fingerprint,
        app_uri,
        landing_page,
        imsi
-FROM dwd.dwd_vova_fact_log_order_process_arc
+FROM dwd.dwd_vova_log_order_process_arc
 WHERE pt='${pt}'"
-spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.sql.adaptive.shuffle.targetPostShuffleInputSize=128000000" --conf "spark.sql.adaptive.enabled=true" --conf "spark.app.name=dwd_vova_fact_log_order_process" -e "$sql"
+spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.sql.adaptive.shuffle.targetPostShuffleInputSize=128000000" --conf "spark.sql.adaptive.enabled=true" --conf "spark.app.name=dwd_vova_log_order_process" -e "$sql"
 if [ $? -ne 0 ];then
   exit 1
 fi
