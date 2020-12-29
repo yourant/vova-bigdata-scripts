@@ -72,7 +72,9 @@ CREATE TABLE dwd.dwd_vova_log_click_arc(
   list_uri            string COMMENT 'list_uri',
   extra               string COMMENT '额外信息',
   landing_page        string,
-  imsi                string
+  imsi                string,
+  br_family           string COMMENT 'Browser family No Firefox',
+  br_version          string COMMENT 'Browser version No 12.0'
 )
 PARTITIONED BY (pt string, hour string)
 row format delimited fields terminated by '\001' stored as parquetfile;
@@ -137,7 +139,9 @@ CREATE TABLE dwd.dwd_vova_log_common_click_arc(
   session_id           string COMMENT 'session_id',
   app_uri              string COMMENT 'app_uri',
   landing_page         string,
-  imsi                 string
+  imsi                 string,
+  br_family            string COMMENT 'Browser family No Firefox',
+  br_version           string COMMENT 'Browser version No 12.0'
 )
 PARTITIONED BY (pt string, hour string)
 row format delimited fields terminated by '\001' stored as parquetfile;
@@ -201,7 +205,9 @@ CREATE TABLE dwd.dwd_vova_log_common_impression_arc(
   session_id          string COMMENT 'session_id',
   app_uri             string COMMENT 'app_uri',
   landing_page        string,
-  imsi                string
+  imsi                string,
+  br_family           string COMMENT 'Browser family No Firefox',
+  br_version          string COMMENT 'Browser version No 12.0'
 )
 PARTITIONED BY (pt string, hour string)
 row format delimited fields terminated by '\001' stored as parquetfile;
@@ -261,7 +267,9 @@ CREATE TABLE dwd.dwd_vova_log_data_arc(
   extra                 string COMMENT '额外信息',
   element_id            string comment '元素id',
   landing_page          string,
-  imsi                  string
+  imsi                  string,
+  br_family             string COMMENT 'Browser family No Firefox',
+  br_version            string COMMENT 'Browser version No 12.0'
 )
 PARTITIONED BY (pt string, hour string)
 row format delimited fields terminated by '\001' stored as parquetfile;
@@ -325,7 +333,9 @@ CREATE TABLE dwd.dwd_vova_log_goods_click_arc(
   session_id                string COMMENT 'session_id',
   app_uri                   string COMMENT 'app_uri',
   landing_page              string,
-  imsi                      string
+  imsi                      string,
+  br_family                 string COMMENT 'Browser family No Firefox',
+  br_version                string COMMENT 'Browser version No 12.0'
 )
 PARTITIONED BY (pt string, hour string)
 row format delimited fields terminated by '\001' stored as parquetfile;
@@ -388,7 +398,9 @@ CREATE TABLE dwd.dwd_vova_log_goods_impression_arc(
   session_id                    string COMMENT 'session_id',
   app_uri                       string COMMENT 'app_uri',
   landing_page                  string,
-  imsi                          string
+  imsi                          string,
+  br_family                     string COMMENT 'Browser family No Firefox',
+  br_version                    string COMMENT 'Browser version No 12.0'
 )
 PARTITIONED BY (pt string, hour string)
 row format delimited fields terminated by '\001' stored as parquetfile;
@@ -447,7 +459,9 @@ CREATE TABLE dwd.dwd_vova_log_impression_arc(
   list_type           string COMMENT '路径前缀',
   element_name        string COMMENT '元素名称',
   landing_page        string COMMENT 'landing_page',
-  imsi                string
+  imsi                string,
+  br_family           string COMMENT 'Browser family No Firefox',
+  br_version          string COMMENT 'Browser version No 12.0'
 )
 PARTITIONED BY (pt string, hour string)
 row format delimited fields terminated by '\001' stored as parquetfile;
@@ -514,7 +528,9 @@ CREATE TABLE dwd.dwd_vova_log_impressions_arc(
   list_uri                      string COMMENT 'list_uri',
   extra                         string COMMENT '额外信息',
   landing_page                  string,
-  imsi                          string
+  imsi                          string,
+  br_family                     string COMMENT 'Browser family No Firefox',
+  br_version                    string COMMENT 'Browser version No 12.0'
 )
 PARTITIONED BY (pt string, hour string)
 row format delimited fields terminated by '\001' stored as parquetfile;
@@ -575,7 +591,9 @@ CREATE TABLE dwd.dwd_vova_log_order_process_arc(
   session_id                string COMMENT 'session_id',
   app_uri                   string COMMENT 'app_uri',
   landing_page              string,
-  imsi                      string
+  imsi                      string,
+  br_family                 string COMMENT 'Browser family No Firefox',
+  br_version                string COMMENT 'Browser version No 12.0'
 )
 PARTITIONED BY (pt string, hour string)
 row format delimited fields terminated by '\001' stored as parquetfile;
@@ -638,7 +656,9 @@ CREATE TABLE dwd.dwd_vova_log_page_view_arc(
   enter_ts            bigint COMMENT '进入时间',
   leave_ts            bigint COMMENT '离开时间',
   landing_page        string,
-  imsi                string
+  imsi                string,
+  br_family           string COMMENT 'Browser family No Firefox',
+  br_version          string COMMENT 'Browser version No 12.0'
 )
 PARTITIONED BY (pt string, hour string)
 row format delimited fields terminated by '\001' stored as parquetfile;
@@ -697,7 +717,9 @@ CREATE TABLE dwd.dwd_vova_log_screen_view_arc(
   virtual_goods_id      bigint COMMENT '页面虚拟商品id',
   app_uri               string COMMENT 'app_uri',
   landing_page          string,
-  imsi                  string
+  imsi                  string,
+  br_family             string COMMENT 'Browser family No Firefox',
+  br_version            string COMMENT 'Browser version No 12.0'
 )
 PARTITIONED BY (pt string, hour string)
 row format delimited fields terminated by '\001' stored as parquetfile;
