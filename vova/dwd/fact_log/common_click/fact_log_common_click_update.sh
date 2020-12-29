@@ -7,14 +7,17 @@ if [ ! -n "$1" ];then
 pt=`date -d "-1 day" +%Y-%m-%d`
 fi
 sql="
-INSERT OVERWRITE TABLE dwd.dwd_vova_log_common_click PARTITION (pt='${pt}')
+set hive.exec.dynamici.partition=true;
+set hive.exec.dynamic.partition.mode=nonstrict;
+INSERT OVERWRITE TABLE dwd.dwd_vova_log_common_click PARTITION (pt='${pt}', datasource)
 SELECT /*+ REPARTITION(20) */ event_fingerprint,
-       datasource,
        event_name,
        platform,
-       unix_timestamp(collector_tstamp)*1000 collector_tstamp,
-       unix_timestamp(dvce_created_tstamp)*1000 dvce_created_tstamp,
-       unix_timestamp(derived_tstamp)*1000 derived_tstamp,
+       collector_tstamp,
+       dvce_created_tstamp,
+       derived_tstamp,
+       collector_ts,
+       dvce_created_ts,
        name_tracker,
        buyer_id,
        domain_userid,
@@ -22,6 +25,11 @@ SELECT /*+ REPARTITION(20) */ event_fingerprint,
        country,
        geo_country,
        geo_city,
+       geo_region,
+       geo_latitude,
+       geo_longitude,
+       geo_region_name,
+       geo_timezone,
        currency,
        page_code,
        gender,
@@ -61,17 +69,19 @@ SELECT /*+ REPARTITION(20) */ event_fingerprint,
        session_id,
        app_uri,
        landing_page,
-       imsi
+       imsi,
+       datasource
 FROM dwd.dwd_vova_log_common_click_arc
 WHERE pt='${pt}'
 union all
 SELECT /*+ REPARTITION(20) */ event_fingerprint,
-       datasource,
        'common_click' event_name,
        platform,
-       unix_timestamp(collector_tstamp)*1000 collector_tstamp,
-       unix_timestamp(dvce_created_tstamp)*1000 dvce_created_tstamp,
-       unix_timestamp(derived_tstamp)*1000 derived_tstamp,
+       collector_tstamp,
+       dvce_created_tstamp,
+       derived_tstamp,
+       collector_ts,
+       dvce_created_ts,
        name_tracker,
        buyer_id,
        domain_userid,
@@ -79,6 +89,11 @@ SELECT /*+ REPARTITION(20) */ event_fingerprint,
        country,
        geo_country,
        geo_city,
+       geo_region,
+       geo_latitude,
+       geo_longitude,
+       geo_region_name,
+       geo_timezone,
        currency,
        page_code,
        gender,
@@ -118,18 +133,20 @@ SELECT /*+ REPARTITION(20) */ event_fingerprint,
        session_id,
        app_uri,
        landing_page,
-       imsi
+       imsi,
+       datasource
 FROM dwd.dwd_vova_log_click_arc
 WHERE pt='${pt}' and event_type='normal'
 union all
 SELECT /*+ REPARTITION(1) */
        event_fingerprint,
-       datasource,
        'common_click' event_name,
        platform,
-       unix_timestamp(collector_tstamp)*1000 collector_tstamp,
-       unix_timestamp(dvce_created_tstamp)*1000 dvce_created_tstamp,
-       unix_timestamp(derived_tstamp)*1000 derived_tstamp,
+       collector_tstamp,
+       dvce_created_tstamp,
+       derived_tstamp,
+       collector_ts,
+       dvce_created_ts,
        name_tracker,
        buyer_id,
        domain_userid,
@@ -137,6 +154,11 @@ SELECT /*+ REPARTITION(1) */
        country,
        geo_country,
        geo_city,
+       geo_region,
+       geo_latitude,
+       geo_longitude,
+       geo_region_name,
+       geo_timezone,
        currency,
        page_code,
        gender,
@@ -176,10 +198,11 @@ SELECT /*+ REPARTITION(1) */
        session_id,
        app_uri,
        landing_page,
-       imsi
+       imsi,
+       datasource
 FROM dwd.dwd_vova_log_data_arc
-WHERE pt='${pt}' and element_name='pdAddToCartSuccess';
-
+WHERE pt='${pt}' and element_name='pdAddToCartSuccess'
+;
 "
 spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.sql.adaptive.shuffle.targetPostShuffleInputSize=128000000" --conf "spark.sql.adaptive.enabled=true" --conf "spark.app.name=dwd_vova_log_common_click" -e "$sql"
 if [ $? -ne 0 ];then

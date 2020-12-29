@@ -1,7 +1,6 @@
 drop table IF EXISTS dwd.dwd_vova_log_common_click;
 CREATE external TABLE dwd.dwd_vova_log_common_click(
   event_fingerprint   string     comment '事件唯一标识',
-  datasource          string     comment '事件来源，vova|ac',
   event_name          string     comment '事件名',
   platform            string     comment '平台，web|mob',
   collector_tstamp      bigint   COMMENT '事件在服务端的收集时间戳',
@@ -62,6 +61,7 @@ CREATE external TABLE dwd.dwd_vova_log_common_click(
   landing_page  string           comment 'landing_page',
   imsi  string                   comment 'imsi'
 )
+COMMENT '点击日志(全部的 normal 的打点)'
 PARTITIONED BY (pt string, datasource string)
 row format delimited fields terminated by '\001' stored as parquetfile
 LOCATION "s3://bigdata-offline/warehouse/dwd/dwd_vova_log_common_click/"
