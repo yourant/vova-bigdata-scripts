@@ -7,14 +7,15 @@ if [ ! -n "$1" ];then
 pt=`date -d "-1 day" +%Y-%m-%d`
 fi
 sql="
-INSERT OVERWRITE TABLE dwd.dwd_vova_log_impressions PARTITION(pt='${pt}')
+INSERT OVERWRITE TABLE dwd.dwd_vova_log_impressions PARTITION(pt='${pt}', datasource)
 SELECT /*+ REPARTITION(40) */ event_fingerprint,
-       datasource,
        event_name,
        platform,
        collector_tstamp,
        dvce_created_tstamp,
        derived_tstamp,
+       collector_ts,
+       dvce_created_ts,
        name_tracker,
        buyer_id,
        domain_userid,
@@ -22,6 +23,11 @@ SELECT /*+ REPARTITION(40) */ event_fingerprint,
        country,
        geo_country,
        geo_city,
+       geo_region,
+       geo_latitude,
+       geo_longitude,
+       geo_region_name,
+       geo_timezone,
        currency,
        page_code,
        gender,
@@ -56,17 +62,19 @@ SELECT /*+ REPARTITION(40) */ event_fingerprint,
        element_position,
        extra,
        landing_page,
-       imsi
+       imsi,
+       datasource
 FROM dwd.dwd_vova_log_impressions_arc
 WHERE pt='${pt}' and event_type='normal'
 union all
 select /*+ REPARTITION(40) */ event_fingerprint,
-       datasource,
        event_name,
        platform,
        collector_tstamp,
        dvce_created_tstamp,
        derived_tstamp,
+       collector_ts,
+       dvce_created_ts,
        name_tracker,
        buyer_id,
        domain_userid,
@@ -74,6 +82,11 @@ select /*+ REPARTITION(40) */ event_fingerprint,
        country,
        geo_country,
        geo_city,
+       geo_region,
+       geo_latitude,
+       geo_longitude,
+       geo_region_name,
+       geo_timezone,
        currency,
        page_code,
        gender,
@@ -108,17 +121,19 @@ select /*+ REPARTITION(40) */ event_fingerprint,
        element_position,
        null extra,
        landing_page,
-       imsi
+       imsi,
+       datasource
 FROM dwd.dwd_vova_log_common_impression_arc
 WHERE pt='${pt}'
 union all
 select /*+ REPARTITION(5) */ event_fingerprint,
-       datasource,
        event_name,
        platform,
        collector_tstamp,
        dvce_created_tstamp,
        derived_tstamp,
+       collector_ts,
+       dvce_created_ts,
        name_tracker,
        buyer_id,
        domain_userid,
@@ -126,6 +141,11 @@ select /*+ REPARTITION(5) */ event_fingerprint,
        country,
        geo_country,
        geo_city,
+       geo_region,
+       geo_latitude,
+       geo_longitude,
+       geo_region_name,
+       geo_timezone,
        currency,
        page_code,
        gender,
@@ -160,7 +180,8 @@ select /*+ REPARTITION(5) */ event_fingerprint,
        null element_position,
        null extra,
        landing_page,
-       imsi
+       imsi,
+       datasource
 FROM dwd.dwd_vova_log_impression_arc
 WHERE pt='${pt}'
 "

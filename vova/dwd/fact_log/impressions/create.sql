@@ -1,7 +1,6 @@
 drop table IF EXISTS dwd.dwd_vova_log_impressions;
 CREATE external TABLE dwd.dwd_vova_log_impressions(
   event_fingerprint   STRING COMMENT '事件唯一标识',
-  datasource          STRING COMMENT '事件来源，vova|ac',
   event_name          STRING COMMENT '事件名',
   platform            STRING COMMENT '平台，web|mob',
   collector_tstamp    bigint COMMENT '事件在服务端的收集时间戳',
@@ -57,6 +56,7 @@ CREATE external TABLE dwd.dwd_vova_log_impressions(
   landing_page        STRING,
   imsi                STRING
 )
+COMMENT '每日全量非商品曝光'
 PARTITIONED BY (pt string, datasource string)
 row format delimited fields terminated by '\001' stored as parquetfile
 LOCATION "s3://bigdata-offline/warehouse/dwd/dwd_vova_log_impressions/"
