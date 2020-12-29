@@ -7,14 +7,15 @@ if [ ! -n "$1" ];then
 pt=`date -d "-1 day" +%Y-%m-%d`
 fi
 sql="
-INSERT OVERWRITE TABLE dwd.dwd_vova_log_page_view PARTITION (pt='${pt}')
+INSERT OVERWRITE TABLE dwd.dwd_vova_log_page_view PARTITION (pt='${pt}', datasource)
 SELECT /*+ REPARTITION(10) */ event_fingerprint,
-       datasource,
        event_name,
        platform,
-       unix_timestamp(collector_tstamp)*1000 collector_tstamp,
-       unix_timestamp(dvce_created_tstamp)*1000 dvce_created_tstamp,
-       unix_timestamp(derived_tstamp)*1000 derived_tstamp,
+       collector_tstamp,
+       dvce_created_tstamp,
+       derived_tstamp,
+       collector_ts,
+       dvce_created_ts,
        name_tracker,
        buyer_id,
        domain_userid,
@@ -22,6 +23,11 @@ SELECT /*+ REPARTITION(10) */ event_fingerprint,
        country,
        geo_country,
        geo_city,
+       geo_region,
+       geo_latitude,
+       geo_longitude,
+       geo_region_name,
+       geo_timezone,
        currency,
        page_code,
        gender,
@@ -54,7 +60,8 @@ SELECT /*+ REPARTITION(10) */ event_fingerprint,
        session_id,
        virtual_goods_id,
        landing_page,
-       imsi
+       imsi,
+       datasource
 FROM dwd.dwd_vova_log_page_view_arc
 WHERE pt='${pt}'"
 spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.sql.adaptive.shuffle.targetPostShuffleInputSize=128000000" --conf "spark.sql.adaptive.enabled=true" --conf "spark.app.name=dwd_vova_log_page_view" -e "$sql"
