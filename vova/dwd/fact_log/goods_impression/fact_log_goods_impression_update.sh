@@ -66,6 +66,8 @@ SELECT /*+ REPARTITION(40) */ event_fingerprint,
        element_type,
        landing_page,
        imsi,
+       br_family,
+       br_version,
        datasource
 FROM dwd.dwd_vova_log_goods_impression_arc
 WHERE pt='${pt}'
@@ -128,6 +130,8 @@ select /*+ REPARTITION(40) */ event_fingerprint,
        element_type,
        landing_page,
        imsi,
+       br_family,
+       br_version,
        datasource
 FROM dwd.dwd_vova_log_impressions_arc
 WHERE pt='${pt}' and event_type='goods'

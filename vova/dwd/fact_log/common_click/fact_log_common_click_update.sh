@@ -70,6 +70,8 @@ SELECT /*+ REPARTITION(20) */ event_fingerprint,
        app_uri,
        landing_page,
        imsi,
+       br_family,
+       br_version,
        datasource
 FROM dwd.dwd_vova_log_common_click_arc
 WHERE pt='${pt}'
@@ -134,6 +136,8 @@ SELECT /*+ REPARTITION(20) */ event_fingerprint,
        app_uri,
        landing_page,
        imsi,
+       br_family,
+       br_version,
        datasource
 FROM dwd.dwd_vova_log_click_arc
 WHERE pt='${pt}' and event_type='normal'
@@ -199,6 +203,8 @@ SELECT /*+ REPARTITION(1) */
        app_uri,
        landing_page,
        imsi,
+       br_family,
+       br_version,
        datasource
 FROM dwd.dwd_vova_log_data_arc
 WHERE pt='${pt}' and element_name='pdAddToCartSuccess'

@@ -51,7 +51,9 @@ CREATE external TABLE dwd.dwd_vova_log_data(
   extra               STRING COMMENT '额外信息',
   element_id          STRING comment '元素id',
   landing_page        STRING,
-  imsi                STRING
+  imsi                STRING,
+  br_family           string COMMENT 'Browser family No Firefox',
+  br_version          string COMMENT 'Browser version No 12.0'
 )
 COMMENT 'data日志'
 PARTITIONED BY (pt string, datasource string)

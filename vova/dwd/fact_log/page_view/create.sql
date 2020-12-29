@@ -51,8 +51,10 @@ CREATE external TABLE dwd.dwd_vova_log_page_view(
   activity_detail string         comment '活动标签详情',
   session_id string              comment 'session_id',
   virtual_goods_id  bigint       comment '页面虚拟商品id',
-  landing_page        STRING,
-  imsi                STRING
+  landing_page            STRING,
+  imsi                    STRING,
+  br_family               string COMMENT 'Browser family No Firefox',
+  br_version              string COMMENT 'Browser version No 12.0'
 )
 COMMENT '页面浏览(全量 pv 点)'
 PARTITIONED BY (pt string, datasource string)

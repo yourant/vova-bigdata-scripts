@@ -60,6 +60,8 @@ SELECT /*+ REPARTITION(5) */ event_fingerprint,
        element_id,
        landing_page,
        imsi,
+       br_family,
+       br_version,
        datasource
 FROM dwd.dwd_vova_log_data_arc
 WHERE pt='${pt}'

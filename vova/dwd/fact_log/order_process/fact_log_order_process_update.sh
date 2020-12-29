@@ -64,6 +64,8 @@ SELECT /*+ REPARTITION(2) */ event_fingerprint,
        app_uri,
        landing_page,
        imsi,
+       br_family,
+       br_version,
        datasource
 FROM dwd.dwd_vova_log_order_process_arc
 WHERE pt='${pt}'"

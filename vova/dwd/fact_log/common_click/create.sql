@@ -59,7 +59,9 @@ CREATE external TABLE dwd.dwd_vova_log_common_click(
   session_id string              comment 'session_id',
   app_uri  string                comment 'app_uri',
   landing_page  string           comment 'landing_page',
-  imsi  string                   comment 'imsi'
+  imsi  string                   comment 'imsi',
+  br_family           string     COMMENT 'Browser family No Firefox',
+  br_version          string     COMMENT 'Browser version No 12.0'
 )
 COMMENT '点击日志(全部的 normal 的打点)'
 PARTITIONED BY (pt string, datasource string)

@@ -54,7 +54,9 @@ CREATE external TABLE dwd.dwd_vova_log_impressions(
   element_position    STRING COMMENT '元素位置',
   extra               STRING COMMENT '额外信息',
   landing_page        STRING,
-  imsi                STRING
+  imsi                STRING,
+  br_family           string COMMENT 'Browser family No Firefox',
+  br_version          string COMMENT 'Browser version No 12.0'
 )
 COMMENT '每日全量非商品曝光'
 PARTITIONED BY (pt string, datasource string)

@@ -61,6 +61,8 @@ SELECT /*+ REPARTITION(10) */ event_fingerprint,
        virtual_goods_id,
        landing_page,
        imsi,
+       br_family,
+       br_version,
        datasource
 FROM dwd.dwd_vova_log_page_view_arc
 WHERE pt='${pt}'"

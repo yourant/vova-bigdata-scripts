@@ -54,8 +54,10 @@ CREATE external TABLE dwd.dwd_vova_log_order_process(
   activity_detail string         comment '活动标签详情',
   session_id string              comment 'session_id',
   app_uri  string                comment 'app_uri',
-  landing_page        STRING,
-  imsi                STRING
+  landing_page            STRING,
+  imsi                    STRING,
+  br_family               string COMMENT 'Browser family No Firefox',
+  br_version              string COMMENT 'Browser version No 12.0'
 )
 COMMENT '每日全量order_process'
 PARTITIONED BY (pt string, datasource string)

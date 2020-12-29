@@ -63,6 +63,8 @@ SELECT /*+ REPARTITION(40) */ event_fingerprint,
        extra,
        landing_page,
        imsi,
+       br_family,
+       br_version,
        datasource
 FROM dwd.dwd_vova_log_impressions_arc
 WHERE pt='${pt}' and event_type='normal'
@@ -122,6 +124,8 @@ select /*+ REPARTITION(40) */ event_fingerprint,
        null extra,
        landing_page,
        imsi,
+       br_family,
+       br_version,
        datasource
 FROM dwd.dwd_vova_log_common_impression_arc
 WHERE pt='${pt}'
@@ -181,6 +185,8 @@ select /*+ REPARTITION(5) */ event_fingerprint,
        null extra,
        landing_page,
        imsi,
+       br_family,
+       br_version,
        datasource
 FROM dwd.dwd_vova_log_impression_arc
 WHERE pt='${pt}'

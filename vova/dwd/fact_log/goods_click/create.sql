@@ -58,7 +58,9 @@ CREATE external TABLE dwd.dwd_vova_log_goods_click(
   app_uri  string                comment 'app_uri',
   element_type  string           comment '元素类型',
   landing_page  string           comment 'landing_page',
-  imsi  string                   comment 'imsi'
+  imsi  string                   comment 'imsi',
+  br_family           string     COMMENT 'Browser family No Firefox',
+  br_version          string     COMMENT 'Browser version No 12.0'
 )
 COMMENT '每日全量商品点击'
 PARTITIONED BY (pt string, datasource string)
