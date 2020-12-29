@@ -7,14 +7,15 @@ if [ ! -n "$1" ];then
 pt=`date -d "-1 day" +%Y-%m-%d`
 fi
 sql="
-INSERT OVERWRITE TABLE dwd.dwd_vova_log_goods_impression PARTITION (pt='${pt}')
+INSERT OVERWRITE TABLE dwd.dwd_vova_log_goods_impression PARTITION (pt='${pt}', datasource)
 SELECT /*+ REPARTITION(40) */ event_fingerprint,
-       datasource,
        event_name,
        platform,
-       unix_timestamp(collector_tstamp)*1000 collector_tstamp,
-       unix_timestamp(dvce_created_tstamp)*1000 dvce_created_tstamp,
-       unix_timestamp(derived_tstamp)*1000 derived_tstamp,
+       collector_tstamp,
+       dvce_created_tstamp,
+       derived_tstamp,
+       collector_ts,
+       dvce_created_ts,
        name_tracker,
        buyer_id,
        domain_userid,
@@ -22,6 +23,11 @@ SELECT /*+ REPARTITION(40) */ event_fingerprint,
        country,
        geo_country,
        geo_city,
+       geo_region,
+       geo_latitude,
+       geo_longitude,
+       geo_region_name,
+       geo_timezone,
        currency,
        page_code,
        gender,
@@ -59,17 +65,19 @@ SELECT /*+ REPARTITION(40) */ event_fingerprint,
        app_uri,
        element_type,
        landing_page,
-       imsi
+       imsi,
+       datasource
 FROM dwd.dwd_vova_log_goods_impression_arc
 WHERE pt='${pt}'
 union all
 select /*+ REPARTITION(40) */ event_fingerprint,
-       datasource,
        'goods_impression' event_name,
        platform,
-       unix_timestamp(collector_tstamp)*1000 collector_tstamp,
-       unix_timestamp(dvce_created_tstamp)*1000 dvce_created_tstamp,
-       unix_timestamp(derived_tstamp)*1000 derived_tstamp,
+       collector_tstamp,
+       dvce_created_tstamp,
+       derived_tstamp,
+       collector_ts,
+       dvce_created_ts,
        name_tracker,
        buyer_id,
        domain_userid,
@@ -77,6 +85,11 @@ select /*+ REPARTITION(40) */ event_fingerprint,
        country,
        geo_country,
        geo_city,
+       geo_region,
+       geo_latitude,
+       geo_longitude,
+       geo_region_name,
+       geo_timezone,
        currency,
        page_code,
        gender,
@@ -114,7 +127,8 @@ select /*+ REPARTITION(40) */ event_fingerprint,
        app_uri,
        element_type,
        landing_page,
-       imsi
+       imsi,
+       datasource
 FROM dwd.dwd_vova_log_impressions_arc
 WHERE pt='${pt}' and event_type='goods'
 "
