@@ -1,3 +1,6 @@
+The structure of Snowplow data:
+https://docs.snowplowanalytics.com/docs/understanding-your-pipeline/canonical-event/
+
 修改：
 collector_tstamp         string -> bigint
 dvce_created_tstamp      string -> bigint
@@ -607,13 +610,11 @@ CREATE TABLE dwd.dwd_vova_log_page_view_arc(
   datasource          string COMMENT '事件来源，vova|ac',
   event_name          string COMMENT '事件名',
   platform            string COMMENT '平台，web|mob',
-  geo_country         string COMMENT 'snowplow上传国家',
-  geo_city            string COMMENT 'snowplow上传城市',
-  geo_region          string COMMENT 'snowplow上传国家和地区的代码ISO-3166-2',
-  geo_latitude        string COMMENT 'snowplow上传位置纬度',
-  geo_longitude       string COMMENT 'snowplow上传位置经度',
-  geo_region_name     string COMMENT 'snowplow上传地区名称',
-  geo_timezone        string COMMENT 'snowplow上传时区名称',
+  collector_tstamp    bigint COMMENT '事件在服务端的收集时间戳',
+  dvce_created_tstamp bigint COMMENT '事件创建的时间戳',
+  derived_tstamp      bigint COMMENT '经过修复的客户端事件时间戳',
+  collector_ts        string COMMENT '事件在服务端的收集时间戳(如:2020-12-26 00:02:14)',
+  dvce_created_ts     string COMMENT '事件创建的时间戳(如:2020-12-26 00:02:14)',
   name_tracker        string COMMENT '',
   buyer_id            bigint COMMENT '用户id',
   domain_userid       string COMMENT '',
@@ -662,7 +663,7 @@ CREATE TABLE dwd.dwd_vova_log_page_view_arc(
   br_family           string COMMENT 'Browser family No Firefox',
   br_version          string COMMENT 'Browser version No 12.0'
 )
-PARTITIONED BY (pt string, hour string)
+    PARTITIONED BY (pt string, hour string)
 row format delimited fields terminated by '\001' stored as parquetfile;
 
 

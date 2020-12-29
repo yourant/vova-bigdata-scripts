@@ -7,7 +7,7 @@ if [ ! -n "$1" ];then
 pt=`date -d "-1 day" +%Y-%m-%d`
 fi
 sql="
-INSERT OVERWRITE TABLE dwd.dwd_vova_log_goods_click PARTITION (pt='${pt}' datasource)
+INSERT OVERWRITE TABLE dwd.dwd_vova_log_goods_click PARTITION (pt='${pt}', datasource)
 SELECT /*+ REPARTITION(5) */ event_fingerprint,
        event_name,
        platform,
