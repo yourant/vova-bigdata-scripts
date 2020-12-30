@@ -1,4 +1,4 @@
-INSERT OVERWRITE TABLE dwb.dwb_fd_erp_country_income_statement_normal_paid PARTITION (dt='${dt}')
+INSERT OVERWRITE TABLE dwb.dwb_fd_erp_country_income_statement_normal_paid PARTITION (pt='${pt}')
 SELECT
     t.order_id
     ,t.party_name
@@ -27,7 +27,7 @@ FROM (
             ,coupon_cost
             ,ads_cost
         FROM dwb.dwb_fd_erp_country_income_statement_normal
-        WHERE dt = '${dt}'
+        WHERE pt = '${pt}'
           AND order_id IS NOT NULL
     ) m
 ) t

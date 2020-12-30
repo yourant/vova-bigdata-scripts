@@ -1,4 +1,4 @@
-INSERT OVERWRITE TABLE fd.fd_mid_country_income_statement_refund_purchase PARTITION (dt = '${dt}')
+INSERT OVERWRITE TABLE fd.fd_mid_country_income_statement_refund_purchase PARTITION (pt = '${pt}')
 SELECT data_type
      , order_id
      , purchase_cost
@@ -31,7 +31,7 @@ FROM (
                                       , order_inv_reserved_detail_id
                                       , reserved_time
                                  FROM ods_fd_romeo.ods_fd_order_inv_reserved_detail
-                                 WHERE date(to_utc_timestamp(reserved_time, "Asia/Shanghai")) = '${dt}'
+                                 WHERE date(to_utc_timestamp(reserved_time, "Asia/Shanghai")) = '${pt}'
                             ) oird
                                 LEFT JOIN
                             (
@@ -91,11 +91,10 @@ FROM (
                          , o.total_amount
                          , o.shipping_amount
                          , o.execute_date
-                         , row_number() over (partition by refund_id order by dt desc ) as rn
                     FROM ods_fd_romeo.ods_fd_romeo_refund o
                     WHERE `status` = 'RFND_STTS_EXECUTED'
                       AND execute_date IS NOT NULL
-                      AND date_format(t.execute_date, 'yyyy-MM-dd') = '${dt}'
+                      AND date_format(t.execute_date, 'yyyy-MM-dd') = '${pt}'
 
                    ) rr
                        LEFT JOIN
@@ -131,11 +130,11 @@ FROM (
                                 , o.total_amount
                                 , o.shipping_amount
                                 , o.execute_date
-                                , row_number() over (partition by refund_id order by dt desc ) as rn
+                                , row_number() over (partition by refund_id order by pt desc ) as rn
                            FROM ods_fd_romeo.ods_fd_romeo_refund o
                            WHERE `status` = 'RFND_STTS_EXECUTED'
                              AND execute_date IS NOT NULL
-                             AND date_format(t.execute_date, 'yyyy-MM-dd') = '${dt}'
+                             AND date_format(t.execute_date, 'yyyy-MM-dd') = '${pt}'
                    ) rr
                        inner join
                    (
@@ -180,7 +179,7 @@ FROM (
                              order_amount
                       from ods_fd_ecshop.ods_fd_ecs_order_info
                       where pay_status = 2
-                        AND date(to_utc_timestamp(eoi.order_time, "Asia/Shanghai")) = '${dt}'
+                        AND date(to_utc_timestamp(eoi.order_time, "Asia/Shanghai")) = '${pt}'
                         AND order_type_id = 'SALE'
                         AND eoi.email not regexp '@tetx.com|@i9i8.com'
               ) eoi
@@ -188,7 +187,7 @@ FROM (
                       select order_sn,
                              order_amount_exchange
                       FROM dwd.dwd_fd_order_info
-                      where  date(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss')) = '${dt}'
+                      where  date(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss')) = '${pt}'
                         AND  pay_status = 2
                         AND eoi.email not regexp '@tetx.com|@i9i8.com'
 

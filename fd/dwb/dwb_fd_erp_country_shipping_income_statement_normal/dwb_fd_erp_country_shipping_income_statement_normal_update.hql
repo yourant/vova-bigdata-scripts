@@ -1,4 +1,4 @@
-INSERT OVERWRITE TABLE dwb.dwb_fd_erp_country_income_statement_normal PARTITION (dt='${dt}')
+INSERT OVERWRITE TABLE dwb.dwb_fd_erp_country_income_statement_normal PARTITION (pt='${pt}')
 SELECT
     order_id
     ,party_name
@@ -40,7 +40,7 @@ FROM (
             AND currency_conversion_date != 0
             AND cancellation_flag != 'Y'
         ) c ON (eoi.currency = c.to_currency_code AND eoi.order_time >= c.currency_conversion_date)
-        WHERE if(eoi.shipping_time = 0, date(to_utc_timestamp(eoi.order_time, "Asia/Shanghai")), from_unixtime(eoi.shipping_time,'yyyy-MM-dd')) = '${dt}'
+        WHERE if(eoi.shipping_time = 0, date(to_utc_timestamp(eoi.order_time, "Asia/Shanghai")), from_unixtime(eoi.shipping_time,'yyyy-MM-dd')) = '${pt}'
           AND eoi.shipping_status=1
           AND eoi.order_type_id = 'SALE'
           AND eoi.email not regexp '@tetx.com|@i9i8.com'
@@ -62,20 +62,20 @@ FROM (
                 order_id
                 ,sales_amount
                 ,party_name
-                ,dt as order_dt
+                ,pt as order_pt
             FROM dwb.dwb_fd_erp_country_income_statement_normal
-            WHERE dt between add_months('${dt}', -4) and date_add('${dt}', 1)
+            WHERE pt between add_months('${pt}', -4) and date_add('${pt}', 1)
         ) o
         INNER JOIN (
             SELECT
-                dt as order_dt
+                pt as order_pt
                 ,party_name
                 ,sum(coalesce(sales_amount, 0.0)) as total_sales_amount
                 ,sum(coalesce(ads_cost, 0.0)) as total_ads_cost
             FROM dwb.dwb_fd_erp_country_income_statement_normal
-            WHERE dt between add_months('${dt}', -4) and date_add('${dt}', 1)
-            GROUP BY dt, party_name
-        ) d ON (o.order_dt = d.order_dt and o.party_name = d.party_name)
+            WHERE pt between add_months('${pt}', -4) and date_add('${pt}', 1)
+            GROUP BY pt, party_name
+        ) d ON (o.order_pt = d.order_pt and o.party_name = d.party_name)
     ) o ON (oi.order_id = o.order_id)
     WHERE oi.rn = 1
 ) t

@@ -1,4 +1,4 @@
-INSERT OVERWRITE TABLE dwb.dwb_fd_erp_country_income_statement_normal PARTITION (dt='${dt}')
+INSERT OVERWRITE TABLE dwb.dwb_fd_erp_country_income_statement_normal PARTITION (pt='${pt}')
 SELECT
     order_id,
     party_name,
@@ -39,7 +39,7 @@ FROM (
             AND currency_conversion_date != 0
             AND cancellation_flag != 'Y'
         ) c ON (eoi.currency = c.to_currency_code AND eoi.order_time >= c.currency_conversion_date)
-        WHERE date(to_utc_timestamp(eoi.order_time, "Asia/Shanghai")) = '${dt}'
+        WHERE date(to_utc_timestamp(eoi.order_time, "Asia/Shanghai")) = '${pt}'
           AND eoi.pay_status=2
           AND eoi.order_type_id = 'SALE'
           AND eoi.email not regexp '@tetx.com|@i9i8.com'
@@ -73,7 +73,7 @@ FROM (
                      , country
                      , `cost`
              FROM ods_fd_ar.ods_fd_ads_adgroup_daily_flat_report
-             WHERE `date` = '${dt}'
+             WHERE `date` = '${pt}'
          ) ads
          left JOIN ods_fd_ecshop.ods_fd_ecs_region r ON ads.country = r.region_name_en
     GROUP BY ads.party_name, ads.country, if(r.region_code is null or r.region_code = '', 'other', r.region_code)
