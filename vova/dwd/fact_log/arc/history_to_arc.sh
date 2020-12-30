@@ -1,4 +1,4 @@
-
+# arc 迁移历史数据测试
 insert overwrite table dwd.dwd_vova_log_common_click_arc PARTITION (pt='2020-12-18', hour='23')
 select
   event_fingerprint    ,
