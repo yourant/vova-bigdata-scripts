@@ -19,5 +19,4 @@ CREATE TABLE if not exists dwb.dwb_fd_place_selection_rpt (
 
 ) COMMENT'投放选款报表'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS ORC
-TBLPROPERTIES ("orc.compress"="SNAPPY");
+STORED AS PARQUET;
