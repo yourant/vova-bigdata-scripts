@@ -13,8 +13,8 @@ fi
 echo "
 spark-submit --master yarn \
 --deploy-mode cluster \
---conf spark.executor.memory=8g \
---conf spark.dynamicAllocation.maxExecutors=200 \
+--conf spark.executor.memory=6g \
+--conf spark.dynamicAllocation.maxExecutors=150 \
 --conf spark.app.name=FactLogToHiveOffline_${stime}_${etime} \
 --conf spark.executor.memoryOverhead=2048 \
 --class com.vova.bigdata.sparkbatch.dataprocess.snowplow.job.FactLogToHiveOffline \
