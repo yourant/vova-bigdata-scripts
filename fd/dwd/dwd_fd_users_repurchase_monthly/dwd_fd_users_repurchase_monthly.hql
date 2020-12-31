@@ -1,4 +1,4 @@
-insert overwrite table dwd.dwd_fd_user_repurchase_monthly partition (pt = '2020-12-01')
+insert overwrite table dwd.dwd_fd_user_repurchase_monthly partition (pt = '${pt}')
 SELECT
     /*+ REPARTITION(1) */
     distinct
