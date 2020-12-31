@@ -57,7 +57,7 @@ nodes:
   - name: judge_dim_vova_coupon
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dim_vova_coupon
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_coupon
       retries: 10
       retry.backoff: 600000
     dependsOn:
@@ -81,7 +81,7 @@ nodes:
   - name: judge_dim_vova_devices
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dim_vova_devices
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_devices
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -91,7 +91,7 @@ nodes:
   - name: judge_merchant_region
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_merchant_region
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_merchant_region
     dependsOn:
       - start_flag
 
@@ -127,7 +127,7 @@ nodes:
   - name: judge_vova_luckystar_order_info
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_luckystar_order_info
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_luckystar_order_info
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -136,7 +136,7 @@ nodes:
   - name: judge_vova_luckystar_activity_group_config
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_luckystar_activity_group_config
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_luckystar_activity_group_config
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -145,7 +145,7 @@ nodes:
   - name: judge_vova_luckystar_activity_config
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_luckystar_activity_config
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_luckystar_activity_config
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -154,7 +154,7 @@ nodes:
   - name: judge_vova_luckystar_activity
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_luckystar_activity
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_luckystar_activity
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -163,7 +163,7 @@ nodes:
   - name: judge_vova_luckystar_winning_record
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_luckystar_winning_record
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_luckystar_winning_record
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -172,7 +172,7 @@ nodes:
   - name: judge_vova_luckystar_activity_prize
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_luckystar_activity_prize
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_luckystar_activity_prize
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -181,7 +181,7 @@ nodes:
   - name: judge_vova_luckystar_winning_config
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_luckystar_winning_config
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_luckystar_winning_config
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -190,7 +190,7 @@ nodes:
   - name: judge_vova_luckystar_group_member
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_luckystar_group_member
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_luckystar_group_member
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -199,7 +199,7 @@ nodes:
   - name: judge_vova_luckystar_group
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_luckystar_group
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_luckystar_group
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -221,7 +221,7 @@ nodes:
   - name: judge_vova_app_push_task
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_app_push_task
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_app_push_task
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -230,7 +230,7 @@ nodes:
   - name: judge_vova_app_push_task_config
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_app_push_task_config
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_app_push_task_config
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -239,7 +239,7 @@ nodes:
   - name: judge_vova_user_tags
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_user_tags
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_user_tags
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -248,7 +248,7 @@ nodes:
   - name: judge_vova_app_push_tag
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_app_push_tag
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_app_push_tag
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -257,7 +257,7 @@ nodes:
   - name: judge_vova_app_event_log_message_push
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_app_event_log_message_push
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_app_event_log_message_push
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -280,7 +280,7 @@ nodes:
   - name: judge_dim_vova_order_goods
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dim_vova_order_goods
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_order_goods
       retries: 10
       retry.backoff: 600000
     dependsOn:
@@ -289,7 +289,7 @@ nodes:
   - name: judge_dim_vova_goods
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dim_vova_goods
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
       retries: 10
       retry.backoff: 600000
     dependsOn:
@@ -309,7 +309,7 @@ nodes:
   - name: judge_fact_log_page_view
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dwd_vova_fact_log_page_view
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_log_page_view
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -318,7 +318,7 @@ nodes:
   - name: judge_fact_log_goods_impression
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dwd_vova_fact_log_goods_impression
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_log_goods_impression
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -337,7 +337,7 @@ nodes:
   - name: judge_dim_vova_buyers
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dim_vova_buyers
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_buyers
       retries: 10
       retry.backoff: 600000
     dependsOn:
@@ -347,7 +347,7 @@ nodes:
   - name: judge_vova_ok_coupon
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_ok_coupon
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_ok_coupon
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -357,7 +357,7 @@ nodes:
   - name: judge_vova_order_info
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_order_info
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_order_info
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -366,7 +366,7 @@ nodes:
   - name: judge_vova_region
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_region
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_region
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -377,7 +377,7 @@ nodes:
   - name: judge_vova_merchant_login_log
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_merchant_login_log
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_merchant_login_log
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -403,7 +403,7 @@ nodes:
   - name: judge_vova_order_goods_extra
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_order_goods_extra
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_order_goods_extra
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -412,7 +412,7 @@ nodes:
   - name: judge_vova_order_shipping_tracking_detail
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_order_shipping_tracking_detail
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_order_shipping_tracking_detail
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -421,7 +421,7 @@ nodes:
   - name: judge_vova_order_shipping_tracking
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_order_shipping_tracking
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_order_shipping_tracking
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -430,7 +430,7 @@ nodes:
   - name: judge_vova_sku_ops_log
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_sku_ops_log
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_sku_ops_log
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -456,7 +456,7 @@ nodes:
   - name: judge_vova_refund_audit_txn
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_refund_audit_txn
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_refund_audit_txn
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -465,7 +465,7 @@ nodes:
   - name: judge_vova_refund_reason_type
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_refund_reason_type
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_refund_reason_type
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -474,7 +474,7 @@ nodes:
   - name: judge_vova_refund_reason
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_refund_reason
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_refund_reason
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -498,7 +498,7 @@ nodes:
   - name: judge_vova_order_goods
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_order_goods
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_order_goods
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -507,7 +507,7 @@ nodes:
   - name: judge_vova_order_goods_status
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_order_goods_status
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_order_goods_status
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -517,7 +517,7 @@ nodes:
   - name: judge_vova_order_relation
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_order_relation
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_order_relation
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -526,7 +526,7 @@ nodes:
   - name: judge_vova_goods
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_goods
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_goods
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -545,7 +545,7 @@ nodes:
   - name: judge_fact_log_screen_view
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh fact_log_screen_view
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fact_log_screen_view
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -554,7 +554,7 @@ nodes:
   - name: judge_vova_goods_comment
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_goods_comment
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_goods_comment
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -588,7 +588,7 @@ nodes:
   - name: judge_dim_vova_category
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dim_vova_category
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_category
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -597,7 +597,7 @@ nodes:
   - name: judge_fact_log_goods_click
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dwd_vova_fact_log_goods_click
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_log_goods_click
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -608,7 +608,7 @@ nodes:
   - name: judge_fact_log_common_click
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dwd_vova_fact_log_common_click
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_log_common_click
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -619,7 +619,7 @@ nodes:
   - name: judge_vova_product_upload_excel
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_product_upload_excel
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_product_upload_excel
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -685,7 +685,7 @@ nodes:
   - name: judge_trigram_pangu_order_goods
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh trigram_pangu_order_goods
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh trigram_pangu_order_goods
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -694,7 +694,7 @@ nodes:
   - name: judge_trigram_pangu_order_info
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh trigram_pangu_order_info
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh trigram_pangu_order_info
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -703,7 +703,7 @@ nodes:
   - name: judge_trigram_pangu_order_goods_purchase_plan
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh trigram_pangu_order_goods_purchase_plan
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh trigram_pangu_order_goods_purchase_plan
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -712,7 +712,7 @@ nodes:
   - name: judge_trigram_pangu_purchase_order_goods
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh trigram_pangu_purchase_order_goods
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh trigram_pangu_purchase_order_goods
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -721,7 +721,7 @@ nodes:
   - name: judge_trigram_pangu_purchase_order_info
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh trigram_pangu_purchase_order_info
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh trigram_pangu_purchase_order_info
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -730,7 +730,7 @@ nodes:
   - name: judge_trigram_pangu_waybill_info
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh trigram_pangu_waybill_info
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh trigram_pangu_waybill_info
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -739,7 +739,7 @@ nodes:
   - name: judge_trigram_pangu_outbound_waybill_info
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh trigram_pangu_outbound_waybill_info
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh trigram_pangu_outbound_waybill_info
       retries: 5
       retry.backoff: 600000
     dependsOn:

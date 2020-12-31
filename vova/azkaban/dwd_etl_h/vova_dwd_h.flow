@@ -49,7 +49,7 @@ nodes:
   - name: judge_vova_order_info_h
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_order_info_h
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_order_info_h
       retries: 20
       retry.backoff: 120000
     dependsOn:
@@ -58,7 +58,7 @@ nodes:
   - name: judge_vova_order_goods_h
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_order_goods_h
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_order_goods_h
       retries: 20
       retry.backoff: 120000
     dependsOn:
@@ -67,7 +67,7 @@ nodes:
   - name: judge_vova_order_relation_h
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_order_relation_h
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_order_relation_h
       retries: 20
       retry.backoff: 120000
     dependsOn:
@@ -76,7 +76,7 @@ nodes:
   - name: judge_vova_virtual_goods_h
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_virtual_goods_h
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_virtual_goods_h
       retries: 20
       retry.backoff: 120000
     dependsOn:
