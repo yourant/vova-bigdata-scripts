@@ -17,6 +17,7 @@ br_family           string  Browser family No Firefox
 br_version          string  Browser version No 12.0
 
 *******************************************************************
+drop table dwd.dwd_vova_log_click_arc;
 CREATE TABLE dwd.dwd_vova_log_click_arc(
   event_fingerprint   string COMMENT '事件唯一标识',
   datasource          string COMMENT '事件来源,vova|ac',
@@ -86,6 +87,7 @@ row format delimited fields terminated by '\001' stored as parquetfile;
 
 
 *******************************************************************
+drop table dwd.dwd_vova_log_common_click_arc;
 CREATE TABLE dwd.dwd_vova_log_common_click_arc(
   event_fingerprint    string COMMENT '事件唯一标识',
   datasource           string COMMENT '事件来源，vova|ac',
@@ -153,6 +155,7 @@ row format delimited fields terminated by '\001' stored as parquetfile;
 
 
 *******************************************************************
+drop table dwd.dwd_vova_log_common_impression_arc;
 CREATE TABLE dwd.dwd_vova_log_common_impression_arc(
   event_fingerprint   string COMMENT '事件唯一标识',
   datasource          string COMMENT '事件来源，vova|ac',
@@ -219,6 +222,7 @@ row format delimited fields terminated by '\001' stored as parquetfile;
 
 
 *******************************************************************
+drop table dwd.dwd_vova_log_data_arc;
 CREATE TABLE dwd.dwd_vova_log_data_arc(
   event_fingerprint     string COMMENT '事件唯一标识',
   datasource            string COMMENT '事件来源，vova|ac',
@@ -281,6 +285,7 @@ row format delimited fields terminated by '\001' stored as parquetfile;
 
 
 *******************************************************************
+drop table dwd.dwd_vova_log_goods_click_arc;
 CREATE TABLE dwd.dwd_vova_log_goods_click_arc(
   event_fingerprint         string COMMENT '事件唯一标识',
   datasource                string COMMENT '事件来源，vova|ac',
@@ -347,6 +352,7 @@ row format delimited fields terminated by '\001' stored as parquetfile;
 
 
 *******************************************************************
+drop table dwd.dwd_vova_log_goods_impression_arc;
 CREATE TABLE dwd.dwd_vova_log_goods_impression_arc(
   event_fingerprint             string COMMENT '事件唯一标识',
   datasource                    string COMMENT '事件来源，vova|ac',
@@ -412,6 +418,7 @@ row format delimited fields terminated by '\001' stored as parquetfile;
 
 
 *******************************************************************
+drop table dwd.dwd_vova_log_impression_arc;
 CREATE TABLE dwd.dwd_vova_log_impression_arc(
   event_fingerprint   string COMMENT '事件唯一标识',
   datasource          string COMMENT '事件来源，vova|ac',
@@ -473,6 +480,7 @@ row format delimited fields terminated by '\001' stored as parquetfile;
 
 
 *******************************************************************
+drop table dwd.dwd_vova_log_impressions_arc;
 CREATE TABLE dwd.dwd_vova_log_impressions_arc(
   event_fingerprint             string COMMENT '事件唯一标识',
   datasource                    string COMMENT '事件来源，vova|ac',
@@ -542,6 +550,7 @@ row format delimited fields terminated by '\001' stored as parquetfile;
 
 
 *******************************************************************
+drop table dwd.dwd_vova_log_order_process_arc;
 CREATE TABLE dwd.dwd_vova_log_order_process_arc(
   event_fingerprint         string COMMENT '事件唯一标识',
   datasource                string COMMENT '事件来源，vova|ac',
@@ -605,6 +614,7 @@ row format delimited fields terminated by '\001' stored as parquetfile;
 
 
 *******************************************************************
+drop table dwd.dwd_vova_log_page_view_arc;
 CREATE TABLE dwd.dwd_vova_log_page_view_arc(
   event_fingerprint   string COMMENT '事件唯一标识',
   datasource          string COMMENT '事件来源，vova|ac',
@@ -668,6 +678,7 @@ row format delimited fields terminated by '\001' stored as parquetfile;
 
 
 *******************************************************************
+drop table dwd.dwd_vova_log_screen_view_arc;
 CREATE TABLE dwd.dwd_vova_log_screen_view_arc(
   event_fingerprint     string COMMENT '事件唯一标识',
   datasource            string COMMENT '事件来源，vova|ac',
