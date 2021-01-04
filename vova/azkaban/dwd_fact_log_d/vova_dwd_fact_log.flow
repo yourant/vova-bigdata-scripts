@@ -24,7 +24,7 @@ nodes:
   - name: judge_vova_fact_log_v2_h
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_fact_log_v2_h
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_v2_h
       retries: 5
       retry.backoff: 600000
     dependsOn:

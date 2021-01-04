@@ -25,7 +25,7 @@ s3://vomkt-emr-rec/jar/vova-bigdata/vova-bigdata-sparkbatch/vova-bigdata-sparkba
 spark-submit --master yarn \
 --deploy-mode client \
 --conf spark.executor.memory=6g \
---conf spark.dynamicAllocation.maxExecutors=150 \
+--conf spark.dynamicAllocation.maxExecutors=100 \
 --conf spark.app.name=FactLogToHiveOffline_${stime}_${etime} \
 --conf spark.executor.memoryOverhead=2048 \
 --class com.vova.bigdata.sparkbatch.dataprocess.snowplow.job.FactLogToHiveOffline \
