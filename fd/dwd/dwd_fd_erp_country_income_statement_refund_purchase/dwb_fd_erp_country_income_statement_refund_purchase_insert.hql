@@ -1,4 +1,4 @@
-INSERT OVERWRITE TABLE fd.fd_mid_country_income_statement_refund_purchase PARTITION (pt = '${pt}')
+INSERT OVERWRITE TABLE dwd.dwd_fd_erp_country_income_statement_refund_purchase PARTITION (pt = '${pt}')
 SELECT data_type
      , order_id
      , purchase_cost
@@ -59,12 +59,11 @@ FROM (
                    (
                        SELECT currency_conversion_rate
                             , to_currency_code
-                            , to_utc_timestamp(currency_conversion_date, "Asia/Shanghai") as currency_conversion_date
-                            ,if(currency_conversion_date != '0000-00-00 00:00:00' and currency_conversion_date != '', unix_timestamp(to_utc_timestamp(currency_conversion_date, "Asia/Shanghai"), "yyyy-MM-dd HH:mm:ss"), 0) as currency_conversion_ts
+                            , currency_conversion_date
+                            ,if(cast(currency_conversion_date as string) != '0000-00-00 00:00:00' and cast(currency_conversion_date as string) != '', cast(unix_timestamp(to_utc_timestamp(currency_conversion_date, "Asia/Shanghai"), "yyyy-MM-dd HH:mm:ss") as bigint), 0) as currency_conversion_ts
                        FROM ods_fd_romeo.ods_fd_currency_conversion
                        WHERE from_currency_code = 'USD'
                          AND currency_conversion_date IS NOT NULL
-                         AND currency_conversion_date != 0
                          AND cancellation_flag != 'Y'
                    ) c ON (p.currency = c.to_currency_code AND p.created_stamp >= c.currency_conversion_date)
      ) t WHERE t.rn = 1 GROUP BY t.order_id
@@ -87,26 +86,25 @@ FROM (
                     SELECT o.order_id
                          , o.refund_id
                          , o.currency
-                         ,  to_utc_timestamp(o.created_stamp, "Asia/Shanghai") AS created_stamp
+                         , o.created_stamp
                          , o.total_amount
                          , o.shipping_amount
                          , o.execute_date
-                    FROM ods_fd_romeo.ods_fd_romeo_refund o
+                    FROM ods_fd_romeo.ods_fd_refund o
                     WHERE `status` = 'RFND_STTS_EXECUTED'
                       AND execute_date IS NOT NULL
-                      AND date_format(t.execute_date, 'yyyy-MM-dd') = '${pt}'
+                      AND to_date(to_utc_timestamp(execute_date, "Asia/Shanghai")) = '${pt}'
 
                    ) rr
                        LEFT JOIN
                    (
                        SELECT currency_conversion_rate
                             , to_currency_code
-                            , to_utc_timestamp(currency_conversion_date, "Asia/Shanghai") as currency_conversion_date
-                            ,if(currency_conversion_date != '0000-00-00 00:00:00' and currency_conversion_date != '', unix_timestamp(to_utc_timestamp(currency_conversion_date, "Asia/Shanghai"), "yyyy-MM-dd HH:mm:ss"), 0) as currency_conversion_ts
+                            , currency_conversion_date
+                            ,if(cast(currency_conversion_date as string) != '0000-00-00 00:00:00' and cast(currency_conversion_date as string) != '', cast(unix_timestamp(to_utc_timestamp(currency_conversion_date, "Asia/Shanghai"), "yyyy-MM-dd HH:mm:ss") as bigint), 0) as currency_conversion_ts
                        FROM ods_fd_romeo.ods_fd_currency_conversion
                        WHERE from_currency_code = 'USD'
                          AND currency_conversion_date IS NOT NULL
-                         AND currency_conversion_date != 0
                          AND cancellation_flag != 'Y'
                    ) c ON (rr.currency = c.to_currency_code AND rr.created_stamp >= c.currency_conversion_date)
      ) t WHERE t.rn = 1
@@ -126,15 +124,14 @@ FROM (
                        SELECT   o.order_id
                                 , o.refund_id
                                 , o.currency
-                                ,  to_utc_timestamp(o.created_stamp, "Asia/Shanghai") AS created_stamp
+                                , unix_timestamp(o.created_stamp,'yyyy-MM-dd HH:mm:ss')  as created_stamp
                                 , o.total_amount
                                 , o.shipping_amount
                                 , o.execute_date
-                                , row_number() over (partition by refund_id order by pt desc ) as rn
-                           FROM ods_fd_romeo.ods_fd_romeo_refund o
+                           FROM ods_fd_romeo.ods_fd_refund o
                            WHERE `status` = 'RFND_STTS_EXECUTED'
                              AND execute_date IS NOT NULL
-                             AND date_format(t.execute_date, 'yyyy-MM-dd') = '${pt}'
+                             AND to_date(to_utc_timestamp(execute_date, "Asia/Shanghai")) = '${pt}'
                    ) rr
                        inner join
                    (
@@ -142,19 +139,17 @@ FROM (
                        from ods_fd_ecshop.ods_fd_ecs_order_info
                        where shipping_status = 1
                          AND order_type_id = 'SALE'
-                         AND email NOT LIKE '%@tetx.com'
-                         AND email NOT LIKE '%@i9i8.com'
+                         AND email not regexp '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
                    ) eoi on rr.order_id = eoi.order_id and rr.created_stamp >= eoi.shipping_time
                        LEFT JOIN
                    (
                        SELECT currency_conversion_rate
                             , to_currency_code
-                            , to_utc_timestamp(currency_conversion_date, "Asia/Shanghai") as currency_conversion_date
-                            ,if(currency_conversion_date != '0000-00-00 00:00:00' and currency_conversion_date != '', unix_timestamp(to_utc_timestamp(currency_conversion_date, "Asia/Shanghai"), "yyyy-MM-dd HH:mm:ss"), 0) as currency_conversion_ts
+                            , unix_timestamp(currency_conversion_date,'yyyy-MM-dd HH:mm:ss') as currency_conversion_date
+                            ,if(cast(currency_conversion_date as string) != '0000-00-00 00:00:00' and cast(currency_conversion_date as string) != '', cast(unix_timestamp(to_utc_timestamp(currency_conversion_date, "Asia/Shanghai"), "yyyy-MM-dd HH:mm:ss") as bigint), 0) as currency_conversion_ts
                        FROM ods_fd_romeo.ods_fd_currency_conversion
                        WHERE from_currency_code = 'USD'
                          AND currency_conversion_date IS NOT NULL
-                         AND currency_conversion_date != 0
                          AND cancellation_flag != 'Y'
                    ) c ON (rr.currency = c.to_currency_code AND rr.created_stamp >= c.currency_conversion_date)
      ) t where t.rn = 1
@@ -174,14 +169,14 @@ FROM (
               from (
                       select order_id,
                              taobao_order_sn,
-                             to_utc_timestamp(eoi.order_time, "Asia/Shanghai") as order_time,
+                             order_time,
                              currency,
                              order_amount
                       from ods_fd_ecshop.ods_fd_ecs_order_info
-                      where pay_status = 2
-                        AND date(to_utc_timestamp(eoi.order_time, "Asia/Shanghai")) = '${pt}'
+                      where date(to_utc_timestamp(order_time, "Asia/Shanghai")) = '${pt}'
+                        AND pay_status = 2
                         AND order_type_id = 'SALE'
-                        AND eoi.email not regexp '@tetx.com|@i9i8.com'
+                        AND email not regexp '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
               ) eoi
               inner join (
                       select order_sn,
@@ -189,18 +184,16 @@ FROM (
                       FROM dwd.dwd_fd_order_info
                       where  date(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss')) = '${pt}'
                         AND  pay_status = 2
-                        AND eoi.email not regexp '@tetx.com|@i9i8.com'
 
               ) oi on eoi.taobao_order_sn = oi.order_sn
               LEFT JOIN (
                    SELECT currency_conversion_rate
                         , to_currency_code
-                        , to_utc_timestamp(currency_conversion_date, "Asia/Shanghai") as currency_conversion_date
-                        ,if(currency_conversion_date != '0000-00-00 00:00:00' and currency_conversion_date != '', unix_timestamp(to_utc_timestamp(currency_conversion_date, "Asia/Shanghai"), "yyyy-MM-dd HH:mm:ss"), 0) as currency_conversion_ts
-                   FROM fd.fd_base_romeo_currency_conversion
+                        , currency_conversion_date
+                        , if(cast(currency_conversion_date as string) != '0000-00-00 00:00:00' and cast(currency_conversion_date as string) != '', cast(unix_timestamp(to_utc_timestamp(currency_conversion_date, "Asia/Shanghai"), "yyyy-MM-dd HH:mm:ss") as bigint), 0) as currency_conversion_ts
+                   FROM ods_fd_romeo.ods_fd_currency_conversion
                    WHERE from_currency_code = 'USD'
                      AND currency_conversion_date IS NOT NULL
-                     AND currency_conversion_date != 0
                      AND cancellation_flag != 'Y'
                ) c ON (eoi.currency = c.to_currency_code AND eoi.order_time >= c.currency_conversion_date)
      ) t  where t.rn = 1
