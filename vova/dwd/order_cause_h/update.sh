@@ -12,7 +12,7 @@ echo "$pre_month"
 
 sql="
 drop table if exists tmp.tmp_vova_fact_order_cause_order_goods_h;
-create table tmp.tmp_vova_fact_order_cause_order_goods_h as
+create table tmp.tmp_vova_fact_order_cause_order_goods_h  STORED AS PARQUETFILE as
 select
 /*+ REPARTITION(1) */
 case when oi.from_domain like '%vova%' then 'vova'
@@ -39,7 +39,7 @@ where oi.email not regexp '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@ai
 and to_date(oi.order_time) = '$pt';
 
 drop table if exists tmp.tmp_fact_order_cause_h_glk_cause_h;
-create table tmp.tmp_fact_order_cause_h_glk_cause_h as
+create table tmp.tmp_fact_order_cause_h_glk_cause_h  STORED AS PARQUETFILE as
 select /*+ REPARTITION(10) */
        t1.datasource,
        t1.goods_id,
@@ -112,7 +112,7 @@ from (select datasource,
                          app_version,
                          test_info,
                          recall_pool
-                  from dwd.dwd_vova_fact_log_goods_click_arc
+                  from dwd.dwd_vova_log_goods_click_arc
                   where pt >= '$pre_pt'
                     and pt <= '$pt'
                     and os_type in('ios','android')
@@ -131,7 +131,7 @@ from (select datasource,
                          app_version,
                          test_info,
                          recall_pool
-                  from dwd.dwd_vova_fact_log_click_arc
+                  from dwd.dwd_vova_log_click_arc
                   where pt >= '$pre_pt'
                     and pt <= '$pt'
                     and os_type in('ios','android')
@@ -151,7 +151,7 @@ from (select datasource,
                          app_version,
                          test_info,
                          recall_pool
-                  from dwd.dwd_vova_fact_log_goods_click
+                  from dwd.dwd_vova_log_goods_click
                   where pt >= '$pre_month'
                     and pt < '$pre_pt'
                     and os_type in('ios','android')
@@ -162,7 +162,7 @@ from (select datasource,
      ) t2
      on t1.device_id = t2.device_id and t1.virtual_goods_id = t2.virtual_goods_id and t1.datasource = t2.datasource;
 drop table if exists tmp.tmp_fact_order_cause_h_expre_cause_h;
-create table tmp.tmp_fact_order_cause_h_expre_cause_h as
+create table tmp.tmp_fact_order_cause_h_expre_cause_h  STORED AS PARQUETFILE as
 select /*+ REPARTITION(10) */
        t1.datasource,
        t1.goods_id,
@@ -233,7 +233,7 @@ from (select datasource,
                          app_version,
                          test_info,
                          recall_pool
-                  from dwd.dwd_vova_fact_log_goods_impression_arc
+                  from dwd.dwd_vova_log_goods_impression_arc
                   where pt = '$pt'
                    and os_type in('ios','android')
                    and page_code not in ('my_order','my_favorites','recently_View','recently_view')
@@ -251,7 +251,7 @@ from (select datasource,
                          app_version,
                          test_info,
                          recall_pool
-                  from dwd.dwd_vova_fact_log_impressions_arc
+                  from dwd.dwd_vova_log_impressions_arc
                   where pt = '$pt'
                    and os_type in('ios','android')
                    and page_code not in ('my_order','my_favorites','recently_View','recently_view')

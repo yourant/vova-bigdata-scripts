@@ -17,7 +17,7 @@ set hive.groupby.position.alias=false;
 
 --step1 商品信息临时表
 drop table if exists tmp.tmp_vova_fact_buyer_portrait_base_01;
-create table tmp.tmp_vova_fact_buyer_portrait_base_01 as
+create table tmp.tmp_vova_fact_buyer_portrait_base_01 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE as
 select t1.goods_id,t1.virtual_goods_id,t1.goods_name,t2.first_cat_id from
 (
 select goods_id,virtual_goods_id,cat_id,goods_name from dim.dim_vova_goods
@@ -56,7 +56,7 @@ count(1) cnt,
 t2.first_cat_id,
 2 act_type_id,t1.pt pt from
 (
-select datasource,virtual_goods_id,buyer_id,pt from dwd.dwd_vova_fact_log_goods_click where pt>='$pre_date' and buyer_id<> -1 and buyer_id is not null
+select datasource,virtual_goods_id,buyer_id,pt from dwd.dwd_vova_log_goods_click where pt>='$pre_date' and buyer_id<> -1 and buyer_id is not null
 ) t1
 left outer join
 tmp.tmp_vova_fact_buyer_portrait_base_01 t2
@@ -86,7 +86,7 @@ when t1.element_name='pdRemoveFromWishlistClick' then 5
 when t1.element_name in ('pdAddToCartSuccess','h5flashsaleSkuPopupGetitnowButton') then 6
 end as act_type_id,t1.pt pt from
 (
-select datasource,cast(element_id as bigint) virtual_goods_id,buyer_id,element_name,pt from dwd.dwd_vova_fact_log_common_click
+select datasource,cast(element_id as bigint) virtual_goods_id,buyer_id,element_name,pt from dwd.dwd_vova_log_common_click
 where pt>='$pre_date' and buyer_id<> -1 and buyer_id is not null
 and element_name in ('pdAddToWishlistClick','pdRemoveFromWishlistClick','pdAddToCartSuccess','h5flashsaleSkuPopupGetitnowButton')
 and  element_id<>'' and element_id is not null
@@ -102,7 +102,7 @@ end,t1.pt;
 
 --step6,8：语言
 insert into table dwd.dwd_vova_fact_buyer_portrait_base  partition(pt)
-select distinct datasource,buyer_id,language,country,1,null,8,pt from dwd.dwd_vova_fact_log_screen_view
+select distinct datasource,buyer_id,language,country,1,null,8,pt from dwd.dwd_vova_log_screen_view
 where pt>='$pre_date' and buyer_id<> -1 and buyer_id is not null;
 --step8,9:日活跃时段
 insert into table dwd.dwd_vova_fact_buyer_portrait_base  partition(pt)
@@ -118,7 +118,7 @@ when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=15 and hour(fr
 when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=18 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<21 then '18'
 when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=21 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<24 then '21'
 end as tag_id,pt
-from dwd.dwd_vova_fact_log_goods_click where pt>='$pre_date' and buyer_id<> -1 and buyer_id is not null
+from dwd.dwd_vova_log_goods_click where pt>='$pre_date' and buyer_id<> -1 and buyer_id is not null
 union all
 select datasource,buyer_id,
 case when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=0 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<3 then '0'
@@ -130,7 +130,7 @@ when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=15 and hour(fr
 when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=18 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<21 then '18'
 when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=21 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<24 then '21'
 end as tag_id,pt
-from dwd.dwd_vova_fact_log_common_click
+from dwd.dwd_vova_log_common_click
 where pt>='$pre_date' and buyer_id<> -1 and buyer_id is not null
 and element_name in ('pdAddToWishlistClick','pdAddToCartSuccess','h5flashsaleSkuPopupGetitnowButton')
 and  element_id<>'' and element_id is not null
@@ -152,11 +152,11 @@ select datasource,buyer_id,tag_id,'active_week' tag_name,count(1),null,9,pt from
 (
 select datasource,buyer_id,
 pmod(datediff(from_unixtime(collector_tstamp,'yyyy-MM-dd'),'1920-01-01')-3,7) tag_id,pt
-from dwd.dwd_vova_fact_log_goods_click where pt>='$pre_date' and buyer_id<> -1 and buyer_id is not null
+from dwd.dwd_vova_log_goods_click where pt>='$pre_date' and buyer_id<> -1 and buyer_id is not null
 union all
 select datasource,buyer_id,
 pmod(datediff(from_unixtime(collector_tstamp,'yyyy-MM-dd'),'1920-01-01')-3,7) tag_id,pt
-from dwd.dwd_vova_fact_log_common_click
+from dwd.dwd_vova_log_common_click
 where pt>='$pre_date' and buyer_id<> -1 and buyer_id is not null
 and element_name in ('pdAddToWishlistClick','pdAddToCartSuccess','h5flashsaleSkuPopupGetitnowButton')
 and  element_id<>'' and element_id is not null
@@ -180,7 +180,7 @@ when day(from_unixtime(collector_tstamp,'yyyy-MM-dd'))>=22 and day(from_unixtime
 when day(from_unixtime(collector_tstamp,'yyyy-MM-dd'))>=25 and day(from_unixtime(collector_tstamp,'yyyy-MM-dd'))<28 then '25'
 when day(from_unixtime(collector_tstamp,'yyyy-MM-dd'))>=28 then '28'
 end as tag_id,pt
-from dwd.dwd_vova_fact_log_goods_click where pt>='$pre_date' and buyer_id<> -1 and buyer_id is not null
+from dwd.dwd_vova_log_goods_click where pt>='$pre_date' and buyer_id<> -1 and buyer_id is not null
 union all
 select datasource,buyer_id,
 case when day(from_unixtime(collector_tstamp,'yyyy-MM-dd'))>=1 and day(from_unixtime(collector_tstamp,'yyyy-MM-dd'))<4 then '1'
@@ -194,7 +194,7 @@ when day(from_unixtime(collector_tstamp,'yyyy-MM-dd'))>=22 and day(from_unixtime
 when day(from_unixtime(collector_tstamp,'yyyy-MM-dd'))>=25 and day(from_unixtime(collector_tstamp,'yyyy-MM-dd'))<28 then '25'
 when day(from_unixtime(collector_tstamp,'yyyy-MM-dd'))>=28 then '28'
 end as tag_id,pt
-from dwd.dwd_vova_fact_log_common_click
+from dwd.dwd_vova_log_common_click
 where pt>='$pre_date' and buyer_id<> -1 and buyer_id is not null
 and element_name in ('pdAddToWishlistClick','pdAddToCartSuccess','h5flashsaleSkuPopupGetitnowButton')
 and  element_id<>'' and element_id is not null

@@ -13,7 +13,7 @@ cc.datasource,
 from_unixtime(cc.collector_tstamp / 1000) as search_time,
 cc.buyer_id,
 lower(trim(cc.element_id)) key_words
-from dwd.dwd_vova_fact_log_common_click cc
+from dwd.dwd_vova_log_common_click cc
 where pt = '${cur_date}' and cc.buyer_id>0
 and cc.element_name = 'search_confirm'
 "
@@ -24,7 +24,7 @@ spark-sql \
 --conf "spark.dynamicAllocation.minExecutors=5" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
 --conf "spark.dynamicAllocation.maxExecutors=100" \
---conf "spark.app.name=fact_search_word" \
+--conf "spark.app.name=dwd_vova_fact_search_word" \
 --conf "spark.default.parallelism = 380" \
 --conf "spark.sql.shuffle.partitions=380" \
 --conf "spark.sql.adaptive.enabled=true" \

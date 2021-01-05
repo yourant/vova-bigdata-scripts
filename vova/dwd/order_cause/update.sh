@@ -11,7 +11,7 @@ echo "$pre_month"
 
 sql="
 drop table if exists tmp.tmp_vova_fact_order_cause_v2_glk_cause;
-create table tmp.tmp_vova_fact_order_cause_v2_glk_cause as
+create table tmp.tmp_vova_fact_order_cause_v2_glk_cause STORED AS PARQUETFILE as
 select /*+ REPARTITION(10) */
        t1.datasource,
        t1.goods_id,
@@ -73,7 +73,7 @@ from (select og.datasource,
                          row_number()
                                  over(partition by datasource,device_id,virtual_goods_id
                                  order by dvce_created_tstamp desc) as row_num
-                  from dwd.dwd_vova_fact_log_goods_click
+                  from dwd.dwd_vova_log_goods_click
                   where pt >= '$pre_month'
                     and pt <= '$cur_date'
                     and os_type in('ios','android')
@@ -83,7 +83,7 @@ from (select og.datasource,
      ) t2
      on t1.device_id = t2.device_id and t1.virtual_goods_id = t2.virtual_goods_id and t1.datasource = t2.datasource;
 drop table if exists tmp.tmp_vova_fact_order_cause_v2_expre_cause;
-create table tmp.tmp_vova_fact_order_cause_v2_expre_cause as
+create table tmp.tmp_vova_fact_order_cause_v2_expre_cause STORED AS PARQUETFILE as
 select /*+ REPARTITION(10) */
        t1.datasource,
        t1.goods_id,
@@ -142,7 +142,7 @@ from (select datasource,
                          recall_pool,
                          row_number() over(partition by datasource,device_id,virtual_goods_id
                                       order by dvce_created_tstamp desc) as row_num
-                  from dwd.dwd_vova_fact_log_goods_impression
+                  from dwd.dwd_vova_log_goods_impression
                   where pt = '$cur_date'
                    and os_type in('ios','android')
                     and page_code not in ('my_order','my_favorites','recently_View','recently_view')

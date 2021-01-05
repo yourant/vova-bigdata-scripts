@@ -12,12 +12,12 @@ sql="
 set hive.groupby.position.alias=false;
 --step1 商品信息临时表
 drop table if exists tmp.tmp_vova_fact_buyer_portrait_base_01;
-create table tmp.tmp_vova_fact_buyer_portrait_base_01 as
+create table tmp.tmp_vova_fact_buyer_portrait_base_01 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE as
 select /*+ REPARTITION(2) */ goods_id,virtual_goods_id,goods_name,first_cat_id from dim.dim_vova_goods;
 
 --step2 购买行为1
 drop table if exists tmp.tmp_vova_fact_buyer_portrait_base_buy;
-create table tmp.tmp_vova_fact_buyer_portrait_base_buy as
+create table tmp.tmp_vova_fact_buyer_portrait_base_buy ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE as
 select /*+ REPARTITION(1) */ t1.datasource,
 t1.buyer_id,
 t1.goods_id,
@@ -37,7 +37,7 @@ t2.goods_name,t2.first_cat_id;
 
 --step3 浏览行为2
 drop table if exists tmp.tmp_vova_fact_buyer_portrait_base_clk;
-create table tmp.tmp_vova_fact_buyer_portrait_base_clk as
+create table tmp.tmp_vova_fact_buyer_portrait_base_clk ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE as
 select t1.datasource,
 t1.buyer_id,
 t2.goods_id,
@@ -46,7 +46,7 @@ count(1) cnt,
 t2.first_cat_id,
 2 act_type_id from
 (
-select datasource,virtual_goods_id,buyer_id from dwd.dwd_vova_fact_log_goods_click where pt='$pre_date' and buyer_id<> -1 and buyer_id is not null
+select datasource,virtual_goods_id,buyer_id from dwd.dwd_vova_log_goods_click where pt='$pre_date' and buyer_id<> -1 and buyer_id is not null
 ) t1
 left outer join
 tmp.tmp_vova_fact_buyer_portrait_base_01 t2
@@ -59,7 +59,7 @@ t2.first_cat_id;
 
 --step4 评论行为3
 drop table if exists tmp.tmp_vova_fact_buyer_portrait_base_com;
-create table tmp.tmp_vova_fact_buyer_portrait_base_com as
+create table tmp.tmp_vova_fact_buyer_portrait_base_com ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE as
 select /*+ REPARTITION(1) */ t1.datasource,t1.buyer_id,t1.goods_id,t2.goods_name,count(1) cnt,t2.first_cat_id,3 act_type_id from
 (
 select datasource,buyer_id,goods_id from dwd.dwd_vova_fact_comment where to_date(post_time) ='$pre_date'
@@ -71,14 +71,14 @@ group by t1.datasource,t1.buyer_id,t1.goods_id,t2.goods_name,t2.first_cat_id;
 
 --step5 收藏4,取消收藏5，加购6
 drop table if exists tmp.tmp_vova_fact_buyer_portrait_base_cart;
-create table tmp.tmp_vova_fact_buyer_portrait_base_cart as
+create table tmp.tmp_vova_fact_buyer_portrait_base_cart ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE as
 select t1.datasource,t1.buyer_id,t2.goods_id,t2.goods_name,count(1) cnt,t2.first_cat_id,
 case when t1.element_name ='pdAddToWishlistClick' then 4
 when t1.element_name='pdRemoveFromWishlistClick' then 5
 when t1.element_name in ('pdAddToCartSuccess','h5flashsaleSkuPopupGetitnowButton') then 6
 end as act_type_id from
 (
-select datasource,cast(element_id as bigint) virtual_goods_id,buyer_id,element_name from dwd.dwd_vova_fact_log_common_click
+select datasource,cast(element_id as bigint) virtual_goods_id,buyer_id,element_name from dwd.dwd_vova_log_common_click
 where pt='$pre_date' and buyer_id<> -1 and buyer_id is not null
 and element_name in ('pdAddToWishlistClick','pdRemoveFromWishlistClick','pdAddToCartSuccess','h5flashsaleSkuPopupGetitnowButton')
 and  element_id<>'' and element_id is not null
@@ -94,8 +94,8 @@ end;
 
 --step6,8：语言
 drop table if exists tmp.tmp_vova_fact_buyer_portrait_base_lan;
-create table tmp.tmp_vova_fact_buyer_portrait_base_lan as
-select distinct datasource,buyer_id,language,country,1 cnt,8 act_type_id from dwd.fact_log_screen_view
+create table tmp.tmp_vova_fact_buyer_portrait_base_lan ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE as
+select distinct datasource,buyer_id,language,country,1 cnt,8 act_type_id from dwd.dwd_vova_log_screen_view
 where pt='$pre_date' and buyer_id<> -1 and buyer_id is not null;
 --step8,9:日活跃时段
 drop table if exists tmp.tmp_vova_fact_buyer_portrait_base_act;
@@ -112,7 +112,7 @@ when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=15 and hour(fr
 when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=18 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<21 then '18'
 when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=21 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<24 then '21'
 end as tag_id
-from dwd.dwd_vova_fact_log_goods_click where pt='$pre_date' and buyer_id<> -1 and buyer_id is not null
+from dwd.dwd_vova_log_goods_click where pt='$pre_date' and buyer_id<> -1 and buyer_id is not null
 union all
 select datasource,buyer_id,
 case when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=0 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<3 then '0'
@@ -124,7 +124,7 @@ when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=15 and hour(fr
 when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=18 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<21 then '18'
 when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=21 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<24 then '21'
 end as tag_id
-from dwd.dwd_vova_fact_log_common_click
+from dwd.dwd_vova_log_common_click
 where pt='$pre_date' and buyer_id<> -1 and buyer_id is not null
 and element_name in ('pdAddToWishlistClick','pdAddToCartSuccess','h5flashsaleSkuPopupGetitnowButton')
 and  element_id<>'' and element_id is not null
@@ -147,11 +147,11 @@ select datasource,buyer_id,tag_id,'active_week' tag_name,count(1) cnt,9 act_type
 (
 select datasource,buyer_id,
 pmod(datediff(from_unixtime(collector_tstamp,'yyyy-MM-dd'),'1920-01-01')-3,7) tag_id
-from dwd.dwd_vova_fact_log_goods_click where pt='$pre_date' and buyer_id<> -1 and buyer_id is not null
+from dwd.dwd_vova_log_goods_click where pt='$pre_date' and buyer_id<> -1 and buyer_id is not null
 union all
 select datasource,buyer_id,
 pmod(datediff(from_unixtime(collector_tstamp,'yyyy-MM-dd'),'1920-01-01')-3,7) tag_id
-from dwd.dwd_vova_fact_log_common_click
+from dwd.dwd_vova_log_common_click
 where pt='$pre_date' and buyer_id<> -1 and buyer_id is not null
 and element_name in ('pdAddToWishlistClick','pdAddToCartSuccess','h5flashsaleSkuPopupGetitnowButton')
 and  element_id<>'' and element_id is not null
@@ -161,7 +161,7 @@ select datasource,buyer_id,pmod(datediff(to_date(order_time),'1920-01-01')-3,7) 
 
 --月活跃度
 drop table if exists tmp.tmp_vova_fact_buyer_portrait_base_act_m;
-create table tmp.tmp_vova_fact_buyer_portrait_base_act_m as
+create table tmp.tmp_vova_fact_buyer_portrait_base_act_m ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE as
 select datasource,buyer_id,tag_id,'active_month' tag_name,count(1) cnt,9 as act_type_id from
 (
 select datasource,buyer_id,
@@ -176,7 +176,7 @@ when day(from_unixtime(collector_tstamp,'yyyy-MM-dd'))>=22 and day(from_unixtime
 when day(from_unixtime(collector_tstamp,'yyyy-MM-dd'))>=25 and day(from_unixtime(collector_tstamp,'yyyy-MM-dd'))<28 then '25'
 when day(from_unixtime(collector_tstamp,'yyyy-MM-dd'))>=28 then '28'
 end as tag_id
-from dwd.dwd_vova_fact_log_goods_click where pt='$pre_date' and buyer_id<> -1 and buyer_id is not null
+from dwd.dwd_vova_log_goods_click where pt='$pre_date' and buyer_id<> -1 and buyer_id is not null
 union all
 select datasource,buyer_id,
 case when day(from_unixtime(collector_tstamp,'yyyy-MM-dd'))>=1 and day(from_unixtime(collector_tstamp,'yyyy-MM-dd'))<4 then '1'
@@ -190,7 +190,7 @@ when day(from_unixtime(collector_tstamp,'yyyy-MM-dd'))>=22 and day(from_unixtime
 when day(from_unixtime(collector_tstamp,'yyyy-MM-dd'))>=25 and day(from_unixtime(collector_tstamp,'yyyy-MM-dd'))<28 then '25'
 when day(from_unixtime(collector_tstamp,'yyyy-MM-dd'))>=28 then '28'
 end as tag_id
-from dwd.dwd_vova_fact_log_common_click
+from dwd.dwd_vova_log_common_click
 where pt='$pre_date' and buyer_id<> -1 and buyer_id is not null
 and element_name in ('pdAddToWishlistClick','pdAddToCartSuccess','h5flashsaleSkuPopupGetitnowButton')
 and  element_id<>'' and element_id is not null
@@ -211,7 +211,7 @@ end as tag_id from dwd.dwd_vova_fact_pay where to_date(order_time)='$pre_date'
 
 --step6 退款完成行为7
 drop table if exists tmp.tmp_vova_fact_buyer_portrait_base_ref;
-create table tmp.tmp_vova_fact_buyer_portrait_base_ref as
+create table tmp.tmp_vova_fact_buyer_portrait_base_ref ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE as
 select
 /*+ REPARTITION(1) */
 t1.datasource,

@@ -20,7 +20,7 @@ select /*+ REPARTITION(1) */
        su.country as app_region_code,
        from_unixtime(cast(min(collector_tstamp)/1000 as int)) as min_collector_time,
        from_unixtime(cast(max(collector_tstamp)/1000 as int)) as max_collector_time
-from dwd.dwd_vova_fact_log_screen_view su
+from dwd.dwd_vova_log_screen_view su
 where su.pt = '${cur_date}'
 group by su.datasource, su.device_id, su.app_version, su.os_type, su.buyer_id, su.language, su.country, su.geo_country;
 

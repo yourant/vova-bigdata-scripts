@@ -1,5 +1,5 @@
-drop table IF EXISTS dwd.dwd_vova_fact_log_common_click;
-CREATE TABLE IF NOT EXISTS dwd.dwd_vova_fact_log_common_click (
+drop table IF EXISTS dwd.dwd_vova_log_common_click;
+CREATE TABLE IF NOT EXISTS dwd.dwd_vova_log_common_click (
 event_fingerprint string       comment '事件唯一标识',
 datasource       string       comment '事件来源，vova|ac',
 event_name        string       comment '事件名',

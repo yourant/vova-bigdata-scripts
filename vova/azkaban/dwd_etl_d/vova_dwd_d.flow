@@ -24,7 +24,7 @@ nodes:
       - vova_fact_luckystar
       - vova_fact_buyer_device_releation
       - vova_fact_web_start_up
-      - vova_fact_rec_search_log
+      - vova_fact_rec_log
       - vova_fact_shield_goods
       - vova_fact_supply_order_goods
       - vova_fact_search_word
@@ -52,7 +52,7 @@ nodes:
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - judge_dim_vova_coupon
+      - start_flag
 
   - name: judge_dim_vova_coupon
     type: command
@@ -573,7 +573,7 @@ nodes:
   - name: vova_fact_buyer_portrait_base
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/dwd/fact_buyer_portrait_base/update.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/dwd/portrait/buyer_portrait_d.sh
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -656,10 +656,10 @@ nodes:
       - judge_fact_log_page_view
       - judge_dim_vova_buyers
 
-  - name: vova_fact_rec_search_log
+  - name: vova_fact_rec_log
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/dwd/fact_rec_search_log/update.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/dwd/rec_log/update.sh
       retries: 5
       retry.backoff: 600000
     dependsOn:

@@ -9,7 +9,7 @@ echo "$pt"
 
 sql="
 drop table if exists tmp.tmp_vova_fact_cart_cause_h_glk_cause;
-create table tmp.tmp_vova_fact_cart_cause_h_glk_cause as
+create table tmp.tmp_vova_fact_cart_cause_h_glk_cause  STORED AS PARQUETFILE as
 select /*+ REPARTITION(5) */
        datasource,
        event_name,
@@ -67,7 +67,7 @@ from (
                          element_type,
                          app_version,
                          test_info
-                  from dwd.dwd_vova_fact_log_goods_click_arc
+                  from dwd.dwd_vova_log_goods_click_arc
                   where pt = '$pt'
                   and os_type in('ios','android')
                   union all
@@ -87,7 +87,7 @@ from (
                          element_type,
                          app_version,
                          test_info
-                  from dwd.dwd_vova_fact_log_click_arc
+                  from dwd.dwd_vova_log_click_arc
                   where pt = '$pt' and event_type ='goods'
                   and os_type in('ios','android')
                   union all
@@ -107,7 +107,7 @@ from (
                          null                       element_type,
                          null                       app_version,
                          null                       test_info
-                  from dwd.dwd_vova_fact_log_common_click_arc
+                  from dwd.dwd_vova_log_common_click_arc
                   where pt = '$pt'
                     and element_name in ('pdAddToCartSuccess')
                     and os_type in('ios','android')
@@ -128,7 +128,7 @@ from (
                          null                       element_type,
                          null                       app_version,
                          null                       test_info
-                  from dwd.dwd_vova_fact_log_click_arc
+                  from dwd.dwd_vova_log_click_arc
                   where pt = '$pt'
                     and element_name in ('pdAddToCartSuccess')
                     and event_type='normal'
@@ -150,7 +150,7 @@ from (
                          null                       element_type,
                          null                       app_version,
                          null                       test_info
-                  from dwd.dwd_vova_fact_log_data_arc
+                  from dwd.dwd_vova_log_data_arc
                   where pt = '$pt'
                     and element_name in ('pdAddToCartSuccess')
                     and os_type in('ios','android')
@@ -158,7 +158,7 @@ from (
 where t2.event_name = 'common_click';
 
 drop table if exists tmp.tmp_vova_fact_cart_cause_h_expre_cause;
-create table tmp.tmp_vova_fact_cart_cause_h_expre_cause as
+create table tmp.tmp_vova_fact_cart_cause_h_expre_cause  STORED AS PARQUETFILE as
 select /*+ REPARTITION(10) */
        datasource,
        event_name,
@@ -235,7 +235,7 @@ from (
                          element_type,
                          app_version,
                          test_info
-                  from dwd.dwd_vova_fact_log_goods_impression_arc
+                  from dwd.dwd_vova_log_goods_impression_arc
                   where pt = '$pt'
                   and os_type in('ios','android')
                   union all
@@ -255,7 +255,7 @@ from (
                          element_type,
                          app_version,
                          test_info
-                  from dwd.dwd_vova_fact_log_impressions_arc
+                  from dwd.dwd_vova_log_impressions_arc
                   where pt = '$pt'
                   and os_type in('ios','android')
                   and event_type='goods'

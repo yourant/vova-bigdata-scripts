@@ -8,7 +8,7 @@ fi
 
 sql="
 drop table if exists tmp.tmp_vova_fact_cart_cause_v2_glk_cause;
-create table tmp.tmp_vova_fact_cart_cause_v2_glk_cause as
+create table tmp.tmp_vova_fact_cart_cause_v2_glk_cause  STORED AS PARQUETFILE as
 select /*+ REPARTITION(5) */
        datasource,
        event_name,
@@ -71,7 +71,7 @@ from (
                          test_info,
 						 recall_pool,
 						 absolute_position position
-                  from dwd.dwd_vova_fact_log_goods_click
+                  from dwd.dwd_vova_log_goods_click
                   where pt = '$cur_date'
                   and os_type in('ios','android')
                   and page_code not in ('my_order','my_favorites','recently_View','recently_view')
@@ -93,7 +93,7 @@ from (
                          null                       test_info,
                          null                       recall_pool,
                          null                       position
-                  from dwd.dwd_vova_fact_log_common_click
+                  from dwd.dwd_vova_log_common_click
                   where pt = '$cur_date'
                     and element_name in ('pdAddToCartSuccess')
                     and os_type in('ios','android')
@@ -101,7 +101,7 @@ from (
 where t2.event_name = 'common_click';
 
 drop table if exists tmp.tmp_vova_fact_cart_cause_v2_expre_cause;
-create table tmp.tmp_vova_fact_cart_cause_v2_expre_cause as
+create table tmp.tmp_vova_fact_cart_cause_v2_expre_cause  STORED AS PARQUETFILE as
 select /*+ REPARTITION(10) */
        datasource,
        event_name,
@@ -184,7 +184,7 @@ from (
                          test_info,
                          recall_pool,
                          absolute_position position
-                  from dwd.dwd_vova_fact_log_goods_impression
+                  from dwd.dwd_vova_log_goods_impression
                   where pt = '$cur_date'
                   and os_type in('ios','android')
                   and page_code not in ('my_order','my_favorites','recently_View','recently_view')

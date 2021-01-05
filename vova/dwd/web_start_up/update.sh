@@ -27,7 +27,7 @@ from
        first_value(referrer) OVER (PARTITION BY datasource, buyer_id, domain_userid, geo_country ORDER BY pt, dvce_created_tstamp) AS first_referrer,
        first_value(from_unixtime(cast(dvce_created_tstamp / 1000 AS int))) OVER (PARTITION BY datasource, buyer_id, domain_userid, geo_country ORDER BY pt, dvce_created_tstamp) AS min_create_time,
        from_unixtime(cast(dvce_created_tstamp / 1000 AS int)) AS max_create_time
-FROM dwd.dwd_vova_fact_log_page_view log
+FROM dwd.dwd_vova_log_page_view log
 WHERE log.pt = '${cur_date}'
   AND (log.datasource = 'airyclub' OR log.datasource = 'vova')
   AND log.platform in ('web', 'pc')) su
@@ -135,7 +135,7 @@ INSERT OVERWRITE TABLE tmp.tmp_vova_web_main_process_register PARTITION (pt = '$
 SELECT log.datasource,
        log.domain_userid,
        min(dvce_created_tstamp) AS min_create_time
-FROM dwd.dwd_vova_fact_log_data log
+FROM dwd.dwd_vova_log_data log
 WHERE log.datasource = 'airyclub'
   AND log.platform IN ('web', 'pc')
   AND log.element_name = 'register_success'
