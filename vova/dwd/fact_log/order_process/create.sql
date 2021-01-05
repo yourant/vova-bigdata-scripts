@@ -1,5 +1,5 @@
-drop table IF EXISTS dwd.dwd_vova_log_screen_view;
-CREATE external TABLE dwd.dwd_vova_log_screen_view(
+drop table IF EXISTS dwd.dwd_vova_log_order_process;
+CREATE external TABLE dwd.dwd_vova_log_order_process(
   datasource          string     comment '事件来源，vova/ac',
   event_fingerprint string       comment '事件唯一标识',
   event_name        string       comment '事件名',
@@ -47,18 +47,21 @@ CREATE external TABLE dwd.dwd_vova_log_screen_view(
   os_type string                 comment '系统类型,ios|android',
   os_version string              comment '系统版本号',
   ip string                      comment 'ip地址',
+  element_name string            comment '元素名称',
+  submit_result string           comment '提交结果',
+  virtual_goods_id bigint        comment '商品虚拟id',
+  payment_method string          comment '支付方式',
   activity_code string           comment '活动标签',
   activity_detail string         comment '活动标签详情',
   session_id string              comment 'session_id',
-  virtual_goods_id  bigint       comment '页面虚拟商品id',
   app_uri  string                comment 'app_uri',
   landing_page            STRING,
   imsi                    STRING,
   br_family               string COMMENT 'Browser family No Firefox',
   br_version              string COMMENT 'Browser version No 12.0'
 )
-COMMENT '全量App'
+COMMENT '每日全量order_process'
 PARTITIONED BY (pt string, dp string)
 row format delimited fields terminated by '\001' stored as parquetfile
-LOCATION "s3://bigdata-offline/warehouse/dwd/dwd_vova_log_screen_view/"
+LOCATION "s3://bigdata-offline/warehouse/dwd/dwd_vova_log_order_process/"
 ;

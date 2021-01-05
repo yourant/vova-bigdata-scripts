@@ -7,14 +7,18 @@ if [ ! -n "$1" ];then
 pt=`date -d "-1 day" +%Y-%m-%d`
 fi
 sql="
-INSERT OVERWRITE TABLE dwd.dwd_vova_fact_log_goods_impression PARTITION (pt='${pt}')
-SELECT /*+ REPARTITION(40) */ event_fingerprint,
+INSERT OVERWRITE TABLE dwd.dwd_vova_log_goods_impression PARTITION (pt='${pt}', dp)
+SELECT
+/*+ REPARTITION(150) */
        datasource,
+       event_fingerprint,
        event_name,
        platform,
-       unix_timestamp(collector_tstamp)*1000 collector_tstamp,
-       unix_timestamp(dvce_created_tstamp)*1000 dvce_created_tstamp,
-       unix_timestamp(derived_tstamp)*1000 derived_tstamp,
+       collector_tstamp,
+       dvce_created_tstamp,
+       derived_tstamp,
+       collector_ts,
+       dvce_created_ts,
        name_tracker,
        buyer_id,
        domain_userid,
@@ -22,6 +26,76 @@ SELECT /*+ REPARTITION(40) */ event_fingerprint,
        country,
        geo_country,
        geo_city,
+       geo_region,
+       geo_latitude,
+       geo_longitude,
+       geo_region_name,
+       geo_timezone,
+       currency,
+       page_code,
+       gender,
+       page_url,
+       account_class,
+       channel_type,
+       view_type,
+       app_version,
+       device_model,
+       device_id,
+       referrer,
+       organic_idfv,
+       advertising_id,
+       advertising_id_sp,
+       test_info,
+       media_source,
+       sys_lang,
+       sys_country,
+       vpn,
+       email,
+       latlng,
+       root,
+       is_tablet,
+       os_type,
+       os_version,
+       ip,
+       list_uri,
+       list_type,
+       virtual_goods_id,
+       absolute_position,
+       recall_pool,
+       activity_code,
+       activity_detail,
+       session_id,
+       app_uri,
+       element_type,
+       landing_page,
+       imsi,
+       br_family,
+       br_version,
+       case when datasource in ('airyclub','vova') then datasource
+         else 'others'
+         end dp
+FROM
+(
+SELECT event_fingerprint,
+       event_name,
+       platform,
+       collector_tstamp,
+       dvce_created_tstamp,
+       derived_tstamp,
+       collector_ts,
+       dvce_created_ts,
+       name_tracker,
+       buyer_id,
+       domain_userid,
+       language,
+       country,
+       geo_country,
+       geo_city,
+       geo_region,
+       geo_latitude,
+       geo_longitude,
+       geo_region_name,
+       geo_timezone,
        currency,
        page_code,
        gender,
@@ -59,17 +133,21 @@ SELECT /*+ REPARTITION(40) */ event_fingerprint,
        app_uri,
        element_type,
        landing_page,
-       imsi
-FROM dwd.dwd_vova_fact_log_goods_impression_arc
+       imsi,
+       br_family,
+       br_version,
+       datasource
+FROM dwd.dwd_vova_log_goods_impression_arc
 WHERE pt='${pt}'
 union all
-select /*+ REPARTITION(40) */ event_fingerprint,
-       datasource,
+select event_fingerprint,
        'goods_impression' event_name,
        platform,
-       unix_timestamp(collector_tstamp)*1000 collector_tstamp,
-       unix_timestamp(dvce_created_tstamp)*1000 dvce_created_tstamp,
-       unix_timestamp(derived_tstamp)*1000 derived_tstamp,
+       collector_tstamp,
+       dvce_created_tstamp,
+       derived_tstamp,
+       collector_ts,
+       dvce_created_ts,
        name_tracker,
        buyer_id,
        domain_userid,
@@ -77,6 +155,11 @@ select /*+ REPARTITION(40) */ event_fingerprint,
        country,
        geo_country,
        geo_city,
+       geo_region,
+       geo_latitude,
+       geo_longitude,
+       geo_region_name,
+       geo_timezone,
        currency,
        page_code,
        gender,
@@ -114,11 +197,16 @@ select /*+ REPARTITION(40) */ event_fingerprint,
        app_uri,
        element_type,
        landing_page,
-       imsi
-FROM dwd.dwd_vova_fact_log_impressions_arc
+       imsi,
+       br_family,
+       br_version,
+       datasource
+FROM dwd.dwd_vova_log_impressions_arc
 WHERE pt='${pt}' and event_type='goods'
+)
+;
 "
-spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.sql.adaptive.shuffle.targetPostShuffleInputSize=128000000" --conf "spark.sql.adaptive.enabled=true" --conf "spark.app.name=dwd_vova_fact_log_goods_impression" -e "$sql"
+spark-sql --executor-memory 13G --conf "spark.dynamicAllocation.maxExecutors=150" --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.sql.adaptive.shuffle.targetPostShuffleInputSize=128000000" --conf "spark.sql.adaptive.enabled=true" --conf "spark.app.name=dwd_vova_log_goods_impression" -e "$sql"
 if [ $? -ne 0 ];then
   exit 1
 fi

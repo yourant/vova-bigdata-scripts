@@ -1,8 +1,8 @@
 #bin/sh
-table="dwb_fd_place_selection_rpt"
+table="dwd_fd_place_selection_detail"
 user="yjzhang"
 
-base_path="/mnt/vova-bigdata-scripts/fd/dwb"
+base_path="/mnt/vova-bigdata-scripts/fd/dwd"
 
 if [ ! -n "$1" ]; then
   pt=$(date -d "- 1 days" +"%Y-%m-%d")
