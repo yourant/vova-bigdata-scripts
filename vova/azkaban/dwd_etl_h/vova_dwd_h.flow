@@ -10,19 +10,12 @@ nodes:
     config:
       command: echo "stop job"
     dependsOn:
-      - vova_fact_log_v2_h
       - vova_fact_cart_cause_h
       - vova_fact_order_cause_h
   - name: start_flag
     type: command
     config:
       command: echo "start job"
-  - name: vova_fact_log_v2_h
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/dwd/fact_log/update_h.sh
-    dependsOn:
-      - start_flag
 
   - name: vova_fact_cart_cause_h
     type: command
@@ -31,7 +24,7 @@ nodes:
       retries: 10
       retry.backoff: 120000
     dependsOn:
-      - vova_fact_log_v2_h
+      - judge_vova_fact_log_v2_h
 
   - name: vova_fact_order_cause_h
     type: command
@@ -44,7 +37,7 @@ nodes:
       - judge_vova_order_goods_h
       - judge_vova_order_relation_h
       - judge_vova_virtual_goods_h
-      - vova_fact_log_v2_h
+      - judge_vova_fact_log_v2_h
 
   - name: judge_vova_order_info_h
     type: command
@@ -82,5 +75,13 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_vova_fact_log_v2_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_v2_h
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
 
 
