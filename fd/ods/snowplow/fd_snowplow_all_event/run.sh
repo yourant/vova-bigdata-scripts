@@ -43,7 +43,9 @@ hive -f ${shell_path}/${table}_create.hql
 
 spark-sql \
   --conf "spark.app.name=${table}_${user}" \
-  --conf "spark.dynamicAllocation.maxExecutors=60" \
+  --conf "spark.dynamicAllocation.maxExecutors=100" \
+  --conf spark.executor.memoryOverhead=2048 \
+  --conf spark.executor.memory=6g \
   -d start="$start" \
   -d end="$end" \
   -d pt_filter="$pt_filter" \
