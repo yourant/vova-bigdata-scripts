@@ -7,8 +7,10 @@ if [ ! -n "$1" ];then
 pt=`date -d "-1 day" +%Y-%m-%d`
 fi
 sql="
-INSERT OVERWRITE TABLE dwd.dwd_vova_log_data PARTITION (pt='${pt}', datasource)
-SELECT /*+ REPARTITION(5) */ event_fingerprint,
+INSERT OVERWRITE TABLE dwd.dwd_vova_log_data PARTITION (pt='${pt}', dp)
+SELECT /*+ REPARTITION(10) */
+       datasource,
+       event_fingerprint,
        event_name,
        platform,
        collector_tstamp,
@@ -62,7 +64,9 @@ SELECT /*+ REPARTITION(5) */ event_fingerprint,
        imsi,
        br_family,
        br_version,
-       datasource
+       case when datasource in ('airyclub','vova') then datasource
+         else 'others'
+         end dp
 FROM dwd.dwd_vova_log_data_arc
 WHERE pt='${pt}'
 "

@@ -7,8 +7,10 @@ if [ ! -n "$1" ];then
 pt=`date -d "-1 day" +%Y-%m-%d`
 fi
 sql="
-INSERT OVERWRITE TABLE dwd.dwd_vova_log_order_process PARTITION (pt='${pt}', datasource)
-SELECT /*+ REPARTITION(2) */ event_fingerprint,
+INSERT OVERWRITE TABLE dwd.dwd_vova_log_order_process PARTITION (pt='${pt}', dp)
+SELECT /*+ REPARTITION(2) */
+       datasource,
+       event_fingerprint,
        event_name,
        platform,
        collector_tstamp,
@@ -66,7 +68,9 @@ SELECT /*+ REPARTITION(2) */ event_fingerprint,
        imsi,
        br_family,
        br_version,
-       datasource
+       case when datasource in ('airyclub','vova') then datasource
+         else 'others'
+         end dp
 FROM dwd.dwd_vova_log_order_process_arc
 WHERE pt='${pt}'"
 spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.sql.adaptive.shuffle.targetPostShuffleInputSize=128000000" --conf "spark.sql.adaptive.enabled=true" --conf "spark.app.name=dwd_vova_log_order_process" -e "$sql"

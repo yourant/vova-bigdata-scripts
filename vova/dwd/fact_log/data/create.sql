@@ -1,5 +1,6 @@
 drop table IF EXISTS dwd.dwd_vova_log_data;
 CREATE external TABLE dwd.dwd_vova_log_data(
+  datasource          string comment '事件来源，vova/ac',
   event_fingerprint   STRING COMMENT '事件唯一标识',
   event_name          STRING COMMENT '事件名',
   platform            STRING COMMENT '平台，web|mob',
@@ -56,7 +57,7 @@ CREATE external TABLE dwd.dwd_vova_log_data(
   br_version          string COMMENT 'Browser version No 12.0'
 )
 COMMENT 'data日志'
-PARTITIONED BY (pt string, datasource string)
+PARTITIONED BY (pt string, dp string)
 row format delimited fields terminated by '\001' stored as parquetfile
 LOCATION "s3://bigdata-offline/warehouse/dwd/dwd_vova_log_data/"
 ;

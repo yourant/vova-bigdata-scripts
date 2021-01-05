@@ -7,8 +7,77 @@ if [ ! -n "$1" ];then
 pt=`date -d "-1 day" +%Y-%m-%d`
 fi
 sql="
-INSERT OVERWRITE TABLE dwd.dwd_vova_log_goods_click PARTITION (pt='${pt}', datasource)
-SELECT /*+ REPARTITION(5) */ event_fingerprint,
+INSERT OVERWRITE TABLE dwd.dwd_vova_log_goods_click PARTITION (pt='${pt}', dp)
+SELECT
+/*+ REPARTITION(5) */
+       datasource,
+       event_fingerprint,
+       event_name,
+       platform,
+       collector_tstamp,
+       dvce_created_tstamp,
+       derived_tstamp,
+       collector_ts,
+       dvce_created_ts,
+       name_tracker,
+       buyer_id,
+       domain_userid,
+       language,
+       country,
+       geo_country,
+       geo_city,
+       geo_region,
+       geo_latitude,
+       geo_longitude,
+       geo_region_name,
+       geo_timezone,
+       currency,
+       page_code,
+       gender,
+       page_url,
+       account_class,
+       channel_type,
+       view_type,
+       app_version,
+       device_model,
+       device_id,
+       referrer,
+       organic_idfv,
+       advertising_id,
+       advertising_id_sp,
+       test_info,
+       media_source,
+       sys_lang,
+       sys_country,
+       vpn,
+       email,
+       latlng,
+       root,
+       is_tablet,
+       os_type,
+       os_version,
+       ip,
+       list_uri,
+       list_type,
+       virtual_goods_id,
+       absolute_position,
+       element_url,
+       recall_pool,
+       activity_code,
+       activity_detail,
+       session_id,
+       app_uri,
+       element_type,
+       landing_page,
+       imsi,
+       br_family,
+       br_version,
+       case when datasource in ('airyclub','vova') then datasource
+         else 'others'
+         end dp
+FROM
+(
+SELECT event_fingerprint,
        event_name,
        platform,
        collector_tstamp,
@@ -73,7 +142,7 @@ SELECT /*+ REPARTITION(5) */ event_fingerprint,
 FROM dwd.dwd_vova_log_goods_click_arc
 WHERE pt='${pt}'
 union all
-SELECT  /*+ REPARTITION(5) */ event_fingerprint,
+SELECT event_fingerprint,
        'goods_click' event_name,
        platform,
        collector_tstamp,
@@ -137,6 +206,8 @@ SELECT  /*+ REPARTITION(5) */ event_fingerprint,
        datasource
 FROM dwd.dwd_vova_log_click_arc
 WHERE pt='${pt}' and event_type='goods'
+)
+;
 "
 spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.sql.adaptive.shuffle.targetPostShuffleInputSize=128000000" --conf "spark.sql.adaptive.enabled=true" --conf "spark.app.name=dwd_vova_log_goods_click" -e "$sql"
 #hive -e "$sql"

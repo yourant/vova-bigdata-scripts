@@ -1,5 +1,6 @@
 drop table IF EXISTS dwd.dwd_vova_log_page_view;
 CREATE external TABLE dwd.dwd_vova_log_page_view(
+  datasource          string     comment '事件来源，vova/ac',
   event_fingerprint string       comment '事件唯一标识',
   event_name        string       comment '事件名',
   platform          string       comment '平台，web|mob',
@@ -57,7 +58,7 @@ CREATE external TABLE dwd.dwd_vova_log_page_view(
   br_version              string COMMENT 'Browser version No 12.0'
 )
 COMMENT '页面浏览(全量 pv 点)'
-PARTITIONED BY (pt string, datasource string)
+PARTITIONED BY (pt string, dp string)
 row format delimited fields terminated by '\001' stored as parquetfile
 LOCATION "s3://bigdata-offline/warehouse/dwd/dwd_vova_log_page_view/"
 ;
