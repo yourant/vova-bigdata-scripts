@@ -177,7 +177,7 @@ display_wrap_price_exchange,
 heel_type_price,
 heel_type_price_exchange,
 display_heel_type_price_exchange
-from ods_fd_vb.ods_fd_order_goods_inc where pt = '$pt'
+from ods_fd_vb.ods_fd_order_goods_binlog_inc where pt = '$pt'
 ) arc
 )tab where tab.rank = 1;
 "

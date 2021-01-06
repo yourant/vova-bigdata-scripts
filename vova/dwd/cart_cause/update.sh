@@ -8,7 +8,7 @@ fi
 
 sql="
 drop table if exists tmp.tmp_vova_fact_cart_cause_v2_glk_cause;
-create table tmp.tmp_vova_fact_cart_cause_v2_glk_cause as
+create table tmp.tmp_vova_fact_cart_cause_v2_glk_cause  STORED AS PARQUETFILE as
 select /*+ REPARTITION(5) */
        datasource,
        event_name,
@@ -25,7 +25,8 @@ select /*+ REPARTITION(5) */
        pre_element_type,
        pre_app_version,
        pre_test_info,
-       pre_recall_pool
+       pre_recall_pool,
+       pre_position
 from (
          select COALESCE(page_code, last_value(page_code, true)
                                                OVER (PARTITION BY device_id,virtual_goods_id ORDER BY dvce_created_tstamp ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)) pre_page_code,
@@ -41,6 +42,8 @@ from (
                                               OVER (PARTITION BY device_id,virtual_goods_id ORDER BY dvce_created_tstamp ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW))  pre_test_info,
                 COALESCE(recall_pool, last_value(recall_pool, true)
                                               OVER (PARTITION BY device_id,virtual_goods_id ORDER BY dvce_created_tstamp ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW))  pre_recall_pool,
+                COALESCE(position, last_value(position, true)
+                                              OVER (PARTITION BY device_id,virtual_goods_id ORDER BY dvce_created_tstamp ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW))  pre_position,
                 datasource,
                 event_name,
                 device_id,
@@ -66,8 +69,9 @@ from (
                          element_type,
                          app_version,
                          test_info,
-						 recall_pool
-                  from dwd.dwd_vova_fact_log_goods_click
+						 recall_pool,
+						 absolute_position position
+                  from dwd.dwd_vova_log_goods_click
                   where pt = '$cur_date'
                   and os_type in('ios','android')
                   and page_code not in ('my_order','my_favorites','recently_View','recently_view')
@@ -87,8 +91,9 @@ from (
                          null                       element_type,
                          null                       app_version,
                          null                       test_info,
-                         null                       recall_pool
-                  from dwd.dwd_vova_fact_log_common_click
+                         null                       recall_pool,
+                         null                       position
+                  from dwd.dwd_vova_log_common_click
                   where pt = '$cur_date'
                     and element_name in ('pdAddToCartSuccess')
                     and os_type in('ios','android')
@@ -96,7 +101,7 @@ from (
 where t2.event_name = 'common_click';
 
 drop table if exists tmp.tmp_vova_fact_cart_cause_v2_expre_cause;
-create table tmp.tmp_vova_fact_cart_cause_v2_expre_cause as
+create table tmp.tmp_vova_fact_cart_cause_v2_expre_cause  STORED AS PARQUETFILE as
 select /*+ REPARTITION(10) */
        datasource,
        event_name,
@@ -113,7 +118,8 @@ select /*+ REPARTITION(10) */
        pre_element_type,
        pre_app_version,
        pre_test_info,
-       pre_recall_pool
+       pre_recall_pool,
+       pre_position
 from (
          select COALESCE(page_code, last_value(page_code, true)
                                                OVER (PARTITION BY device_id,virtual_goods_id ORDER BY dvce_created_tstamp ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)) pre_page_code,
@@ -129,6 +135,8 @@ from (
                                               OVER (PARTITION BY device_id,virtual_goods_id ORDER BY dvce_created_tstamp ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW))  pre_test_info,
                 COALESCE(recall_pool, last_value(recall_pool, true)
                                               OVER (PARTITION BY device_id,virtual_goods_id ORDER BY dvce_created_tstamp ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW))  pre_recall_pool,
+                COALESCE(position, last_value(position, true)
+                                              OVER (PARTITION BY device_id,virtual_goods_id ORDER BY dvce_created_tstamp ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW))  pre_position,
                 datasource,
                 event_name,
                 device_id,
@@ -154,7 +162,8 @@ from (
                          null element_type,
                          null app_version,
                          null test_info,
-                         null recall_pool
+                         null recall_pool,
+                         null position
                   from tmp.tmp_vova_fact_cart_cause_v2_glk_cause
                   where pre_page_code is null
                   union all
@@ -173,8 +182,9 @@ from (
                          element_type,
                          app_version,
                          test_info,
-                         recall_pool
-                  from dwd.dwd_vova_fact_log_goods_impression
+                         recall_pool,
+                         absolute_position position
+                  from dwd.dwd_vova_log_goods_impression
                   where pt = '$cur_date'
                   and os_type in('ios','android')
                   and page_code not in ('my_order','my_favorites','recently_View','recently_view')
@@ -199,7 +209,8 @@ select /*+ REPARTITION(2) */
        pre_element_type,
        pre_app_version,
        pre_test_info,
-       pre_recall_pool
+       pre_recall_pool,
+       pre_position
 from tmp.tmp_vova_fact_cart_cause_v2_glk_cause
 where pre_page_code is not null
 union all
@@ -219,7 +230,8 @@ select /*+ REPARTITION(2) */
        pre_element_type,
        pre_app_version,
        pre_test_info,
-       pre_recall_pool
+       pre_recall_pool,
+       pre_position
 from tmp.tmp_vova_fact_cart_cause_v2_expre_cause;
 "
 #如果使用spark-sql运行，则执行spark-sql -e
@@ -228,5 +240,6 @@ spark-sql --conf "spark.app.name=dwd_vova_cart_cause_v2" -e "$sql"
 if [ $? -ne 0 ];then
   exit 1
 fi
+
 
 

@@ -71,7 +71,7 @@ oi.is_conversion,
 oi.from_domain,
 oi.project_name,
 oi.user_agent_id,
-if(ua.platform_type is null, 'other', ua.platform_type) AS platform_type,
+if(ua.platform_type is null, 'others', ua.platform_type) AS platform_type,
 ua.version,
 ua.is_app,
 ua.device_type,
@@ -212,6 +212,7 @@ display_bonus_exchange,
 token,
 payer_id
 from ods_fd_vb.ods_fd_order_info
+where email not regexp '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
 )oi
 left join (
 select du.user_id,du.sp_duid

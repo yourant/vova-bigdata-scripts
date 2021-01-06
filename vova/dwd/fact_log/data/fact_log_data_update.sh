@@ -7,14 +7,17 @@ if [ ! -n "$1" ];then
 pt=`date -d "-1 day" +%Y-%m-%d`
 fi
 sql="
-INSERT OVERWRITE TABLE dwd.dwd_vova_fact_log_data PARTITION (pt='${pt}')
-SELECT /*+ REPARTITION(5) */ event_fingerprint,
+INSERT OVERWRITE TABLE dwd.dwd_vova_log_data PARTITION (pt='${pt}', dp)
+SELECT /*+ REPARTITION(10) */
        datasource,
+       event_fingerprint,
        event_name,
        platform,
        collector_tstamp,
        dvce_created_tstamp,
        derived_tstamp,
+       collector_ts,
+       dvce_created_ts,
        name_tracker,
        buyer_id,
        domain_userid,
@@ -22,6 +25,11 @@ SELECT /*+ REPARTITION(5) */ event_fingerprint,
        country,
        geo_country,
        geo_city,
+       geo_region,
+       geo_latitude,
+       geo_longitude,
+       geo_region_name,
+       geo_timezone,
        currency,
        page_code,
        gender,
@@ -53,11 +61,16 @@ SELECT /*+ REPARTITION(5) */ event_fingerprint,
        extra,
        element_id,
        landing_page,
-       imsi
-FROM dwd.dwd_vova_fact_log_data_arc
+       imsi,
+       br_family,
+       br_version,
+       case when datasource in ('airyclub','vova') then datasource
+         else 'others'
+         end dp
+FROM dwd.dwd_vova_log_data_arc
 WHERE pt='${pt}'
 "
-spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.sql.adaptive.shuffle.targetPostShuffleInputSize=128000000" --conf "spark.sql.adaptive.enabled=true" --conf "spark.app.name=dwd_vova_fact_log_data" -e "$sql"
+spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.sql.adaptive.shuffle.targetPostShuffleInputSize=128000000" --conf "spark.sql.adaptive.enabled=true" --conf "spark.app.name=dwd_vova_log_data" -e "$sql"
 if [ $? -ne 0 ];then
   exit 1
 fi

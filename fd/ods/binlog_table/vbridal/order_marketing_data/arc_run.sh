@@ -60,7 +60,7 @@ order_id,
 sp_session_id,
 created_time,
 last_update_time
-from ods_fd_vb.ods_fd_order_marketing_data_inc where pt = '$pt'
+from ods_fd_vb.ods_fd_order_marketing_data_binlog_inc where pt = '$pt'
 ) arc
 )tab where tab.rank = 1;
 "

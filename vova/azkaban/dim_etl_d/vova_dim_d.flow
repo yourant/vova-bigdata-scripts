@@ -74,7 +74,7 @@ nodes:
   - name: dim_trigram_nuwa_pdd_category
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/dim/pdd_category/nova_update.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/dim/pdd_category/update.sh
       retries: 5
       retry.backoff: 600000
     dependsOn:

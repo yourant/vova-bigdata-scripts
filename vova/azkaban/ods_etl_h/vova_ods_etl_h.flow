@@ -43,7 +43,7 @@ nodes:
         config:
           retries: 10
           retry.backoff: 120000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=order_info --inc_column=last_update_time --mapers=5 --etl_type=INCTIME --period_type=hour --partition_num=100
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_info --inc_column=last_update_time --mapers=5 --etl_type=INCTIME --period_type=hour --partition_num=100
         dependsOn:
           - trd_start
 
@@ -52,7 +52,7 @@ nodes:
         config:
           retries: 10
           retry.backoff: 120000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=order_relation --inc_column=order_id --etl_type=INCID --period_type=hour --partition_num=50
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_relation --inc_column=order_id --etl_type=INCID --period_type=hour --partition_num=50
         dependsOn:
           - trd_start
 
@@ -61,7 +61,7 @@ nodes:
         config:
           retries: 10
           retry.backoff: 120000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=order_goods --inc_column=rec_id --etl_type=INCID --period_type=hour --partition_num=700
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_goods --inc_column=rec_id --etl_type=INCID --period_type=hour --partition_num=700
         dependsOn:
           - trd_start
 
@@ -70,7 +70,7 @@ nodes:
         config:
           retries: 10
           retry.backoff: 120000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=zsp --table_name=order_info --mapers=1 --etl_type=INIT  --period_type=hour --partition_num=1
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=zsp --table_name=order_info --mapers=1 --etl_type=INIT  --period_type=hour --partition_num=1
         dependsOn:
           - trd_start
 
@@ -96,6 +96,6 @@ nodes:
         config:
           retries: 10
           retry.backoff: 120000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vts --table_name=virtual_goods --inc_column=virtual_goods_id --etl_type=INCID --period_type=hour --partition_num=10
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=virtual_goods --inc_column=virtual_goods_id --etl_type=INCID --period_type=hour --partition_num=10
         dependsOn:
           - goods_start

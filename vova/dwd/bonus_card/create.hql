@@ -9,7 +9,7 @@ s3://bigdata-offline/warehouse/pdb/vova/vvqueue/vvqueue-bonus_card_status/pt=%Y-
 {"bonus_card_id":"43738","user_id":"101938828","old_status":"","new_status":"unpaid","update_time":1605595451}
 
 -- ods 外部表
-CREATE EXTERNAL TABLE ods.vova_bonus_card_status (
+CREATE EXTERNAL TABLE ods_vova_ext.ods_vova_bonus_card_status (
     data string
 ) COMMENT '月卡红包用户数据' PARTITIONED BY (pt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'

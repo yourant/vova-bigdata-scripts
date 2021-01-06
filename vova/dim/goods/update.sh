@@ -24,6 +24,7 @@ select 'vova' as datasource,
        g.is_complete,
        g.is_new,
        g.cat_id,
+       c.cat_name,
        c.first_cat_id,
        c.first_cat_name,
        c.second_cat_id,
@@ -31,6 +32,7 @@ select 'vova' as datasource,
        c.three_cat_id,
        c.three_cat_name as third_cat_name,
        g.merchant_id    as mct_id,
+       m.store_name as mct_name,
        g.shop_price,
        g.shipping_fee,
        g.goods_weight,
@@ -38,7 +40,8 @@ select 'vova' as datasource,
        got.first_off_time,
        got.last_on_time,
        got.last_off_time,
-       g.goods_thumb
+       g.goods_thumb,
+       g.old_goods_id
 from ods_vova_vts.ods_vova_goods g
          inner join ods_vova_vts.ods_vova_virtual_goods vg on g.goods_id = vg.goods_id
          inner join dim.dim_vova_category c on c.cat_id = g.cat_id
@@ -55,6 +58,7 @@ FROM
       GROUP BY
       goods_id) got
       on g.goods_id = got.goods_id
+  left join ods_vova_vts.ods_vova_merchant m on g.merchant_id = m.merchant_id
 
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e

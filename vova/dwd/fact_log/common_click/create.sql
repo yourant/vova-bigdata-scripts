@@ -1,5 +1,5 @@
-drop table IF EXISTS dwd.dwd_vova_fact_log_common_click;
-CREATE TABLE IF NOT EXISTS dwd.dwd_vova_fact_log_common_click (
+drop table IF EXISTS dwd.dwd_vova_log_common_click;
+CREATE TABLE IF NOT EXISTS dwd.dwd_vova_log_common_click (
 event_fingerprint string       comment '事件唯一标识',
 datasource       string       comment '事件来源，vova|ac',
 event_name        string       comment '事件名',
@@ -14,7 +14,7 @@ language string                comment '语言',
 country string                 comment '国家',
 geo_country string             comment 'snowplow上传国家',
 geo_city string                comment 'snowplow上传城市',
-currency string                comment 'snowplow上传国家',
+currency string                comment '货币类型',
 page_code string               comment '页面',
 gender string                  comment '性别',
 page_url string                comment '页面链接',
