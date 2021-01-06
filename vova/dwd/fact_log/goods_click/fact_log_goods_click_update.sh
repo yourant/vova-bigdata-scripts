@@ -209,7 +209,24 @@ WHERE pt='${pt}' and event_type='goods'
 )
 ;
 "
-spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.sql.adaptive.shuffle.targetPostShuffleInputSize=128000000" --conf "spark.sql.adaptive.enabled=true" --conf "spark.app.name=dwd_vova_log_goods_click" -e "$sql"
+
+spark-sql \
+--executor-memory 4G --executor-cores 1 \
+--conf "spark.sql.parquet.writeLegacyFormat=true"  \
+--conf "spark.dynamicAllocation.minExecutors=20" \
+--conf "spark.dynamicAllocation.initialExecutors=20" \
+--conf "spark.dynamicAllocation.maxExecutors=150" \
+--conf "spark.app.name=dwd_vova_log_goods_click" \
+--conf "spark.default.parallelism = 380" \
+--conf "spark.sql.shuffle.partitions=380" \
+--conf "spark.sql.adaptive.enabled=true" \
+--conf "spark.sql.adaptive.join.enabled=true" \
+--conf "spark.shuffle.sort.bypassMergeThreshold=10000" \
+--conf "spark.sql.inMemoryColumnarStorage.compressed=true" \
+--conf "spark.sql.inMemoryColumnarStorage.partitionPruning=true" \
+--conf "spark.sql.inMemoryColumnarStorage.batchSize=100000" \
+--conf "spark.network.timeout=300" \
+-e "$sql"
 #hive -e "$sql"
 if [ $? -ne 0 ];then
   exit 1
