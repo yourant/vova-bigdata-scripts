@@ -12,12 +12,12 @@ sql="
 set hive.groupby.position.alias=false;
 --step1 商品信息临时表
 drop table if exists tmp.tmp_vova_fact_buyer_portrait_base_01;
-create table tmp.tmp_vova_fact_buyer_portrait_base_01 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE as
+create table tmp.tmp_vova_fact_buyer_portrait_base_01  STORED AS PARQUETFILE as
 select /*+ REPARTITION(2) */ goods_id,virtual_goods_id,goods_name,first_cat_id from dim.dim_vova_goods;
 
 --step2 购买行为1
 drop table if exists tmp.tmp_vova_fact_buyer_portrait_base_buy;
-create table tmp.tmp_vova_fact_buyer_portrait_base_buy ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE as
+create table tmp.tmp_vova_fact_buyer_portrait_base_buy  STORED AS PARQUETFILE as
 select /*+ REPARTITION(1) */ t1.datasource,
 t1.buyer_id,
 t1.goods_id,
@@ -37,7 +37,7 @@ t2.goods_name,t2.first_cat_id;
 
 --step3 浏览行为2
 drop table if exists tmp.tmp_vova_fact_buyer_portrait_base_clk;
-create table tmp.tmp_vova_fact_buyer_portrait_base_clk ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE as
+create table tmp.tmp_vova_fact_buyer_portrait_base_clk  STORED AS PARQUETFILE as
 select t1.datasource,
 t1.buyer_id,
 t2.goods_id,
@@ -59,7 +59,7 @@ t2.first_cat_id;
 
 --step4 评论行为3
 drop table if exists tmp.tmp_vova_fact_buyer_portrait_base_com;
-create table tmp.tmp_vova_fact_buyer_portrait_base_com ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE as
+create table tmp.tmp_vova_fact_buyer_portrait_base_com  STORED AS PARQUETFILE as
 select /*+ REPARTITION(1) */ t1.datasource,t1.buyer_id,t1.goods_id,t2.goods_name,count(1) cnt,t2.first_cat_id,3 act_type_id from
 (
 select datasource,buyer_id,goods_id from dwd.dwd_vova_fact_comment where to_date(post_time) ='$pre_date'
@@ -71,7 +71,7 @@ group by t1.datasource,t1.buyer_id,t1.goods_id,t2.goods_name,t2.first_cat_id;
 
 --step5 收藏4,取消收藏5，加购6
 drop table if exists tmp.tmp_vova_fact_buyer_portrait_base_cart;
-create table tmp.tmp_vova_fact_buyer_portrait_base_cart ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE as
+create table tmp.tmp_vova_fact_buyer_portrait_base_cart  STORED AS PARQUETFILE as
 select t1.datasource,t1.buyer_id,t2.goods_id,t2.goods_name,count(1) cnt,t2.first_cat_id,
 case when t1.element_name ='pdAddToWishlistClick' then 4
 when t1.element_name='pdRemoveFromWishlistClick' then 5
@@ -94,7 +94,7 @@ end;
 
 --step6,8：语言
 drop table if exists tmp.tmp_vova_fact_buyer_portrait_base_lan;
-create table tmp.tmp_vova_fact_buyer_portrait_base_lan ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE as
+create table tmp.tmp_vova_fact_buyer_portrait_base_lan  STORED AS PARQUETFILE as
 select distinct datasource,buyer_id,language,country,1 cnt,8 act_type_id from dwd.dwd_vova_log_screen_view
 where pt='$pre_date' and buyer_id<> -1 and buyer_id is not null;
 --step8,9:日活跃时段
@@ -161,7 +161,7 @@ select datasource,buyer_id,pmod(datediff(to_date(order_time),'1920-01-01')-3,7) 
 
 --月活跃度
 drop table if exists tmp.tmp_vova_fact_buyer_portrait_base_act_m;
-create table tmp.tmp_vova_fact_buyer_portrait_base_act_m ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE as
+create table tmp.tmp_vova_fact_buyer_portrait_base_act_m  STORED AS PARQUETFILE as
 select datasource,buyer_id,tag_id,'active_month' tag_name,count(1) cnt,9 as act_type_id from
 (
 select datasource,buyer_id,
@@ -211,7 +211,7 @@ end as tag_id from dwd.dwd_vova_fact_pay where to_date(order_time)='$pre_date'
 
 --step6 退款完成行为7
 drop table if exists tmp.tmp_vova_fact_buyer_portrait_base_ref;
-create table tmp.tmp_vova_fact_buyer_portrait_base_ref ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE as
+create table tmp.tmp_vova_fact_buyer_portrait_base_ref  STORED AS PARQUETFILE as
 select
 /*+ REPARTITION(1) */
 t1.datasource,
@@ -221,7 +221,7 @@ t4.goods_name,
 sum(t3.goods_number) cnt,
 t4.first_cat_id,
 7 act_type_id
-from dwd.fact_refund t1
+from dwd.dwd_vova_fact_refund t1
 left join dwd.dwd_vova_fact_pay t3 on t1.order_goods_id = t3.order_goods_id
 left join tmp.tmp_vova_fact_buyer_portrait_base_01 t4 on t3.goods_id = t4.goods_id
 where to_date (t1.exec_refund_time) = '$pre_date'

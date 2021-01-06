@@ -118,7 +118,7 @@ SELECT 'airyclub'                                            AS datasource,
        fp.first_order_time,
        fp.first_pay_time,
        ar.click_url as clk_url
-FROM ods_vova_acl.ods_vova_ac_appsflyer_record ar
+FROM ods_ac_acl.ods_ac_appsflyer_record ar
          LEFT JOIN ods_vova_vtlr.ods_vova_channel_mapping cm ON cm.child_channel = ar.media_source
          LEFT JOIN tmp.tmp_vova_device_first_pay fp ON fp.device_id = ar.device_id AND fp.datasource = 'airyclub'
     FULL JOIN (SELECT device_id

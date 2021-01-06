@@ -30,11 +30,22 @@ nodes:
       - vova_fact_search_word
       - vova_fact_ab
       - vova_fact_log_bonus_card
+      - vova_fact_log_click_cause
 
   - name: start_flag
     type: command
     config:
       command: echo "start job"
+
+  - name: vova_fact_log_click_cause
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwd/click_cause/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_fact_log_goods_click
+      - judge_fact_log_page_view
 
   - name: vova_fact_shield_goods
     type: command
@@ -309,7 +320,7 @@ nodes:
   - name: judge_fact_log_page_view
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_log_page_view
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_page_view
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -318,7 +329,7 @@ nodes:
   - name: judge_fact_log_goods_impression
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_log_goods_impression
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_goods_impression
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -545,7 +556,7 @@ nodes:
   - name: judge_fact_log_screen_view
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fact_log_screen_view
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_screen_view
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -597,7 +608,7 @@ nodes:
   - name: judge_fact_log_goods_click
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_log_goods_click
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_goods_click
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -608,7 +619,7 @@ nodes:
   - name: judge_fact_log_common_click
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_log_common_click
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_common_click
       retries: 5
       retry.backoff: 600000
     dependsOn:
