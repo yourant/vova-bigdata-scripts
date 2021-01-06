@@ -1,0 +1,24 @@
+---
+config:
+  failure.emails: andy.zhang@vova.com.hk
+  retries: 3
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - vova_fact_log_v2_h
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: vova_fact_log_v2_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwd/fact_log/update_h.sh
+    dependsOn:
+      - start_flag
