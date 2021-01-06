@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS dwd.dwd_vova_fact_start_up
     app_region_code   string COMMENT 'country',
     min_collector_time  TIMESTAMP COMMENT '当日登录最小时间',
     max_collector_time  TIMESTAMP COMMENT '当日登录最大时间'
-) COMMENT '设备启动事实表' PARTITIONED BY (pt STRING)
+) COMMENT '设备启动事实表' PARTITIONED BY (pt STRING,dp STRING)
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
 
