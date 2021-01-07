@@ -1,12 +1,12 @@
 #!/bin/bash
-show_usage="args:[--db_code= MySQL地址CODE, --etl_type=etl类型, --pt=时间, --table_name=表名,--mapers=并发数量(数字)，--split_id=并发切割ID(默认MySQL第一个主键),--inc_column=增量字段(只允许日期类型或者数字ID),--partition_num=ods表文件数量, --period_type=间隔类型（day，hour两种,--primary_key=主键）,--table_type=表类型(1.外部表，2.内部表)]"
+show_usage="args:[--db_code= MySQL地址CODE, --etl_type=etl类型, --pt=时间, --table_name=表名,--mapers=并发数量(数字)，--split_id=并发切割ID(默认MySQL第一个主键),--inc_column=增量字段(只允许日期类型或者数字ID),--partition_num=ods表文件数量, --period_type=间隔类型（day，hour两种,--primary_key=主键）,--table_type=表类型(1.外部表，2.内部表),--executor_memory=spark executor内存]"
 #1 判断有没有传入参数
 if [ ! -n "$1" ];then
     echo $show_usage
     exit 1
 fi
 api_url=10.108.11.8:18082
-ARGS=$(getopt -o jn --long db_code:,etl_type:,pt:,table_name:,mapers:,split_id:,inc_column:,partition_num:,period_type:,primary_key:,table_type: -- "$@")
+ARGS=$(getopt -o jn --long db_code:,etl_type:,pt:,table_name:,mapers:,split_id:,inc_column:,partition_num:,period_type:,primary_key:,table_type:,executor_memory: -- "$@")
 eval set -- "${ARGS}"
 inc_column=""
 #2 定义一些变量　mapers 默认为３　date 默认为前1天
@@ -24,6 +24,7 @@ partition_num=100
 period_type=day
 yarn_queue=default
 table_type=1
+executor_memory=6G
 
 
 while true; do
@@ -72,6 +73,10 @@ while true; do
     table_type=$2
     shift 2
     ;;
+    --executor_memory)
+    executor_memory=$2
+    shift 2
+    ;;
   --)
     shift
     break
@@ -118,8 +123,7 @@ url=$(echo $resp | jq '.url'| sed $'s/\"//g')
 user=$(echo $resp | jq '.user'| sed $'s/\"//g')
 pwd=$(echo $resp | jq '.pwd'| sed $'s/\"//g')
 hiveDb=$(echo $resp | jq '.hiveDb'| sed $'s/\"//g')
-tablePath=$(echo $resp | jq '.tablePath'| sed $'s/\"//g')
-
+tablePath=$(echo $resp | jq .tablePath| sed $'s/\"//g'| sed $'s/\'//g')
 if [ "$split_id" = "" ];then
   split_id=$primary_key
 fi
@@ -129,9 +133,8 @@ fi
 tmp_path=s3://bigdata-offline/tmp/sqoop/${hiveDb}/${table_name}
 #tmp_path=hdfs:///tmp/sqoop/${hiveDb}/${table_name}
 hadoop fs -rm -r $tmp_path
-
 echo "tablePath:${tablePath}"
-hdfs dfs -mkdir $tablePath
+hadoop fs -mkdir ${tablePath}
 #10 根据不同的etl_type　ALL,INIT,INCTIME,INCID　走不同的逻辑处理
 #note:target-dir #11已解释
 
@@ -291,8 +294,8 @@ else
   echo "merge with spark enginer"
   spark-sql \
   --queue ${yarn_queue} \
-  --driver-memory 8G \
-  --executor-memory 6G --executor-cores 1 \
+  --driver-memory ${executor_memory} \
+  --executor-memory 8G --executor-cores 1 \
   --conf "spark.sql.parquet.writeLegacyFormat=true"  \
   --conf "spark.dynamicAllocation.minExecutors=5" \
   --conf "spark.dynamicAllocation.initialExecutors=20" \

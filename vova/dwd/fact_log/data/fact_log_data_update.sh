@@ -68,12 +68,12 @@ SELECT /*+ REPARTITION(10) */
          else 'others'
          end dp
 FROM dwd.dwd_vova_log_data_arc
-WHERE pt='${pt}'
+WHERE (pt='${pt}'and date(collector_ts)='${pt}' ) or (pt=date_sub('${pt}',1) and hour ='23' and date(collector_ts)='${pt}') or (pt=date_add('${pt}',1) and hour ='00' and date(collector_ts)='${pt}')
 "
 
 
 spark-sql \
---executor-memory 4G --executor-cores 1 \
+--executor-memory 8G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=20" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
