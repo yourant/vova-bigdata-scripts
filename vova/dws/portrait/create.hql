@@ -37,5 +37,97 @@ CREATE TABLE if not exists dws.dws_vova_buyer_portrait
     `max_visits_cnt_cw`         BIGINT COMMENT '历史最大访问次数'
 ) PARTITIONED BY ( pt string)
  COMMENT '买家画像结果表'
-    ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
+    STORED AS PARQUETFILE;
+
+DROP TABLE IF EXISTS tmp.tmp_vova_dws_buyer_portrait_cat7_result;
+CREATE TABLE IF NOT EXISTS tmp.tmp_vova_dws_buyer_portrait_cat7_result
+(
+    datasource          STRING,
+    buyer_id            BIGINT,
+    first_cat_prefer_1w ARRAY<BIGINT>
+) COMMENT 'tmp_vova_dws_buyer_portrait_cat7_result'
+    STORED AS PARQUETFILE;
+
+DROP TABLE IF EXISTS tmp.tmp_vova_dws_buyer_portrait_cat30_result;
+CREATE TABLE IF NOT EXISTS tmp.tmp_vova_dws_buyer_portrait_cat30_result
+(
+    datasource          STRING,
+    buyer_id            BIGINT,
+    first_cat_prefer_1m ARRAY<BIGINT>
+) COMMENT 'tmp_vova_dws_buyer_portrait_cat30_result'
+    STORED AS PARQUETFILE;
+
+DROP TABLE IF EXISTS tmp.tmp_vova_dws_buyer_portrait_first_cat_his_result;
+CREATE TABLE IF NOT EXISTS tmp.tmp_vova_dws_buyer_portrait_first_cat_his_result
+(
+    datasource          STRING,
+    buyer_id            BIGINT,
+    first_cat_prefer_his ARRAY<BIGINT>
+) COMMENT 'tmp_vova_dws_buyer_portrait_first_cat_his_result'
+    STORED AS PARQUETFILE;
+
+DROP TABLE IF EXISTS tmp.tmp_vova_dws_buyer_portrait_second_cat7_result;
+CREATE TABLE IF NOT EXISTS tmp.tmp_vova_dws_buyer_portrait_second_cat7_result
+(
+    datasource          STRING,
+    buyer_id            BIGINT,
+    second_cat_prefer_1w ARRAY<BIGINT>
+) COMMENT 'tmp_vova_dws_buyer_portrait_second_cat7_result'
+    STORED AS PARQUETFILE;
+
+DROP TABLE IF EXISTS tmp.tmp_vova_dws_buyer_portrait_second_cat30_result;
+CREATE TABLE IF NOT EXISTS tmp.tmp_vova_dws_buyer_portrait_second_cat30_result
+(
+    datasource          STRING,
+    buyer_id            BIGINT,
+    second_cat_prefer_1m ARRAY<BIGINT>
+) COMMENT 'tmp_vova_dws_buyer_portrait_second_cat30_result'
+    STORED AS PARQUETFILE;
+
+DROP TABLE IF EXISTS tmp.tmp_vova_dws_buyer_portrait_second_cat_his_result;
+CREATE TABLE IF NOT EXISTS tmp.tmp_vova_dws_buyer_portrait_second_cat_his_result
+(
+    datasource          STRING,
+    buyer_id            BIGINT,
+    second_cat_prefer_his ARRAY<BIGINT>
+) COMMENT 'tmp_vova_dws_buyer_portrait_second_cat_his_result'
+    STORED AS PARQUETFILE;
+
+DROP TABLE IF EXISTS tmp.tmp_vova_dws_buyer_portrait_brand7_result;
+CREATE TABLE IF NOT EXISTS tmp.tmp_vova_dws_buyer_portrait_brand7_result
+(
+    datasource          STRING,
+    buyer_id            BIGINT,
+    brand_prefer_1w ARRAY<BIGINT>
+) COMMENT 'tmp_vova_dws_buyer_portrait_brand7_result'
+    STORED AS PARQUETFILE;
+
+DROP TABLE IF EXISTS tmp.tmp_vova_dws_buyer_portrait_brand30_result;
+CREATE TABLE IF NOT EXISTS tmp.tmp_vova_dws_buyer_portrait_brand30_result
+(
+    datasource          STRING,
+    buyer_id            BIGINT,
+    brand_prefer_1m ARRAY<BIGINT>
+) COMMENT 'tmp_vova_dws_buyer_portrait_brand30_result'
+    STORED AS PARQUETFILE;
+
+DROP TABLE IF EXISTS tmp.tmp_vova_dws_buyer_portrait_brand_his_result;
+CREATE TABLE IF NOT EXISTS tmp.tmp_vova_dws_buyer_portrait_brand_his_result
+(
+    datasource          STRING,
+    buyer_id            BIGINT,
+    brand_prefer_his ARRAY<BIGINT>
+) COMMENT 'tmp_vova_dws_buyer_portrait_brand_his_result'
+    STORED AS PARQUETFILE;
+
+
+
+
+
+
+
+
+
+
+
 

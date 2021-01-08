@@ -18,7 +18,7 @@ create table if  not exists  dws.dws_vova_buyer_goods_behave (
     `gmv`                 decimal(13,2)      COMMENT 'i_gmv'
 ) PARTITIONED BY (pt string)
  COMMENT '用户商品联合维度用户行为统计表'
-     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
+     STORED AS PARQUETFILE;
 
 
 -- 价格区间字典表

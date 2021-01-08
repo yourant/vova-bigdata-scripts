@@ -379,7 +379,7 @@ select
 datasource,
 buyer_id,
 count(distinct order_id) ship_cnt_his
-from dim_order_goods
+from dim.dim_vova_order_goods
 where sku_shipping_status >0
 group by datasource,buyer_id;
 
