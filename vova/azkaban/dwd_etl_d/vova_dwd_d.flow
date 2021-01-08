@@ -93,8 +93,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_devices
-      retries: 5
-      retry.backoff: 600000
+      retries: 15
+      retry.backoff: 300000
     dependsOn:
       - start_flag
 
@@ -292,8 +292,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_order_goods
-      retries: 10
-      retry.backoff: 600000
+      retries: 15
+      retry.backoff: 300000
     dependsOn:
       - start_flag
 
@@ -301,8 +301,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
-      retries: 10
-      retry.backoff: 600000
+      retries: 15
+      retry.backoff: 300000
     dependsOn:
       - start_flag
 
@@ -321,8 +321,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_page_view
-      retries: 5
-      retry.backoff: 600000
+      retries: 10
+      retry.backoff: 300000
     dependsOn:
       - start_flag
 
@@ -330,8 +330,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_goods_impression
-      retries: 5
-      retry.backoff: 600000
+      retries: 10
+      retry.backoff: 300000
     dependsOn:
       - start_flag
 
@@ -349,8 +349,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_buyers
-      retries: 10
-      retry.backoff: 600000
+      retries: 15
+      retry.backoff: 300000
     dependsOn:
       - start_flag
 
@@ -557,8 +557,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_screen_view
-      retries: 5
-      retry.backoff: 600000
+      retries: 10
+      retry.backoff: 300000
     dependsOn:
       - start_flag
 
@@ -600,8 +600,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_category
-      retries: 5
-      retry.backoff: 600000
+      retries: 10
+      retry.backoff: 300000
     dependsOn:
       - start_flag
 
@@ -609,8 +609,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_goods_click
-      retries: 5
-      retry.backoff: 600000
+      retries: 10
+      retry.backoff: 300000
     dependsOn:
       - start_flag
 
@@ -620,8 +620,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_common_click
-      retries: 5
-      retry.backoff: 600000
+      retries: 10
+      retry.backoff: 300000
     dependsOn:
       - start_flag
 
