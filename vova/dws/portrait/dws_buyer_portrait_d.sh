@@ -419,7 +419,7 @@ max_visits_cnt_cw cnt
 from tmp.tmp_vova_buyer_max_visits_cw;
 
 
-insert overwrite table dws.dws_buyer_portrait partition(pt='$pre_date')
+insert overwrite table dws.dws_vova_buyer_portrait partition(pt='$pre_date')
 select
 /*+ REPARTITION(30) */
 t1.datasource,
@@ -458,7 +458,7 @@ t24.price_prefer_1w,
 nvl(t25.pay_cnt_his,0) pay_cnt_his,
 nvl(t26.ship_cnt_his,0) ship_cnt_his,
 nvl(t27.max_visits_cnt_cw,0) max_visits_cnt_cw
-from dim_buyers t1
+from dim.dim_vova_buyers t1
 left outer join
 (
 select datasource,buyer_id,country from
