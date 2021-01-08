@@ -27,5 +27,5 @@ create table if  not exists  dws.dws_vova_goods_1d (
     `first_cat_name`              string COMMENT 'i_商品第一类目name'
 ) PARTITIONED BY ( pt string)
  COMMENT '商品与（datasource，ctry，os_type，gender可选）联合维度表'
-     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
+     STORED AS PARQUETFILE;
 
