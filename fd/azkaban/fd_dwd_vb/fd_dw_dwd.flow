@@ -86,7 +86,7 @@ nodes:
         dependsOn:
           - fd_dwd_vb_goods_flow_start
 
-      - name: dwd_fd_goods_project_extensiongir
+      - name: dwd_fd_goods_project_extension
         type: command
         config:
            command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_goods_project_extension/run.sh
