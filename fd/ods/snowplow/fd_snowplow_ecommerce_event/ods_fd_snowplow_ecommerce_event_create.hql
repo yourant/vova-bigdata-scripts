@@ -70,7 +70,6 @@ create table if not exists ods_fd_snowplow.ods_fd_snowplow_ecommerce_event
     )
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
     stored as parquet;
-
 -- ---
 -- set hive.exec.dynamic.partition.mode=nonstrict;
 -- ---
