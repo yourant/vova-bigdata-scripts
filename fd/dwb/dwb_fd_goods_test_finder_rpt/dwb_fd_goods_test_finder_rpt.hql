@@ -4,7 +4,7 @@ select
     gt_all.project_name,
     if(cat_name is null or trim(cat_name)='','null',cat_name) as cat_name,
     test_type,
-    if(gpe.ext_value is null or trim(gpe.ext_value )='','null',gpe.ext_value ) as finder ,
+    if(dfg.goods_selector is null or trim(dfg.goods_selector )='','null',dfg.goods_selector ) as finder ,
     preorder_plan_name,
     gt_all.virtual_goods_id,
     test_finish_dt,
@@ -71,8 +71,8 @@ where all_result not regexp '0|8'
 ) gt_all
 
 left join
-         dwd.dwd_fd_goods_project_extension gpe
-on gpe.goods_id = gt_all.goods_id and gpe.project_name = gt_all.project_name and gpe.ext_name = 'goods_selector'
+         dim.dim_fd_goods dfg
+on dfg.goods_id = gt_all.goods_id and dfg.project_name = gt_all.project_name
 
 left join
 (
