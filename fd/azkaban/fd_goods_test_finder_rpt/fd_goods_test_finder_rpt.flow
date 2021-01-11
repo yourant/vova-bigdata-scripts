@@ -1,7 +1,7 @@
 ---
 config:
   failure.emails: shihu@i9i8.com
-  retries: 10
+  retries: 20
   retry.backoff: 300000
 
 nodes:
@@ -47,7 +47,6 @@ nodes:
           - judge_dim_fd_goods
 
 
-
       - name: judge_ods_fd_vb_goods_preorder_plan
         type: command
         config:
@@ -76,8 +75,7 @@ nodes:
         dependsOn:
           - judge_ods_fd_vb_goods_preorder_plan
           - judge_fd_dim_category
-          - judge_ods_fd_vb_goods_test_preorder_resulty
-
+          - judge_ods_fd_vb_goods_test_preorder_result
 
 
       - name: judge_dwd_fd_order_goods
@@ -86,7 +84,7 @@ nodes:
           command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_goods
         dependsOn:
           - fd_goods_test_finder_rpt_flow_start
-      
+
       - name: fd_goods_test_finder_rpt_flow_run
         type: command
         config:
