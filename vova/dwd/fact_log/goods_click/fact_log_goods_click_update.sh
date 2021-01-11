@@ -205,13 +205,13 @@ SELECT event_fingerprint,
        br_version,
        datasource
 FROM dwd.dwd_vova_log_click_arc
-WHERE pt='${pt}' and event_type='goods'
+WHERE ((pt='${pt}'and date(collector_ts)='${pt}' ) or (pt=date_sub('${pt}',1) and hour ='23' and date(collector_ts)='${pt}') or (pt=date_add('${pt}',1) and hour ='00' and date(collector_ts)='${pt}')) and event_type='goods'
 )
 ;
 "
 
 spark-sql \
---executor-memory 4G --executor-cores 1 \
+--executor-memory 8G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=20" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \

@@ -16,8 +16,8 @@ SELECT /*+ REPARTITION(2) */
        collector_tstamp,
        dvce_created_tstamp,
        derived_tstamp,
-       collector_ts,
-       dvce_created_ts,
+       cast(collector_tstamp/1000 as timestamp) collector_ts,
+       cast(dvce_created_tstamp/1000 as timestamp) dvce_created_ts,
        name_tracker,
        buyer_id,
        domain_userid,
@@ -25,11 +25,11 @@ SELECT /*+ REPARTITION(2) */
        country,
        geo_country,
        geo_city,
-       geo_region,
-       geo_latitude,
-       geo_longitude,
-       geo_region_name,
-       geo_timezone,
+       null geo_region,
+       null geo_latitude,
+       null geo_longitude,
+       null geo_region_name,
+       null geo_timezone,
        currency,
        page_code,
        gender,
@@ -66,13 +66,14 @@ SELECT /*+ REPARTITION(2) */
        app_uri,
        landing_page,
        imsi,
-       br_family,
-       br_version,
+       null br_family,
+       null br_version,
        case when datasource in ('airyclub','vova') then datasource
          else 'others'
          end dp
-FROM dwd.dwd_vova_log_order_process_arc
-WHERE (pt='${pt}'and date(collector_ts)='${pt}' ) or (pt=date_sub('${pt}',1) and hour ='23' and date(collector_ts)='${pt}') or (pt=date_add('${pt}',1) and hour ='00' and date(collector_ts)='${pt}')"
+FROM dwd.dwd_vova_log_order_process_history
+WHERE pt='${pt}'
+"
 
 
 spark-sql \
@@ -81,7 +82,7 @@ spark-sql \
 --conf "spark.dynamicAllocation.minExecutors=20" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
 --conf "spark.dynamicAllocation.maxExecutors=150" \
---conf "spark.app.name=dwd_vova_log_order_process" \
+--conf "spark.app.name=dwd_vova_log_order_process_history" \
 --conf "spark.default.parallelism = 380" \
 --conf "spark.sql.shuffle.partitions=380" \
 --conf "spark.sql.adaptive.enabled=true" \

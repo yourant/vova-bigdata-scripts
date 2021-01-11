@@ -1,11 +1,11 @@
 #bin/sh
-table="dwb_fd_batch_goods_like_rpt"
-user="yjzhang"
+table="dwb_fd_goods_test_finder_rpt"
+user="ruimeng"
 
 base_path="/mnt/vova-bigdata-scripts/fd/dwb"
 
 if [ ! -n "$1" ]; then
-  pt=`date -d "-1 days" +%Y-%m-%d`
+  pt=$(date +"%Y-%m-%d")
 else
   echo $1 | grep -Eq "[0-9]{4}-[0-9]{2}-[0-9]{2}" && date -d "$1" +"%Y-%m-%d" >/dev/null
   if [[ $? -ne 0 ]]; then
@@ -18,15 +18,13 @@ echo "pt: ${pt}"
 
 shell_path="${base_path}/${table}"
 
-#hive -f ${shell_path}/${table}_create.hql
-pt_yesterday=$(date -d "-1 day" +"%Y-%m-%d")
-batchNum_new=`hive -e " select max(batch) from ads.ads_fd_goods_inspired where pt >='${pt_yesterday}' "`
-batchNum=`expr substr $batchNum_new 1 8`
+hive -f ${shell_path}/${table}_create.hql
+
 spark-sql \
   --conf "spark.app.name=${table}_${user}" \
+  --conf "spark.dynamicAllocation.maxExecutors=60" \
   -d pt="${pt}" \
-  -d batchNum="${batchNum}" \
-  -f ${shell_path}/${table}.hql
+  -f ${shell_path}/${table}_insert.hql
 
 if [ $? -ne 0 ]; then
   exit 1
