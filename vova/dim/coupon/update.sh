@@ -21,7 +21,8 @@ select
        oc.user_id                     as buyer_id,
        from_unixtime(oc.coupon_ctime) as cpn_create_time,
        oc.extend_day,
-       oc.can_use_times
+       oc.can_use_times,
+       occ.currency
 from ods_vova_vts.ods_vova_ok_coupon oc
          inner join dim.dim_vova_buyers byr on byr.buyer_id = oc.user_id
          inner join ods_vova_vts.ods_vova_ok_coupon_config occ on oc.coupon_config_id = occ.coupon_config_id

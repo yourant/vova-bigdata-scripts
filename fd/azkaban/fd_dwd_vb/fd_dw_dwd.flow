@@ -1,7 +1,7 @@
 ---
 config:
   failure.emails: htgao@i9i8.com
-  retries: 10
+  retries: 20
   retry.backoff: 300000
 
 nodes:
@@ -78,20 +78,6 @@ nodes:
         dependsOn:
           - judge_ods_order_analytics
           - dwd_fd_order_goods
-
-      - name: judge_ods_fd_goods_project_extension
-        type: command
-        config:
-           command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_goods_project_extension
-        dependsOn:
-          - fd_dwd_vb_goods_flow_start
-
-      - name: dwd_fd_goods_project_extension
-        type: command
-        config:
-           command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_goods_project_extension/run.sh
-        dependsOn:
-          - judge_ods_fd_goods_project_extension
 
 
     dependsOn:
