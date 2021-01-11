@@ -1,30 +1,30 @@
--- ¡¾Êı¾İ¡¿[4947]ACÆ·Àà±íÏÖÊı¾İ±¨±í
--- É¸Ñ¡Ïî
--- Ê±¼ä
--- ¹ú¼Ò	Ä¬ÈÏÕ¹Ê¾all	Õ¹Ê¾top20¹ú¼Ò	gb,fr,de,it,es,nl,pt,es,us,cs,pl,be,mx,si,ru,jp,br,tw,na,au
--- Æ·Àà	Ä¬ÈÏÕ¹Ê¾all	all£¬¸÷¶ş¼¶Æ·Àà
+-- ã€æ•°æ®ã€‘[4947]ACå“ç±»è¡¨ç°æ•°æ®æŠ¥è¡¨
+-- ç­›é€‰é¡¹
+-- æ—¶é—´
+-- å›½å®¶   é»˜è®¤å±•ç¤ºall å±•ç¤ºtop20å›½å®¶   gb,fr,de,it,es,nl,pt,es,us,cs,pl,be,mx,si,ru,jp,br,tw,na,au
+-- å“ç±»   é»˜è®¤å±•ç¤ºall allï¼Œå„äºŒçº§å“ç±»
 --
 --
--- searchÊı¾İ±íÏÖ
--- 		½öÕ¹Ê¾£¬²»×öÉ¸Ñ¡		"searchÒ³Êı¾İ
--- ²»Í¬¶ş¼¶Æ·Àà¶ÔÓ¦Í¬Ò»Ò»¼¶Æ·ÀàÊı¾İÏàÍ¬"	searchÒ³Êı¾İ	¶ş¼¶Æ·ÀàÏÂËùÓĞÉÌÆ·¼Ó¹º°´Å¥UV/ÉÌÏêÒ³UV	¶ş¼¶Æ·ÀàÏÂËùÓĞÉÌÆ·ÒÑ¸¶¿îUV/¶ş¼¶Æ·ÀàÉÌÏêÒ³UV
--- Ê±¼ä	¹ú¼Ò	Ò»¼¶Æ·Àà	¶ş¼¶Æ·Àà	Ò»¼¶Æ·Ààµã»÷uv	¶ş¼¶Æ·Ààµã»÷UV	ÉÌÏêÒ³×ª»¯ÂÊ	ÉÌÏêµ½Ö§¸¶×ª»¯ÂÊ
+-- searchæ•°æ®è¡¨ç°
+--      ä»…å±•ç¤ºï¼Œä¸åšç­›é€‰        "searché¡µæ•°æ®
+-- ä¸åŒäºŒçº§å“ç±»å¯¹åº”åŒä¸€ä¸€çº§å“ç±»æ•°æ®ç›¸åŒ"  searché¡µæ•°æ®   äºŒçº§å“ç±»ä¸‹æ‰€æœ‰å•†å“åŠ è´­æŒ‰é’®UV/å•†è¯¦é¡µUV   äºŒçº§å“ç±»ä¸‹æ‰€æœ‰å•†å“å·²ä»˜æ¬¾UV/äºŒçº§å“ç±»å•†è¯¦é¡µUV
+-- æ—¶é—´   å›½å®¶  ä¸€çº§å“ç±»    äºŒçº§å“ç±»    ä¸€çº§å“ç±»ç‚¹å‡»uv    äºŒçº§å“ç±»ç‚¹å‡»UV    å•†è¯¦é¡µè½¬åŒ–ç‡  å•†è¯¦åˆ°æ”¯ä»˜è½¬åŒ–ç‡
 
-ACÊı¾İ±¨±í-searchÊı¾İ±íÏÖ
+ACæ•°æ®æŠ¥è¡¨-searchæ•°æ®è¡¨ç°
 
 Drop table dwb.dwb_vova_second_cat_manifest;
 CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_second_cat_manifest (
-datasource           string    COMMENT 'd_Êı¾İÔ´',
-region_code          string    COMMENT 'd_¹ú¼Ò',
-first_cat_name       string    COMMENT 'i_Ò»¼¶Æ·Àà',
-second_cat_name      string    COMMENT 'd_¶ş¼¶Æ·Àà',
+datasource           string    COMMENT 'd_æ•°æ®æº',
+region_code          string    COMMENT 'd_å›½å®¶',
+first_cat_name       string    COMMENT 'i_ä¸€çº§å“ç±»',
+second_cat_name      string    COMMENT 'd_äºŒçº§å“ç±»',
 
-search_first_cat_uv  bigint    COMMENT 'i_searchÒ³Êı¾İÒ»¼¶Æ·Ààµã»÷UV',
-search_second_cat_uv bigint    COMMENT 'i_searchÒ³Êı¾İ¶ş¼¶Æ·Ààµã»÷UV',
-add_cart_uv          bigint    COMMENT 'i_¶ş¼¶Æ·ÀàÏÂËùÓĞÉÌÆ·¼Ó¹º°´Å¥UV',
-pd_uv                bigint    COMMENT 'i_ÉÌÏêÒ³UV',
-pay_uv               bigint    COMMENT 'i_ÉÌÆ·Ö§¸¶UV'
-) COMMENT 'ACÊı¾İ±¨±í-searchÊı¾İ±íÏÖ' PARTITIONED BY (pt STRING)
+search_first_cat_uv  bigint    COMMENT 'i_searché¡µæ•°æ®ä¸€çº§å“ç±»ç‚¹å‡»UV',
+search_second_cat_uv bigint    COMMENT 'i_searché¡µæ•°æ®äºŒçº§å“ç±»ç‚¹å‡»UV',
+add_cart_uv          bigint    COMMENT 'i_äºŒçº§å“ç±»ä¸‹æ‰€æœ‰å•†å“åŠ è´­æŒ‰é’®UV',
+pd_uv                bigint    COMMENT 'i_å•†è¯¦é¡µUV',
+pay_uv               bigint    COMMENT 'i_å•†å“æ”¯ä»˜UV'
+) COMMENT 'ACæ•°æ®æŠ¥è¡¨-searchæ•°æ®è¡¨ç°' PARTITIONED BY (pt STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE
 LOCATION "s3://bigdata-offline/warehouse/dwb/dwb_vova_second_cat_manifest/"
 ;
