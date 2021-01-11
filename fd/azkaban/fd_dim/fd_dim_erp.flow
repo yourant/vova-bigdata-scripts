@@ -1,7 +1,7 @@
 ---
 config:
   failure.emails: jhlu@i9i8.com
-  retries: 10
+  retries: 20
   retry.backoff: 300000
 
 nodes:

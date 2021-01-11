@@ -1,8 +1,8 @@
 ---
 config:
   failure.emails: htgao@i9i8.com
-  retries: 3
-  retry.backoff: 100000
+  retries: 20
+  retry.backoff: 300000
 
 nodes:
   - name: fd_dim_vb_start
@@ -50,6 +50,13 @@ nodes:
     dependsOn:
       - fd_dim_vb_start
 
+  - name: judge_ods_fd_vb_goods_project_extension
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_goods_project_extension
+    dependsOn:
+      - fd_dim_vb_start
+
   - name: fd_dim_goods
     type: command
     config:
@@ -58,7 +65,8 @@ nodes:
       - judge_ods_fd_vb_goods
       - judge_ods_fd_vb_virtual_goods
       - fd_dim_category
-  
+      - judge_ods_fd_vb_goods_project_extension
+
   - name: judge_ods_fd_vb_languages
     type: command
     config:
