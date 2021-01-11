@@ -24,7 +24,7 @@ SELECT 'vova'          AS datasource,
        vgc.display_order,
        vgc.language_id,
        vgc.tag
-FROM ods_vova_themis.ods_vova_goods_comment vgc;
+FROM ods_vova_vts.ods_vova_goods_comment vgc;
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
 spark-sql  --conf "spark.app.name=dwd_vova_fact_comment" --conf "spark.sql.parquet.writeLegacyFormat=true" -e "$sql"

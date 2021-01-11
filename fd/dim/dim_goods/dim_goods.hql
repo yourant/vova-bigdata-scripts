@@ -21,7 +21,8 @@ CREATE TABLE IF NOT EXISTS dim.dim_fd_goods
     third_cat_id     bigint COMMENT '商品三级类目',
     third_cat_name   string COMMENT '商品三级类目',
     shop_price       DECIMAL(15, 4) comment '商品价格',
-    goods_weight     DECIMAL(15, 4) comment '商品重量'
+    goods_weight     DECIMAL(15, 4) comment '商品重量',
+    goods_selector   string  comment '商品选款人'
 ) COMMENT '商品维度'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
@@ -49,7 +50,8 @@ select
   t2.three_cat_id as third_cat_id,
   t2.three_cat_name as third_cat_name,
   t1.shop_price as shop_price,
-  t1.goods_weight as goods_weight
+  t1.goods_weight as goods_weight,
+  t4.ext_value
 from (
 	select
 		goods_id,cp_goods_id,brand_id,goods_sn,goods_name,goods_desc,keywords,add_time,
@@ -59,4 +61,5 @@ from (
 	) t1
 LEFT JOIN dim.dim_fd_category t2 on t1.cat_id = t2.cat_id
 LEFT JOIN ods_fd_vb.ods_fd_virtual_goods t3 on t1.goods_id = t3.goods_id
+LEFT JOIN ods_fd_vb.ods_fd_goods_project_extension t4 on t3.goods_id = t4.goods_id and lower(t3.project_name) = lower(t4.project_name) and t4.ext_name = 'goods_selector'
 ;

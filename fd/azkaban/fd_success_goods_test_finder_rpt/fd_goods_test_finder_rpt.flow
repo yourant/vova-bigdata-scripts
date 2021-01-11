@@ -1,0 +1,85 @@
+---
+config:
+  failure.emails: ekko.zhang@i9i8.com
+  retries: 5
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_goods_test_finder_rpt
+    type: noop
+
+  - name: fd_goods_test_finder_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_goods_test_finder_flow_start
+        type: noop
+        
+      - name: judge_dwd_fd_finished_goods_test
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_finished_goods_test
+        dependsOn:
+          - fd_goods_test_finder_flow_start
+      
+      - name: judge_dwd_fd_finished_preorder
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_finished_preorder
+        dependsOn:
+          - fd_goods_test_finder_flow_start
+      
+      - name: judge_dim_fd_goods_finder
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_fd_goods_finder
+        dependsOn:
+          - fd_goods_test_finder_flow_start
+      
+      - name: judge_dwd_fd_order_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_goods
+        dependsOn:
+          - fd_goods_test_finder_flow_start
+
+      - name: judge_dim_category
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fd_dim_category
+        dependsOn:
+          - fd_goods_test_finder_flow_start
+
+      - name: judge_dim_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fd_dim_goods
+        dependsOn:
+          - fd_goods_test_finder_flow_start
+
+      - name: fd_goods_test_finder_rpt_run
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_test_finder_rpt/run.sh ${pt}
+        dependsOn:
+          - judge_dwd_fd_finished_goods_test
+          - judge_dwd_fd_finished_preorder
+          - judge_dim_fd_goods_finder
+          - judge_dwd_fd_order_goods
+          - judge_dim_category
+          - judge_dim_goods
+
+
+      - name: fd_goods_test_finder_flow_end
+        type: noop
+        dependsOn:
+          - fd_goods_test_finder_rpt_run
+
+    dependsOn:
+      - fd_goods_test_finder_rpt
+
+  - name: fd_goods_test_finder_end
+    type: noop
+    dependsOn:
+      - fd_goods_test_finder_flow

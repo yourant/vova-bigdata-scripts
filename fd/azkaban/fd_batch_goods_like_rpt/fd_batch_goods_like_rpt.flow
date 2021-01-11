@@ -1,0 +1,46 @@
+---
+config:
+  failure.emails: ekko.zhang@i9i8.com
+  retries: 8
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_batch_goods_like_rpt
+    type: noop
+
+  - name: fd_batch_goods_like_rpt_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_batch_goods_like_rpt_flow_start
+        type: noop
+
+      - name: judge_dwd_fd_batch_detail
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_batch_detail
+        dependsOn:
+          - fd_batch_goods_like_rpt_flow_start
+
+      - name: fd_batch_goods_like_rpt_flow_run
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_batch_goods_like_rpt/run.sh ${pt}
+        dependsOn:
+          - judge_dwd_fd_batch_detail
+
+      - name: fd_batch_goods_like_rpt_flow_end
+        type: noop
+        dependsOn:
+          - fd_batch_goods_like_rpt_flow_run
+
+    dependsOn:
+      - fd_batch_goods_like_rpt
+
+  - name: fd_batch_goods_like_rpt_end
+    type: noop
+    dependsOn:
+      - fd_batch_goods_like_rpt_flow
+
+

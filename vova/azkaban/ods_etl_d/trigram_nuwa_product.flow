@@ -1,0 +1,1849 @@
+---
+config:
+  retries: 4
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: noop
+    dependsOn:
+      - trigram_nuwa_merge_flow
+
+  - name: start_flag
+    type: noop
+
+
+#merge_flow
+  - name: trigram_nuwa_merge_flow
+    type: flow
+    config:
+      retries: 4
+      retry.backoff: 600000
+    dependsOn:
+      - trigram_nuwa_flow
+    nodes:
+      - name: trigram_nuwa_merge_flow_end
+        type: noop
+        dependsOn:
+          - trigram_nuwa_merge
+
+      - name: trigram_nuwa_merge_flow_start
+        type: noop
+
+      - name: trigram_nuwa_merge
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/vova/ods/merge/trigram_nuwa_product.sh
+        dependsOn:
+          - trigram_nuwa_merge_flow_start
+
+#trigram_nuwa新中台-商品服务
+  - name: trigram_nuwa_flow
+    type: flow
+    config:
+      retries: 4
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+    nodes:
+      - name: trigram_nuwa_end
+        type: noop
+        dependsOn:
+          - trigram_nuwa_product_0
+          - trigram_nuwa_product_1
+          - trigram_nuwa_product_2
+          - trigram_nuwa_product_3
+          - trigram_nuwa_product_4
+          - trigram_nuwa_product_5
+          - trigram_nuwa_product_6
+          - trigram_nuwa_product_7
+          - trigram_nuwa_product_8
+          - trigram_nuwa_product_9
+          - trigram_nuwa_product_10
+          - trigram_nuwa_product_11
+          - trigram_nuwa_product_12
+          - trigram_nuwa_product_13
+          - trigram_nuwa_product_14
+          - trigram_nuwa_product_15
+          - trigram_nuwa_product_16
+          - trigram_nuwa_product_17
+          - trigram_nuwa_product_18
+          - trigram_nuwa_product_19
+          - trigram_nuwa_product_20
+          - trigram_nuwa_product_21
+          - trigram_nuwa_product_22
+          - trigram_nuwa_product_23
+          - trigram_nuwa_product_24
+          - trigram_nuwa_product_25
+          - trigram_nuwa_product_26
+          - trigram_nuwa_product_27
+          - trigram_nuwa_product_28
+          - trigram_nuwa_product_29
+          - trigram_nuwa_product_30
+          - trigram_nuwa_product_31
+          - trigram_nuwa_product_32
+          - trigram_nuwa_product_33
+          - trigram_nuwa_product_34
+          - trigram_nuwa_product_35
+          - trigram_nuwa_product_36
+          - trigram_nuwa_product_37
+          - trigram_nuwa_product_38
+          - trigram_nuwa_product_39
+          - trigram_nuwa_product_40
+          - trigram_nuwa_product_41
+          - trigram_nuwa_product_42
+          - trigram_nuwa_product_43
+          - trigram_nuwa_product_44
+          - trigram_nuwa_product_45
+          - trigram_nuwa_product_46
+          - trigram_nuwa_product_47
+          - trigram_nuwa_product_48
+          - trigram_nuwa_product_49
+          - trigram_nuwa_product_50
+          - trigram_nuwa_product_51
+          - trigram_nuwa_product_52
+          - trigram_nuwa_product_53
+          - trigram_nuwa_product_54
+          - trigram_nuwa_product_55
+          - trigram_nuwa_product_56
+          - trigram_nuwa_product_57
+          - trigram_nuwa_product_58
+          - trigram_nuwa_product_59
+          - trigram_nuwa_product_60
+          - trigram_nuwa_product_61
+          - trigram_nuwa_product_62
+          - trigram_nuwa_product_63
+          - trigram_nuwa_product_64
+          - trigram_nuwa_product_65
+          - trigram_nuwa_product_66
+          - trigram_nuwa_product_67
+          - trigram_nuwa_product_68
+          - trigram_nuwa_product_69
+          - trigram_nuwa_product_70
+          - trigram_nuwa_product_71
+          - trigram_nuwa_product_72
+          - trigram_nuwa_product_73
+          - trigram_nuwa_product_74
+          - trigram_nuwa_product_75
+          - trigram_nuwa_product_76
+          - trigram_nuwa_product_77
+          - trigram_nuwa_product_78
+          - trigram_nuwa_product_79
+          - trigram_nuwa_product_80
+          - trigram_nuwa_product_81
+          - trigram_nuwa_product_82
+          - trigram_nuwa_product_83
+          - trigram_nuwa_product_84
+          - trigram_nuwa_product_85
+          - trigram_nuwa_product_86
+          - trigram_nuwa_product_87
+          - trigram_nuwa_product_88
+          - trigram_nuwa_product_89
+          - trigram_nuwa_product_90
+          - trigram_nuwa_product_91
+          - trigram_nuwa_product_92
+          - trigram_nuwa_product_93
+          - trigram_nuwa_product_94
+          - trigram_nuwa_product_95
+          - trigram_nuwa_product_96
+          - trigram_nuwa_product_97
+          - trigram_nuwa_product_98
+          - trigram_nuwa_product_99
+          - trigram_nuwa_product_100
+          - trigram_nuwa_product_101
+          - trigram_nuwa_product_102
+          - trigram_nuwa_product_103
+          - trigram_nuwa_product_104
+          - trigram_nuwa_product_105
+          - trigram_nuwa_product_106
+          - trigram_nuwa_product_107
+          - trigram_nuwa_product_108
+          - trigram_nuwa_product_109
+          - trigram_nuwa_product_110
+          - trigram_nuwa_product_111
+          - trigram_nuwa_product_112
+          - trigram_nuwa_product_113
+          - trigram_nuwa_product_114
+          - trigram_nuwa_product_115
+          - trigram_nuwa_product_116
+          - trigram_nuwa_product_117
+          - trigram_nuwa_product_118
+          - trigram_nuwa_product_119
+          - trigram_nuwa_product_120
+          - trigram_nuwa_product_121
+          - trigram_nuwa_product_122
+          - trigram_nuwa_product_123
+          - trigram_nuwa_product_124
+          - trigram_nuwa_product_125
+          - trigram_nuwa_product_126
+          - trigram_nuwa_product_127
+          - trigram_nuwa_product_128
+          - trigram_nuwa_product_129
+          - trigram_nuwa_product_130
+          - trigram_nuwa_product_131
+          - trigram_nuwa_product_132
+          - trigram_nuwa_product_133
+          - trigram_nuwa_product_134
+          - trigram_nuwa_product_135
+          - trigram_nuwa_product_136
+          - trigram_nuwa_product_137
+          - trigram_nuwa_product_138
+          - trigram_nuwa_product_139
+          - trigram_nuwa_product_140
+          - trigram_nuwa_product_141
+          - trigram_nuwa_product_142
+          - trigram_nuwa_product_143
+          - trigram_nuwa_product_144
+          - trigram_nuwa_product_145
+          - trigram_nuwa_product_146
+          - trigram_nuwa_product_147
+          - trigram_nuwa_product_148
+          - trigram_nuwa_product_149
+          - trigram_nuwa_product_150
+          - trigram_nuwa_product_151
+          - trigram_nuwa_product_152
+          - trigram_nuwa_product_153
+          - trigram_nuwa_product_154
+          - trigram_nuwa_product_155
+          - trigram_nuwa_product_156
+          - trigram_nuwa_product_157
+          - trigram_nuwa_product_158
+          - trigram_nuwa_product_159
+          - trigram_nuwa_product_160
+          - trigram_nuwa_product_161
+          - trigram_nuwa_product_162
+          - trigram_nuwa_product_163
+          - trigram_nuwa_product_164
+          - trigram_nuwa_product_165
+          - trigram_nuwa_product_166
+          - trigram_nuwa_product_167
+          - trigram_nuwa_product_168
+          - trigram_nuwa_product_169
+          - trigram_nuwa_product_170
+          - trigram_nuwa_product_171
+          - trigram_nuwa_product_172
+          - trigram_nuwa_product_173
+          - trigram_nuwa_product_174
+          - trigram_nuwa_product_175
+          - trigram_nuwa_product_176
+          - trigram_nuwa_product_177
+          - trigram_nuwa_product_178
+          - trigram_nuwa_product_179
+          - trigram_nuwa_product_180
+          - trigram_nuwa_product_181
+          - trigram_nuwa_product_182
+          - trigram_nuwa_product_183
+          - trigram_nuwa_product_184
+          - trigram_nuwa_product_185
+          - trigram_nuwa_product_186
+          - trigram_nuwa_product_187
+          - trigram_nuwa_product_188
+          - trigram_nuwa_product_189
+          - trigram_nuwa_product_190
+          - trigram_nuwa_product_191
+          - trigram_nuwa_product_192
+          - trigram_nuwa_product_193
+          - trigram_nuwa_product_194
+          - trigram_nuwa_product_195
+          - trigram_nuwa_product_196
+          - trigram_nuwa_product_197
+          - trigram_nuwa_product_198
+          - trigram_nuwa_product_199
+          - trigram_nuwa_product_200
+          - trigram_nuwa_product_201
+          - trigram_nuwa_product_202
+          - trigram_nuwa_product_203
+          - trigram_nuwa_product_204
+          - trigram_nuwa_product_205
+          - trigram_nuwa_product_206
+          - trigram_nuwa_product_207
+          - trigram_nuwa_product_208
+          - trigram_nuwa_product_209
+          - trigram_nuwa_product_210
+          - trigram_nuwa_product_211
+          - trigram_nuwa_product_212
+          - trigram_nuwa_product_213
+          - trigram_nuwa_product_214
+          - trigram_nuwa_product_215
+          - trigram_nuwa_product_216
+          - trigram_nuwa_product_217
+          - trigram_nuwa_product_218
+          - trigram_nuwa_product_219
+          - trigram_nuwa_product_220
+          - trigram_nuwa_product_221
+          - trigram_nuwa_product_222
+          - trigram_nuwa_product_223
+          - trigram_nuwa_product_224
+          - trigram_nuwa_product_225
+          - trigram_nuwa_product_226
+          - trigram_nuwa_product_227
+          - trigram_nuwa_product_228
+          - trigram_nuwa_product_229
+          - trigram_nuwa_product_230
+          - trigram_nuwa_product_231
+          - trigram_nuwa_product_232
+          - trigram_nuwa_product_233
+          - trigram_nuwa_product_234
+          - trigram_nuwa_product_235
+          - trigram_nuwa_product_236
+          - trigram_nuwa_product_237
+          - trigram_nuwa_product_238
+          - trigram_nuwa_product_239
+          - trigram_nuwa_product_240
+          - trigram_nuwa_product_241
+          - trigram_nuwa_product_242
+          - trigram_nuwa_product_243
+          - trigram_nuwa_product_244
+          - trigram_nuwa_product_245
+          - trigram_nuwa_product_246
+          - trigram_nuwa_product_247
+          - trigram_nuwa_product_248
+          - trigram_nuwa_product_249
+          - trigram_nuwa_product_250
+          - trigram_nuwa_product_251
+          - trigram_nuwa_product_252
+          - trigram_nuwa_product_253
+          - trigram_nuwa_product_254
+          - trigram_nuwa_product_255
+
+      - name: trigram_nuwa_start
+        type: noop
+
+      - name: trigram_nuwa_product_0
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_0 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_1
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_1 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_2
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_2 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_3
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_3 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_4
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_4 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_5
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_5 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_6
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_6 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_7
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_7 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_8
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_8 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_9
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_9 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_10
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_10 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_11
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_11 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_12
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_12 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_13
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_13 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_14
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_14 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_15
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_15 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_16
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_16 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_17
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_17 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_18
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_18 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_19
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_19 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_20
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_20 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_21
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_21 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_22
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_22 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_23
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_23 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_24
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_24 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_25
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_25 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_26
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_26 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_27
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_27 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_28
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_28 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_29
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_29 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_30
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_30 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_31
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_31 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_32
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_32 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_33
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_33 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_34
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_34 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_35
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_35 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_36
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_36 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_37
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_37 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_38
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_38 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_39
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_39 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_40
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_40 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_41
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_41 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_42
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_42 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_43
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_43 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_44
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_44 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_45
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_45 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_46
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_46 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_47
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_47 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_48
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_48 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_49
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_49 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_50
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_50 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_51
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_51 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_52
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_52 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_53
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_53 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_54
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_54 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_55
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_55 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_56
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_56 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_57
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_57 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_58
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_58 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_59
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_59 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_60
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_60 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_61
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_61 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_62
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_62 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_63
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_63 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_64
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_64 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_65
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_65 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_66
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_66 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_67
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_67 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_68
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_68 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_69
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_69 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_70
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_70 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_71
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_71 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_72
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_72 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_73
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_73 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_74
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_74 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_75
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_75 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_76
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_76 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_77
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_77 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_78
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_78 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_79
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_79 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_80
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_80 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_81
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_81 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_82
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_82 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_83
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_83 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_84
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_84 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_85
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_85 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_86
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_86 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_87
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_87 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_88
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_88 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_89
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_89 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_90
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_90 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_91
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_91 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_92
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_92 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_93
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_93 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_94
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_94 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_95
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_95 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_96
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_96 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_97
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_97 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_98
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_98 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_99
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_99 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_100
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_100 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_101
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_101 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_102
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_102 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_103
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_103 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_104
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_104 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_105
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_105 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_106
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_106 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_107
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_107 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_108
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_108 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_109
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_109 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_110
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_110 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_111
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_111 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_112
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_112 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_113
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_113 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_114
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_114 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_115
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_115 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_116
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_116 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_117
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_117 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_118
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_118 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_119
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_119 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_120
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_120 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_121
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_121 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_122
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_122 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_123
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_123 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_124
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_124 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_125
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_125 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_126
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_126 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_127
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_127 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_128
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_128 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_129
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_129 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_130
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_130 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_131
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_131 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_132
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_132 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_133
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_133 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_134
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_134 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_135
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_135 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_136
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_136 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_137
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_137 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_138
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_138 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_139
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_139 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_140
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_140 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_141
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_141 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_142
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_142 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_143
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_143 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_144
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_144 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_145
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_145 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_146
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_146 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_147
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_147 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_148
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_148 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_149
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_149 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_150
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_150 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_151
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_151 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_152
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_152 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_153
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_153 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_154
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_154 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_155
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_155 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_156
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_156 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_157
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_157 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_158
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_158 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_159
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_159 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_160
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_160 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_161
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_161 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_162
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_162 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_163
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_163 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_164
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_164 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_165
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_165 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_166
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_166 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_167
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_167 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_168
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_168 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_169
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_169 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_170
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_170 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_171
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_171 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_172
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_172 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_173
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_173 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_174
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_174 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_175
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_175 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_176
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_176 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_177
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_177 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_178
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_178 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_179
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_179 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_180
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_180 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_181
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_181 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_182
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_182 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_183
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_183 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_184
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_184 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_185
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_185 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_186
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_186 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_187
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_187 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_188
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_188 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_189
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_189 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_190
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_190 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_191
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_191 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_192
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_192 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_193
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_193 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_194
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_194 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_195
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_195 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_196
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_196 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_197
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_197 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_198
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_198 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_199
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_199 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_200
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_200 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_201
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_201 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_202
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_202 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_203
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_203 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_204
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_204 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_205
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_205 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_206
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_206 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_207
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_207 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_208
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_208 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_209
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_209 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_210
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_210 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_211
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_211 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_212
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_212 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_213
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_213 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_214
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_214 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_215
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_215 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_216
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_216 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_217
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_217 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_218
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_218 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_219
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_219 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_220
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_220 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_221
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_221 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_222
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_222 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_223
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_223 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_224
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_224 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_225
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_225 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_226
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_226 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_227
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_227 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_228
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_228 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_229
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_229 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_230
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_230 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_231
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_231 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_232
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_232 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_233
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_233 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_234
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_234 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_235
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_235 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_236
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_236 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_237
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_237 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_238
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_238 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_239
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_239 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_240
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_240 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_241
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_241 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_242
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_242 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_243
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_243 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_244
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_244 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_245
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_245 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_246
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_246 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_247
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_247 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_248
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_248 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_249
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_249 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_250
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_250 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_251
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_251 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_252
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_252 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_253
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_253 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_254
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_254 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+      - name: trigram_nuwa_product_255
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=gnw  --table_name=product_255 --etl_type=INIT
+        dependsOn:
+          - trigram_nuwa_start
+
+

@@ -1,0 +1,920 @@
+---
+config:
+  retries: 4
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: noop
+    dependsOn:
+      - themis_trd_flow
+      - themis_goods_flow
+      - themis_lgtcs_flow
+      - themis_mbrmct_flow
+
+
+
+  - name: start_flag
+    type: noop
+
+
+# flow: 交易域数据抽取
+  - name: themis_trd_flow
+    type: flow
+    config:
+      retries: 4
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+    nodes:
+      - name: themis_trd_start
+        type: noop
+
+      - name: themis_trd_end
+        type: noop
+        dependsOn:
+          - vova_fisher_order_info_product
+          - collection_order_goods
+          - vova_merchant_region
+          - vova_goods_warehouse_limit
+          - vova_goods_warehouse_limit_pre
+          - vova_brand
+          - vova_client_payer_id_blacklist
+          - vova_credit_card_blacklist
+          - vova_client_ip_blacklist
+          - vova_domain_user_id_blacklist
+          - vova_address_tel_name_blacklist
+          - vova_pay_credit_card_history
+          - vova_cms_shopping_blacklist
+          - vova_order_info
+          - vova_order_extension
+          - vova_order_goods
+          - vova_order_goods_status
+          - vova_order_relation
+          - vova_order_goods_extra
+          - vova_order_goods_extension
+          - vova_refund_type
+          - vova_refund_reason_type
+          - vova_refund_reason
+          - vova_refund_audit_txn
+          - vova_payment
+          - vova_paypal_txn
+          - vova_chargeback_code_reason
+          - vova_checkout_chargeback_reporting
+          - vova_order_card_installments_record
+          - vova_sc_warehouse_goods
+          - vova_sc_shipping_order
+          - vova_sc_goods_shipping
+          - vova_sc_order_goods
+          - vova_sc_goods_shipping_detail
+
+# 交易域数据抽取
+      - name: vova_fisher_order_info_product
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=fisher_order_info_product --mapers=5 --inc_column=id --etl_type=INCID --period_type=day --partition_num=10
+        dependsOn:
+          - themis_trd_start
+
+      - name: collection_order_goods
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=collection_order_goods --mapers=10 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_merchant_region
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_region --mapers=10 --etl_type=ALL  --period_type=day --partition_num=10
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_goods_warehouse_limit
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=goods_warehouse_limit --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_goods_warehouse_limit_pre
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=goods_warehouse_limit_pre --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_brand
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=brand --inc_column=last_update_time --mapers=1 --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_client_payer_id_blacklist
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=client_payer_id_blacklist --inc_column=last_update_time --mapers=1 --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_credit_card_blacklist
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=credit_card_blacklist --inc_column=last_update_time --mapers=1 --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_client_ip_blacklist
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=client_ip_blacklist --inc_column=last_update_time --mapers=1 --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_domain_user_id_blacklist
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=domain_user_id_blacklist --inc_column=last_update_time --mapers=1 --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_address_tel_name_blacklist
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=address_tel_name_blacklist --inc_column=last_update_time --mapers=1 --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_pay_credit_card_history
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=pay_credit_card_history --inc_column=last_update_time --mapers=4 --etl_type=INCTIME --period_type=day --partition_num=50
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_cms_shopping_blacklist
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=cms_shopping_blacklist --inc_column=last_update_time --mapers=1 --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_order_info
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_info --inc_column=last_update_time --mapers=5 --etl_type=INCTIME --period_type=day --partition_num=100
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_order_extension
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_extension --mapers=50 --etl_type=ALL  --period_type=day --partition_num=50
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_order_goods
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_goods --inc_column=rec_id --mapers=10 --etl_type=INCID  --period_type=day --partition_num=300
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_order_goods_status
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_goods_status --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=25
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_order_relation
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_relation --mapers=10 --etl_type=ALL  --period_type=day --partition_num=20
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_order_goods_extra
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_goods_extra --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_order_goods_extension
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_goods_extension --inc_column=abs_id --etl_type=INCID --period_type=day --mapper=10 --partition_num=70
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_refund_type
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=refund_type --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_refund_reason_type
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=refund_reason_type --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_refund_reason
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=refund_reason --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=20
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_refund_audit_txn
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=refund_audit_txn --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=20
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_payment
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=payment --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_paypal_txn
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=paypal_txn --inc_column=txn_datetime --etl_type=INCTIMENOMERGE --period_type=day --partition_num=400 --split_id=txn_datetime
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_chargeback_code_reason
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=chargeback_code_reason --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_checkout_chargeback_reporting
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=checkout_chargeback_reporting --mapers=2 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_order_card_installments_record
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_card_installments_record --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_sc_warehouse_goods
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=sc_warehouse_goods --mapers=2 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_sc_shipping_order
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=sc_shipping_order --mapers=2 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_sc_goods_shipping
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=sc_goods_shipping --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_sc_order_goods
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=sc_order_goods --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - themis_trd_start
+
+      - name: vova_sc_goods_shipping_detail
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=sc_goods_shipping_detail --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - themis_trd_start
+
+# flow:商品域数据抽取
+  - name: themis_goods_flow
+    type: flow
+    config:
+      retries: 4
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+    nodes:
+      - name: themis_goods_start
+        type: noop
+
+      - name: themis_goods_end
+        type: noop
+        dependsOn:
+          - warehouse_shipping_order
+          - vova_gsn_reduce_valid_goods
+          - warehouse_shipping_order_detail
+          - sku_warehouse_storage
+          - sku_warehouse_storage_log
+          - vova_goods
+          - vova_virtual_goods
+          - vova_goods_on_sale_record
+          - vova_goods_display_sort
+          - vova_category
+          - vova_goods_sku
+          - vova_fbv_sku_display_storage
+          - vova_fbv_goods_shipping_fee
+          - vova_fbv_sku_display_storage_log
+          - vova_fbv_sku_merchant_storage_log
+          - vova_fbv_sku_warehouse_storage_log
+          - vova_goods_attached_attribute
+          - vova_collection_goods_no_join
+          - vova_goods_gallery
+          - vova_sku_style
+          - vova_style_value
+          - vova_style_name
+          - vova_route
+
+#商品域数据抽取
+      - name: warehouse_shipping_order
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=warehouse_shipping_order --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_gsn_reduce_valid_goods
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=gsn_reduce_valid_goods --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_goods_start
+
+      - name: warehouse_shipping_order_detail
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=warehouse_shipping_order_detail --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_goods_start
+
+      - name: sku_warehouse_storage
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=sku_warehouse_storage --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_goods_start
+
+      - name: sku_warehouse_storage_log
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=sku_warehouse_storage_log --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_goods
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=goods --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=120
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_virtual_goods
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=virtual_goods --inc_column=virtual_goods_id --etl_type=INCID --period_type=day --partition_num=10
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_goods_on_sale_record
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=goods_on_sale_record --inc_column=goods_on_sale_record_id --etl_type=INCID --period_type=day --partition_num=30
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_goods_display_sort
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=goods_display_sort --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_category
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=category --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_goods_sku
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=goods_sku --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=400
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_fbv_sku_display_storage
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=fbv_sku_display_storage --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_fbv_goods_shipping_fee
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=fbv_goods_shipping_fee --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_fbv_sku_display_storage_log
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=fbv_sku_display_storage_log --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_fbv_sku_merchant_storage_log
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=fbv_sku_merchant_storage_log --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_fbv_sku_warehouse_storage_log
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=fbv_sku_warehouse_storage_log --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_goods_attached_attribute
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=goods_attached_attribute --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_collection_goods_no_join
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=collection_goods_no_join --mapers=2 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_goods_gallery
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=goods_gallery --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=150
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_sku_style
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=sku_style --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=120
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_style_value
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=style_value --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_style_name
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=style_name --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_route
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=route --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_goods_start
+
+
+# flow: 物流域数据抽取
+  - name: themis_lgtcs_flow
+    type: flow
+    config:
+      retries: 4
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+    nodes:
+      - name: themis_lgtcs_start
+        type: noop
+
+      - name: themis_lgtcs_end
+        type: noop
+        dependsOn:
+          - vova_shipping_carrier
+          - vova_order_shipping_tracking
+          - vova_order_shipping_tracking_detail
+          - vova_sku_ops_log
+
+      - name: vova_shipping_carrier
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=shipping_carrier --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_lgtcs_start
+
+      - name: vova_order_shipping_tracking
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_shipping_tracking  --inc-column=last_update_time  --mapers=3 --etlType=INCTIME --partition_num=30
+        dependsOn:
+          - themis_lgtcs_start
+
+      - name: vova_order_shipping_tracking_detail
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_shipping_tracking_detail --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=25
+        dependsOn:
+          - themis_lgtcs_start
+
+      - name: vova_sku_ops_log
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=sku_ops_log --mapers=5 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=90
+        dependsOn:
+          - themis_lgtcs_start
+
+
+
+# flow: 会员和店铺域数据抽取
+  - name: themis_mbrmct_flow
+    type: flow
+    config:
+      retries: 4
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+    nodes:
+      - name: themis_mbrmct_start
+        type: noop
+
+      - name: themis_mbrmct_end
+        type: noop
+        dependsOn:
+          - vova_merchant_register_coupon
+          - vova_sponsor
+          - vova_merchant_sponsor
+          - vova_merchant
+          - vova_merchant_register_deposit_payment
+          - vova_users
+          - vova_users_extension
+          - vova_user_agent
+          - vova_user_login_record
+          - vova_ban_sell_history
+          - vova_languages
+          - vova_region
+          - vova_merchant_detail
+          - vova_merchant_payment_account_info
+          - vova_merchant_login_log
+          - vova_product_upload_excel
+          - vova_merchant_coupon_config
+          - vova_merchant_coupon
+          - vova_merchant_sale
+          - vova_merchant_assessment_score
+          - vova_merchant_assessment_score_log
+          - vova_bonus_card
+
+#会员和店铺域数据抽取
+      - name: vova_merchant_register_coupon
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_register_coupon --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_sponsor
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=sponsor --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_merchant_sponsor
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_sponsor --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_merchant
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_merchant_register_deposit_payment #
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_register_deposit_payment --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_users
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=users --inc_column=last_time --etl_type=INCTIME --period_type=day --partition_num=100
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_users_extension
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=users_extension --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=40
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_user_agent
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=user_agent --inc_column=user_agent_id --etl_type=INCID --period_type=day --partition_num=100
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_user_login_record
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=user_login_record --inc_column=login_id --etl_type=INCID --period_type=day --partition_num=100
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_ban_sell_history
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=ban_sell_history --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_languages
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=languages --etl_type=ALL  --mapers=1 --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_region
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=region --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_merchant_detail
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_detail --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_merchant_payment_account_info #
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_payment_account_info --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_merchant_login_log
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_login_log --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_product_upload_excel
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=product_upload_excel --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=15
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_merchant_coupon_config
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_coupon_config --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_merchant_coupon
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_coupon --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_merchant_sale
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_sale --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_merchant_assessment_score
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_assessment_score --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_merchant_assessment_score_log
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_assessment_score_log --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_bonus_card
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=bonus_card --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mbrmct_start

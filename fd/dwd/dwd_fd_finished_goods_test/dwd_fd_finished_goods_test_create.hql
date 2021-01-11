@@ -17,6 +17,7 @@ create table if not exists `dwd.dwd_fd_finished_goods_test`
     goods_source     string comment '商品来源',
     test_count       bigint comment '测款次数',
     create_time      string comment '线程创建时间',
+    test_time        string comment '入测时间',
     finish_time      string comment '线程结束时间'
 )
     comment "已经结束的测款信息表"

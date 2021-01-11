@@ -1,5 +1,5 @@
 #bin/sh
-table="dwb_fd_120_position_impression_uv_7d"
+table="dwb_fd_goods_test_finder_summary"
 user="lujiaheng"
 
 base_path="/mnt/vova-bigdata-scripts/fd/dwb"

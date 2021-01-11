@@ -1,16 +1,16 @@
 insert overwrite table dwb.dwb_fd_goods_test_finder_summary
 select
 /*+ REPARTITION(1) */
-       finder_test.project_name,
-       finder,
-       finder_test.cat_id,
-       cat_name,
-       test_type,
-       preorder_plan_name,
-       finished_goods_num,
-       success_goods_num,
-       success_goods_sales_amount_7d,
-       category_sales_7d
+    finder_test.project_name,
+    finder,
+    finder_test.cat_id,
+    cat_name,
+    test_type,
+    preorder_plan_name,
+    finished_goods_num,
+    success_goods_num,
+    success_goods_sales_amount_7d,
+    category_sales_7d
 
 from (
          select project_name,
@@ -21,7 +21,7 @@ from (
                 nvl(preorder_plan_name, 'ALL')                         as preorder_plan_name,
                 count(distinct virtual_goods_id)                       as finished_goods_num,
                 count(distinct if(result = 1, virtual_goods_id, null)) as success_goods_num,
-                sum(goods_sales_7d)                                    as success_goods_sales_amount_7d
+                sum(if(result = 1, goods_sales_7d, 0))                 as success_goods_sales_amount_7d
          from (
                   select nvl(goods_test.project_name, 'NALL') as project_name,
                          nvl(cat_name, 'NALL')                as cat_name,

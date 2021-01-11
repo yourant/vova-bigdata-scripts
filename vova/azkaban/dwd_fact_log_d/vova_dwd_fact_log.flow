@@ -1,0 +1,107 @@
+---
+config:
+  retries: 10
+  retry.backoff: 120000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+
+nodes:
+  - name: end_flag
+    type: noop
+    dependsOn:
+      - vova_fact_log_goods_click
+      - vova_fact_log_common_click
+      - vova_fact_log_screen_view
+      - vova_fact_log_order_process
+      - vova_fact_log_page_view
+      - vova_fact_log_goods_impression
+      - vova_fact_log_impressions
+      - vova_fact_log_data
+
+  - name: start_flag
+    type: noop
+
+  - name: judge_vova_fact_log_v2_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_v2_h
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_fact_log_goods_click
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/vova/dwd/fact_log/goods_click/fact_log_goods_click_update.sh
+    dependsOn:
+      - judge_vova_fact_log_v2_h
+
+  - name: vova_fact_log_common_click
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/vova/dwd/fact_log/common_click/fact_log_common_click_update.sh
+    dependsOn:
+      - judge_vova_fact_log_v2_h
+
+  - name: vova_fact_log_screen_view
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/vova/dwd/fact_log/screen_view/fact_log_screen_view_update.sh
+    dependsOn:
+      - judge_vova_fact_log_v2_h
+
+  - name: vova_fact_log_order_process
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/vova/dwd/fact_log/order_process/fact_log_order_process_update.sh
+    dependsOn:
+      - judge_vova_fact_log_v2_h
+
+  - name: vova_fact_log_goods_impression
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/vova/dwd/fact_log/goods_impression/fact_log_goods_impression_update.sh
+    dependsOn:
+      - judge_vova_fact_log_v2_h
+
+  - name: vova_fact_log_page_view
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/vova/dwd/fact_log/page_view/fact_log_page_view_update.sh
+    dependsOn:
+      - judge_vova_fact_log_v2_h
+
+  - name: vova_fact_log_impressions
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/vova/dwd/fact_log/impressions/fact_log_impressions_update.sh
+    dependsOn:
+      - judge_vova_fact_log_v2_h
+
+  - name: vova_fact_log_data
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/vova/dwd/fact_log/data/fact_log_data_update.sh
+    dependsOn:
+      - judge_vova_fact_log_v2_h
+
+
+

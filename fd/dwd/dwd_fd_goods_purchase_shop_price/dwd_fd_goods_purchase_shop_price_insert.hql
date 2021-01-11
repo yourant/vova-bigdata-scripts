@@ -1,7 +1,9 @@
 insert overwrite table dwd.dwd_fd_goods_purchase_shop_price partition (pt='${pt}')
-select gp.goods_id,
+select
+/*+ REPARTITION(1) */
+       gp.goods_id,
        gp.virtual_goods_id,
-       fp.name as project_name,
+       lower(fp.name) as project_name,
        g.cat_id,
        gp.shop_price,
        g.purchase_price,

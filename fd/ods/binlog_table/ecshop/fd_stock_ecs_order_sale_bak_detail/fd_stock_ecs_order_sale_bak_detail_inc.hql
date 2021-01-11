@@ -16,7 +16,7 @@ from(
         o_raw.14d_sale,
         o_raw.28d_sale,
         o_raw.uniq_sku,
-        row_number() OVER (PARTITION BY o_raw.id ORDER BY o_raw.xid DESC) AS rank
+        row_number() OVER (PARTITION BY o_raw.id ORDER BY cast(o_raw.xid as BIGINT) DESC) AS rank
     from pdb.fd_ecshop_fd_stock_ecs_order_sale_bak_detail
     LATERAL VIEW json_tuple(value, 'kafka_table', 'kafka_ts', 'kafka_commit', 'kafka_xid','kafka_type' , 'kafka_old' , 'id', 'bak_id', 'bak_order_date', 'external_goods_id', 'on_sale_time', '7d_sale', '14d_sale', '28d_sale', 'uniq_sku') o_raw
     AS `table`, ts, `commit`, xid, type, old, id,bak_id,bak_order_date,external_goods_id,on_sale_time,7d_sale,14d_sale,28d_sale,uniq_sku

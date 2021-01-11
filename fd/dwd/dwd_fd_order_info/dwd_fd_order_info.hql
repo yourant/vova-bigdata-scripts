@@ -1,4 +1,4 @@
-a'sINSERT overwrite table dwd.dwd_fd_order_info
+INSERT overwrite table dwd.dwd_fd_order_info
 select 
     ud.sp_duid,
     oi.order_id,
@@ -44,7 +44,7 @@ select
     oi.from_domain,
     oi.project_name,
     oi.user_agent_id,
-    if(ua.platform_type is null, 'other', ua.platform_type) AS platform_type,
+    if(ua.platform_type is null, 'others', ua.platform_type) AS platform_type,
     ua.version,
     ua.is_app,
     ua.device_type,

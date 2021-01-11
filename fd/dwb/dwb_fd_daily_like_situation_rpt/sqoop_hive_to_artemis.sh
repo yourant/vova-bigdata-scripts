@@ -16,21 +16,21 @@ fi
 echo '当前脚本执行时间:' $pt
 
 #打版数据
-sqoop export \
--Dorg.apache.sqoop.export.text.dump_data_on_error=true \
--Dmapreduce.job.queuename=default \
---connect jdbc:mysql://artemis-data.cpbbe5ehgjpf.us-east-1.rds.amazonaws.com:3306/data_report \
---username data-report \
---password 'C27PoowhAZIU$LHeI%Gs' \
---table daily_like_situation_rpt \
---update-key "pt, batch, virtual_goods_id, project, country, platform_type" \
---columns batch,virtual_goods_id,project,country,platform_type,like_num,unlike_num,impressions,pt \
---update-mode allowinsert \
---hcatalog-database dwb \
---hcatalog-table dwb_fd_daily_like_situation_rpt \
---hcatalog-partition-keys pt \
---hcatalog-partition-values $pt \
---fields-terminated-by '\001'
+#sqoop export \
+#-Dorg.apache.sqoop.export.text.dump_data_on_error=true \
+#-Dmapreduce.job.queuename=default \
+#--connect jdbc:mysql://artemis-data.cpbbe5ehgjpf.us-east-1.rds.amazonaws.com:3306/data_report \
+#--username data-report \
+#--password 'C27PoowhAZIU$LHeI%Gs' \
+#--table daily_like_situation_rpt \
+#--update-key "pt, batch, virtual_goods_id, project, country, platform_type" \
+#--columns batch,virtual_goods_id,project,country,platform_type,like_num,unlike_num,impressions,pt \
+#--update-mode allowinsert \
+#--hcatalog-database dwb \
+#--hcatalog-table dwb_fd_daily_like_situation_rpt \
+#--hcatalog-partition-keys pt \
+#--hcatalog-partition-values $pt \
+#--fields-terminated-by '\001'
 
 
 if [ $? -ne 0 ]; then

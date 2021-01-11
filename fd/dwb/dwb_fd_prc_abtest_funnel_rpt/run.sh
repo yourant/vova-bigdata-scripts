@@ -51,12 +51,38 @@ select    /*+ REPARTITION(1) */
            sum(bonus),
            sum(shipping_fee)
 from(
+
+
+select
+     project,
+     platform_type,
+     country,
+     app_version,
+     if(abtest_name regexp 'amp',substr(abtest_name,5),abtest_name) as abtest_name,
+     abtest_version,
+     session_id,
+     homepage_session_id,
+     list_session_id,
+     product_session_id,
+     cart_session_id,
+     add_session_id,
+     remove_session_id,
+     checkout_session_id,
+     checkout_option_session_id,
+     purchase_session_id,
+     checkout_page_session_id,
+     order_id,
+     goods_amount,
+     bonus,
+     shipping_fee
+
+from(
     select project,
            platform_type,
            country,
            app_version,
-           nvl(substr(abtest_info, 1, instr(abtest_info, '=') - 1),'NALL')  as abtest_name,
-           nvl(substr(abtest_info, instr(abtest_info, '=') + 1) ,'NALL')   as abtest_version,
+           substr(abtest_info, 1, instr(abtest_info, '=') - 1)  as abtest_name,
+           substr(abtest_info, instr(abtest_info, '=') + 1)   as abtest_version,
            session_id,
            IF(page_code = 'homepage', session_id, null)           as homepage_session_id,
            IF(page_code in ('list', 'landing'), session_id, null) as list_session_id,
@@ -93,6 +119,7 @@ from(
                  or (pt='$pt' and hour >= '00' and hour<='15'))
 
          ) fms LATERAL VIEW OUTER explode(split(fms.abtest, '&')) fms as abtest_info
+         )abtest_session
 
     union all
 
@@ -100,8 +127,8 @@ from(
            fboi.platform_type                               as platform_type,
            fboi.country_code                                as country,
            fboi.version                                   as app_version,
-           nvl(substr(abtest_info, 1, instr(abtest_info, '=') - 1),'NALL') as abtest_name,
-           nvl(substr(abtest_info, instr(abtest_info, '=') + 1),'NALL')   as abtest_version,
+           substr(abtest_info, 1, instr(abtest_info, '=') - 1) as abtest_name,
+           substr(abtest_info, instr(abtest_info, '=') + 1)   as abtest_version,
            NULL                                                as session_id,
            NULL                                                as homepage_session_id,
            NULL                                                as list_session_id,
@@ -152,14 +179,14 @@ from(
     ) fboi LATERAL VIEW OUTER explode(split(fboi.ext_value, '&')) fboi as abtest_info
 
 )tab1
-group by
-    project,
-    platform_type,
-    country,
-    app_version,
-    abtest_name,
-    abtest_version
-     with cube;
+
+group by              project,
+                      platform_type,
+                      country,
+                      app_version,
+                      abtest_name,
+                      abtest_version
+                       with cube;
 "
 
 spark-sql \

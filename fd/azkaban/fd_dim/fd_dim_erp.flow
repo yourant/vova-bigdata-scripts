@@ -1,0 +1,36 @@
+---
+config:
+  failure.emails: jhlu@i9i8.com
+  retries: 20
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_daily_job_start
+    type: noop
+
+  - name: judge_ods_dmc_goods_project
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_dmc_goods_project
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: judge_ods_fam_party
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fam_party
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: dim_fd_goods_finder
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dim/dim_fd_goods_finder/run.sh
+    dependsOn:
+      - judge_ods_dmc_goods_project
+      - judge_ods_fam_party
+
+  - name: fd_daily_job_end
+    type: noop
+    dependsOn:
+      - dim_fd_goods_finder

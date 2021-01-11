@@ -24,6 +24,7 @@ select 'vova' as datasource,
        g.is_complete,
        g.is_new,
        g.cat_id,
+       c.cat_name,
        c.first_cat_id,
        c.first_cat_name,
        c.second_cat_id,
@@ -31,6 +32,7 @@ select 'vova' as datasource,
        c.three_cat_id,
        c.three_cat_name as third_cat_name,
        g.merchant_id    as mct_id,
+       m.store_name as mct_name,
        g.shop_price,
        g.shipping_fee,
        g.goods_weight,
@@ -38,9 +40,10 @@ select 'vova' as datasource,
        got.first_off_time,
        got.last_on_time,
        got.last_off_time,
-       g.goods_thumb
-from ods_vova_themis.ods_vova_goods g
-         inner join ods_vova_themis.ods_vova_virtual_goods vg on g.goods_id = vg.goods_id
+       g.goods_thumb,
+       g.old_goods_id
+from ods_vova_vts.ods_vova_goods g
+         inner join ods_vova_vts.ods_vova_virtual_goods vg on g.goods_id = vg.goods_id
          inner join dim.dim_vova_category c on c.cat_id = g.cat_id
          left join
 -- 新增商品（最早、最晚）上线时间、下线时间
@@ -51,10 +54,11 @@ from ods_vova_themis.ods_vova_goods g
       max( IF ( action = 'on', create_time, NULL ) ) last_on_time,
       max( IF ( action = 'off', create_time, NULL ) ) last_off_time
 FROM
-      ( SELECT goods_id, CASE WHEN action = 'on' THEN 'on' ELSE 'off' END AS action, create_time FROM ods_vova_themis.ods_vova_goods_on_sale_record )
+      ( SELECT goods_id, CASE WHEN action = 'on' THEN 'on' ELSE 'off' END AS action, create_time FROM ods_vova_vts.ods_vova_goods_on_sale_record )
       GROUP BY
       goods_id) got
       on g.goods_id = got.goods_id
+  left join ods_vova_vts.ods_vova_merchant m on g.merchant_id = m.merchant_id
 
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e

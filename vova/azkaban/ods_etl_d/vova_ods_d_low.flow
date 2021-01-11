@@ -1,0 +1,294 @@
+---
+config:
+  retries: 4
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: noop
+    dependsOn:
+      - themis_intact_flow
+      - bimaster_flow
+      - newsletter_flow
+      - trigram_pangu_flow
+      - report_ychen_flow
+
+  - name: start_flag
+    type: noop
+
+
+
+# flow: 互动域数据抽取
+  - name: themis_intact_flow
+    type: flow
+    config:
+      retries: 4
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+    nodes:
+      - name: themis_intact_start
+        type: noop
+
+      - name: themis_intact_end
+        type: noop
+        dependsOn:
+          - vova_goods_comment
+
+#互动域数据抽取
+      - name: vova_goods_comment
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=goods_comment --mapers=5 --inc_column=comment_id --etl_type=INCID --period_type=day --partition_num=20
+        dependsOn:
+          - themis_intact_start
+
+
+# flow: bimaster
+  - name: bimaster_flow
+    type: flow
+    config:
+      retries: 4
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+    nodes:
+      - name: bimaster_start
+        type: noop
+
+      - name: bimasterr_end
+        type: noop
+        dependsOn:
+          - vova_images_vector
+          - vova_rec_gid_pic_similar
+          - vova_mct_auth_status
+
+      - name: vova_images_vector # test
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vbai --table_name=images_vector --mapers=1 --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=150
+        dependsOn:
+          - bimaster_start
+
+      - name: vova_rec_gid_pic_similar
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vbts --table_name=rec_gid_pic_similar --etl_type=INIT  --mapers=2 --period_type=day --partition_num=3
+        dependsOn:
+          - bimaster_start
+
+      - name: vova_mct_auth_status
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vbts --table_name=mct_auth_status --etl_type=ALL  --mapers=1 --period_type=day --partition_num=3
+        dependsOn:
+          - bimaster_start
+
+
+# flow: newsletter
+  - name: newsletter_flow
+    type: flow
+    config:
+      retries: 4
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+    nodes:
+      - name: newsletter_start
+        type: noop
+
+      - name: newsletter_end
+        type: noop
+        dependsOn:
+          - vova_email_verify_result
+
+      - name: vova_email_verify_result # test 无库
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vns --table_name=email_verify_result --etl_type=ALL  --mapers=25 --period_type=day --partition_num=25
+        dependsOn:
+          - newsletter_start
+
+
+# flow: trigram_pangu新中台
+  - name: trigram_pangu_flow
+    type: flow
+    config:
+      retries: 4
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+    nodes:
+      - name: trigram_pangu_end
+        type: noop
+        dependsOn:
+          - trigram_pangu_order_info
+          - trigram_pangu_order_goods
+          - trigram_pangu_order_goods_purchase_plan
+          - trigram_pangu_purchase_order_info
+          - trigram_pangu_purchase_order_goods
+          - trigram_pangu_outbound_waybill_info
+          - trigram_pangu_waybill_info
+          - trigram_nuwa_category
+
+      - name: trigram_pangu_start
+        type: noop
+
+      - name: trigram_pangu_order_info
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=gpg --table_name=order_info --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - trigram_pangu_start
+
+      - name: trigram_pangu_order_goods
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=gpg --table_name=order_goods --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - trigram_pangu_start
+
+      - name: trigram_pangu_order_goods_purchase_plan
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=gpg --table_name=order_goods_purchase_plan --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - trigram_pangu_start
+
+      - name: trigram_pangu_purchase_order_info
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=gpg --table_name=purchase_order_info --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - trigram_pangu_start
+
+      - name: trigram_pangu_purchase_order_goods
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=gpg --table_name=purchase_order_goods --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - trigram_pangu_start
+
+      - name: trigram_pangu_outbound_waybill_info
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=gpg --table_name=outbound_waybill_info --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - trigram_pangu_start
+
+      - name: trigram_pangu_waybill_info
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=gpg --table_name=waybill_info --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=3
+        dependsOn:
+          - trigram_pangu_start
+
+      - name: trigram_nuwa_category
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=gnw --table_name=category --etl_type=ALL  --mapers=1 --period_type=day --partition_num=3
+        dependsOn:
+          - trigram_pangu_start
+
+# flow: report_ychen
+  - name: report_ychen_flow
+    type: flow
+    config:
+      retries: 4
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+    nodes:
+      - name: report_ychen_end
+        type: noop
+        dependsOn:
+          - vova_ads_ga_channel_daily_gmv_flat_report
+          - vova_ads_ga_channel_daily_flat_report
+          - vova_adwords_ad_performance_daily_report
+          - vova_adwords_ad_carousel
+          - vova_campaign_adgroup_mapping
+          - vova_campaign_mapping
+
+      - name: report_ychen_start
+        type: noop
+
+      - name: vova_ads_ga_channel_daily_gmv_flat_report
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=cy --table_name=ads_ga_channel_daily_gmv_flat_report --etl_type=ALL  --mapers=1 --period_type=day --partition_num=3 --primary_key=adgfr_id
+        dependsOn:
+          - report_ychen_start
+
+      - name: vova_ads_ga_channel_daily_flat_report
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=cy --table_name=ads_ga_channel_daily_flat_report --etl_type=ALL --mapers=1 --period_type=day --partition_num=3 --primary_key=adfr_id
+        dependsOn:
+          - report_ychen_start
+
+      - name: vova_adwords_ad_performance_daily_report
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=cy --table_name=adwords_ad_performance_daily_report --etl_type=ALL --mapers=1 --period_type=day --partition_num=3 --primary_key=rec_id
+        dependsOn:
+          - report_ychen_start
+
+      - name: vova_adwords_ad_carousel
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=cy --table_name=adwords_ad_carousel --etl_type=ALL --mapers=1 --period_type=day --partition_num=3 --primary_key=id
+        dependsOn:
+          - report_ychen_start
+
+      - name: vova_campaign_adgroup_mapping
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=cy --table_name=campaign_adgroup_mapping --etl_type=ALL --mapers=1 --period_type=day --partition_num=3 --primary_key=CampaignId
+        dependsOn:
+          - report_ychen_start
+
+      - name: vova_campaign_mapping
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=cy --table_name=campaign_mapping --etl_type=ALL --mapers=1 --period_type=day --partition_num=3 --primary_key=CampaignId
+        dependsOn:
+          - report_ychen_start

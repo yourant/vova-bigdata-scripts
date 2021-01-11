@@ -115,11 +115,11 @@ CASE
     ELSE
         0
     END AS is_leaf
-FROM ods_vova_themis.ods_vova_category c
-LEFT JOIN ods_vova_themis.ods_vova_category c_pri ON c.parent_id = c_pri.cat_id
-LEFT JOIN ods_vova_themis.ods_vova_category c_ga ON c_pri.parent_id = c_ga.cat_id
-LEFT JOIN ods_vova_themis.ods_vova_category c_th ON c_ga.parent_id = c_th.cat_id
-LEFT JOIN ods_vova_themis.ods_vova_category c_fou ON c_th.parent_id = c_fou.cat_id;
+FROM ods_vova_vts.ods_vova_category c
+LEFT JOIN ods_vova_vts.ods_vova_category c_pri ON c.parent_id = c_pri.cat_id
+LEFT JOIN ods_vova_vts.ods_vova_category c_ga ON c_pri.parent_id = c_ga.cat_id
+LEFT JOIN ods_vova_vts.ods_vova_category c_th ON c_ga.parent_id = c_th.cat_id
+LEFT JOIN ods_vova_vts.ods_vova_category c_fou ON c_th.parent_id = c_fou.cat_id;
 "
 #执行hql
 spark-sql --conf "spark.app.name=dim_vova_vovacategory"  --conf "spark.sql.parquet.writeLegacyFormat=true" -e "$sql"

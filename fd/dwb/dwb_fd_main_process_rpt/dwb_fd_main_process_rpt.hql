@@ -111,8 +111,6 @@ from (
                         and pay_status = 2
                         and project_name is not NULL
                         and length(project_name) > 2
-                        and oi.email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
-
                   ) oi
                   left join (select order_id,sp_session_id from ods_fd_vb.ods_fd_order_marketing_data group by order_id,sp_session_id) om on om.order_id = oi.order_id
                   left join (

@@ -90,13 +90,15 @@ r1.parent_id,
            when r3.region_type = 3 then r3.region_code
            when r4.region_type = 3 then r4.region_code
            end as area_code
-from ods_vova_themis.ods_vova_region r1
+from ods_vova_vts.ods_vova_region r1
          left join
-     ods_vova_themis.ods_vova_region r2 on r1.parent_id = r2.region_id
+     ods_vova_vts.ods_vova_region r2 on r1.parent_id = r2.region_id
          left join
-     ods_vova_themis.ods_vova_region r3 on r2.parent_id = r3.region_id
+     ods_vova_vts.ods_vova_region r3 on r2.parent_id = r3.region_id
          left join
-     ods_vova_themis.ods_vova_region r4 on r3.parent_id = r4.region_id;
+     ods_vova_vts.ods_vova_region r4 on r3.parent_id = r4.region_id
+where r1.region_display = 1
+;
 "
 spark-sql --conf "spark.app.name=dim_vova_region" --conf "spark.sql.parquet.writeLegacyFormat=true" -e "$sql"
 #如果脚本失败，则报错

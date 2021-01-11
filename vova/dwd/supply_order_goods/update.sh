@@ -34,8 +34,8 @@ owi.guess_weight, --出库重量,运单粒度
 owi.carrier_code, --承运商
 owi.refer_waybill_no
 from
-ods_vova_pangu.ods_vova_order_goods tpog
-INNER JOIN ods_vova_pangu.ods_vova_order_info tpoi ON tpoi.order_id = tpog.order_id
+ods_gyl_gpg.ods_gyl_order_goods tpog
+INNER JOIN ods_gyl_gpg.ods_gyl_order_info tpoi ON tpoi.order_id = tpog.order_id
 LEFT JOIN
          (
          select
@@ -62,12 +62,12 @@ LEFT JOIN
          tpogpp.order_goods_id,
          row_number() over (partition by order_goods_id order by create_time desc)        as rank
          from
-         ods_vova_pangu.ods_vova_order_goods_purchase_plan tpogpp
+         ods_gyl_gpg.ods_gyl_order_goods_purchase_plan tpogpp
          ) t1
          where t1.rank = 1
          ) tpogpp ON tpogpp.order_goods_id = tpog.order_goods_id
-LEFT JOIN ods_vova_pangu.ods_vova_purchase_order_goods pog ON tpogpp.purchase_order_goods_id = pog.purchase_order_goods_id
-LEFT JOIN ods_vova_pangu.ods_vova_purchase_order_info poi ON pog.purchase_order_id = poi.purchase_order_id
+LEFT JOIN ods_gyl_gpg.ods_gyl_purchase_order_goods pog ON tpogpp.purchase_order_goods_id = pog.purchase_order_goods_id
+LEFT JOIN ods_gyl_gpg.ods_gyl_purchase_order_info poi ON pog.purchase_order_id = poi.purchase_order_id
 LEFT JOIN
  (
  select
@@ -77,11 +77,11 @@ LEFT JOIN
    first(wi.bound_status) AS bound_status,
    sum(wi.inbound_weight) AS inbound_weight
  from
- ods_vova_pangu.ods_vova_waybill_info wi
+ ods_gyl_gpg.ods_gyl_waybill_info wi
  GROUP BY wi.purchase_order_goods_id
  ) wi
  ON wi.purchase_order_goods_id = pog.purchase_order_goods_id
-LEFT JOIN ods_vova_pangu.ods_vova_outbound_waybill_info owi ON tpog.refer_waybill_no = owi.refer_waybill_no
+LEFT JOIN ods_gyl_gpg.ods_gyl_outbound_waybill_info owi ON tpog.refer_waybill_no = owi.refer_waybill_no
 ;
 "
 

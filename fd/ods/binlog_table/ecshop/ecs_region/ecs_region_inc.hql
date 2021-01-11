@@ -13,7 +13,7 @@ from(
         ,o_raw.region_type
         ,o_raw.region_cn_name
         ,o_raw.region_code
-        ,row_number () OVER (PARTITION BY o_raw.region_id ORDER BY o_raw.xid DESC) AS rank
+        ,row_number () OVER (PARTITION BY o_raw.region_id ORDER BY cast(o_raw.xid as BIGINT) DESC) AS rank
     from pdb.fd_ecshop_ecs_region
     LATERAL VIEW json_tuple(value, 'kafka_table', 'kafka_ts', 'kafka_commit', 'kafka_xid','kafka_type' , 'kafka_old' , 'region_id', 'parent_id', 'region_name', 'region_type', 'region_cn_name', 'region_code') o_raw
     AS `table`, ts, `commit`, xid, type, old, region_id, parent_id, region_name, region_type, region_cn_name, region_code

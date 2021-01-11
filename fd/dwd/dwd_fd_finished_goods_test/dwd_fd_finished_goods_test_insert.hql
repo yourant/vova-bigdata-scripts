@@ -18,6 +18,7 @@ select
        gtg.goods_source,
        gtg.test_count,
        gtg.create_time,
+       gtg.test_time,
        gtg.last_update_time as finish_time
 from ods_fd_vb.ods_fd_goods_test_goods gtg
          left join ods_fd_vb.ods_fd_goods_test_pipeline gtp on gtg.pipeline_id = gtp.pipeline_id
