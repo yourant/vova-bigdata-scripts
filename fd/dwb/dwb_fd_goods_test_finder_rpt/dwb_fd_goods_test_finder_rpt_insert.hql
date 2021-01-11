@@ -2,7 +2,7 @@ insert overwrite table dwb.dwb_fd_goods_test_finder_rpt
 select
     /*+ REPARTITION(1) */
     gt_all.project_name,
-    if(cat_name is null or trim(cat_name)='','null',cat_name) as cat_name,
+    if(gt_all.cat_name is null or trim(gt_all.cat_name)='','null',gt_all.cat_name) as cat_name,
     test_type,
     if(dfg.goods_selector is null or trim(dfg.goods_selector )='','null',dfg.goods_selector ) as finder ,
     preorder_plan_name,
