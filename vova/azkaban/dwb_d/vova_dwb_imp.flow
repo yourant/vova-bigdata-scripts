@@ -1,0 +1,53 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - dwb_vova_coupon
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+
+  - name: dwb_vova_coupon
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/coupon/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_buyers
+      - judge_dim_vova_coupon
+      - judge_dwd_fact_vova_pay
+
+  - name: judge_dim_vova_buyers
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_buyers
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_coupon
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_coupon
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_fact_vova_pay
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fact_vova_pay
+    dependsOn:
+      - start_flag
