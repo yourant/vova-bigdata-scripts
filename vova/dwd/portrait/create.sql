@@ -1,4 +1,5 @@
-CREATE TABLE dwd.dwd_vova_fact_buyer_portrait_base
+drop table dwd.dwd_vova_fact_buyer_portrait_base;
+CREATE EXTERNAL TABLE dwd.dwd_vova_fact_buyer_portrait_base
 (
     datasource   STRING,
     buyer_id     BIGINT,

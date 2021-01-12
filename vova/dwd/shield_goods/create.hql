@@ -1,5 +1,5 @@
 drop table dwd.dwd_vova_fact_shield_goods;
-CREATE TABLE dwd.dwd_vova_fact_shield_goods
+CREATE EXTERNAL TABLE dwd.dwd_vova_fact_shield_goods
 (
     goods_id    STRING,
     region_id   STRING,

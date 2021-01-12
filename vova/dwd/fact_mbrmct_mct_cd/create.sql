@@ -1,6 +1,6 @@
 --商户相关记录明细表,商户登录，商户上下架商品，商户禁售等
 drop table if exists dwd.dwd_vova_fact_mbrmct_mct_cd;
-create table dwd.dwd_vova_fact_mbrmct_mct_cd
+create external table dwd.dwd_vova_fact_mbrmct_mct_cd
 (
     datasource string COMMENT '数据源',
     mct_id     bigint COMMENT '商户id',

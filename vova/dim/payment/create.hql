@@ -1,5 +1,5 @@
 drop table dim.dim_vova_payment;
-CREATE TABLE IF NOT EXISTS dim.dim_vova_payment
+CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_vova_payment
 (
     datasource     string comment '数据平台',
     payment_id     bigint,

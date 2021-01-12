@@ -1,5 +1,5 @@
 drop table if exists dwd.dwd_vova_ab_test_expre;
-CREATE TABLE IF NOT EXISTS dwd.dwd_vova_ab_test_expre
+CREATE external TABLE IF NOT EXISTS dwd.dwd_vova_ab_test_expre
 (
     datasource    string,
     platform      string,
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS dwd.dwd_vova_ab_test_expre
 
 
 drop table if exists dwd.dwd_vova_ab_test_clk;
-CREATE TABLE IF NOT EXISTS dwd.dwd_vova_ab_test_clk
+CREATE external TABLE IF NOT EXISTS dwd.dwd_vova_ab_test_clk
 (
     datasource    string,
     platform      string,
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS dwd.dwd_vova_ab_test_clk
 
 
 drop table if exists dwd.dwd_vova_ab_test_cart;
-CREATE TABLE IF NOT EXISTS dwd.dwd_vova_ab_test_cart
+CREATE external TABLE IF NOT EXISTS dwd.dwd_vova_ab_test_cart
 (
     datasource    string,
     platform      string,
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS dwd.dwd_vova_ab_test_cart
 
 
 drop table if exists dwd.dwd_vova_ab_test_pay;
-CREATE TABLE IF NOT EXISTS dwd.dwd_vova_ab_test_pay
+CREATE external TABLE IF NOT EXISTS dwd.dwd_vova_ab_test_pay
 (
     datasource    string,
     platform      string,

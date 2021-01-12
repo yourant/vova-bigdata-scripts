@@ -1,4 +1,5 @@
-CREATE TABLE dwd.dwd_vova_fact_goods_click_cause
+drop table dwd.dwd_vova_fact_goods_click_cause;
+CREATE external TABLE dwd.dwd_vova_fact_goods_click_cause
 (
     buyer_id   BIGINT COMMENT 'd_买家id',
     goods_id   BIGINT COMMENT 'd_商品id',
