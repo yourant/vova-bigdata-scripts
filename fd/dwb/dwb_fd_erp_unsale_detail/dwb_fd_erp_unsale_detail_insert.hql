@@ -26,21 +26,17 @@ select
 	if(stock_up_id is null,0,1) as is_spring_stock
 from (
 	select
-		eg.goods_id,
-		eg.goods_sku,
-		nvl(egs.stock_days,0) as stock_days,
-		nvl(eas.14d_avg_sale,0) as 14d_avg_sale,
-		nvl(euo.goods_number,0) as goods_number,
-		nvl(erg.reserve_num,0) as reserve_num,
-		nvl(egsm.goods_number_month,0) as goods_number_month,
-        CEILING(nvl((if((nvl(erg.reserve_num,0) - nvl(euo.goods_number,0)) > 0,nvl(erg.reserve_num,0) - nvl(euo.goods_number,0),0)) / eas.14d_avg_sale,0)) as can_sale_days,
-		if(nvl(egs.stock_days,0)> 30,nvl(egs.stock_days,0),30) as back_days,
+		t0.goods_id,
+		t0.goods_sku,
+		nvl(t0.stock_days,0) as stock_days,
+		nvl(t0.14d_avg_sale,0) as 14d_avg_sale,
+		nvl(t0.goods_number,0) as goods_number,
+		nvl(t0.reserve_num,0) as reserve_num,
+		nvl(t0.goods_number_month,0) as goods_number_month,
+        CEILING(nvl((if((nvl(t0.reserve_num,0) - nvl(t0.goods_number,0)) > 0,nvl(t0.reserve_num,0) - nvl(t0.goods_number,0),0)) / t0.14d_avg_sale,0)) as can_sale_days,
+		if(nvl(t0.stock_days,0)> 30,nvl(t0.stock_days,0),30) as back_days,
 		t1.stock_up_id
-	from (select goods_id,goods_sku from dwb.dwb_fd_erp_goods_sku where pt = '${pt}') eg
-	LEFT JOIN (select goods_id,stock_days from dwb.dwb_fd_erp_goods_stock where pt = '${pt}') egs on egs.goods_id = eg.goods_id
-	LEFT JOIN (select goods_id,goods_sku,14d_avg_sale from dwb.dwb_fd_erp_14d_avg_sale where pt = '${pt}') eas on eas.goods_id = eg.goods_id and eas.goods_sku = eg.goods_sku
-	LEFT JOIN (select goods_id,goods_sku,goods_number from dwb.dwb_fd_erp_unreserve_order where pt = '${pt}') euo on euo.goods_id = eg.goods_id and euo.goods_sku = eg.goods_sku
-	LEFT JOIN (select goods_id,goods_sku,reserve_num from dwb.dwb_fd_erp_reserve_goods where pt = '${pt}') erg on erg.goods_id = eg.goods_id and erg.goods_sku = eg.goods_sku
-	LEFT JOIN (select goods_id,goods_sku,goods_number_month from dwb.dwb_fd_erp_goods_sale_monthly where pt = '${pt}') egsm on egsm.goods_id = eg.goods_id and egsm.goods_sku = eg.goods_sku
-    LEFT JOIN (select goods_id,stock_up_id from dwd.dwd_fd_spring_festival_stock_up_info ) t1 on t1.goods_id = eg.goods_id
-) tab1;
+	from (
+	dwd.dwd_fd_erp_unsale_goods_info t0
+    LEFT JOIN (select goods_id,stock_up_id from dwd.dwd_fd_spring_festival_stock_up_info ) t1 on t1.goods_id = t0.goods_id
+) )tab1;
