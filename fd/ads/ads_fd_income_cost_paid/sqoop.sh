@@ -1,5 +1,5 @@
 #bin/sh
-table="dwb_fd_income_cost"
+table="ads_fd_income_cost_paid"
 user="gaohaitao"
 
 base_path="/mnt/vova-bigdata-scripts/fd/dwb"
@@ -22,12 +22,12 @@ sqoop export \
 --connect jdbc:mysql://artemis-data.cpbbe5ehgjpf.us-east-1.rds.amazonaws.com:3306/data_report \
 --username data-report \
 --password 'C27PoowhAZIU$LHeI%Gs' \
---table rpt_income_cost \
---update-key "pt, party_name, country_code, country_name, dimension_type" \
---columns batch,goods_id,virtual_goods_id,project_name,country_code,platform,like_num,unlike_num,impressions,pt \
+--table income_cost_paid_rpt \
+--update-key "project, country_code, country_name, pt_date" \
+--columns project,country_code,country_name,pt_date,purchase_cost,sale_amount,coupon_cost,ads_cost,refund_cost,total_cost \
 --update-mode allowinsert \
---hcatalog-database dwb \
---hcatalog-table dwb_fd_income_cost \
+--hcatalog-database ads \
+--hcatalog-table ads_fd_income_cost_paid \
 --hcatalog-partition-keys pt \
 --hcatalog-partition-values $pt \
 --fields-terminated-by '\001'

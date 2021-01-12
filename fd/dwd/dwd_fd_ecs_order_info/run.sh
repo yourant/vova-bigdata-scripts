@@ -1,6 +1,6 @@
 #bin/sh
-table="dwd_fd_erp_country_income_statement_refund_purchase"
-user="gaohaitao"
+table="dwd_fd_ecs_order_info"
+user="htgao"
 
 base_path="/mnt/vova-bigdata-scripts/fd/dwd"
 

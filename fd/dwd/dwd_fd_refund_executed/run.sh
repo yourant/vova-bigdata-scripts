@@ -1,6 +1,6 @@
 #bin/sh
-table="dwd_fd_erp_country_income_statement_normal"
-user="gaohaitao"
+table="dwd_fd_refund_executed"
+user="htgao"
 
 base_path="/mnt/vova-bigdata-scripts/fd/dwd"
 
