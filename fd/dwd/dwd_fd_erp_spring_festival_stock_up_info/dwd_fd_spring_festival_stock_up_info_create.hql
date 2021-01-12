@@ -1,0 +1,22 @@
+create table if not exists dwd.dwd_fd_spring_festival_stock_up_info (
+    stock_up_id bigint comment '春节备货id'
+    ,goods_id bigint comment '商品id'
+    ,small_cat string comment '小分类'
+    ,season bigint comment '季节'
+    ,start_date string comment '备货开始时间'
+    ,end_date string comment '备货结束时间'
+    ,node_time string comment '备货时间结点'
+    ,source bigint comment '记录来源'
+    ,remark string comment '备注'
+    ,is_open bigint comment '是否开启春节备货'
+    ,open_time string comment '第一次开启时间'
+    ,batch_spring_ratio decimal(10,4) comment '批次备货春节系数'
+    ,total_spring_ratio decimal(10,4) comment '剩余备货春节系数'
+    ,status bigint comment '备货状态'
+    ,is_del bigint comment '是否删除商品春节备货状态'
+    ,updated_at  string comment '更新时间'
+    ,created_at  string comment '创建时间'
+) comment '春节备货库存表'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+STORED AS PARQUET
+;

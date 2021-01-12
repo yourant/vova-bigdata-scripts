@@ -1,4 +1,4 @@
-insert overwrite table dwd.dwd_fd_erp_14d_avg_sale partition (pt = '${pt}')
+insert overwrite table dwb.dwb_fd_erp_14d_avg_sale partition (pt = '${pt}')
 select
  /*+ REPARTITION(1) */
 	external_goods_id as goods_id,

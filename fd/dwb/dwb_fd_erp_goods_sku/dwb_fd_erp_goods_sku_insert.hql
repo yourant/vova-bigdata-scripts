@@ -1,4 +1,4 @@
-insert overwrite table dwd.dwd_fd_erp_goods_sku partition (pt = '${pt}')
+insert overwrite table dwb.dwb_fd_erp_goods_sku partition (pt = '${pt}')
 select  /*+ REPARTITION(1) */
         distinct
 	  	tab2.goods_id,

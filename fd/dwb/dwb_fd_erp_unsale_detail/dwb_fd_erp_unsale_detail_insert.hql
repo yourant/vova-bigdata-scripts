@@ -22,7 +22,8 @@ select
 	case
 		when tab1.14d_avg_sale = 0 then tab1.reserve_num
 		when tab1.14d_avg_sale > 0 then tab1.14d_avg_sale * (tab1.can_sale_days - tab1.back_days)
-	else 0 end as unsale_goods_num
+	else 0 end as unsale_goods_num,
+	if(stock_up_id is null,0,1) as is_spring_stock
 from (
 	select
 		eg.goods_id,
@@ -33,11 +34,13 @@ from (
 		nvl(erg.reserve_num,0) as reserve_num,
 		nvl(egsm.goods_number_month,0) as goods_number_month,
         CEILING(nvl((if((nvl(erg.reserve_num,0) - nvl(euo.goods_number,0)) > 0,nvl(erg.reserve_num,0) - nvl(euo.goods_number,0),0)) / eas.14d_avg_sale,0)) as can_sale_days,
-		if(nvl(egs.stock_days,0)> 30,nvl(egs.stock_days,0),30) as back_days
-	from (select goods_id,goods_sku from dwd.dwd_fd_erp_goods_sku where pt = '${pt}') eg
-	LEFT JOIN (select goods_id,stock_days from dwd.dwd_fd_erp_goods_stock where pt = '${pt}') egs on egs.goods_id = eg.goods_id
-	LEFT JOIN (select goods_id,goods_sku,14d_avg_sale from dwd.dwd_fd_erp_14d_avg_sale where pt = '${pt}') eas on eas.goods_id = eg.goods_id and eas.goods_sku = eg.goods_sku
-	LEFT JOIN (select goods_id,goods_sku,goods_number from dwd.dwd_fd_erp_unreserve_order where pt = '${pt}') euo on euo.goods_id = eg.goods_id and euo.goods_sku = eg.goods_sku
-	LEFT JOIN (select goods_id,goods_sku,reserve_num from dwd.dwd_fd_erp_reserve_goods where pt = '${pt}') erg on erg.goods_id = eg.goods_id and erg.goods_sku = eg.goods_sku
-	LEFT JOIN (select goods_id,goods_sku,goods_number_month from dwd.dwd_fd_erp_goods_sale_monthly where pt = '${pt}') egsm on egsm.goods_id = eg.goods_id and egsm.goods_sku = eg.goods_sku
+		if(nvl(egs.stock_days,0)> 30,nvl(egs.stock_days,0),30) as back_days,
+		t1.stock_up_id
+	from (select goods_id,goods_sku from dwb.dwb_fd_erp_goods_sku where pt = '${pt}') eg
+	LEFT JOIN (select goods_id,stock_days from dwb.dwb_fd_erp_goods_stock where pt = '${pt}') egs on egs.goods_id = eg.goods_id
+	LEFT JOIN (select goods_id,goods_sku,14d_avg_sale from dwb.dwb_fd_erp_14d_avg_sale where pt = '${pt}') eas on eas.goods_id = eg.goods_id and eas.goods_sku = eg.goods_sku
+	LEFT JOIN (select goods_id,goods_sku,goods_number from dwb.dwb_fd_erp_unreserve_order where pt = '${pt}') euo on euo.goods_id = eg.goods_id and euo.goods_sku = eg.goods_sku
+	LEFT JOIN (select goods_id,goods_sku,reserve_num from dwb.dwb_fd_erp_reserve_goods where pt = '${pt}') erg on erg.goods_id = eg.goods_id and erg.goods_sku = eg.goods_sku
+	LEFT JOIN (select goods_id,goods_sku,goods_number_month from dwb.dwb_fd_erp_goods_sale_monthly where pt = '${pt}') egsm on egsm.goods_id = eg.goods_id and egsm.goods_sku = eg.goods_sku
+    LEFT JOIN (select goods_id,stock_up_id from dwd.dwd_fd_spring_festival_stock_up_info ) t1 on t1.goods_id = eg.goods_id
 ) tab1;

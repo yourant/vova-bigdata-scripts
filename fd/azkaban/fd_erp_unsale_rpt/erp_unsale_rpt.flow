@@ -23,24 +23,79 @@ nodes:
         dependsOn:
           - erp_unsale_rpt_flow_start
 
-      - name: base_caculate
+      - name: dwb_fd_erp_14d_avg_sale
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_erp_unsale_rpt/init_run.sh ${pt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_erp_14d_avg_sale/run.sh dwb_fd_erp_14d_avg_sale
         dependsOn:
           - judge_fd_dw_erp_ods_inc_end
-      
-      - name: unsale_rpt_caculate
+
+      - name: dwb_fd_erp_goods_sale_monthly
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_erp_unsale_rpt/run.sh ${pt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_erp_14d_avg_sale/run.sh dwb_fd_erp_goods_sale_monthly
         dependsOn:
-          - base_caculate
+          - judge_fd_dw_erp_ods_inc_end
+
+      - name: dwb_fd_erp_goods_sku
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_erp_14d_avg_sale/run.sh dwb_fd_erp_goods_sku
+        dependsOn:
+          - judge_fd_dw_erp_ods_inc_end
+
+      - name: dwb_fd_erp_goods_stock
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_erp_14d_avg_sale/run.sh dwb_fd_erp_goods_stock
+        dependsOn:
+          - judge_fd_dw_erp_ods_inc_end
+
+      - name: dwb_fd_erp_reserve_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_erp_14d_avg_sale/run.sh dwb_fd_erp_reserve_goods
+        dependsOn:
+          - judge_fd_dw_erp_ods_inc_end
+
+      - name: dwb_fd_erp_unreserve_order
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_erp_14d_avg_sale/run.sh dwb_fd_erp_unreserve_order
+        dependsOn:
+          - judge_fd_dw_erp_ods_inc_end
+
+      - name: dwd_fd_spring_festival_stock_up_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_erp_14d_avg_sale/run.sh dwd_fd_spring_festival_stock_up_info
+        dependsOn:
+          - judge_fd_dw_erp_ods_inc_end
+
+      - name: dwb_fd_erp_unsale_detail
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_erp_14d_avg_sale/run.sh dwb_fd_erp_unsale_detail
+        dependsOn:
+          - dwb_fd_erp_14d_avg_sale
+          - dwb_fd_erp_goods_sale_monthly
+          - dwb_fd_erp_goods_sku
+          - dwb_fd_erp_goods_stock
+          - dwb_fd_erp_reserve_goods
+          - dwb_fd_erp_unreserve_order
+          - dwd_fd_spring_festival_stock_up_info
+
+      - name: dwb_fd_erp_unsale_rpt
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_erp_unsale_rpt/run.sh dwb_fd_erp_unsale_rpt
+        dependsOn:
+          - dwb_fd_erp_unsale_detail
 
       - name: erp_unsale_rpt_flow_end
         type: noop
         dependsOn:
-          - unsale_rpt_caculate
+          - dwb_fd_erp_unsale_rpt
 
     dependsOn:
       - fd_erp_rpt_start

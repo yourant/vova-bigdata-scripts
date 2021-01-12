@@ -1,5 +1,5 @@
 #bin/sh
-table="dwb_fd_erp_unsale_rpt"
+table="dwd_fd_erp_reserve_goods"
 user="ruimeng"
 
 base_path="/mnt/vova-bigdata-scripts/fd/dwb"

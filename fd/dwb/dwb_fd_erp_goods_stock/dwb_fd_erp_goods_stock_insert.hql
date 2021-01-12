@@ -1,4 +1,4 @@
-insert overwrite table dwd.dwd_fd_erp_goods_stock partition (pt = '${pt}')
+insert overwrite table dwb.dwb_fd_erp_goods_stock partition (pt = '${pt}')
 select
      /*+ REPARTITION(1) */
 	goods_id as goods_id,
