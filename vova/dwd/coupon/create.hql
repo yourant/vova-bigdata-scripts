@@ -1,5 +1,5 @@
 drop table dwd.dwd_vova_fact_coupon;
-CREATE  TABLE IF NOT EXISTS dwd.dwd_vova_fact_coupon
+CREATE EXTERNAL TABLE IF NOT EXISTS dwd.dwd_vova_fact_coupon
 (
     datasource          string comment '数据平台',
     cpn_id     bigint COMMENT '优惠券ID',

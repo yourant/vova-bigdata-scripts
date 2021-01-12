@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS tmp.tmp_vova_buyer_first_refund
 
 
 drop table dim.dim_vova_buyers;
-CREATE TABLE IF NOT EXISTS dim.dim_vova_buyers
+CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_vova_buyers
 (
     datasource       string comment '数据平台',
     buyer_id         bigint COMMENT '买家ID',

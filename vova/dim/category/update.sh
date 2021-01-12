@@ -7,6 +7,7 @@ cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 
 ### 2.定义执行HQL
+hadoop fs -mkdir s3://bigdata-offline/warehouse/dim/dim_vova_category
 sql="
 INSERT OVERWRITE TABLE dim.dim_vova_category
 SELECT

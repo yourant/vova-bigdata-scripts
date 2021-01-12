@@ -1,5 +1,5 @@
 drop table dim.dim_vova_languages;
-CREATE TABLE IF NOT EXISTS dim.dim_vova_languages
+CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_vova_languages
 (
     datasource     string comment '数据平台',
     languages_id   bigint comment '语言id',

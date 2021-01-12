@@ -1,5 +1,5 @@
 DROP TABLE dim.dim_vova_supply_goods;
-CREATE TABLE IF NOT EXISTS dim.dim_vova_supply_goods
+CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_vova_supply_goods
 (
     goods_id        bigint COMMENT 'vova.goods_id',
     commodity_id    string COMMENT 'supply.commodity_id',
