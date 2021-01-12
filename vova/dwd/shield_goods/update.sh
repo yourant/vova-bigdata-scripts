@@ -1,4 +1,5 @@
 #!/bin/bash
+hadoop fs -mkdir s3://bigdata-offline/warehouse/dwd/dwd_vova_fact_shield_goods
 #指定日期和引擎
 sql="
 drop table if exists tmp.tmp_vova_fact_shield_goods_01;

@@ -1,5 +1,5 @@
 drop table dim.dim_vova_region;
-CREATE TABLE dim.dim_vova_region
+CREATE EXTERNAL TABLE dim.dim_vova_region
 (
     datasource            string comment '数据平台',
     region_id             bigint,

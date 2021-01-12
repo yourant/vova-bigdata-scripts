@@ -1,5 +1,5 @@
 drop table dim.dim_vova_trigram_nuwa_pdd_category;
-CREATE TABLE IF NOT EXISTS dim.dim_vova_trigram_nuwa_pdd_category
+CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_vova_trigram_nuwa_pdd_category
 (
     cat_id          bigint,
     cat_name        string,

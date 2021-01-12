@@ -1,5 +1,5 @@
 drop table dwd.dwd_vova_rec_search_log;
-CREATE TABLE IF NOT EXISTS dwd.dwd_vova_rec_search_log
+CREATE EXTERNAL TABLE IF NOT EXISTS dwd.dwd_vova_rec_search_log
 (
     event_date    string COMMENT '日期',
     query         string COMMENT '搜索词',
