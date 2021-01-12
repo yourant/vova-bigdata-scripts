@@ -6,6 +6,7 @@ if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 ###逻辑sql
+hadoop fs -mkdir s3://bigdata-offline/warehouse/dim/dim_vova_order_goods
 sql="
 INSERT OVERWRITE TABLE dim.dim_vova_order_goods
 SELECT CASE

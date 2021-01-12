@@ -1,5 +1,5 @@
 drop table dwd.dwd_vova_fact_cart_cause_v2;
-CREATE TABLE IF NOT EXISTS dwd.dwd_vova_fact_cart_cause_v2
+CREATE external TABLE IF NOT EXISTS dwd.dwd_vova_fact_cart_cause_v2
 (
     datasource          string,
     event_name          string,

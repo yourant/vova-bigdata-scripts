@@ -8,6 +8,9 @@ fi
 ###更新设备首单
 ### 取设备当前版本，当前的buyer_id，激活日期
 ### 更新设备维度
+hadoop fs -mkdir s3://bigdata-offline/warehouse/tmp/tmp_vova_device_first_pay
+hadoop fs -mkdir s3://bigdata-offline/warehouse/tmp/tmp_vova_device_app_version
+hadoop fs -mkdir s3://bigdata-offline/warehouse/dim/dim_vova_devices
 sql="
 insert overwrite table tmp.tmp_vova_device_first_pay
 SELECT datasource,
