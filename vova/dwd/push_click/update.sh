@@ -5,6 +5,7 @@ cur_date=$1
 if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
+hadoop fs -mkdir s3://bigdata-offline/warehouse/dwd/dwd_vova_fact_push_click
 ###更新
 sql="
 insert overwrite table dwd.dwd_vova_fact_push_click

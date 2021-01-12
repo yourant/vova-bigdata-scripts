@@ -7,9 +7,7 @@ cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 ###更新fact_start_up
 sql="
-set hive.exec.dynamici.partition=true;
-set hive.exec.dynamic.partition.mode=nonstrict;
-insert overwrite table dwd.dwd_vova_fact_start_up PARTITION (pt='${cur_date}',dp)
+insert overwrite table dwd.dwd_vova_fact_start_up PARTITION (pt='${cur_date}')
 select /*+ REPARTITION(1) */
        su.datasource,
        su.device_id,
@@ -25,7 +23,7 @@ select /*+ REPARTITION(1) */
        su.dp
 from dwd.dwd_vova_log_screen_view su
 where su.pt = '${cur_date}'
-group by su.dp,su.datasource, su.device_id, su.app_version, su.os_type, su.buyer_id, su.language, su.country, su.geo_country;
+group by su.datasource, su.device_id, su.app_version, su.os_type, su.buyer_id, su.language, su.country, su.geo_country;
 
 insert overwrite table tmp.tmp_vova_css_start_up
 select su.datasource,

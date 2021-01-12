@@ -1,5 +1,5 @@
 drop table dim.dim_vova_order_goods;
-CREATE TABLE IF NOT EXISTS dim.dim_vova_order_goods
+CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_vova_order_goods
 (
     datasource                            STRING COMMENT '数据平台',
     order_source                          STRING COMMENT '订单来源api,web',

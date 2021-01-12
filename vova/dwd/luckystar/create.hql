@@ -1,5 +1,5 @@
 drop table if exists dwd.dwd_vova_fact_luk_act;
-create table dwd.dwd_vova_fact_luk_act
+create external table dwd.dwd_vova_fact_luk_act
 (
     datasource     string comment '数据站点',
     act_id         bigint comment '活动id',
@@ -23,7 +23,7 @@ create table dwd.dwd_vova_fact_luk_act
 
 
 drop table if exists dwd.dwd_vova_fact_luk_grp_act;
-create table dwd.dwd_vova_fact_luk_grp_act
+create external table dwd.dwd_vova_fact_luk_grp_act
 (
     datasource   string comment '数据站点',
     act_id       bigint comment '活动id',

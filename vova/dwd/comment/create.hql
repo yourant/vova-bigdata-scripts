@@ -1,5 +1,5 @@
 drop table dwd.dwd_vova_fact_comment;
-CREATE TABLE IF NOT EXISTS dwd.dwd_vova_fact_comment
+CREATE external TABLE IF NOT EXISTS dwd.dwd_vova_fact_comment
 (
     datasource STRING COMMENT '数据平台',
     comment_id     bigint COMMENT '评论id',

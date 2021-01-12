@@ -1,5 +1,5 @@
 drop table dwd.dwd_vova_fact_order_cause_v2;
-CREATE TABLE IF NOT EXISTS dwd.dwd_vova_fact_order_cause_v2
+CREATE EXTERNAL TABLE IF NOT EXISTS dwd.dwd_vova_fact_order_cause_v2
 (
     datasource            string comment '数据平台',
     goods_id              bigint comment '商品id',
