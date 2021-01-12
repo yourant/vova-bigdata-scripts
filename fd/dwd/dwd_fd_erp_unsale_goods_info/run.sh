@@ -1,8 +1,8 @@
 #bin/sh
-table="dwb_fd_erp_unsale_detail"
+table="dwd_fd_erp_unsale_goods_info"
 user="ruimeng"
 
-base_path="/mnt/vova-bigdata-scripts/fd/dwb"
+base_path="/mnt/vova-bigdata-scripts/fd/dwd"
 
 if [ ! -n "$1" ]; then
   pt=$(date +"%Y-%m-%d")
