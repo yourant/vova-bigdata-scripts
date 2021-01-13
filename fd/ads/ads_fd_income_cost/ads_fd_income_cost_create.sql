@@ -1,3 +1,5 @@
+-- mysql导出表的建表语句
+
 create table IF NOT EXISTS income_cost_rpt
 (
     id             int(11) unsigned auto_increment comment '自增主键ID'
