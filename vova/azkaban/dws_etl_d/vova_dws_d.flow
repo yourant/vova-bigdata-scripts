@@ -22,7 +22,7 @@ nodes:
     config:
       command: echo "start job"
 
-  - name: dws_buyer_portrait
+  - name: dws_buyer_portrait_process
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/vova/dws/portrait/dws_buyer_portrait_d.sh
@@ -33,6 +33,15 @@ nodes:
       - judge_dim_vova_category
       - judge_dim_vova_goods
     condition: all_success
+
+  - name: dws_buyer_portrait
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dws/portrait/dws_buyer_portrait_d_final.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - dws_buyer_portrait_process
 
   - name: judge_vova_fact_buyer_portrait_base
     type: command
