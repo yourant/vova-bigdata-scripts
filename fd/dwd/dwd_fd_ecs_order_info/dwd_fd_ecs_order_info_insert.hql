@@ -122,7 +122,7 @@ ecs_order_info_paid as (
       group by ecs_order_id
   ) order_refund on order_info.ecs_order_id = order_refund.ecs_order_id
 
-  -- 广告花费，按组织和pt聚合
+  -- 广告花费，按组织,国家 和pt聚合
   left join (
       select pt,
              project,
