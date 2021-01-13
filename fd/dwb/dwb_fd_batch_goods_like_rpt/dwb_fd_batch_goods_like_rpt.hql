@@ -1,6 +1,7 @@
 
 insert overwrite table dwb.dwb_fd_batch_goods_like_rpt
 SELECT
+ /*+ REPARTITION(1) */
        batch,
        virtual_goods_id,
        project,
@@ -24,7 +25,6 @@ from
     where pt>=date_add('${pt}',-60)
     group by batch,virtual_goods_id,project,country,platform_type
 ) t1
- where t1.batch >= '${batchNum}'
 group by batch,virtual_goods_id,project,country,platform_type
     grouping sets (
     ( batch, virtual_goods_id, project, country, platform_type),

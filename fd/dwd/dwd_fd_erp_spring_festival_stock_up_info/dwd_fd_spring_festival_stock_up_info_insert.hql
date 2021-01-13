@@ -10,13 +10,5 @@ select
      ,node_time
      ,source
      ,remark
-     ,is_open
-     ,open_time
-     ,cast(batch_spring_ratio as decimal(10,4))
-     ,cast(total_spring_ratio as decimal(10,4))
-     ,status
-     ,is_del
-     ,created_at
-     ,updated_at
 from
-    ods_fd_ecshop.ods_fd_fd_spring_festival_stock_up_info ;
+    ods_fd_ecshop.ods_fd_fd_spring_festival_stock_up_info where is_del=0 and is_open=1;

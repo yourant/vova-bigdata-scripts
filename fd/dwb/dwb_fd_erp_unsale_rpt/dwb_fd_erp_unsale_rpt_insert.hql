@@ -10,7 +10,7 @@ select
 from (
 	select
 		nvl(t1.unsale_level,'all') as unsale_level,
-		nvl(t1.is_spring_stock,'all') as is_spring_stock,
+		nvl(cast(t1.is_spring_stock as string),'all')  as is_spring_stock,
 		(sum(t1.unsale_goods_num) / sum(t1.goods_number_month)) as unsale_rate,
 		sum(t1.unsale_goods_num) as unsale_goods_num,
 		sum(t1.goods_number_month) as goods_number_total
@@ -28,7 +28,7 @@ from (
 left join(
 	select
 		nvl(t1.unsale_level,'all') as unsale_level,
-		nvl(t1.is_spring_stock,'all') as is_spring_stock,
+		nvl(cast(t1.is_spring_stock as string),'all')  as is_spring_stock,
 		(sum(t1.unsale_goods_num) / sum(t1.goods_number_month)) as unsale_rate,
 		sum(t1.unsale_goods_num) as unsale_goods_num,
 		sum(t1.goods_number_month) as goods_number_total

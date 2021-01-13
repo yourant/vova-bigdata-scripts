@@ -10,21 +10,8 @@ select
       t4.goods_number
  from
      (
-     select
-             distinct tab2.goods_id,
-     	  	tab1.uniq_sku as goods_sku
-     from (
-     	select uniq_sku
-     	from ods_fd_ecshop.ods_fd_fd_sku_backups
-     )tab1
-     INNER JOIN (
-     	select
-     		external_goods_id as goods_id,
-     		uniq_sku
-     	from ods_fd_ecshop.ods_fd_ecs_goods
-     	where external_cat_id != 3002
-     	group by external_goods_id,uniq_sku
-     ) tab2 on tab1.uniq_sku = tab2.uniq_sku
+   select t2.external_goods_id as goods_id,t2.uniq_sku as goods_sku from ods_fd_ecshop.ods_fd_fd_sku_backups t1 inner join  ods_fd_ecshop.ods_fd_ecs_goods t2
+      on t1.uniq_sku=t2.uniq_sku and t2.external_cat_id != 3002
      ) t0
 left join
      (select
@@ -35,29 +22,22 @@ left join
      group by external_goods_id,uniq_sku ) as t1
  on  t1.goods_id=t0.goods_id and t1.goods_sku=t0.goods_sku
 left join
-     (select
-     	eg.external_goods_id as goods_id,
-     	eg.uniq_sku as goods_sku,
-     	sum(eog.goods_number) as goods_number_month
-     from (
-     	select goods_id,order_id,goods_number
-     	from ods_fd_ecshop.ods_fd_ecs_order_goods
-     	group by goods_id,order_id,goods_number
-     )eog
-     INNER JOIN (
-     	select order_id
-     	from ods_fd_ecshop.ods_fd_ecs_order_info
-     	where pay_status = 2
-     	and order_type_id = 'SALE'
-     	and to_date(to_utc_timestamp(order_time, 'PRC')) >= trunc('${pt}','MM')
-     	and to_date(to_utc_timestamp(order_time, 'PRC')) <= '${pt}'
-     	group by order_id
-     )eoi on eoi.order_id = eog.order_id
-     INNER JOIN (
-     	select external_goods_id,uniq_sku,goods_id
-     	from ods_fd_ecshop.ods_fd_ecs_goods
-     )eg on eog.goods_id = eg.goods_id
-     group by eg.external_goods_id,eg.uniq_sku ) as t2
+     (   select
+           t3.external_goods_id as goods_id,
+           t3.uniq_sku as goods_sku,
+          sum(t2.goods_number) as goods_number_month
+          from
+            ods_fd_ecshop.ods_fd_ecs_order_info t1
+          left join
+            ods_fd_ecshop.ods_fd_ecs_order_goods t2
+          on t1.order_id = t2.order_id and t1.pay_status = 2
+           	and t1.order_type_id = 'SALE'
+           	and to_date(to_utc_timestamp(t1.order_time, 'PRC')) >= trunc('${pt}','MM')
+           	and to_date(to_utc_timestamp(t1.order_time, 'PRC')) <= '${pt}'
+          left join
+          ods_fd_ecshop.ods_fd_ecs_goods t3
+          on  t2.goods_id=t3.goods_id
+          group by t3.external_goods_id,t3.uniq_sku) as t2
  on t0.goods_id=t2.goods_id and t0.goods_sku=t2.goods_sku
 left join
      (

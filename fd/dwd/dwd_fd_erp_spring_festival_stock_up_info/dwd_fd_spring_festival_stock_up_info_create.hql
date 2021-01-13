@@ -8,15 +8,7 @@ create table if not exists dwd.dwd_fd_spring_festival_stock_up_info (
     ,node_time string comment '备货时间结点'
     ,source bigint comment '记录来源'
     ,remark string comment '备注'
-    ,is_open bigint comment '是否开启春节备货'
-    ,open_time string comment '第一次开启时间'
-    ,batch_spring_ratio decimal(10,4) comment '批次备货春节系数'
-    ,total_spring_ratio decimal(10,4) comment '剩余备货春节系数'
-    ,status bigint comment '备货状态'
-    ,is_del bigint comment '是否删除商品春节备货状态'
-    ,updated_at  string comment '更新时间'
-    ,created_at  string comment '创建时间'
 ) comment '春节备货库存表'
-ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' lines terminated by '\n'
 STORED AS PARQUET
 ;
