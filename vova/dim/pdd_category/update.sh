@@ -5,7 +5,7 @@ cur_date=$1
 if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
-
+hadoop fs -mkdir s3://bigdata-offline/warehouse/dim/dim_vova_trigram_nuwa_pdd_category
 ### 2.定义执行HQL
 sql="
 INSERT OVERWRITE TABLE dim.dim_vova_trigram_nuwa_pdd_category

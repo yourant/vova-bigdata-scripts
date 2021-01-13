@@ -115,7 +115,7 @@ FROM (
                                            OVER (PARTITION BY domain_userid ORDER BY pt, min_create_time)  AS first_page_url,
                                first_value(parse_url(first_referrer, 'HOST'))
                                            OVER (PARTITION BY domain_userid ORDER BY pt, min_create_time)  AS first_referrer
-                        FROM dwd.dwd_vova_fact_web_start_up su WHERE su.dp = 'airyclub'
+                        FROM dwd.dwd_vova_fact_web_start_up su WHERE su.datasource = 'airyclub'
                        ) su
                   WHERE su.rank = 1
               ) temp
@@ -160,7 +160,7 @@ FROM (SELECT domain_userid,
                    region_code,
                    row_number() OVER (PARTITION BY domain_userid ORDER BY pt DESC, min_create_time DESC) AS rank,
                    first_value(min_create_time) OVER (PARTITION BY domain_userid ORDER BY pt, min_create_time)            AS activate_time
-            FROM dwd.dwd_vova_fact_web_start_up su WHERE su.dp = 'airyclub'
+            FROM dwd.dwd_vova_fact_web_start_up su WHERE su.datasource = 'airyclub'
            ) su
       WHERE su.rank = 1) t1
          LEFT JOIN (
@@ -170,7 +170,7 @@ FROM (SELECT domain_userid,
                  buyer_id,
                  row_number() OVER (PARTITION BY domain_userid ORDER BY pt, min_create_time) AS rank
           FROM dwd.dwd_vova_fact_web_start_up su
-          WHERE su.buyer_id > 0 AND su.dp = 'airyclub') su
+          WHERE su.buyer_id > 0 AND su.datasource = 'airyclub') su
     WHERE su.rank = 1
 ) t2 ON t1.domain_userid = t2.domain_userid
          LEFT JOIN dim.dim_vova_buyers db ON t2.buyer_id = db.buyer_id

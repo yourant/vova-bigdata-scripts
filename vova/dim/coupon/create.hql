@@ -1,5 +1,5 @@
 drop table dim.dim_vova_coupon;
-CREATE TABLE IF NOT EXISTS dim.dim_vova_coupon
+CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_vova_coupon
 (
     datasource       string comment '数据平台',
     cpn_id            BIGINT COMMENT '优惠券ID',
@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS dim.dim_vova_coupon
     buyer_id          string COMMENT '优惠券所有者',
     cpn_create_time   timestamp COMMENT '优惠券创建时间',
     extend_day        BIGINT COMMENT '优惠券有效时长',
-    can_use_times     BIGINT COMMENT '此红包最多可以使用的次数'
+    can_use_times     BIGINT COMMENT '此红包最多可以使用的次数',
+    currency          string COMMENT 'currency'
 ) COMMENT '优惠券维度'
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 

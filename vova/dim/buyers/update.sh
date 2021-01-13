@@ -6,6 +6,10 @@ if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 ###更新用户首单
+hadoop fs -mkdir s3://bigdata-offline/warehouse/tmp/tmp_vova_buyer_first_pay
+hadoop fs -mkdir s3://bigdata-offline/warehouse/tmp/tmp_vova_buyer_first_refund
+hadoop fs -mkdir s3://bigdata-offline/warehouse/tmp/tmp_vova_buyer_app_version
+hadoop fs -mkdir s3://bigdata-offline/warehouse/dim/dim_vova_buyers
 sql="
 insert overwrite table tmp.tmp_vova_buyer_first_pay
 select 'vova' as datasource,

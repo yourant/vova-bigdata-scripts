@@ -1,5 +1,5 @@
 drop table dwd.dwd_vova_fact_start_up;
-CREATE TABLE IF NOT EXISTS dwd.dwd_vova_fact_start_up
+CREATE EXTERNAL TABLE IF NOT EXISTS dwd.dwd_vova_fact_start_up
 (
     datasource     string comment '数据平台',
     device_id     string COMMENT '设备ID',
@@ -12,12 +12,12 @@ CREATE TABLE IF NOT EXISTS dwd.dwd_vova_fact_start_up
     app_region_code   string COMMENT 'country',
     min_collector_time  TIMESTAMP COMMENT '当日登录最小时间',
     max_collector_time  TIMESTAMP COMMENT '当日登录最大时间'
-) COMMENT '设备启动事实表' PARTITIONED BY (pt STRING,dp STRING)
+) COMMENT '设备启动事实表' PARTITIONED BY (pt STRING)
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
 
 drop table tmp.tmp_vova_css_start_up;
-CREATE TABLE IF NOT EXISTS tmp.tmp_vova_css_start_up
+CREATE EXTERNAL TABLE IF NOT EXISTS tmp.tmp_vova_css_start_up
 (
     datasource     string comment '数据平台',
     device_id     string COMMENT '设备ID',

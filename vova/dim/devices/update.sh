@@ -8,6 +8,9 @@ fi
 ###更新设备首单
 ### 取设备当前版本，当前的buyer_id，激活日期
 ### 更新设备维度
+hadoop fs -mkdir s3://bigdata-offline/warehouse/tmp/tmp_vova_device_first_pay
+hadoop fs -mkdir s3://bigdata-offline/warehouse/tmp/tmp_vova_device_app_version
+hadoop fs -mkdir s3://bigdata-offline/warehouse/dim/dim_vova_devices
 sql="
 insert overwrite table tmp.tmp_vova_device_first_pay
 SELECT datasource,
@@ -118,7 +121,7 @@ SELECT 'airyclub'                                            AS datasource,
        fp.first_order_time,
        fp.first_pay_time,
        ar.click_url as clk_url
-FROM ods_vova_acl.ods_vova_ac_appsflyer_record ar
+FROM ods_ac_acl.ods_ac_appsflyer_record ar
          LEFT JOIN ods_vova_vtlr.ods_vova_channel_mapping cm ON cm.child_channel = ar.media_source
          LEFT JOIN tmp.tmp_vova_device_first_pay fp ON fp.device_id = ar.device_id AND fp.datasource = 'airyclub'
     FULL JOIN (SELECT device_id

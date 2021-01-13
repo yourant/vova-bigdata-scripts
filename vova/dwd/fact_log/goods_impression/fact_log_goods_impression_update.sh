@@ -138,7 +138,7 @@ SELECT event_fingerprint,
        br_version,
        datasource
 FROM dwd.dwd_vova_log_goods_impression_arc
-WHERE pt='${pt}'
+WHERE(pt='${pt}'and date(collector_ts)='${pt}' ) or (pt=date_sub('${pt}',1) and hour ='23' and date(collector_ts)='${pt}') or (pt=date_add('${pt}',1) and hour ='00' and date(collector_ts)='${pt}')
 union all
 select event_fingerprint,
        'goods_impression' event_name,
@@ -202,11 +202,28 @@ select event_fingerprint,
        br_version,
        datasource
 FROM dwd.dwd_vova_log_impressions_arc
-WHERE pt='${pt}' and event_type='goods'
+WHERE ((pt='${pt}'and date(collector_ts)='${pt}' ) or (pt=date_sub('${pt}',1) and hour ='23' and date(collector_ts)='${pt}') or (pt=date_add('${pt}',1) and hour ='00' and date(collector_ts)='${pt}')) and event_type='goods'
 )
 ;
 "
-spark-sql --executor-memory 13G --conf "spark.dynamicAllocation.maxExecutors=150" --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.sql.adaptive.shuffle.targetPostShuffleInputSize=128000000" --conf "spark.sql.adaptive.enabled=true" --conf "spark.app.name=dwd_vova_log_goods_impression" -e "$sql"
+
+spark-sql \
+--executor-memory 8G --executor-cores 1 \
+--conf "spark.sql.parquet.writeLegacyFormat=true"  \
+--conf "spark.dynamicAllocation.minExecutors=20" \
+--conf "spark.dynamicAllocation.initialExecutors=20" \
+--conf "spark.dynamicAllocation.maxExecutors=150" \
+--conf "spark.app.name=dwd_vova_log_goods_impression" \
+--conf "spark.default.parallelism = 380" \
+--conf "spark.sql.shuffle.partitions=380" \
+--conf "spark.sql.adaptive.enabled=true" \
+--conf "spark.sql.adaptive.join.enabled=true" \
+--conf "spark.shuffle.sort.bypassMergeThreshold=10000" \
+--conf "spark.sql.inMemoryColumnarStorage.compressed=true" \
+--conf "spark.sql.inMemoryColumnarStorage.partitionPruning=true" \
+--conf "spark.sql.inMemoryColumnarStorage.batchSize=100000" \
+--conf "spark.network.timeout=300" \
+-e "$sql"
 if [ $? -ne 0 ];then
   exit 1
 fi

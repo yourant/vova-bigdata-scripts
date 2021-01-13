@@ -5,6 +5,7 @@ cur_date=$1
 if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
+hadoop fs -mkdir s3://bigdata-offline/warehouse/dim/dim_vova_region
 ###逻辑sql
 sql="
 INSERT OVERWRITE TABLE dim.dim_vova_region
@@ -96,7 +97,9 @@ from ods_vova_vts.ods_vova_region r1
          left join
      ods_vova_vts.ods_vova_region r3 on r2.parent_id = r3.region_id
          left join
-     ods_vova_vts.ods_vova_region r4 on r3.parent_id = r4.region_id;
+     ods_vova_vts.ods_vova_region r4 on r3.parent_id = r4.region_id
+where r1.region_display = 1
+;
 "
 spark-sql --conf "spark.app.name=dim_vova_region" --conf "spark.sql.parquet.writeLegacyFormat=true" -e "$sql"
 #如果脚本失败，则报错

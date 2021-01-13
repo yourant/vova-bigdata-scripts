@@ -19,11 +19,14 @@ echo "pt: ${pt}"
 shell_path="${base_path}/${table}"
 
 hive -f ${shell_path}/${table}_create.hql
-
+pt_yesterday=$(date -d "-1 day" +"%Y-%m-%d")
+batchNum_new=`hive -e " select max(batch) from ads.ads_fd_goods_inspired where pt >='${pt_yesterday}' "`
+batchNum=`expr substr $batchNum_new 1 8`
 spark-sql \
   --conf "spark.app.name=${table}_${user}" \
   --conf "spark.dynamicAllocation.maxExecutors=60" \
   -d pt="${pt}" \
+  -d batchNum="${batchNum}" \
   -f ${shell_path}/${table}_insert.hql
 
 if [ $? -ne 0 ]; then

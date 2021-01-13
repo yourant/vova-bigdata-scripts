@@ -6,9 +6,9 @@ select /*+ REPARTITION(1) */
     project,
     country,
     platform_name,
-    count(if(event = 'goods_like', session_id, null))       as like_num,
-    count(if(event = 'goods_dislike', session_id, null))    as unlike_num,
-    count(if(event = 'goods_impression', session_id, null)) as impressions
+    count(distinct if(event = 'goods_like', session_id, null))       as like_num,
+    count(distinct if(event = 'goods_dislike', session_id, null))    as unlike_num,
+    count(distinct if(event = 'goods_impression', session_id, null)) as impressions
 from (
          select batch            as batch,
                 g.goods_id       as goods_id,
@@ -55,5 +55,6 @@ from (
               ) t1
                   left join dim.dim_fd_goods g on t1.virtual_goods_id = g.virtual_goods_id
      ) t2
+     where t2.batch >= '${batchNum}'
 group by batch, goods_id, virtual_goods_id, project, country, platform_name
 having length(country) <=2

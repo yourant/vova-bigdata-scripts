@@ -385,7 +385,7 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/vova/dim/buyers/update.sh
-      retries: 5
+      retries: 10
       retry.backoff: 600000
     dependsOn:
       - judge_vova_users
@@ -455,8 +455,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_start_up
-      retries: 5
-      retry.backoff: 600000
+      retries: 10
+      retry.backoff: 300000
     dependsOn:
       - start_flag
 
@@ -464,7 +464,7 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/vova/dim/devices/update.sh
-      retries: 5
+      retries: 10
       retry.backoff: 600000
     dependsOn:
       - judge_vova_appsflyer_record

@@ -54,7 +54,7 @@ from
             project_name,order_id,country,user_agent_id,email,goods_amount,shipping_fee from ods_fd_vb.ods_fd_order_info_inc
             where pt='${pt}'  and  pay_status=2 and pay_time is not null
             and    to_date(date_format(to_utc_timestamp(pay_time, 'America/Los_Angeles'),'yyyy-MM-dd HH:mm:ss'))='${pt}'
-                        and  email NOT REGEXP "tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com"
+                        and  email NOT REGEXP "@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com"
         ) oi
 
         left join  ods_fd_vb.ods_fd_user_agent_analysis uaa on oi.user_agent_id=uaa.user_agent_id

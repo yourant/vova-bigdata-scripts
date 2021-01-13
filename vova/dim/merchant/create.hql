@@ -1,5 +1,5 @@
 drop table dim.dim_vova_merchant;
-CREATE TABLE IF NOT EXISTS dim.dim_vova_merchant
+CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_vova_merchant
 (
     datasource          string comment '数据平台',
     mct_id              bigint COMMENT '店铺ID',

@@ -7,9 +7,7 @@ cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 ###更新fact_start_up
 sql="
-set hive.exec.dynamici.partition=true;
-set hive.exec.dynamic.partition.mode=nonstrict;
-insert overwrite table dwd.dwd_vova_fact_start_up PARTITION (pt='${cur_date}',dp)
+insert overwrite table dwd.dwd_vova_fact_start_up PARTITION (pt='${cur_date}')
 select /*+ REPARTITION(1) */
        su.datasource,
        su.device_id,
