@@ -24,15 +24,6 @@ if [ "${pt}" == "${result_pt}" ]; then
         sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=ALL --table_name=ads_adgroup_daily_flat_report --partition_num=5 --period_type=day
 
 else
-        echo 'artemis-db '${pt}'广告花费未入库，需要导入!'
-        sleep 5m
-        result_pt=`mysql -h "${art_host}" -u"${art_user}" -p"${art_pwd}" -N -e "${max_pt}"`
-        if [ "${pt}" == "${result_pt}" ]; then
-                echo 'artemis-db '${pt}'广告花费已经入库!'
-                sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=ALL --table_name=ads_adgroup_daily_flat_report --partition_num=5 --period_type=day
-
-        else
-                echo 'artemis-db '${pt}'广告花费未入库，等待...!'
-                exit 1
-        fi
+        echo 'artemis-db '${pt}'广告花费未入库，等待...!'
+        exit 1
 fi
