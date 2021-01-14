@@ -46,7 +46,7 @@ nodes:
   - name: judge_vova_fact_buyer_portrait_base
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_buyer_portrait_base
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_buyer_portrait_base
       retries: 10
       retry.backoff: 600000
     dependsOn:
@@ -73,7 +73,7 @@ nodes:
   - name: judge_vova_fact_pay
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_pay
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay
       retries: 5
       retry.backoff: 600000
     dependsOn:
