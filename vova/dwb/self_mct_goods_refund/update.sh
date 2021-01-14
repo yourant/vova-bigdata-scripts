@@ -1,7 +1,6 @@
 #!/bin/bash
 echo "start_time:"  `date +"%Y-%m-%d %H:%M:%S" -d "8 hour"`
 
-job_name="dwb_vova_sel_mct_goods_refund_req5027_chenkai"
 
 #指定日期和引擎
 cur_date=$1
@@ -14,6 +13,8 @@ start_date='2020-04-01'
 
 echo "start_date: ${start_date}"
 echo "cur_date: ${cur_date}"
+job_name="dwb_vova_sel_mct_goods_refund_req5027_chenkai_${cur_date}"
+
 ###逻辑sql
 sql="
 insert OVERWRITE TABLE dwb.dwb_vova_sel_mct_goods_refund

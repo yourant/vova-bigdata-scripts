@@ -13,7 +13,7 @@ echo "table_suffix: ${table_suffix}"
 
 echo "cur_date: $cur_date"
 
-job_name="dwb_vova_goods_manifest_req5264_chenkai"
+job_name="dwb_vova_goods_manifest_req5264_chenkai_${cur_date}"
 
 #
 sql="

@@ -1,7 +1,6 @@
 #!/bin/bash
 echo "start_time:"  `date +"%Y-%m-%d %H:%M:%S" -d "8 hour"`
 
-job_name="dwb_vova_taiwan_first_order_buyer_req4892_chenkai"
 
 #指定日期和引擎
 cur_date=$1
@@ -14,6 +13,8 @@ table_suffix=`date -d "${cur_date}" +%Y%m%d`
 echo "table_suffix: ${table_suffix}"
 
 echo "cur_date: $cur_date"
+job_name="dwb_vova_taiwan_first_order_buyer_req4892_chenkai_${cur_date}"
+
 #
 sql="
 -- 当日用户中未签收过的用户 drop table tmp.tmp_today_order_buyer_${table_suffix}

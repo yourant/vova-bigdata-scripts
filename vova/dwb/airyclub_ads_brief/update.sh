@@ -13,7 +13,7 @@ echo "cur_date: ${cur_date}"
 table_suffix=`date -d "${cur_date}" +%Y%m%d`
 echo "table_suffix: ${table_suffix}"
 
-job_name="dwb_vova_airyclub_daily_ratio_req4999_chenkai"
+job_name="dwb_vova_airyclub_daily_ratio_req4999_chenkai_${cur_date}"
 
 ###逻辑sql
 sql="

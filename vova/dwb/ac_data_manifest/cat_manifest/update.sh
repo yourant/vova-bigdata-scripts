@@ -10,7 +10,7 @@ fi
 
 echo "cur_date: $cur_date"
 
-job_name="dwb_vova_second_cat_manifest_req4947_chenkai"
+job_name="dwb_vova_second_cat_manifest_req4947_chenkai_${cur_date}"
 
 #
 sql="
