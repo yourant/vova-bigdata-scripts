@@ -23,7 +23,7 @@ select
 		when tab1.14d_avg_sale = 0 then tab1.reserve_num
 		when tab1.14d_avg_sale > 0 then tab1.14d_avg_sale * (tab1.can_sale_days - tab1.back_days)
 	else 0 end as unsale_goods_num,
-	if(stock_up_id is null,0,1) as is_spring_stock
+	if(stock_up_id is null,false,true) as is_spring_stock
 from (
 	select
 		t0.goods_id,
@@ -38,5 +38,6 @@ from (
 		t1.stock_up_id
 	from (
 	dwd.dwd_fd_erp_unsale_goods_info t0
-    LEFT JOIN (select goods_id,stock_up_id from dwd.dwd_fd_spring_festival_stock_up_info ) t1 on t1.goods_id = t0.goods_id
+    LEFT JOIN  dwd.dwd_fd_spring_festival_stock_up_info  t1 on t1.goods_id = t0.goods_id
+    and t0.pt='${pt}'
 ) )tab1;
