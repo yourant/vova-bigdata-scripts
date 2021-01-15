@@ -11,15 +11,3 @@ CREATE TABLE IF NOT EXISTS  `dim.dim_fd_currency`(
 COMMENT '货币维度'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
-
-insert overwrite table dim.dim_fd_currency
-select currency_id,
-       currency,
-       currency_symbol,
-       desc_en,
-       desc_cn,
-       disabled,
-       display_order,
-       currency_local_symbol,
-       continent
-from ods_fd_vb.ods_fd_currency;
