@@ -1,5 +1,5 @@
 INSERT overwrite table dim.dim_fd_region
-select s.region_id,
+select /*+ REPARTITION(1) */ s.region_id,
        if(s.region_code is null or s.region_code = '', s.region_name_en, s.region_code) as region_code,
        s.region_name_en,
        s.region_name_cn,

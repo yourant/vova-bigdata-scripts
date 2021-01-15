@@ -1,5 +1,6 @@
 INSERT overwrite table dim.dim_fd_user_agent
-select 
+select
+    /*+ REPARTITION(1) */
     `user_agent_id`
     , case
           when is_app = 0 and device_type = 'pc' then 'PC'

@@ -1,5 +1,6 @@
 insert overwrite table dim.dim_fd_category
 select
+    /*+ REPARTITION(1) */
     cat_id,
     cat_name,
     depth,

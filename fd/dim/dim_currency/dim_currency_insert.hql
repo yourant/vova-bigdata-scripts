@@ -1,5 +1,6 @@
 insert overwrite table dim.dim_fd_currency
-select currency_id,
+select /*+ REPARTITION(1) */
+       currency_id,
        currency,
        currency_symbol,
        desc_en,

@@ -1,5 +1,6 @@
 INSERT overwrite table dim.dim_fd_language
-select 
+select
+    /*+ REPARTITION(1) */
     languages_id, 
     name, 
     code

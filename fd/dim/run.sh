@@ -66,5 +66,15 @@ echo $pt_format_last
 #脚本路径
 shell_path="/mnt/vova-bigdata-scripts/fd/dim"
 
+spark-sql \
+  --conf "spark.app.name=fd_${table_name}_gaohaitao" \
+  --conf "spark.dynamicAllocation.maxExecutors=30" \
+  -f ${shell_path}/${table_name}/${table_name}_insert.hql
+
 #将dim层维表
-hive -hiveconf pt=$pt -hiveconf mapred.job.name=fd_${table_name}_gaohaitao -f ${shell_path}/${table_name}/${table_name}.hql
+#hive -hiveconf pt=$pt -hiveconf mapred.job.name=fd_${table_name}_gaohaitao -f ${shell_path}/${table_name}/${table_name}.hql
+
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+echo "table [$table_name] is finished !"

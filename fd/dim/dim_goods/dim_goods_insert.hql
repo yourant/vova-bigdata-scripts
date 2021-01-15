@@ -1,5 +1,6 @@
 insert overwrite table dim.dim_fd_goods
 select
+    /*+ REPARTITION(1) */
   lower(t3.project_name) as project_name,
   t1.goods_id as goods_id,
   t3.virtual_goods_id as virtual_goods_id,
