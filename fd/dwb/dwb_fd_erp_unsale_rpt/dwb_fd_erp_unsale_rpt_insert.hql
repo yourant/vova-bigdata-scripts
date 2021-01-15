@@ -2,7 +2,7 @@ insert overwrite table dwb.dwb_fd_erp_unsale_rpt  partition (pt = '${pt}')
 select
      /*+ REPARTITION(1) */
 	tab1.unsale_level,
-	cast(tab1.is_spring_stock as string),
+	lower(cast(tab1.is_spring_stock as string)) as is_spring_stock ,
 	tab1.unsale_rate as unsale_rate,
 	tab1.unsale_goods_num as unsale_goods_num,
 	tab1.goods_number_total as goods_number_total,
