@@ -1,5 +1,6 @@
 insert overwrite table dwb.dwb_fd_realtime_new_rpt partition(pt='${pt}')
 select
+    /*+ REPARTITION(1) */
     nvl(project,'all') as project,
     nvl(platform,'all') as platform,
     nvl(country,'all') as country,
