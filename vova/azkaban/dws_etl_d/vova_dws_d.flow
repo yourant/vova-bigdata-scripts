@@ -16,6 +16,7 @@ nodes:
       - dws_buyer_goods_behave
       - dws_goods_1d
       - dws_goods_core_feature_his
+      - dws_devices
 
   - name: start_flag
     type: command
@@ -152,7 +153,35 @@ nodes:
       - judge_fact_log_goods_click
       - judge_vova_fact_pay
 
+  - name: dws_devices
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dws/devices/update.sh
+      retries: 20
+      retry.backoff: 600000
+    dependsOn:
+      - judge_vova_start_up
+      - judge_vova_fact_pay
+      - judge_dim_vova_devices
+    condition: all_success
 
+  - name: judge_dim_vova_devices
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_devices
+      retries: 15
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_start_up
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_start_up
+      retries: 15
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
 
 
 
