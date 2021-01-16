@@ -191,6 +191,7 @@ from tmp.tmp_vova_dws_device_loss_device dld
                       and re.refund_reason_type_id != 8
                     group by og.device_id, og.datasource) as nl on nl.device_id = dld.device_id and nl.datasource = dld.datasource
 where dld.datasource is not null
+  and dld.datasource in ('vova', 'airyclub')
   and dld.device_id is not null;
 "
 hive -e "${sql}"
