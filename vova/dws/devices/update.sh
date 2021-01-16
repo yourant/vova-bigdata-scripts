@@ -95,44 +95,44 @@ where dev.device_id is not null
 drop table if exists tmp.tmp_vova_dws_device_pay;
 create table tmp.tmp_vova_dws_device_pay as
 select oi.datasource                          as datasource,
-       ore.device_id                          as device_id,
+       oi.device_id                          as device_id,
        min(oi.pay_time)                       as first_pay_time,
        max(oi.pay_time)                       as last_pay_time,
        collect_set(lp.last_1_pay_time)[0]     as last_1_pay_time,
-       sum(oi.order_amount + oi.shipping_fee) as pay_gmv,
+       sum(gmv) as pay_gmv,
        count(1)                               as pay_order
-from (select pay_time,
-             order_id,
-             order_amount,
-             shipping_fee,
-             if(from_domain like '%vova%', 'vova', 'airyclub') as datasource
-      from ods.vova_order_info oi
-      where oi.pay_status >= 1
-        and date(oi.pay_time) <= '${cur_date}'
+from (select first(pay_time) as pay_time,
+             fp.datasource,
+             fp.order_id,
+             fp.device_id,
+             sum(goods_number * shop_price + shipping_fee) as gmv
+      from dwd.dwd_vova_fact_pay fp
+      where date(fp.pay_time) <= '${cur_date}'
+        AND fp.datasource in ('vova', 'airyclub')
+        AND fp.device_id is not null
+        GROUP BY fp.device_id, fp.datasource, fp.order_id
      ) oi
-         inner join ods.vova_order_relation ore on oi.order_id = ore.order_id
          left join
      (select *
       from (select device_id,
                    datasource,
                    pay_time                                                                 as last_1_pay_time,
-                   row_number() over (partition by datasource, device_id order by pay_time) as rank
-            from (select pay_time,
-                         order_id,
-                         order_amount,
-                         shipping_fee,
-                         if(from_domain like '%vova%', 'vova', 'airyclub') as datasource
-                  from ods.vova_order_info oi
-                  where oi.pay_status >= 1
+                   row_number() over (partition by datasource, device_id order by pay_time desc) as rank
+            from (
+                   select       first(pay_time) as pay_time,
+                                fp.datasource,
+                                fp.order_id,
+                                fp.device_id
+                         from dwd.dwd_vova_fact_pay fp
+                         where date(fp.pay_time) <= '${cur_date}'
+                           AND fp.datasource in ('vova', 'airyclub')
+                           AND fp.device_id is not null
+                           GROUP BY fp.device_id, fp.datasource, fp.order_id
                  ) oi
-                     inner join ods.vova_order_relation ore on oi.order_id = ore.order_id
-            where ore.device_id is not null
            ) as lp
       where lp.rank = 2
-     ) as lp on lp.device_id = ore.device_id and lp.datasource = oi.datasource
-where ore.device_id is not null
-  and oi.datasource is not null
-group by oi.datasource, ore.device_id;
+     ) as lp on lp.device_id = oi.device_id and lp.datasource = oi.datasource
+group by oi.datasource, oi.device_id;
 "
 spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"   --conf "spark.dynamicAllocation.maxExecutors=300"   --conf "spark.dynamicAllocation.minExecutors=60" --conf "spark.dynamicAllocation.initialExecutors=100" --conf "spark.app.name=dws_devices" --conf "spark.sql.autoBroadcastJoinThreshold=10485760" -e "$sql"
 
