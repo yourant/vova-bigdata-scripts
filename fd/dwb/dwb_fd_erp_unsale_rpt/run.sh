@@ -5,7 +5,7 @@ user="ruimeng"
 base_path="/mnt/vova-bigdata-scripts/fd/dwb"
 
 if [ ! -n "$1" ]; then
-  pt=$(date +"%Y-%m-%d")
+    pt=`date -d "- 1 days" +"%Y-%m-%d"`
 else
   echo $1 | grep -Eq "[0-9]{4}-[0-9]{2}-[0-9]{2}" && date -d "$1" +"%Y-%m-%d" >/dev/null
   if [[ $? -ne 0 ]]; then
