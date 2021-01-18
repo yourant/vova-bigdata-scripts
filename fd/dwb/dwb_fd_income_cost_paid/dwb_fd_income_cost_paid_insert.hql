@@ -1,4 +1,5 @@
-insert overwrite table ads.ads_fd_income_cost_paid partition (pt='${pt}')
+set hive.exec.dynamic.partition.mode=nonstrict;
+insert overwrite table ads.ads_fd_income_cost_paid partition (pt)
 select /*+ REPARTITION(1) */t.project
      , t.country_code
      ,CASE
@@ -12,6 +13,7 @@ select /*+ REPARTITION(1) */t.project
      , nvl(t.ads_cost, 0.0)      as ads_cost
      , nvl(t.refund_cost, 0.0)   as refund_cost
      , nvl(t.total_cost, 0.0)    as total_cost
+     , t.pt_date as pt
 from (
          select nvl(t2.project, 'All')                                          as project
               , nvl(t2.country_code, 'All')                                      as country_code
@@ -41,7 +43,7 @@ from (
 left join (
     select
         region_code,region_name
-    from ods_fd_ecshop.ods_fd_ecs_region
+    from dim.dim_fd_ecs_region
     where region_type = 0
 ) r ON upper(t.country_code) = upper(r.region_code)
 where t.pt_date != '0000-00-00' and t.project in('floryday','airydress');

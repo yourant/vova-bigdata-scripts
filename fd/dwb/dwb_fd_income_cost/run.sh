@@ -1,5 +1,5 @@
 #bin/sh
-table="ads_fd_income_cost_paid"
+table="dwb_fd_income_cost"
 user="gaohaitao"
 
 base_path="/mnt/vova-bigdata-scripts/fd/dwb"
