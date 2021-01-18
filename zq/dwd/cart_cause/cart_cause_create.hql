@@ -15,6 +15,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS dwd.dwd_zq_fact_cart_cause
     pre_list_uri          string comment '归因list_uri(最后一次点击list_uri)',
     pre_element_type      string comment '归因element_type(最后一次点击element_type)',
     pre_app_version       string comment '归因app_version(最后一次点击app_version)',
-    pre_test_info         string comment '归因test_info(最后一次点击test_info)'
+    pre_test_info         string comment '归因test_info(最后一次点击test_info)',
+    pre_recall_pool       string comment '归因test_info(最后一次点击test_info)'
 ) COMMENT '中台站群加车归因' PARTITIONED BY (pt STRING)
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;

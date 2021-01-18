@@ -138,9 +138,9 @@ spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"   --conf "spark.dyna
 
 echo "prepare done, start overwrite  dws.dws_vova_devices"
 sql="
--- 快照当天用户的情况
 insert overwrite table dws.dws_vova_devices
-select dld.datasource,
+select /*+ REPARTITION(50) */
+       dld.datasource,
        dld.device_id,
        dp.first_pay_time,
        dp.last_pay_time,
@@ -194,7 +194,8 @@ where dld.datasource is not null
   and dld.datasource in ('vova', 'airyclub')
   and dld.device_id is not null;
 "
-hive -e "${sql}"
+#hive -e "$sql"
+spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"   --conf "spark.dynamicAllocation.maxExecutors=50"   --conf "spark.dynamicAllocation.minExecutors=20" --conf "spark.dynamicAllocation.initialExecutors=20" --conf "spark.app.name=dws_devices" -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
