@@ -1,4 +1,4 @@
-insert overwrite table dwd.dwd_fd_app_retention_activity partition (pt='${pt}',classify='play')
+insert into table dwd.dwd_fd_app_retention_activity partition (pt='${pt}')
 select
  /*+ REPARTITION(1) */
 project as project,
