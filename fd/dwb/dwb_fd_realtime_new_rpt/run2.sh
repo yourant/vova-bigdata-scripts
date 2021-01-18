@@ -30,12 +30,12 @@ echo $pt
 #s3_path="s3://vova-bd-test/warehouse_test/dwb"
 
 #脚本路径
-shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_realtime_rpt"
+shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_realtime_new_rpt"
 
 #hive -hiveconf pt=$pt  -hiveconf s3_path=$s3_path  -f ${shell_path}/dwb_fd_realtime_session_rpt.hql
 
 spark-sql \
---conf "spark.app.name=dwb_fd_realtime_gmv_orders_rpt_yjzhang"   \
+--conf "spark.app.name=dwb_fd_realtime_gmv_orders_rpt_zhangchenhao"   \
 -d pt=$pt \
 -f ${shell_path}/order_info_inc.hql
 
