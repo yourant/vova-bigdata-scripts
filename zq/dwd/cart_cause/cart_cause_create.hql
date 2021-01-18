@@ -1,5 +1,5 @@
 drop table dwd.dwd_zq_fact_cart_cause;
-CREATE TABLE IF NOT EXISTS dwd.dwd_zq_fact_cart_cause
+CREATE EXTERNAL TABLE IF NOT EXISTS dwd.dwd_zq_fact_cart_cause
 (
     datasource            string comment '数据平台',
     event_name            string comment '事件名称',

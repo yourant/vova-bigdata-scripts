@@ -1,5 +1,5 @@
 drop table dwd.dwd_zq_fact_web_start_up;
-CREATE TABLE IF NOT EXISTS dwd.dwd_zq_fact_web_start_up
+CREATE EXTERNAL TABLE IF NOT EXISTS dwd.dwd_zq_fact_web_start_up
 (
     datasource     string comment '数据平台',
     domain_userid  string COMMENT '设备ID',

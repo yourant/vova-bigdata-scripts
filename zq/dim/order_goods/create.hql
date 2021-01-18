@@ -1,5 +1,5 @@
 DROP TABLE dim.dim_zq_order_goods;
-CREATE TABLE IF NOT EXISTS dim.dim_zq_order_goods
+CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_zq_order_goods
 (
     datasource       STRING COMMENT 'datasource',
     platform         STRING COMMENT 'platform',

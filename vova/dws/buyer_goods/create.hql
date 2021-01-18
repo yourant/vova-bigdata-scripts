@@ -1,6 +1,6 @@
 -- 用户商品联合维度用户行为统计表
 drop table if exists dws.dws_vova_buyer_goods_behave;
-create table if  not exists  dws.dws_vova_buyer_goods_behave (
+create EXTERNAL table dws.dws_vova_buyer_goods_behave (
     `buyer_id`            bigint      COMMENT 'd_用户id',
     `gs_id`               bigint      COMMENT 'd_商品id',
     `cat_id`              bigint      COMMENT 'i_品类id',

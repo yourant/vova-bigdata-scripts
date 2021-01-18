@@ -1,5 +1,5 @@
 drop table dws.dws_vova_devices;
-CREATE TABLE IF NOT EXISTS dws.dws_vova_devices
+CREATE EXTERNAL TABLE IF NOT EXISTS dws.dws_vova_devices
 (
     datasource             string,
     device_id              string COMMENT 'device_id',
