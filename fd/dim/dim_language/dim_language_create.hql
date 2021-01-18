@@ -5,10 +5,3 @@ CREATE TABLE IF NOT EXISTS `dim.dim_fd_language`(
 COMMENT '语言维表'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS PARQUETFILE;
-
-INSERT overwrite table dim.dim_fd_language
-select 
-    languages_id, 
-    name, 
-    code
-from ods_fd_vb.ods_fd_languages;

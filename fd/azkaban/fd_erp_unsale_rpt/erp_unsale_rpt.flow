@@ -16,31 +16,86 @@ nodes:
       - name: erp_unsale_rpt_flow_start
         type: noop
       
-      - name: judge_fd_dw_erp_ods_inc_end
+      - name: judge_ods_fd_ecs_goods
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fd_dw_erp_ods_inc_end
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_ecs_goods
+        dependsOn:
+          - erp_unsale_rpt_flow_start
+
+      - name: judge_ods_fd_stock_ecs_order_sale_bak_detail
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_stock_ecs_order_sale_bak_detail
+        dependsOn:
+          - erp_unsale_rpt_flow_start
+
+      - name: judge_ods_fd_sku_backups
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_sku_backups
+        dependsOn:
+          - erp_unsale_rpt_flow_start
+
+      - name: judge_ods_fd_spring_festival_stock_up_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_spring_festival_stock_up_info
+        dependsOn:
+          - erp_unsale_rpt_flow_start
+
+      - name: judge_ods_fd_stock_goods_config
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_stock_goods_config
+        dependsOn:
+          - erp_unsale_rpt_flow_start
+
+      - name: judge_ods_fd_ecs_order_goods
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_ecs_order_goods
+        dependsOn:
+          - erp_unsale_rpt_flow_start
+
+      - name: judge_ods_fd_ecs_order_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_ecs_order_info
+        dependsOn:
+          - erp_unsale_rpt_flow_start
+
+      - name: judge_ods_inventory_summary
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_inventory_summary
         dependsOn:
           - erp_unsale_rpt_flow_start
 
       - name: dwd_fd_erp_unsale_goods_info
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_erp_14d_avg_sale/run.sh dwd_fd_erp_unsale_goods_info
+          command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_erp_unsale_goods_info/run.sh
         dependsOn:
-          - judge_fd_dw_erp_ods_inc_end
+          - judge_ods_fd_ecs_goods
+          - judge_ods_fd_stock_ecs_order_sale_bak_detail
+          - judge_ods_fd_sku_backups
+          - judge_ods_fd_stock_goods_config
+          - judge_ods_fd_ecs_order_goods
+          - judge_ods_fd_ecs_order_info
+          - judge_ods_inventory_summary
 
       - name: dwd_fd_spring_festival_stock_up_info
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_erp_14d_avg_sale/run.sh dwd_fd_spring_festival_stock_up_info
+          command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_spring_festival_stock_up_info/run.sh
         dependsOn:
-          - judge_fd_dw_erp_ods_inc_end
+          - judge_ods_fd_spring_festival_stock_up_info
 
       - name: dwb_fd_erp_unsale_detail
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_erp_14d_avg_sale/run.sh dwb_fd_erp_unsale_detail
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_erp_unsale_detail/run.sh  ${pt}
         dependsOn:
           - dwd_fd_erp_unsale_goods_info
           - dwd_fd_spring_festival_stock_up_info
@@ -48,7 +103,7 @@ nodes:
       - name: dwb_fd_erp_unsale_rpt
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_erp_unsale_rpt/run.sh dwb_fd_erp_unsale_rpt
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_erp_unsale_rpt/run.sh  ${pt}
         dependsOn:
           - dwb_fd_erp_unsale_detail
 
