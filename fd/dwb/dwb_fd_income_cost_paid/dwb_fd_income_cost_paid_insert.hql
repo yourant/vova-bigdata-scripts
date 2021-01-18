@@ -1,5 +1,5 @@
 set hive.exec.dynamic.partition.mode=nonstrict;
-insert overwrite table ads.ads_fd_income_cost_paid partition (pt)
+insert overwrite table dwb.dwb_fd_income_cost_paid partition (pt)
 select /*+ REPARTITION(1) */t.project
      , t.country_code
      ,CASE

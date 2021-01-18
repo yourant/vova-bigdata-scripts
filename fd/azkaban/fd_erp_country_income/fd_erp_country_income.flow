@@ -102,7 +102,7 @@ nodes:
   - name: dim_fd_ecs_region
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_fd_ecs_region
+      command: sh /mnt/vova-bigdata-scripts/fd/dim/dim_ecs_region/run.sh dim_fd_ecs_region
     dependsOn:
       - judge_ods_ecs_region
 
