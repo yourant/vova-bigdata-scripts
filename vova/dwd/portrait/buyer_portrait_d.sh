@@ -98,48 +98,7 @@ create table tmp.tmp_vova_fact_buyer_portrait_base_lan  STORED AS PARQUETFILE as
 select distinct datasource,buyer_id,language,country,1 cnt,8 act_type_id from dwd.dwd_vova_log_screen_view
 where pt='$pre_date' and buyer_id<> -1 and buyer_id is not null;
 --step8,9:日活跃时段
-drop table if exists tmp.tmp_vova_fact_buyer_portrait_base_act;
-create table tmp.tmp_vova_fact_buyer_portrait_base_act as
-select datasource,buyer_id,tag_id,'active_day' tag_name,count(1) cnt,9 act_type_id from
-(
-select datasource,buyer_id,
-case when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=0 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<3 then '0'
-when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=3 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<6 then '3'
-when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=6 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<9 then '6'
-when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=9 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<12 then '9'
-when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=12 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<15 then '12'
-when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=15 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<18 then '15'
-when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=18 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<21 then '18'
-when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=21 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<24 then '21'
-end as tag_id
-from dwd.dwd_vova_log_goods_click where pt='$pre_date' and buyer_id<> -1 and buyer_id is not null
-union all
-select datasource,buyer_id,
-case when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=0 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<3 then '0'
-when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=3 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<6 then '3'
-when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=6 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<9 then '6'
-when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=9 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<12 then '9'
-when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=12 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<15 then '12'
-when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=15 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<18 then '15'
-when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=18 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<21 then '18'
-when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=21 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<24 then '21'
-end as tag_id
-from dwd.dwd_vova_log_common_click
-where pt='$pre_date' and buyer_id<> -1 and buyer_id is not null
-and element_name in ('pdAddToWishlistClick','pdAddToCartSuccess','h5flashsaleSkuPopupGetitnowButton')
-and  element_id<>'' and element_id is not null
-union all
-select datasource,buyer_id,
-case when hour(order_time) >=0 and hour(order_time) <3 then '0'
-when hour(order_time) >=3 and  hour(order_time) <6 then '3'
-when hour(order_time) >=6 and  hour(order_time) <9 then '6'
-when hour(order_time) >=9 and  hour(order_time) <12 then '9'
-when hour(order_time) >=12 and hour(order_time) <15 then '12'
-when hour(order_time) >=15 and hour(order_time) <18 then '15'
-when hour(order_time) >=18 and hour(order_time) <21 then '18'
-when hour(order_time) >=21 and hour(order_time) <24 then '21'
-end as tag_id from dwd.dwd_vova_fact_pay where to_date(order_time)='$pre_date'
-) t group by datasource,buyer_id,tag_id,'active_day',null;
+
 --0-6:星期日-星期六，周活跃度
 drop table if exists tmp.tmp_vova_fact_buyer_portrait_base_act_w;
 create table tmp.tmp_vova_fact_buyer_portrait_base_act_w as
@@ -249,7 +208,46 @@ select datasource,buyer_id,cast(goods_id as string) goods_id,goods_name,cnt,firs
 union all
 select datasource,buyer_id,language goods_id,country goods_name,cnt,null first_cat_id,act_type_id from tmp.tmp_vova_fact_buyer_portrait_base_lan
 union all
-select datasource,buyer_id,cast(tag_id as string) goods_id,tag_name goods_name,cnt,null first_cat_id,act_type_id from tmp.tmp_vova_fact_buyer_portrait_base_act
+select datasource,buyer_id,cast(tag_id as string) goods_id,tag_name goods_name,cnt,null first_cat_id,act_type_id from (select datasource,buyer_id,tag_id,'active_day' tag_name,count(1) cnt,9 act_type_id from
+(
+select datasource,buyer_id,
+case when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=0 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<3 then '0'
+when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=3 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<6 then '3'
+when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=6 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<9 then '6'
+when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=9 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<12 then '9'
+when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=12 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<15 then '12'
+when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=15 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<18 then '15'
+when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=18 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<21 then '18'
+when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=21 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<24 then '21'
+end as tag_id
+from dwd.dwd_vova_log_goods_click where pt='$pre_date' and buyer_id<> -1 and buyer_id is not null
+union all
+select datasource,buyer_id,
+case when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=0 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<3 then '0'
+when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=3 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<6 then '3'
+when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=6 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<9 then '6'
+when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=9 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<12 then '9'
+when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=12 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<15 then '12'
+when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=15 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<18 then '15'
+when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=18 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<21 then '18'
+when hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))>=21 and hour(from_unixtime(collector_tstamp,'yyyy-MM-dd HH:mm:ss'))<24 then '21'
+end as tag_id
+from dwd.dwd_vova_log_common_click
+where pt='$pre_date' and buyer_id<> -1 and buyer_id is not null
+and element_name in ('pdAddToWishlistClick','pdAddToCartSuccess','h5flashsaleSkuPopupGetitnowButton')
+and  element_id<>'' and element_id is not null
+union all
+select datasource,buyer_id,
+case when hour(order_time) >=0 and hour(order_time) <3 then '0'
+when hour(order_time) >=3 and  hour(order_time) <6 then '3'
+when hour(order_time) >=6 and  hour(order_time) <9 then '6'
+when hour(order_time) >=9 and  hour(order_time) <12 then '9'
+when hour(order_time) >=12 and hour(order_time) <15 then '12'
+when hour(order_time) >=15 and hour(order_time) <18 then '15'
+when hour(order_time) >=18 and hour(order_time) <21 then '18'
+when hour(order_time) >=21 and hour(order_time) <24 then '21'
+end as tag_id from dwd.dwd_vova_fact_pay where to_date(order_time)='$pre_date'
+) t group by datasource,buyer_id,tag_id,'active_day',null) t
 union all
 select datasource,buyer_id,cast(tag_id as string) goods_id,tag_name goods_name,cnt,null first_cat_id,act_type_id from tmp.tmp_vova_fact_buyer_portrait_base_act_w
 union all

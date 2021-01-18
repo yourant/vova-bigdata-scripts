@@ -4,7 +4,7 @@ hadoop fs -mkdir s3://bigdata-offline/warehouse/dwd/dwd_vova_fact_shield_goods
 sql="
 drop table if exists tmp.tmp_vova_fact_shield_goods_01;
 create table tmp.tmp_vova_fact_shield_goods_01  STORED AS PARQUETFILE as
-select
+select /*+ REPARTITION(20) */
     key_id goods_id,
     region_id,
     merchant_id mct_id,
@@ -26,7 +26,7 @@ where key_type = 'merchant'
 ;
 
 insert overwrite table dwd.dwd_vova_fact_shield_goods
-select
+select /*+ REPARTITION(200) */
 goods_id,
 region_id,
 mct_id,
@@ -55,6 +55,7 @@ spark-sql \
 --conf "spark.sql.inMemoryColumnarStorage.partitionPruning=true" \
 --conf "spark.sql.inMemoryColumnarStorage.batchSize=100000" \
 --conf "spark.network.timeout=300" \
+--conf "spark.sql.autoBroadcastJoinThreshold=31457280" \
 -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then

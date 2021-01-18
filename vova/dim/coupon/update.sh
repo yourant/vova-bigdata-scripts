@@ -9,7 +9,7 @@ fi
 hadoop fs -mkdir s3://bigdata-offline/warehouse/dim/dim_vova_coupon
 sql="
 insert overwrite table dim.dim_vova_coupon
-select
+select /*+ REPARTITION(100) */
        byr.datasource,
        oc.coupon_id                   as cpn_id,
        oc.coupon_code                 as cpn_code,

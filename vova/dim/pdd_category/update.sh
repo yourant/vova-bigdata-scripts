@@ -9,7 +9,7 @@ hadoop fs -mkdir s3://bigdata-offline/warehouse/dim/dim_vova_trigram_nuwa_pdd_ca
 ### 2.定义执行HQL
 sql="
 INSERT OVERWRITE TABLE dim.dim_vova_trigram_nuwa_pdd_category
-SELECT
+SELECT /*+ REPARTITION(1) */
 c.category_id,
 c.category_name,
 c.category_level,
