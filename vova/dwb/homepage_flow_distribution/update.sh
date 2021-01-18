@@ -66,10 +66,10 @@ with t1 as(
   dim.dim_vova_devices dd
   on fli.datasource = dd.datasource and fli.device_id = dd.device_id
   where fli.pt= '${cur_date}' and fli.os_type in ('android','ios') and fli.datasource ='vova'
-    and fli.page_code = 'homepage'
+    and fli.page_code = 'homepage' and fli.element_position is not null
  ) tmp1
  group by cube(pt,region_code,platform,main_channel,is_new,element_position)
- HAVING pt != 'all' and element_position != 'NA'
+ HAVING pt != 'all'
 ),
 t2 as(
  select
@@ -126,9 +126,10 @@ t2 as(
   on flcc.datasource = dd.datasource and flcc.device_id = dd.device_id
   where flcc.pt = '${cur_date}' and flcc.os_type in ('android','ios') and flcc.datasource ='vova' and flcc.event_type ='normal'
    and (flcc.page_code = 'homepage' or (flcc.page_code = 'homepage_couponPopup' and flcc.element_name='hpCouponShopNow'))
+    and flcc.element_position is not null
  ) tmp2
  group by cube(pt,region_code,platform,main_channel,is_new,element_position)
- HAVING pt != 'all' and element_position != 'NA'
+ HAVING pt != 'all'
 ),
 t3 as(
  select
@@ -168,9 +169,10 @@ t3 as(
   where flgi.pt = '${cur_date}' and flgi.os_type in ('android','ios') and flgi.datasource ='vova'
    and flgi.page_code='homepage'
    and flgi.list_type in ('/new_user_7day','/flash_sale_hp_entrance','/recentlyViewed_hp_entrance')
+   and flgi.absolute_position is not null
  ) tmp3
  group by cube(pt,region_code,platform,main_channel,is_new,element_position)
- HAVING pt != 'all' and element_position != 'NA'
+ HAVING pt != 'all'
 ),
 t4 as(
  select
@@ -209,9 +211,10 @@ t4 as(
   where flgc.pt = '${cur_date}' and flgc.os_type in ('android','ios') and flgc.datasource ='vova'
    and flgc.page_code='homepage'
    and flgc.list_type in ('/new_user_7day','/flash_sale_hp_entrance','/recentlyViewed_hp_entrance')
+   and flgc.absolute_position is not null
  ) tmp4
  group by cube(pt,region_code,platform,main_channel,is_new,element_position)
- HAVING pt != 'all' and element_position != 'NA'
+ HAVING pt != 'all'
 ),
 t5 as(
  select
@@ -244,8 +247,8 @@ t5 as(
   where flsv.pt = '${cur_date}' and flsv.os_type in ('android','ios') and flsv.datasource ='vova'
   and flsv.page_code in ('homepage_couponPopup','homepage')
  ) tmp5
- group by cube(pt,region_code,platform,main_channel,is_new,element_position)
- HAVING pt != 'all' and element_position != 'NA'
+ group by cube(pt,region_code,platform,main_channel,is_new)
+ HAVING pt != 'all'
 )
 
 INSERT OVERWRITE TABLE dwb.dwb_vova_homepage_flow_distribution PARTITION (pt='${cur_date}')
@@ -303,6 +306,7 @@ INSERT OVERWRITE TABLE dwb.dwb_vova_homepage_flow_distribution PARTITION (pt='${
  t5
  on t1.pt = t5.pt and t1.region_code = t5.region_code and t1.platform = t5.platform
   and t1.main_channel = t5.main_channel and t1.is_new = t5.is_new
+ where t1.element_position != 'NA'
 ;
 "
 #如果使用spark-sql运行，则执行spark-sql -e
