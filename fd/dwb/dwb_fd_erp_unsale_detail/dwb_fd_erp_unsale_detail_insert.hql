@@ -39,5 +39,5 @@ from (
 	from (
 	dwd.dwd_fd_erp_unsale_goods_info t0
     LEFT JOIN  dwd.dwd_fd_spring_festival_stock_up_info  t1 on t1.goods_id = t0.goods_id
-    and t0.pt='${pt}'
-) )tab1;
+)   where t0.pt='${pt}'
+)tab1;
