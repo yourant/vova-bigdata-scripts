@@ -1,4 +1,4 @@
-insert overwrite table dwd.dwd_fd_app_retention_activity partition (pt='${pt}')
+insert overwrite table dwd.dwd_fd_app_user_retention partition (pt='${pt}')
 select
  /*+ REPARTITION(1) */
 rewards_day1.project as project,

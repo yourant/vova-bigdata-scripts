@@ -1,4 +1,6 @@
+insert overwrite table dwd.dwd_fd_app_play_wheel partition (pt='${pt}')
 select
+    /*+ REPARTITION(1) */
     nvl(t2.project,t3.project) as project,
     nvl(t2.platform_type,t3.platform_type) as platform_type,
     nvl(t2.country_code,t3.country_code) as country_code,
