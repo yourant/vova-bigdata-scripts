@@ -77,4 +77,4 @@ left join (
     from dim.dim_fd_ecs_region
     where region_type = 0
 ) r ON upper(t.country_code) = upper(r.region_code)
-where t.pt_date != '0000-00-00' and t.project in('floryday','airydress');
+where t.pt_date != '0000-00-00' and t.pt_date <= '${pt}'  and t.project in('floryday','airydress');
