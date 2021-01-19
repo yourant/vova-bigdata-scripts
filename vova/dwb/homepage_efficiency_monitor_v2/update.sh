@@ -37,7 +37,19 @@ from
 -- 首页入口曝光(theme_activity)
 create table if not EXISTS tmp.tmp_entry_impre_list_type_req7445_${table_suffix} as
 select
-/*+ REPARTITION(2) */
+  /*+ REPARTITION(2) */
+  region_code,
+  platform,
+  app_version,
+  is_new,
+  module_name,
+  element_position,
+  element_name,
+  entry_impre_uv,
+  entry_impre_pv
+from
+(
+select
   nvl(region_code, 'all')       region_code,
   nvl(platform, 'all')          platform,
   nvl(app_version, 'all')       app_version,
@@ -94,13 +106,26 @@ group by cube(region_code
   ,element_position
   ,element_name)
 having module_name != 'all'
-  and app_version in (select app_version from tmp.tmp_app_version_req7445_${table_suffix})
+)
+where app_version in (select app_version from tmp.tmp_app_version_req7445_${table_suffix})
 ;
 
 -- 入口曝光(非theme_activity)
 create table if not EXISTS tmp.tmp_entry_impre_element_name_req7445_${table_suffix} as
 select
-/*+ REPARTITION(2) */
+  /*+ REPARTITION(2) */
+  region_code,
+  platform,
+  app_version,
+  is_new,
+  module_name,
+  element_position,
+  element_name,
+  entry_impre_uv,
+  entry_impre_pv
+from
+(
+select
   nvl(region_code, 'all')       region_code,
   nvl(platform, 'all')          platform,
   nvl(app_version, 'all')       app_version,
@@ -146,15 +171,28 @@ group by cube(region_code
   ,is_new
   ,element_name)
 having module_name != 'all'
-  and app_version in (select app_version from tmp.tmp_app_version_req7445_${table_suffix})
+)
+where app_version in (select app_version from tmp.tmp_app_version_req7445_${table_suffix})
 ;
 
 -- 入口点击(theme_activity)
 create table if not EXISTS tmp.tmp_entry_click_list_type_req7445_${table_suffix} as
 select
-/*+ REPARTITION(2) */
+  /*+ REPARTITION(2) */
+  region_code,
+  platform,
+  app_version,
+  is_new,
+  module_name,
+  element_position,
+  element_name,
+  entry_clk_uv,
+  entry_clk_pv
+from
+(
+select
   nvl(region_code, 'all')       region_code,
-  nvl(platform, 'all')           platform,
+  nvl(platform, 'all')          platform,
   nvl(app_version, 'all')       app_version,
   nvl(is_new, 'all')            is_new,
   nvl(module_name, 'all')       module_name,
@@ -209,15 +247,29 @@ group by cube(region_code
   ,element_position
   ,element_name)
 having module_name != 'all'
-  and app_version in (select app_version from tmp.tmp_app_version_req7445_${table_suffix})
+)
+where app_version in (select app_version from tmp.tmp_app_version_req7445_${table_suffix})
 ;
 
 -- 入口点击(非theme_activity)
 create table if not EXISTS tmp.tmp_entry_click_element_name_req7445_${table_suffix} as
 select
-/*+ REPARTITION(2) */
+  /*+ REPARTITION(2) */
+  region_code,
+  platform,
+  app_version,
+  is_new,
+  module_name,
+  element_position,
+  element_name,
+  entry_clk_uv,
+  entry_clk_pv
+from
+(
+select
+
   nvl(region_code, 'all')       region_code,
-  nvl(platform, 'all')           platform,
+  nvl(platform, 'all')          platform,
   nvl(app_version, 'all')       app_version,
   nvl(is_new, 'all')            is_new,
   nvl(element_name, 'all')      module_name,
@@ -281,18 +333,27 @@ group by cube(region_code
   ,is_new
   ,element_name)
 having module_name != 'all'
-  and app_version in (select app_version from tmp.tmp_app_version_req7445_${table_suffix})
+)
+where app_version in (select app_version from tmp.tmp_app_version_req7445_${table_suffix})
 ;
 
 -- 首页点击pv
 create table if not EXISTS tmp.tmp_homepage_clk_req7445_${table_suffix} as
 select
-/*+ REPARTITION(2) */
+  /*+ REPARTITION(2) */
+  region_code,
+  platform,
+  app_version,
+  is_new,
+  homepage_clk_pv
+from
+(
+select
   nvl(region_code, 'all') region_code,
-  nvl(platform, 'all') platform,
+  nvl(platform, 'all')    platform,
   nvl(app_version, 'all') app_version,
-  nvl(is_new, 'all') is_new,
-  count(device_id) homepage_clk_pv
+  nvl(is_new, 'all')      is_new,
+  count(device_id)        homepage_clk_pv
 from
 (
   select
@@ -322,13 +383,29 @@ group by cube(
   platform,
   app_version,
   is_new)
-having app_version in (select app_version from tmp.tmp_app_version_req7445_${table_suffix})
+)
+where app_version in (select app_version from tmp.tmp_app_version_req7445_${table_suffix})
 ;
 
 -- list_type: theme_activity 订单归因
 create table if not EXISTS tmp.tmp_theme_activity_order_cause_req7445_${table_suffix} as
 select
-/*+ REPARTITION(2) */
+  /*+ REPARTITION(2) */
+  region_code,
+  platform,
+  app_version,
+  is_new,
+  module_name,
+  element_position,
+  element_name,
+  activity_goods_number,
+  activity_gmv,
+  activity_pay_uv,
+  activity_first_pay_uv
+from
+(
+select
+
   nvl(region_code, 'all')             region_code,
   nvl(platform, 'all')                platform,
   nvl(app_version, 'all')             app_version,
@@ -434,23 +511,38 @@ group by cube(
   element_name
 )
 having module_name != 'all'
-  and app_version in (select app_version from tmp.tmp_app_version_req7445_${table_suffix})
+)
+where app_version in (select app_version from tmp.tmp_app_version_req7445_${table_suffix})
 ;
 
 -- element_name: 非theme_activity 归因
 create table if not EXISTS tmp.tmp_no_theme_activity_order_cause_req7445_${table_suffix} as
 select
-/*+ REPARTITION(2) */
-  nvl(region_code,'all')        region_code,
-  nvl(platform,'all')           platform,
-  nvl(app_version,'all')        app_version,
-  nvl(is_new,'all')             is_new,
-  nvl(element_name,'all')       module_name,
-  'all'                         element_position,
-  'all'                         element_name,
-  sum(goods_number)             activity_goods_number,
-  sum(gmv)                      activity_gmv,
-  count(distinct pay_device_id) activity_pay_uv,
+  /*+ REPARTITION(2) */
+  region_code,
+  platform,
+  app_version,
+  is_new,
+  module_name,
+  element_position,
+  element_name,
+  activity_goods_number,
+  activity_gmv,
+  activity_pay_uv,
+  activity_first_pay_uv
+from
+(
+select
+  nvl(region_code,'all')              region_code,
+  nvl(platform,'all')                 platform,
+  nvl(app_version,'all')              app_version,
+  nvl(is_new,'all')                   is_new,
+  nvl(element_name,'all')             module_name,
+  'all'                               element_position,
+  'all'                               element_name,
+  sum(goods_number)                   activity_goods_number,
+  sum(gmv)                            activity_gmv,
+  count(distinct pay_device_id)       activity_pay_uv,
   count(distinct first_pay_device_id) activity_first_pay_uv
 from
 (
@@ -509,21 +601,34 @@ group by cube(
   element_name
 )
 having module_name != 'all'
-  and app_version in (select app_version from tmp.tmp_app_version_req7445_${table_suffix})
+)
+where app_version in (select app_version from tmp.tmp_app_version_req7445_${table_suffix})
 ;
 
 -- 非theme_activity 会场 pv,uv screen_view
 create table if not exists tmp.tmp_no_theme_activity_pv_req7445_${table_suffix} as
 select
-/*+ REPARTITION(1) */
-  nvl(region_code,'all') region_code,
-  nvl(platform,'all')    platform,
-  nvl(app_version,'all') app_version,
-  nvl(is_new,'all')      is_new,
-  nvl(element_name,'all') module_name,
-  'all'                   element_position,
-  'all'                   element_name,
-  count(device_id) activity_pv,
+  /*+ REPARTITION(1) */
+  region_code,
+  platform,
+  app_version,
+  is_new,
+  module_name,
+  element_position,
+  element_name,
+  activity_pv,
+  activity_uv
+from
+(
+select
+  nvl(region_code,'all')    region_code,
+  nvl(platform,'all')       platform,
+  nvl(app_version,'all')    app_version,
+  nvl(is_new,'all')         is_new,
+  nvl(element_name,'all')   module_name,
+  'all'                     element_position,
+  'all'                     element_name,
+  count(device_id)          activity_pv,
   count(distinct device_id) activity_uv
 from
 (
@@ -566,13 +671,25 @@ group by cube(
   element_name
 )
 having module_name != 'all'
-  and app_version in (select app_version from tmp.tmp_app_version_req7445_${table_suffix})
+)
+where app_version in (select app_version from tmp.tmp_app_version_req7445_${table_suffix})
 ;
 
 -- 非theme_activity 会场 dv page_view
 create table if not exists tmp.tmp_no_theme_activity_dv_req7445_${table_suffix} as
 select
-/*+ REPARTITION(1) */
+  /*+ REPARTITION(1) */
+  region_code,
+  platform,
+  app_version,
+  is_new,
+  module_name,
+  element_position,
+  element_name,
+  activity_dv
+from
+(
+select
   nvl(region_code,'all')  region_code,
   nvl(platform,'all')     platform,
   nvl(app_version,'all')  app_version,
@@ -622,18 +739,29 @@ group by cube(
   element_name
 )
 having module_name != 'all'
-  and app_version in (select app_version from tmp.tmp_app_version_req7445_${table_suffix})
+)
+where app_version in (select app_version from tmp.tmp_app_version_req7445_${table_suffix})
 ;
 
 -- 全站销售情况
 create table if not exists tmp.tmp_vova_order_req7445_${table_suffix} as
 select
+/*+ REPARTITION(1) */
+  region_code,
+  platform,
+  app_version,
+  is_new,
+  all_station_goods_number,
+  all_station_gmv
+from
+(
+select
   nvl(region_code, 'all') region_code,
   nvl(platform, 'all')    platform,
   nvl(app_version, 'all') app_version,
   nvl(is_new, 'all')      is_new,
-  sum(goods_number) all_station_goods_number,
-  sum(gmv) all_station_gmv
+  sum(goods_number)       all_station_goods_number,
+  sum(gmv)                all_station_gmv
 from
 (
   select
@@ -669,7 +797,8 @@ group by cube(
   app_version,
   is_new
 )
-having app_version in (select app_version from tmp.tmp_app_version_req7445_${table_suffix})
+)
+where app_version in (select app_version from tmp.tmp_app_version_req7445_${table_suffix})
 ;
 
 -- 聚合
@@ -807,22 +936,23 @@ on tmp_impre.region_code = tmp_vova_order.region_code
   and tmp_impre.is_new = tmp_vova_order.is_new
 ;
 
-drop table if exists tmp.tmp_app_version_req7445_${table_suffix};
-drop table if exists tmp.tmp_entry_impre_list_type_req7445_${table_suffix};
-drop table if exists tmp.tmp_entry_impre_element_name_req7445_${table_suffix};
-drop table if exists tmp.tmp_entry_click_list_type_req7445_${table_suffix};
-drop table if exists tmp.tmp_entry_click_element_name_req7445_${table_suffix};
-drop table if exists tmp.tmp_no_theme_activity_pv_req7445_${table_suffix};
-drop table if exists tmp.tmp_no_theme_activity_dv_req7445_${table_suffix};
-drop table if exists tmp.tmp_no_theme_activity_order_cause_req7445_${table_suffix};
-drop table if exists tmp.tmp_theme_activity_order_cause_req7445_${table_suffix};
-drop table if exists tmp.tmp_homepage_clk_req7445_${table_suffix};
-drop table if exists tmp.tmp_vova_order_req7445_${table_suffix};
+
+-- drop table if exists tmp.tmp_app_version_req7445_${table_suffix};
+-- drop table if exists tmp.tmp_entry_impre_list_type_req7445_${table_suffix};
+-- drop table if exists tmp.tmp_entry_impre_element_name_req7445_${table_suffix};
+-- drop table if exists tmp.tmp_entry_click_list_type_req7445_${table_suffix};
+-- drop table if exists tmp.tmp_entry_click_element_name_req7445_${table_suffix};
+-- drop table if exists tmp.tmp_no_theme_activity_pv_req7445_${table_suffix};
+-- drop table if exists tmp.tmp_no_theme_activity_dv_req7445_${table_suffix};
+-- drop table if exists tmp.tmp_no_theme_activity_order_cause_req7445_${table_suffix};
+-- drop table if exists tmp.tmp_theme_activity_order_cause_req7445_${table_suffix};
+-- drop table if exists tmp.tmp_homepage_clk_req7445_${table_suffix};
+-- drop table if exists tmp.tmp_vova_order_req7445_${table_suffix};
 "
 
 #如果使用spark-sql运行，则执行spark-sql -e
 spark-sql \
---executor-memory 12G --executor-cores 1 \
+--executor-memory 10G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=10" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \

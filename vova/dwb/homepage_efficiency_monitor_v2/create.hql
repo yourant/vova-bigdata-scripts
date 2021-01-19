@@ -6,6 +6,10 @@ PRD：https://docs.google.com/spreadsheets/d/19tVHh9CUMUdUMXkPy9Z5GxJuAKqVPYEVc6
 打点文档：https://docs.google.com/spreadsheets/d/1swMq3nW4MxSWf0HfdpLxKyKoGLGSJtz5VT-W0ilacjs/edit#gid=891143247
 
 首页效率监控体系-V2
+需求方及需求号: 马聪, 7445
+创建时间及开发人员：2020-12-26,陈凯
+修改需求方及需求号:
+修改人及修改时间:
 
 CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_homepage_total_efficiency_v2(
   region_code              string        COMMENT '国家',
