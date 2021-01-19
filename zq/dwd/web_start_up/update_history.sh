@@ -28,13 +28,13 @@ from
        log.platform,
        log.buyer_id,
        log.geo_country                                             AS region_code,
-       row_number() OVER (PARTITION BY datasource, buyer_id, domain_userid, geo_country,platform, pt ORDER BY pt DESC, dvce_created_tstamp DESC) AS rank,
-       first_value(page_url) OVER (PARTITION BY datasource, buyer_id, domain_userid, geo_country,platform, pt ORDER BY pt, dvce_created_tstamp) AS first_page_url,
-       first_value(referrer) OVER (PARTITION BY datasource, buyer_id, domain_userid, geo_country,platform, pt ORDER BY pt, dvce_created_tstamp) AS first_referrer,
-       first_value(dvce_created_ts) OVER (PARTITION BY datasource, buyer_id, domain_userid, geo_country, platform, pt ORDER BY pt, dvce_created_tstamp) AS min_create_time,
+       row_number() OVER (PARTITION BY log.datasource, buyer_id, domain_userid, geo_country,platform, pt ORDER BY pt DESC, dvce_created_tstamp DESC) AS rank,
+       first_value(page_url) OVER (PARTITION BY log.datasource, buyer_id, domain_userid, geo_country,platform, pt ORDER BY pt, dvce_created_tstamp) AS first_page_url,
+       first_value(referrer) OVER (PARTITION BY log.datasource, buyer_id, domain_userid, geo_country,platform, pt ORDER BY pt, dvce_created_tstamp) AS first_referrer,
+       first_value(dvce_created_ts) OVER (PARTITION BY log.datasource, buyer_id, domain_userid, geo_country, platform, pt ORDER BY pt, dvce_created_tstamp) AS min_create_time,
        dvce_created_ts AS max_create_time,
        log.pt
-FROM dwd.dwd_vova_log_page_view_arc log
+FROM dwd.dwd_vova_log_page_view log
 inner join dim.dim_zq_site se on se.datasource = log.datasource
 WHERE log.pt >= '2020-08-18'
   AND log.dp = 'others'
@@ -57,7 +57,7 @@ log.datasource,
 log.domain_userid,
 log.pt,
 min(log.dvce_created_ts) as dvce_created_ts
-FROM dwd.dwd_vova_log_page_view_arc log
+FROM dwd.dwd_vova_log_page_view log
 inner join dim.dim_zq_site se on se.datasource = log.datasource
 WHERE log.pt >= '2020-08-18'
   AND log.dp = 'others'
@@ -93,7 +93,7 @@ CASE
         THEN 'facebook'
     ELSE 'unknown' END AS original_channel,
 log.dvce_created_ts
-FROM dwd.dwd_vova_log_page_view_arc log
+FROM dwd.dwd_vova_log_page_view log
 inner join dim.dim_zq_site se on se.datasource = log.datasource
 WHERE log.pt >= '2020-08-18'
   AND log.dp = 'others'
