@@ -136,6 +136,10 @@ group by oi.datasource, oi.device_id;
 "
 spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"   --conf "spark.dynamicAllocation.maxExecutors=300"   --conf "spark.dynamicAllocation.minExecutors=60" --conf "spark.dynamicAllocation.initialExecutors=100" --conf "spark.app.name=dws_devices" --conf "spark.sql.autoBroadcastJoinThreshold=10485760" -e "$sql"
 
+if [ $? -ne 0 ];then
+  exit 1
+fi
+
 echo "prepare done, start overwrite  dws.dws_vova_devices"
 sql="
 insert overwrite table dws.dws_vova_devices

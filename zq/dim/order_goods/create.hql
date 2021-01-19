@@ -2,6 +2,7 @@ DROP TABLE dim.dim_zq_order_goods;
 CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_zq_order_goods
 (
     datasource       STRING COMMENT 'datasource',
+    region_code      STRING COMMENT 'region_code',
     platform         STRING COMMENT 'platform',
     from_domain      STRING COMMENT 'oi.from_domain',
     order_id         BIGINT COMMENT 'oi.order_id',
