@@ -9,7 +9,8 @@ hadoop fs -mkdir s3://bigdata-offline/warehouse/dwd/dwd_vova_fact_comment
 ###逻辑sql
 sql="
 insert overwrite table dwd.dwd_vova_fact_comment
-SELECT 'vova'          AS datasource,
+SELECT /*+ REPARTITION(15) */
+       'vova'          AS datasource,
        vgc.comment_id,
        vgc.goods_id,
        vgc.category_id AS cat_id,

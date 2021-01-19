@@ -1,8 +1,8 @@
 #bin/sh
-table="ads_fd_income_cost_paid"
+table="dwd_fd_app_register"
 user="gaohaitao"
 
-base_path="/mnt/vova-bigdata-scripts/fd/dwb"
+base_path="/mnt/vova-bigdata-scripts/fd/dwd"
 
 if [ ! -n "$1" ]; then
   pt=$(date -d "- 1 days" +"%Y-%m-%d")
@@ -16,7 +16,6 @@ else
 fi
 echo "pt: ${pt}"
 
-
 shell_path="${base_path}/${table}"
 
 hive -f ${shell_path}/${table}_create.hql
@@ -24,6 +23,8 @@ hive -f ${shell_path}/${table}_create.hql
 spark-sql \
   --conf "spark.app.name=${table}_${user}" \
   --conf "spark.dynamicAllocation.maxExecutors=60" \
+  --conf "spark.executor.memoryOverhead=4G" \
+  --driver-memory 2g \
   -d pt="${pt}" \
   -f ${shell_path}/${table}_insert.hql
 

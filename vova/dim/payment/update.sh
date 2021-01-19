@@ -9,7 +9,7 @@ hadoop fs -mkdir s3://bigdata-offline/warehouse/dim/dim_vova_payment
 ###逻辑sql
 sql="
 INSERT OVERWRITE TABLE dim.dim_vova_payment
-select 'vova' as datasource,
+select /*+ REPARTITION(1) */ 'vova' as datasource,
     p.payment_id,
     p.payment_code,
     p.payment_name,

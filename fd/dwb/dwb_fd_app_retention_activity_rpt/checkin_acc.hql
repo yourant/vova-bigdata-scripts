@@ -1,4 +1,4 @@
-insert overwrite table dwd.dwd_fd_app_retention_activity partition (pt='${pt}',classify='checkin_acc')
+insert into table dwd.dwd_fd_app_retention_activity partition (pt='${pt}')
 select
 /*+ REPARTITION(1) */
 t2.project as project,

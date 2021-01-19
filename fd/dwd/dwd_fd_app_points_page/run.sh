@@ -1,8 +1,8 @@
 #bin/sh
-table="ads_fd_income_cost"
+table="dwd_fd_app_points_page"
 user="gaohaitao"
 
-base_path="/mnt/vova-bigdata-scripts/fd/dwb"
+base_path="/mnt/vova-bigdata-scripts/fd/dwd"
 
 if [ ! -n "$1" ]; then
   pt=$(date -d "- 1 days" +"%Y-%m-%d")
@@ -15,7 +15,6 @@ else
   pt=$1
 fi
 echo "pt: ${pt}"
-
 
 shell_path="${base_path}/${table}"
 
