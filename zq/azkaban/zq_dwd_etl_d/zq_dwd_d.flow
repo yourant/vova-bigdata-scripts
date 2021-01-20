@@ -75,8 +75,8 @@ nodes:
       - judge_zq_goods_gallery
       - judge_gvg_goods_info_relation
       - judge_gpt_product_map
-      - judge_dim_zq_category
-      - judge_dim_zq_site
+      - dim_zq_category
+      - dim_zq_site
 
   - name: judge_zq_goods
     type: command
@@ -143,7 +143,6 @@ nodes:
       - judge_zq_order_goods
       - judge_zq_virtual_goods
       - judge_zq_order_extension
-#      - judge_zq_region
 
   - name: judge_zq_order_info
     type: command
@@ -226,9 +225,9 @@ nodes:
     dependsOn:
       - judge_dwd_vova_log_goods_click
       - judge_dwd_vova_log_goods_impression
-      - judge_fn_order_info
-      - judge_fn_order_goods
-      - judge_fn_virtual_goods
+      - judge_zq_order_info
+      - judge_zq_order_goods
+      - judge_zq_virtual_goods
 
   - name: judge_dwd_vova_log_goods_click
     type: command
