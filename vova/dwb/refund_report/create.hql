@@ -1,4 +1,8 @@
 退款率报表
+需求方及需求号：
+创建时间及开发人员：郑智宇
+修改需求方及需求号：,7379
+修改人及修改时间：陈凯, 2021/01/15
 
 drop table dwb.dwb_vova_refund_report_detail;
 CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_refund_report_detail
