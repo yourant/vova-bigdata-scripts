@@ -206,6 +206,7 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_dwd_vova_log_goods_page_view
+      - dim_zq_site
 
   - name: judge_dwd_vova_log_goods_page_view
     type: command
@@ -228,6 +229,7 @@ nodes:
       - judge_zq_order_info
       - judge_zq_order_goods
       - judge_zq_virtual_goods
+      - dim_zq_site
 
   - name: judge_dwd_vova_log_goods_click
     type: command
@@ -257,6 +259,7 @@ nodes:
       - judge_dwd_vova_log_goods_click
       - judge_dwd_vova_log_goods_impression
       - judge_dwd_vova_log_common_click
+      - dim_zq_site
 
   - name: judge_dwd_vova_log_common_click
     type: command
