@@ -1,0 +1,29 @@
+---
+config:
+  failure.emails: htgao@i9i8.com
+  retries: 15
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_dmc_flow_start
+    type: noop
+
+  - name: ods_dmc_goods_project
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=dmc --etl_type=ALL --table_name=dmc_goods_project --mapers=2 --partition_num=1 --period_type=day
+    dependsOn:
+        - fd_dmc_flow_start
+
+  - name: ods_dmc_goods
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=dmc --etl_type=ALL --table_name=dmc_goods --mapers=2 --partition_num=1 --period_type=day
+    dependsOn:
+        - fd_dmc_flow_start
+    
+  - name: fd_dmc_flow_end
+    type: noop
+    dependsOn:
+        - ods_dmc_goods
+        - ods_dmc_goods_project
