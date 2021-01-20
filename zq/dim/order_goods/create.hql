@@ -7,6 +7,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_zq_order_goods
     from_domain      STRING COMMENT 'oi.from_domain',
     order_id         BIGINT COMMENT 'oi.order_id',
     pay_time         timestamp COMMENT 'oi.pay_time',
+    pay_status       BIGINT COMMENT 'oi.pay_status',
     order_time       timestamp COMMENT 'oi.order_time',
     order_goods_id   BIGINT COMMENT 'og.rec_id',
     goods_id         BIGINT COMMENT 'og.goods_id',
