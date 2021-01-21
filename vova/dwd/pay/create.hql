@@ -1,3 +1,4 @@
+ALTER TABLE dwd.dwd_vova_fact_pay SET TBLPROPERTIES('EXTERNAL'='False')
 drop table dwd.dwd_vova_fact_pay;
 CREATE EXTERNAL TABLE IF NOT EXISTS dwd.dwd_vova_fact_pay
 (
@@ -16,9 +17,12 @@ CREATE EXTERNAL TABLE IF NOT EXISTS dwd.dwd_vova_fact_pay
     goods_id         bigint comment '商品ID',
     goods_sn         string comment '商品SN',
     goods_name       string comment '商品名称',
-    cat_id           bigint comment '类目ID',
-    first_cat_name   string comment '商品一级类目',
-    second_cat_name  string comment '商品二级类目',
+    cat_id           BIGINT COMMENT '商品类目ID',
+    cat_name         string COMMENT '商品类目name',
+    first_cat_id     BIGINT COMMENT '商品一级类目ID',
+    first_cat_name   string COMMENT '商品一级类目name',
+    second_cat_id    BIGINT COMMENT '商品二级类目ID',
+    second_cat_name  string COMMENT '商品二级类目name',
     order_time       timestamp comment '下单时间',
     confirm_time     timestamp comment '子订单确认时间',
     pay_time         timestamp comment '支付时间',

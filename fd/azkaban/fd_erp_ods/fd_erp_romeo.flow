@@ -1,0 +1,94 @@
+---
+config:
+  failure.emails: htgao@i9i8.com
+  retries: 15
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_romeo_flow_start
+    type: noop
+
+  - name: ods_currency_conversion
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=currency_conversion --mapers=2 --partition_num=1 --period_type=day
+    dependsOn:
+        - fd_romeo_flow_start
+
+  - name: ods_order_inv_reserved_detail
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=INCTIME --inc_column=reserved_time --table_name=order_inv_reserved_detail  --partition_num=1 --period_type=day
+    dependsOn:
+        - fd_romeo_flow_start
+
+  - name: ods_order_inv_reserved
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=order_inv_reserved  --partition_num=2 --period_type=day
+    dependsOn:
+        - fd_romeo_flow_start
+
+  - name: ods_order_inv_reserverd_inventory_mapping
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=INCID --inc_column=id --table_name=order_inv_reserverd_inventory_mapping  --partition_num=1 --period_type=day
+    dependsOn:
+        - fd_romeo_flow_start
+  
+  - name: ods_inventory_item
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=INCTIME --inc_column=last_updated_stamp --table_name=inventory_item  --partition_num=1 --period_type=day
+    dependsOn:
+        - fd_romeo_flow_start
+
+  - name: ods_refund
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=INCTIME --inc_column=last_update_stamp --table_name=refund  --partition_num=1 --period_type=day
+    dependsOn:
+        - fd_romeo_flow_start
+
+  - name: ods_goods_purchase_price
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=goods_purchase_price --mapers=2 --partition_num=1 --period_type=day
+    dependsOn:
+        - fd_romeo_flow_start
+
+  - name: ods_party
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=party --mapers=2 --partition_num=1 --period_type=day
+    dependsOn:
+        - fd_romeo_flow_start
+
+  - name: ods_party_config
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=party_config --mapers=2 --partition_num=1 --period_type=day
+    dependsOn:
+        - fd_romeo_flow_start
+
+  - name: ods_inventory_summary
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=inventory_summary --mapers=2 --partition_num=1 --period_type=day
+    dependsOn:
+        - fd_romeo_flow_start
+
+  - name: fd_romeo_inc_flow_end
+    type: noop
+    dependsOn:
+        - ods_currency_conversion
+        - ods_order_inv_reserved_detail
+        - ods_order_inv_reserved
+        - ods_order_inv_reserverd_inventory_mapping
+        - ods_inventory_item
+        - ods_refund
+        - ods_goods_purchase_price
+        - ods_party
+        - ods_party_config
+        - ods_inventory_summary
+

@@ -35,6 +35,9 @@ spark-submit \
 --conf spark.sql.shuffle.partitions=380 \
 --conf spark.app.name=FDSessionGAChannel \
 --class com.fd.bigdata.sparkbatch.log.jobs.SessionGAChannel \
-s3://vomkt-emr-rec/jar/warehouse/fd/ga_channel_1.1.jar
+s3://vomkt-emr-rec/jar/warehouse/fd/snowplow_offline_1.6.jar
+if [ $? -ne 0 ]; then
+  exit 1
+fi
 
 echo "step2: insert data finished !"
