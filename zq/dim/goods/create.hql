@@ -1,5 +1,5 @@
 drop table dim.dim_zq_goods;
-CREATE TABLE IF NOT EXISTS dim.dim_zq_goods
+CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_zq_goods
 (
     goods_id         bigint,
     virtual_goods_id bigint,

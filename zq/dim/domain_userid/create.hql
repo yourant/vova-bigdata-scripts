@@ -1,5 +1,5 @@
 DROP TABLE dim.dim_zq_domain_userid;
-CREATE TABLE IF NOT EXISTS dim.dim_zq_domain_userid
+CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_zq_domain_userid
 (
     datasource  string COMMENT 'datasource',
     domain_userid  string COMMENT 'domain_userid',

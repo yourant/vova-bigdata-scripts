@@ -1,6 +1,6 @@
 --商品维度汇总表
 drop table if exists dws.dws_vova_goods_1d;
-create table if  not exists  dws.dws_vova_goods_1d (
+create EXTERNAL table if  not exists  dws.dws_vova_goods_1d (
     `datasource`                  string COMMENT 'd_来源',
     `ctry`                        string COMMENT 'd_国家',
     `os_type`                     string COMMENT 'd_系统类型,ios|android',

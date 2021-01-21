@@ -1,5 +1,5 @@
 DROP TABLE dim.dim_zq_site;
-CREATE TABLE IF NOT EXISTS dim.dim_zq_site
+CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_zq_site
 (
     datasource     string,
     domain_group   string

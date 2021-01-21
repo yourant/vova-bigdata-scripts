@@ -8,7 +8,8 @@ fi
 ###逻辑sql
 sql="
 INSERT OVERWRITE TABLE dim.dim_zq_domain_userid
-SELECT t1.datasource,
+SELECT /*+ REPARTITION(5) */
+       t1.datasource,
        t1.domain_userid,
        t1.platform,
        t1.activate_time,

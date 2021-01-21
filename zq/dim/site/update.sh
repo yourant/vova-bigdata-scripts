@@ -10,6 +10,7 @@ fi
 sql="
 INSERT OVERWRITE TABLE dim.dim_zq_site
 SELECT
+/*+ REPARTITION(1) */
 project_name as datasource,
 domain_group
 from
