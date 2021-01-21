@@ -18,7 +18,7 @@ job_name="dwb_vova_airyclub_daily_ratio_req4999_chenkai_${cur_date}"
 ###逻辑sql
 sql="
 INSERT OVERWRITE TABLE dwb.dwb_vova_airyclub_daily_ratio PARTITION (pt = '${cur_date}')
-select
+select /*+ REPARTITION(1) */
   t1.total_gmv total_gmv,
   t2.total_cost total_cost,
   if(t1.total_gmv=0 or round(t2.total_cost/t1.total_gmv, 4)>5, 5, round(t2.total_cost/t1.total_gmv, 4)) total_ratio,
@@ -66,7 +66,7 @@ on t1.pt = t2.pt
 ;
 
 INSERT OVERWRITE TABLE dwb.dwb_vova_fb_ads_ctr PARTITION (pt = '${cur_date}')
-select
+select /*+ REPARTITION(1) */
 t3.campaignCountry campaign_contry,
 t3.campaignChannel campaign_device,
 t1.ad_name ad_name,

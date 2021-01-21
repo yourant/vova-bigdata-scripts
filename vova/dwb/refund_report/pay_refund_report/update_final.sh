@@ -15,7 +15,8 @@ sql="
 set hive.exec.dynamic.partition=true;
 set hive.exec.dynamic.partition.mode=nonstrict;
 insert overwrite table dwb.dwb_vova_pay_refund_report PARTITION (pt)
-SELECT pay_order.action_date,
+SELECT /*+ REPARTITION(1) */
+       pay_order.action_date,
        pay_order.region_code,
        'all' AS activity,
        pay_order.platform,

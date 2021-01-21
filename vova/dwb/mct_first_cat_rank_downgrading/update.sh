@@ -19,6 +19,7 @@ job_name="dwb_vova_mct_first_cat_rank_downgrading_req_chenkai_${cur_date}"
 sql="
 insert overwrite table dwb.dwb_vova_mct_first_cat_rank_downgrading PARTITION (pt='${cur_date}')
 select
+/*+ REPARTITION(1) */
   'vova' datasource,
   regexp_replace(dm.spsor_name,'\'',' ') spsor_name,
   today.mct_id mct_id,

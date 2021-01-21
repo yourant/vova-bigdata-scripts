@@ -154,6 +154,7 @@ create table if not EXISTS tmp.tmp_delivered_order_detail_${table_suffix} as
 -- t1 首单返券活动日常报表
 insert overwrite table dwb.dwb_vova_first_order_coupon PARTITION (pt = '${cur_date}')
  select
+ /*+ REPARTITION(1) */
  nvl(tmp_order.is_new, 'all') is_new,
  tmp_order.region_code region_code,
  nvl(tmp_order.platform, 'all') platform,
@@ -221,6 +222,7 @@ insert overwrite table dwb.dwb_vova_first_order_coupon PARTITION (pt = '${cur_da
 -- 活动订单明细
 insert overwrite table dwb.dwb_vova_first_order_detail PARTITION (pt = '${cur_date}')
  select
+ /*+ REPARTITION(1) */
  nvl(nvl(tmp_pay.is_new,tmp_refund.is_new), tmp_delivered.is_new) is_new,
  'TW',
  nvl(nvl(tmp_pay.platform,tmp_refund.platform), tmp_delivered.platform) platform,
@@ -317,6 +319,7 @@ insert overwrite table dwb.dwb_vova_first_order_detail PARTITION (pt = '${cur_da
 -- 用户核销情况
 insert overwrite table dwb.dwb_vova_buyer_coupon_use PARTITION (pt = '${cur_date}')
  select
+ /*+ REPARTITION(1) */
  nvl(tmp1.is_new, 'all') is_new,
  nvl(tmp1.region_code, 'all') region_code,
  nvl(tmp1.platform,'all') platform,
@@ -371,6 +374,7 @@ insert overwrite table dwb.dwb_vova_buyer_coupon_use PARTITION (pt = '${cur_date
 -- 优惠券核销情况
 insert overwrite table dwb.dwb_vova_coupon_use PARTITION (pt = '${cur_date}')
  select
+ /*+ REPARTITION(1) */
  nvl(tmp_dd.is_new, 'all') is_new,
  nvl(tmp_dog.region_code,'all') region_code,
  nvl(tmp_dog.platform,'all') platform,

@@ -14,6 +14,7 @@ sql="
 REFRESH table dwb.dwb_vova_refund_report_detail;
 insert overwrite table dwb.dwb_vova_refund_report  PARTITION (pt='${cur_date}')
 SELECT
+/*+ REPARTITION(1) */
        nvl(final.action_date, 'all')           AS action_date,
        nvl(final.region_code, 'all')           AS region_code,
        'all' as activity,

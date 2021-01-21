@@ -119,7 +119,7 @@ WHERE date(tnew.order_time) <= '${cur_date}'
 )
 
 insert OVERWRITE TABLE dwb.dwb_vova_finance_self_mct_summary PARTITION (pt)
-select
+select /*+ REPARTITION(1) */
     t3.datasource,
     t3.mct_name,
     nvl(t3.confirm_ord_gs_cnt, 0) confirm_ord_gs_cnt,

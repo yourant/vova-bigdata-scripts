@@ -69,6 +69,7 @@ create table if not exists tmp.tmp_brand_word_${table_suffix} as
 
 insert overwrite table dwb.dwb_vova_search_no_result_frequent_word PARTITION (pt = '${cur_date}')
 select
+/*+ REPARTITION(1) */
   datasource,
   region_code,
   search_word,
@@ -132,6 +133,7 @@ from
 
 insert overwrite table dwb.dwb_vova_search_no_result PARTITION (pt = '${cur_date}')
 select
+/*+ REPARTITION(1) */
 nvl(datasource, 'all') datasource,
 nvl(region_code, 'all') region_code,
 nvl(platform, 'all') platform,

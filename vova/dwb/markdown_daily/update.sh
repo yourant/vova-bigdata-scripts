@@ -333,7 +333,7 @@ job3_name="rpt_markdown_goods_sales_req5319_chenkai_${cur_date}"
 ###逻辑sql
 sql3="
 insert OVERWRITE TABLE dwb.dwb_vova_markdown_goods_sales PARTITION (pt='${cur_date}')
-select
+select /*+ REPARTITION(1) */
   t1.datasource,
   'all' region_code,
   'all' platform,

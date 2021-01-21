@@ -176,7 +176,8 @@ group by cube (nvl(dg.first_cat_name,'NA'), nvl(dg.second_cat_name,'NA'), nvl(dg
 )
 
 INSERT OVERWRITE TABLE dwb.dwb_vova_goods_gcr_gmv_report PARTITION (pt = '${cur_date}')
-SELECT '${cur_date}'                                                                  event_date,
+SELECT /*+ REPARTITION(1) */
+      '${cur_date}' event_date,
        t1.datasource,
        t1.region_code,
        t1.first_cat_name,

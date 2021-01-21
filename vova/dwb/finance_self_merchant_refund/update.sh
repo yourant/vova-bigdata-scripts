@@ -119,7 +119,7 @@ GROUP BY date(dog.confirm_time),dm.mct_name
 ;
 
 INSERT OVERWRITE TABLE dwb.dwb_vova_finance_self_merchant_refund_detail PARTITION (pt)
-select
+select /*+ REPARTITION(1) */
 date(dog.confirm_time) as event_date,
 dm.mct_name,
 rt.refund_type,

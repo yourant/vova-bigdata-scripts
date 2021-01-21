@@ -13,7 +13,8 @@ job_name="dwb_vova_devices_tag_req_chenkai_${cur_date}"
 #优惠券使用
 sql="
 insert overwrite table dwb.dwb_vova_devices_tag PARTITION (pt = '${cur_date}')
-select datasource                  as datasource,
+select /*+ REPARTITION(1) */
+       datasource                  as datasource,
        event_date                  as event_date,
        region_code                 as region_code,
        main_channel                as main_channel,

@@ -71,7 +71,7 @@ with tmp_ac_daily as(
 )
 
 insert overwrite table dwb.dwb_vova_ac_order_daily PARTITION (pt)
-select
+select /*+ REPARTITION(1) */
 t1.datasource,
 t1.region_code,
 t1.main_channel,
