@@ -8,7 +8,7 @@ fi
 hadoop fs -mkdir s3://bigdata-offline/warehouse/dwd/dwd_vova_fact_buyer_device_releation
 sql="
 insert overwrite table dwd.dwd_vova_fact_buyer_device_releation PARTITION (pt = '${cur_date}')
-select
+select /*+ REPARTITION(200) */
 buyer_id,
 datasource,
 device_id,

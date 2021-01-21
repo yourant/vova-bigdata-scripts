@@ -47,8 +47,14 @@ if [ $? -ne 0 ];then
 fi
 echo "step1: pdb_${table_name} table is finished !"
 
+spark-sql \
+  --conf "spark.app.name=fd_${table_name}_inc_gaohaitao" \
+  --conf "spark.dynamicAllocation.maxExecutors=60" \
+  -d pt=$pt \
+  -f ${shell_path}/${table_name}_binlog_inc.hql
+
 #inc表
-hive -hiveconf pt=$pt -hiveconf mapred.job.name=fd_${table_name}_binlog_gaohaitao -f ${shell_path}/${table_name}_binlog_inc.hql
+#hive -hiveconf pt=$pt -hiveconf mapred.job.name=fd_${table_name}_binlog_gaohaitao -f ${shell_path}/${table_name}_binlog_inc.hql
 
 if [ $? -ne 0 ];then
   exit 1

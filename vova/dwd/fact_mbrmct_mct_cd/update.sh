@@ -12,7 +12,7 @@ sql="
 ALTER TABLE dwd.dwd_vova_fact_mbrmct_mct_cd DROP IF EXISTS PARTITION (pt='$pre_date');
 --md5
 insert into table dwd.dwd_vova_fact_mbrmct_mct_cd partition(pt='$pre_date')
-select t1.datasource,t1.mct_id,t1.id,t1.start_dt,t1.end_dt,0,t2.cnt_td,-1,t1.act_type from
+select /*+ REPARTITION(100) */ t1.datasource,t1.mct_id,t1.id,t1.start_dt,t1.end_dt,0,t2.cnt_td,-1,t1.act_type from
 (
 select distinct
 'vova' datasource,

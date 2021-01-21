@@ -26,7 +26,11 @@ spark-submit \
   --conf spark.yarn.appMasterEnv.start=$saprk_pt \
   --conf spark.app.name=FDSnowplowOffline \
   --class com.fd.bigdata.sparkbatch.log.jobs.SnowplowOffline \
-  s3://vomkt-emr-rec/jar/warehouse/fd/snowplow_offline_1.4.jar
+  s3://vomkt-emr-rec/jar/warehouse/fd/snowplow_offline_1.5.jar
+
+if [ $? -ne 0 ]; then
+  exit 1
+fi
 
 echo "spark finished"
 

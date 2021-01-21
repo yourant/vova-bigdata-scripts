@@ -8,7 +8,8 @@ fi
 hadoop fs -mkdir s3://bigdata-offline/warehouse/dwd/dwd_vova_fact_luk_act
 sql="
 insert overwrite table dwd.dwd_vova_fact_luk_act
-select 'vova'                       as datasource,
+select /*+ REPARTITION(1) */
+       'vova'                       as datasource,
        la.activity_id               as act_id,
        la.activity_config_id        as act_cfg_id,
        la.start_time                as start_time,
@@ -32,7 +33,8 @@ from ods_vova_vts.ods_vova_luckystar_activity la
          inner join ods_vova_vts.ods_vova_luckystar_activity_group_config lagc on lagc.activity_group_config_id = lac.activity_group_config_id;
 
 insert overwrite table dwd.dwd_vova_fact_luk_grp_act
-select 'vova'                  as datasource,
+select /*+ REPARTITION(2) */
+       'vova'                  as datasource,
        lg.activity_id          as act_id,
        lg.group_id             as grp_id,
        lg.group_status         as grp_sts,

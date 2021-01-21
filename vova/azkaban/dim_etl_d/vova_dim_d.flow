@@ -394,7 +394,7 @@ nodes:
       - judge_vova_languages
       - judge_vova_refund_reason
       - judge_vova_order_info
-      - judge_vova_fact_start_up
+      - judge_dwd_vova_fact_start_up
     condition: all_success
 
   - name: judge_vova_users
@@ -451,10 +451,10 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: judge_vova_fact_start_up
+  - name: judge_dwd_vova_fact_start_up
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_start_up
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_start_up
       retries: 10
       retry.backoff: 300000
     dependsOn:
@@ -471,7 +471,7 @@ nodes:
       - judge_vova_order_info
       - judge_vova_order_relation
       - judge_vova_channel_mapping
-      - judge_vova_fact_start_up
+      - judge_dwd_vova_fact_start_up
     condition: all_success
 
   - name: judge_vova_appsflyer_record

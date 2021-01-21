@@ -9,7 +9,7 @@ hadoop fs -mkdir s3://bigdata-offline/warehouse/dim/dim_vova_merchant
 ###逻辑sql
 sql="
 insert overwrite table dim.dim_vova_merchant
-select 'vova' as datasource,
+select /*+ REPARTITION(1) */ 'vova' as datasource,
        m.merchant_id AS mct_id,
        m.create_time AS reg_time,
        m.merchant_sn AS mct_sn,

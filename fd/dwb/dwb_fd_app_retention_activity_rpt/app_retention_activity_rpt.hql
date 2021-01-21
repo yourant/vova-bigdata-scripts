@@ -1,6 +1,6 @@
 insert overwrite table dwb.dwb_fd_app_retention_activity_rpt partition (pt='${pt}')
 select
-/*+ REPARTITION(1) */
+/*+ REPARTITION(10) */
 nvl(project,'all') as project,
 nvl(platform_type,'all') as platform_type,
 nvl(country_code,'all') as country_code,

@@ -1,0 +1,57 @@
+---
+config:
+    failure.emails: htgao@i9i8.com
+    retries: 15
+    retry.backoff: 300000
+
+nodes:
+  - name: fd_ecshop_inc_flow_start
+    type: noop
+
+  - name: ods_fd_ecs_order_goods_inc
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop/inc_run.sh ecs_order_goods ${pt}
+    dependsOn:
+        - fd_ecshop_inc_flow_start
+
+  - name: ods_fd_ecs_order_goods_arc
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop/ecs_order_goods/arc_run.sh ecs_order_goods ${pt}
+    dependsOn:
+        - ods_fd_ecs_order_goods_inc
+
+  - name: ods_fd_ecs_order_goods
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop/ecs_order_goods/spt_run.sh ecs_order_goods ${pt}
+    dependsOn:
+        - ods_fd_ecs_order_goods_arc
+
+  - name: ods_fd_ecs_order_info_inc
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop/inc_run.sh ecs_order_info ${pt}
+    dependsOn:
+        - fd_ecshop_inc_flow_start
+
+  - name: ods_fd_ecs_order_info_arc
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop/ecs_order_info/arc_run.sh ecs_order_info ${pt}
+    dependsOn:
+        - ods_fd_ecs_order_info_inc
+
+  - name: ods_fd_ecs_order_info
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop/ecs_order_info/spt_run.sh ecs_order_info ${pt}
+    dependsOn:
+        - ods_fd_ecs_order_info_arc
+
+  - name: fd_ecshop_inc_flow_end
+    type: noop
+    dependsOn:
+        - ods_fd_ecs_order_info
+        - ods_fd_ecs_order_goods
