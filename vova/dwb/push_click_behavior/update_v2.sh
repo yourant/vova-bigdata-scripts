@@ -1,4 +1,6 @@
 #!/bin/bash
+echo "start_time:"  `date +"%Y-%m-%d %H:%M:%S" -d "8 hour"`
+
 #指定日期和引擎
 cur_date=$1
 #默认日期为昨天
@@ -913,6 +915,7 @@ spark-sql \
 if [ $? -ne 0 ];then
   exit 1
 fi
+echo "${job_name} end_time:"  `date +"%Y-%m-%d %H:%M:%S" -d "8 hour"`
 
 
 
