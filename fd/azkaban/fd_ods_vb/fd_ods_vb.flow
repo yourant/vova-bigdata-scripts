@@ -23,6 +23,13 @@ nodes:
         dependsOn:
           - fd_ods_goods_flow_start
 
+      - name: ods_fd_vb_goods_project_extension
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods_project_extension --partition_num=2 --period_type=day
+        dependsOn:
+          - fd_ods_goods_flow_start
+
       - name: ods_fd_vb_virtual_goods
         type: command
         config:
@@ -47,7 +54,7 @@ nodes:
       - name: ods_fd_vb_goods_display_order_artemis_country
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCTIME --inc_column=last_update_time --table_name=goods_display_order_artemis_country  --partition_num=2  --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCTIME --inc_column=last_update_time --table_name=goods_display_order_artemis_country  --partition_num=6 --executor_memory=8G  --period_type=day
         dependsOn:
           - fd_ods_goods_flow_start
 
@@ -183,13 +190,6 @@ nodes:
       - name: fd_ods_app_flow_start
         type: noop
 
-      - name: ods_fd_vb_app_message_push
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCTIME --inc_column=push_time --table_name=app_message_push --mapers=8 --partition_num=4  --period_type=day
-        dependsOn:
-          - fd_ods_app_flow_start
-
       - name: ods_fd_vb_app_event_log_message_push
         type: command
         config:
@@ -253,14 +253,7 @@ nodes:
       - name: ods_fd_ar_ads_adgroup_daily_flat_report
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=INCTIME --inc_column=date --table_name=ads_adgroup_daily_flat_report  --partition_num=1 --period_type=day
-        dependsOn:
-          - fd_ods_order_flow_start
-
-      - name: ods_fd_ar_feed_shopping_performance_report
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=INCTIME --inc_column=last_update_time --table_name=feed_shopping_performance_report  --partition_num=1 --period_type=day
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=ALL --table_name=ads_adgroup_daily_flat_report  --partition_num=5 --period_type=day
         dependsOn:
           - fd_ods_order_flow_start
 

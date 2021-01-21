@@ -10,7 +10,7 @@ sql="
 drop table if exists tmp.dwd_zq_fact_cart_cause_glk_cause;
 create table tmp.dwd_zq_fact_cart_cause_glk_cause as
 select /*+ REPARTITION(5) */
-       datasource,
+       t2.datasource,
        event_name,
        virtual_goods_id,
        domain_userid,
@@ -51,7 +51,7 @@ from (
                 platform,
                 country
          from (
-                  select datasource,
+                  select log.datasource,
                          dvce_created_tstamp,
                          event_name,
                          virtual_goods_id,
@@ -66,13 +66,14 @@ from (
                          element_type,
                          app_version,
                          test_info,recall_pool
-                  from dwd.fact_log_goods_click
-                  where pt = '$cur_date'
-                    and platform in('pc','web')
-                    and datasource NOT IN ('vova', 'airyclub')
-                  and page_code not in ('my_order','my_favorites','recently_View','recently_view')
+                  from dwd.dwd_vova_log_goods_click log
+                    inner join dim.dim_zq_site ds on ds.datasource = log.datasource
+                  where log.pt = '$cur_date'
+                    and log.platform in('pc','web')
+                    and log.dp = 'others'
+                    and log.page_code not in ('my_order','my_favorites','recently_View','recently_view')
                   union all
-                  select datasource,
+                  select log.datasource,
                          dvce_created_tstamp,
                          event_name,
                          cast(element_id as bigint) virtual_goods_id,
@@ -88,12 +89,13 @@ from (
                          null                       app_version,
                          null                       test_info,
                          null                       recall_pool
-                  from dwd.fact_log_data
-                  where pt = '$cur_date'
-                    and element_name in ('AddToCartSuccess')
-                    and page_code in ('product_detail')
-                    and platform in('pc','web')
-                    and datasource NOT IN ('vova', 'airyclub')
+                  from dwd.dwd_vova_log_data log
+                    inner join dim.dim_zq_site ds on ds.datasource = log.datasource
+                  where log.pt = '$cur_date'
+                    and log.platform in('pc','web')
+                    and log.dp = 'others'
+                    and log.element_name in ('AddToCartSuccess')
+                    and log.page_code in ('product_detail')
               ) t1) t2
 inner join dim.dim_zq_site se on se.datasource = t2.datasource
 where t2.event_name = 'data';
@@ -101,7 +103,7 @@ where t2.event_name = 'data';
 drop table if exists tmp.dwd_zq_fact_cart_cause_expre_cause;
 create table tmp.dwd_zq_fact_cart_cause_expre_cause as
 select /*+ REPARTITION(10) */
-       datasource,
+       t2.datasource,
        event_name,
        virtual_goods_id,
        domain_userid,
@@ -161,7 +163,7 @@ from (
                   from tmp.dwd_zq_fact_cart_cause_glk_cause
                   where pre_page_code is null
                   union all
-                  select datasource,
+                  select log.datasource,
                          dvce_created_tstamp,
                          event_name,
                          virtual_goods_id,
@@ -176,11 +178,12 @@ from (
                          element_type,
                          app_version,
                          test_info,recall_pool
-                  from dwd.fact_log_goods_impression
-                  where pt = '$cur_date'
-                    and platform in('pc','web')
-                    and datasource NOT IN ('vova', 'airyclub')
-                  and page_code not in ('my_order','my_favorites','recently_View','recently_view')
+                  from dwd.dwd_vova_log_goods_impression log
+                    inner join dim.dim_zq_site ds on ds.datasource = log.datasource
+                  where log.pt = '$cur_date'
+                    and log.platform in('pc','web')
+                    and log.dp = 'others'
+                    and log.page_code not in ('my_order','my_favorites','recently_View','recently_view')
               ) t1
      ) t2
 inner join dim.dim_zq_site se on se.datasource = t2.datasource
@@ -227,7 +230,7 @@ select /*+ REPARTITION(2) */
 from tmp.dwd_zq_fact_cart_cause_expre_cause;
 "
 #如果使用spark-sql运行，则执行spark-sql -e
-spark-sql --queue important --conf "spark.app.name=cart_cause_v2" -e "$sql"
+spark-sql --conf "spark.app.name=cart_cause_v2" -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1

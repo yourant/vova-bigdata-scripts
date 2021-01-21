@@ -8,7 +8,7 @@ fi
 
 sql="
 insert overwrite table dwd.dwd_vova_fact_search_word partition(pt='${cur_date}')
-select
+select /*+ REPARTITION(1) */
 cc.datasource,
 from_unixtime(cc.collector_tstamp / 1000) as search_time,
 cc.buyer_id,

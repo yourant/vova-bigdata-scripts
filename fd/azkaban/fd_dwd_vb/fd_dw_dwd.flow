@@ -23,13 +23,17 @@ nodes:
         dependsOn:
           - fd_dwd_vb_goods_flow_start
       
-      - name: judge_ods_snowplow∂
-        type: noop
+      - name: judge_ods_snowplow
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fd_snowplow_hour_flow_end
         dependsOn:
           - fd_dwd_vb_goods_flow_start
 
       - name: judge_fd_ods_vb_blg_end
-        type: noop
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fd_ods_vb_blg_end
         dependsOn:
           - fd_dwd_vb_goods_flow_start
       
@@ -41,7 +45,7 @@ nodes:
           - fd_dwd_vb_goods_flow_start
       
       - name: judge_ods_order_analytics
-        type: noop
+        type: command
         config:
           command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_ar_order_analytics
         dependsOn:
@@ -78,7 +82,6 @@ nodes:
         dependsOn:
           - judge_ods_order_analytics
           - dwd_fd_order_goods
-
 
     dependsOn:
       - fd_dwd_vb_start

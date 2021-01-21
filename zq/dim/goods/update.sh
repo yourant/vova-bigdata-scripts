@@ -42,11 +42,11 @@ left join ods_zq_zsp.ods_zq_virtual_goods vg on g.goods_id = vg.goods_id
                   WHERE gg.is_delete = 0 AND gg.is_default = 1
               ) t1
          WHERE t1.rank = 1
-     ) gg ON gg.goods_id = fg.goods_id
-left join ods_gyl_gvg.ods_gyl_goods_info_relation tv on fg.goods_id = tv.sale_platform_commodity_id
+     ) gg ON gg.goods_id = g.goods_id
+left join ods_gyl_gvg.ods_gyl_goods_info_relation tv on g.goods_id = tv.sale_platform_commodity_id
 left join ods_gyl_gpt.ods_gyl_product_map tp on tp.commodity_id = tv.commodity_id
-left join dim.dim_zq_category c on c.cat_id = fg.cat_id
-left join dim.dim_zq_site s on s.datasource = g.datasource
+left join dim.dim_zq_category c on c.cat_id = g.cat_id
+left join dim.dim_zq_site s on s.datasource = vg.project_name
 "
 #执行hql
 spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e "$sql"

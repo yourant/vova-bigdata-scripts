@@ -1,5 +1,5 @@
 drop table if exists dws.dws_vova_buyer_portrait;
-CREATE TABLE if not exists dws.dws_vova_buyer_portrait
+CREATE EXTERNAL TABLE if not exists dws.dws_vova_buyer_portrait
 (
     `datasource`                STRING COMMENT '数据平台',
     `buyer_id`                  BIGINT COMMENT '买家id',

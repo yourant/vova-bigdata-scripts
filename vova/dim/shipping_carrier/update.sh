@@ -9,7 +9,7 @@ fi
 ###更新goods维度
 sql="
 insert overwrite table dim.dim_vova_shipping_carrier
-select 'vova' as datasource,
+select /*+ REPARTITION(1) */ 'vova' as datasource,
        carrier_id,
        carrier_url,
        sc.carrier_name            eng_name,

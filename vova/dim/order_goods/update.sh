@@ -9,7 +9,7 @@ fi
 hadoop fs -mkdir s3://bigdata-offline/warehouse/dim/dim_vova_order_goods
 sql="
 INSERT OVERWRITE TABLE dim.dim_vova_order_goods
-SELECT CASE
+SELECT /*+ REPARTITION(300) */ CASE
            WHEN oi.from_domain LIKE '%vova%' THEN 'vova'
            WHEN oi.from_domain LIKE '%airyclub%' THEN 'airyclub'
            ELSE 'NA'

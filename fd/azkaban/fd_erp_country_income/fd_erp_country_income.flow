@@ -15,6 +15,13 @@ nodes:
     dependsOn:
       - fd_erp_country_income_start
 
+  - name: judge_ods_fd_vb_order_info
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_order_info
+    dependsOn:
+      - fd_erp_country_income_start
+
   - name: judge_ads_adgroup_daily_flat_report
     type: command
     config:
@@ -95,7 +102,7 @@ nodes:
   - name: dim_fd_ecs_region
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_fd_ecs_region
+      command: sh /mnt/vova-bigdata-scripts/fd/dim/dim_ecs_region/run.sh dim_fd_ecs_region
     dependsOn:
       - judge_ods_ecs_region
 
@@ -104,6 +111,7 @@ nodes:
     config:
       command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_refund_executed/run.sh ${pt}
     dependsOn:
+      - judge_ods_fd_vb_order_info
       - judge_ads_adgroup_daily_flat_report
       - judge_ods_fd_ecs_goods
       - judge_ods_currency_conversion
@@ -124,35 +132,21 @@ nodes:
     dependsOn:
       - dwd_fd_refund_executed
 
-  - name: ads_fd_income_cost
+  - name: dwb_fd_income_cost
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_income_cost/run.sh ${pt}
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_income_cost/run.sh ${pt}
     dependsOn:
       - dwd_fd_ecs_order_info
 
-  - name: sqoop_ads_fd_income_cost
+  - name: dwb_fd_income_cost_paid
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_income_cost/sqoop.sh ${pt}
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_income_cost_paid/run.sh ${pt}
     dependsOn:
-      - ads_fd_income_cost
-
-  - name: ads_fd_income_cost_paid
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_income_cost_paid/run.sh ${pt}
-    dependsOn:
-      - sqoop_ads_fd_income_cost
-
-  - name: sqoop_ads_fd_income_cost_paid
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_income_cost_paid/sqoop.sh ${pt}
-    dependsOn:
-      - ads_fd_income_cost_paid
+      - dwb_fd_income_cost
 
   - name: fd_erp_country_income_end
     type: noop
     dependsOn:
-      - sqoop_ads_fd_income_cost_paid
+      - dwb_fd_income_cost_paid

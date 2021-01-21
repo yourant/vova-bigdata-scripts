@@ -9,7 +9,8 @@ hadoop fs -mkdir s3://bigdata-offline/warehouse/dwd/dwd_vova_fact_push_click
 ###更新
 sql="
 insert overwrite table dwd.dwd_vova_fact_push_click
-select 'vova'                          as datasource,
+select /*+ REPARTITION(20) */
+       'vova'                          as datasource,
        vaelmp.uid                                             as buyer_id,
        nvl(regexp_extract(ug.user_tag, 'R_([0-9])', 0), 'NA') as r_tag,
        nvl(regexp_extract(ug.user_tag, 'F_([0-9])', 0), 'NA') as f_tag,

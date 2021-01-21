@@ -1,5 +1,5 @@
 drop table dim.dim_zq_category;
-CREATE TABLE IF NOT EXISTS dim.dim_zq_category
+CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_zq_category
 (
     cat_id          bigint,
     cat_name        string,

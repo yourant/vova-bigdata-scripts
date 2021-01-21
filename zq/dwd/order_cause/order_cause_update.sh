@@ -38,7 +38,7 @@ from (
               dog.order_goods_id
       from dim.dim_zq_order_goods dog
                inner join dim.dim_zq_goods dg on dg.goods_id = dog.goods_id
-      where date(oi.order_time) = '$cur_date'
+      where date(dog.order_time) = '$cur_date'
      ) t1
          left join
      (
@@ -57,7 +57,7 @@ from (
                 test_info as pre_test_info,
                 recall_pool as pre_recall_pool
          from (
-                  select datasource,
+                  select log.datasource,
                          virtual_goods_id,
                          domain_userid,
                          buyer_id,
@@ -72,14 +72,15 @@ from (
                          test_info,
                          recall_pool,
                          row_number()
-                                 over(partition by datasource,domain_userid,virtual_goods_id
+                                 over(partition by log.datasource,domain_userid,virtual_goods_id
                                  order by dvce_created_tstamp desc) as row_num
-                  from dwd.fact_log_goods_click
-                  where pt >= '$pre_month'
-                    and pt <= '$cur_date'
-                    and platform in('pc','web')
-                    and datasource NOT IN ('vova', 'airyclub')
-                    and page_code not in ('my_order','my_favorites','recently_View','recently_view')
+                  from dwd.dwd_vova_log_goods_click log
+                    inner join dim.dim_zq_site ds on ds.datasource = log.datasource
+                  where log.pt >= '$pre_month'
+                    and log.pt <= '$cur_date'
+                    and log.dp = 'others'
+                    and log.platform in('pc','web')
+                    and log.page_code not in ('my_order','my_favorites','recently_View','recently_view')
               ) t0
          where t0.row_num = 1
      ) t2
@@ -87,7 +88,7 @@ from (
 drop table if exists tmp.fact_fn_order_cause_v2_expre_cause;
 create table tmp.fact_fn_order_cause_v2_expre_cause as
 select /*+ REPARTITION(10) */
-       'florynight' AS datasource,
+       t1.datasource,
        t1.goods_id,
        t1.domain_userid,
        t1.buyer_id,
@@ -129,7 +130,7 @@ from (
                 test_info as pre_test_info,
                 recall_pool as pre_recall_pool
          from (
-                  select datasource,
+                  select log.datasource,
                          virtual_goods_id,
                          domain_userid,
                          buyer_id,
@@ -143,13 +144,14 @@ from (
                          absolute_position,
                          test_info,
                          recall_pool,
-                         row_number() over(partition by datasource,domain_userid,virtual_goods_id
+                         row_number() over(partition by log.datasource,domain_userid,virtual_goods_id
                                       order by dvce_created_tstamp desc) as row_num
-                  from dwd.fact_log_goods_impression
-                  where pt = '$cur_date'
-                    and platform in('pc','web')
-                    and datasource NOT IN ('vova', 'airyclub')
-                    and page_code not in ('my_order','my_favorites','recently_View','recently_view')
+                  from dwd.dwd_vova_log_goods_impression log
+                    inner join dim.dim_zq_site ds on ds.datasource = log.datasource
+                  where log.pt = '$cur_date'
+                    and log.platform in('pc','web')
+                    and log.dp = 'others'
+                    and log.page_code not in ('my_order','my_favorites','recently_View','recently_view')
               ) t0
          where t0.row_num = 1
      ) t2
@@ -209,7 +211,7 @@ from tmp.fact_fn_order_cause_v2_expre_cause
 ) t where order_goods_id is not null;
 "
 #如果使用spark-sql运行，则执行spark-sql -e
-spark-sql --queue important  --conf "spark.app.name=fn_order_cause" -e "$sql"
+spark-sql --conf "spark.app.name=fn_order_cause" -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1

@@ -1,5 +1,6 @@
 INSERT OVERWRITE TABLE dim.dim_fd_ecs_region
 SELECT
+    /*+ REPARTITION(1) */
     region_id,
 	parent_id,
 	region_name,
