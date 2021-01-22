@@ -58,7 +58,7 @@ FROM (SELECT fc.create_time,
 "
 
 spark-sql \
---executor-memory 8G --executor-cores 1 \
+--executor-memory 10G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=5" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \

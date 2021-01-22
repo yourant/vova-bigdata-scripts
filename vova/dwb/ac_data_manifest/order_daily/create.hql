@@ -38,3 +38,23 @@ sign_refund_order_goods_cnt      bigint          COMMENT 'i_当日产生的收�
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE
 LOCATION "s3://bigdata-offline/warehouse/dwb/dwb_vova_ac_order_daily/"
 ;
+AC-日报表
+2021-01-22 历史数据迁移
+dwb.dwb_vova_ac_order_daily
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_ac_order_daily/*
+
+hadoop fs -rm -r s3://bigdata-offline/warehouse/dwb/dwb_vova_ac_order_daily/*
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_ac_order_daily/*
+
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_ac_order_daily/*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_ac_order_daily/  s3://bigdata-offline/warehouse/dwb/dwb_vova_ac_order_daily
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_ac_order_daily/*
+
+emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_ac_order_daily/
+
+msck repair table dwb.dwb_vova_ac_order_daily;
+select * from dwb.dwb_vova_ac_order_daily limit 20;

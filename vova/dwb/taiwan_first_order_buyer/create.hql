@@ -95,3 +95,86 @@ coupon_5_gmv         DECIMAL(10, 2)   comment '无门槛5元订单gmv'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE
 LOCATION "s3://bigdata-offline/warehouse/dwb/dwb_vova_coupon_use/"
 ;
+
+
+dwb.dwb_vova_first_order_coupon
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_coupon/*
+
+hadoop fs -rm -r s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_coupon/*
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_coupon/*
+
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_first_order_coupon/*
+
+hadoop distcp -m 30 -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_first_order_coupon/  s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_coupon
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_coupon/*
+
+emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_coupon/
+
+msck repair table dwb.dwb_vova_first_order_coupon;
+select * from dwb.dwb_vova_first_order_coupon limit 20;
+
+@@@@@@@@@@@@@@@@@@@@@@@
+
+dwb.dwb_vova_first_order_detail
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_detail/*
+
+hadoop fs -rm -r s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_detail/*
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_detail/*
+
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_first_order_detail/*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_first_order_detail/  s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_detail
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_detail/*
+
+emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_detail/
+
+msck repair table dwb.dwb_vova_first_order_detail;
+select * from dwb.dwb_vova_first_order_detail limit 20;
+
+@@@@@@@@@@@@@@@@@@@@@@@
+
+dwb.dwb_vova_buyer_coupon_use
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_buyer_coupon_use/*
+
+hadoop fs -rm -r s3://bigdata-offline/warehouse/dwb/dwb_vova_buyer_coupon_use/*
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_buyer_coupon_use/*
+
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_buyer_coupon_use/*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_buyer_coupon_use/  s3://bigdata-offline/warehouse/dwb/dwb_vova_buyer_coupon_use
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_buyer_coupon_use/*
+
+emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_buyer_coupon_use/
+
+msck repair table dwb.dwb_vova_buyer_coupon_use;
+select * from dwb.dwb_vova_buyer_coupon_use limit 20;
+
+@@@@@@@@@@@@@@@@@@@@@@@
+
+dwb.dwb_vova_coupon_use
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_coupon_use/*
+
+hadoop fs -rm -r s3://bigdata-offline/warehouse/dwb/dwb_vova_coupon_use/*
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_coupon_use/*
+
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_coupon_use/*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_coupon_use/  s3://bigdata-offline/warehouse/dwb/dwb_vova_coupon_use
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_coupon_use/*
+
+emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_coupon_use/
+
+msck repair table dwb.dwb_vova_coupon_use;
+select * from dwb.dwb_vova_coupon_use limit 20;

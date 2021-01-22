@@ -1,9 +1,8 @@
 app月度留存:
 
-app月度留存           table   dwb.dwb_vova_user_month_cohort
-首次支付用户月度留存    table   dwb.dwb_vova_order_month_start_up_cohort
-用户复购月度留存       table   dwb.dwb_vova_order_month_cohort
-
+table   dwb.dwb_vova_user_month_cohort              app月度留存
+table   dwb.dwb_vova_order_month_start_up_cohort    首次支付用户月度留存
+table   dwb.dwb_vova_order_month_cohort             用户复购月度留存
 
 
 #用户月度留存
@@ -89,6 +88,63 @@ LOCATION "s3://bigdata-offline/warehouse/dwb/dwb_vova_order_month_start_up_cohor
 ;
 
 
+# 2021-01-22
+dwb.dwb_vova_user_month_cohort
+dwb.dwb_vova_user_month_cohort
+
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_order_month_cohort
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_user_month_cohort/*
+
+hadoop fs -rm -r s3://bigdata-offline/warehouse/dwb/dwb_vova_user_month_cohort/*
+
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_user_month_cohort/*
+
+hadoop distcp -m 30 -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_user_month_cohort/  s3://bigdata-offline/warehouse/dwb/dwb_vova_user_month_cohort
+
+emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_user_month_cohort/
+
+msck repair table dwb.dwb_vova_user_month_cohort;
+select * from dwb.dwb_vova_user_month_cohort limit 20;
+
+###############################################################################
+
+dwb.dwb_vova_order_month_start_up_cohort
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_order_month_start_up_cohort/*
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_order_month_start_up_cohort/*
+
+hadoop fs -rm -r s3://bigdata-offline/warehouse/dwb/dwb_vova_order_month_start_up_cohort/*
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_order_month_start_up_cohort/*
+
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_order_month_start_up_cohort/*
+
+hadoop distcp -m 30 -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_order_month_start_up_cohort/  s3://bigdata-offline/warehouse/dwb/dwb_vova_order_month_start_up_cohort
+
+emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_order_month_start_up_cohort/
+
+msck repair table dwb.dwb_vova_order_month_start_up_cohort;
+select * from dwb.dwb_vova_order_month_start_up_cohort limit 20;
+
+
+###############################################################################
+
+dwb.dwb_vova_order_month_cohort
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_order_month_cohort/*
+
+hadoop fs -rm -r s3://bigdata-offline/warehouse/dwb/dwb_vova_order_month_cohort/*
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_order_month_cohort/*
+
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_order_month_cohort/*
+
+hadoop distcp -m 30 -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_order_month_cohort/  s3://bigdata-offline/warehouse/dwb/dwb_vova_order_month_cohort
+
+emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_order_month_cohort/
+
+msck repair table dwb.dwb_vova_order_month_cohort;
+select * from dwb.dwb_vova_order_month_cohort limit 20;
 
 
 

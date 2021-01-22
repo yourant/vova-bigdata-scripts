@@ -66,28 +66,6 @@ cost  为   ads_ga_channel_daily_flat_report 中字段cost
 ratio = gmv/cost
 
 
-DROP TABLE rpt.rpt_airyclub_daily_ratio;
-CREATE TABLE IF NOT EXISTS rpt.rpt_airyclub_daily_ratio
-(
-    total_gmv       DECIMAL(14, 2) COMMENT 'total_gmv',
-    total_cost      DECIMAL(14, 2) COMMENT 'total_cost',
-    total_ratio     DECIMAL(14, 2) COMMENT 'total_ratio',
-    fb_ios_gmv      DECIMAL(14, 2) COMMENT 'fb_ios_gmv',
-    fb_ios_cost     DECIMAL(14, 2) COMMENT 'fb_ios_cost',
-    fb_ios_ratio    DECIMAL(14, 2) COMMENT 'fb_ios_ratio',
-    fb_andr_gmv     DECIMAL(14, 2) COMMENT 'fb_andr_gmv',
-    fb_andr_cost    DECIMAL(14, 2) COMMENT 'fb_andr_cost',
-    fb_andr_ratio   DECIMAL(14, 2) COMMENT 'fb_andr_ratio',
-    gc_ios_gmv      DECIMAL(14, 2) COMMENT 'gc_ios_gmv',
-    gc_ios_cost     DECIMAL(14, 2) COMMENT 'gc_ios_cost',
-    gc_ios_ratio    DECIMAL(14, 2) COMMENT 'gc_ios_ratio',
-    gc_andr_gmv     DECIMAL(14, 2) COMMENT 'gc_andr_gmv',
-    gc_andr_cost    DECIMAL(14, 2) COMMENT 'gc_andr_cost',
-    gc_andr_ratio   DECIMAL(14, 2) COMMENT 'gc_andr_ratio'
-) COMMENT 'Airyclub Daily Ratio'
-    PARTITIONED BY (pt string) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
-
-
 table2:
 date campaign_contry campaign_device ad_name impression  clicks  ctr carousel_card   link_clicks
 
@@ -152,21 +130,6 @@ campaign
      Ad name,impression,clicks,ctr为 adwords_ad_performance_daily_report 对应字段
       carousel_card,  link_clicks 为 adwords_ad_carousel 中的字段 carousel_name, link_clicks
 
-
-
-DROP TABLE rpt.rpt_fb_ads_ctr;
-CREATE TABLE IF NOT EXISTS rpt.rpt_fb_ads_ctr
-(
-    campaign_contry  string         COMMENT 'campaign_contry',
-    campaign_device  string         COMMENT 'campaign_device',
-    ad_name          string         COMMENT 'ad_name',
-    carousel_card    string         COMMENT 'carousel_card',
-    impressions      bigint         COMMENT 'impressions',
-    clicks           bigint         COMMENT 'clicks',
-    ctr              DECIMAL(14, 2) COMMENT 'ctr',
-    link_clicks      bigint         COMMENT 'link_clicks'
-) COMMENT 'FB Ads CTR'
-    PARTITIONED BY (pt string) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 2021-01-09

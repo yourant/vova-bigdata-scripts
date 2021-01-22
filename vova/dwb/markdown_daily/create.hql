@@ -74,3 +74,63 @@ no_markdown_max_goods_number  bigint         COMMENT 'i_未参与降价id的最�
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE
 LOCATION "s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_sales/"
 ;
+
+2021-01-22 历史数据迁移
+dwb.dwb_vova_markdown_goods_daily
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_daily/*
+
+hadoop fs -rm -r s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_daily/*
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_daily/*
+
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_markdown_goods_daily/*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_markdown_goods_daily/  s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_daily
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_daily/*
+
+emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_daily/
+
+msck repair table dwb.dwb_vova_markdown_goods_daily;
+select * from dwb.dwb_vova_markdown_goods_daily limit 20;
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+dwb.dwb_vova_markdown_order_daily
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_order_daily/*
+
+hadoop fs -rm -r s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_order_daily/*
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_order_daily/*
+
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_markdown_order_daily/*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_markdown_order_daily/  s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_order_daily
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_order_daily/*
+
+emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_order_daily/
+
+msck repair table dwb.dwb_vova_markdown_order_daily;
+select * from dwb.dwb_vova_markdown_order_daily limit 20;
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+dwb.dwb_vova_markdown_goods_sales
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_sales/*
+
+hadoop fs -rm -r s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_sales/*
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_sales/*
+
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_markdown_goods_sales/*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_markdown_goods_sales/  s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_sales
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_sales/*
+
+emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_sales/
+
+msck repair table dwb.dwb_vova_markdown_goods_sales;
+select * from dwb.dwb_vova_markdown_goods_sales limit 20;

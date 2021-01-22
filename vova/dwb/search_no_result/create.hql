@@ -37,3 +37,42 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE
 LOCATION "s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result/"
 ;
 
+dwb.dwb_vova_search_no_result_frequent_word
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result_frequent_word/*
+
+hadoop fs -rm -r s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result_frequent_word/*
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result_frequent_word/*
+
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_search_no_result_frequent_word/*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_search_no_result_frequent_word/  s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result_frequent_word
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result_frequent_word/*
+
+emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result_frequent_word/
+
+msck repair table dwb.dwb_vova_search_no_result_frequent_word;
+select * from dwb.dwb_vova_search_no_result_frequent_word limit 20;
+
+@@@@@@@@@@@@@@@@@@@@@@@
+
+dwb.dwb_vova_search_no_result
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result/*
+
+hadoop fs -rm -r s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result/*
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result/*
+
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_search_no_result/*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_search_no_result/  s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result/*
+
+emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result/
+
+msck repair table dwb.dwb_vova_search_no_result;
+select * from dwb.dwb_vova_search_no_result limit 20;

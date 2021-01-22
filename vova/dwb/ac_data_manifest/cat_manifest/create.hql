@@ -32,3 +32,24 @@ LOCATION "s3://bigdata-offline/warehouse/dwb/dwb_vova_second_cat_manifest/"
 select *
 from dwb.dwb_vova_second_cat_manifest
 where region_code='all' and second_cat_name ='all'
+
+
+2021-01-22 历史数据迁移
+dwb.dwb_vova_second_cat_manifest
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_second_cat_manifest/*
+
+hadoop fs -rm -r s3://bigdata-offline/warehouse/dwb/dwb_vova_second_cat_manifest/*
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_second_cat_manifest/*
+
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_second_cat_manifest/*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_second_cat_manifest/  s3://bigdata-offline/warehouse/dwb/dwb_vova_second_cat_manifest
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_second_cat_manifest/*
+
+emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_second_cat_manifest/
+
+msck repair table dwb.dwb_vova_second_cat_manifest;
+select * from dwb.dwb_vova_second_cat_manifest limit 20;
