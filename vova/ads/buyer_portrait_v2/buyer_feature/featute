@@ -1,0 +1,292 @@
+
+where pt > date_sub( '2020-06-09', 30 )
+                AND pt <= '2020-06-09'
+
+
+
+select
+db.buyer_id,
+db.gender AS reg_gender,
+db.user_age_group AS reg_age_group,
+db.reg_time,
+db.region_code as reg_ctry,
+db.language_code as lag_id,
+dd.child_channel AS reg_channel,
+nvl(dd.platform,'other') as os_type,
+tmp_clk.gs_ids,
+tmp_add_cat.gs_ids,
+tmp_collect.gs_ids,
+tmp_ord.gs_ids
+from
+dwd.dim_buyers db
+left join dwd.dim_devices dd on dd.device_id = db.current_device_id and dd.datasource= db.datasource
+left join
+-- 近30天点击商品集合
+(select
+t2.buyer_id,
+concat_ws(",",collect_list(t2.gs_id)) as gs_ids
+from
+(select
+t1.buyer_id,
+t1.goods_id as gs_id,
+row_number() over(partition by t1.buyer_id order by t1.last_clk_time desc) rk
+from
+(select
+gc.buyer_id,
+dg.goods_id,
+max(collector_tstamp) as last_clk_time
+from dwd.fact_log_goods_click gc
+inner join dwd.dim_goods dg on gc.virtual_goods_id = dg.virtual_goods_id
+where pt = '2020-06-01' and platform ='mob' and collector_tstamp is not null
+group by gc.buyer_id,dg.goods_id)t1)t2
+where rk <=100
+group by t2.buyer_id)tmp_clk
+on db.buyer_id = tmp_clk.buyer_id
+left join
+-- 近60天加购商品集合
+(
+select
+t2.buyer_id,
+concat_ws(",",collect_list(t2.gs_id)) as gs_ids
+from
+(select
+t1.buyer_id,
+t1.goods_id as gs_id
+from
+(select
+cc.buyer_id,
+dg.goods_id,
+max(collector_tstamp) as last_time
+from
+dwd.fact_log_common_click cc
+inner join dwd.dim_goods dg on cc.element_id = dg.virtual_goods_id
+where cc.pt = '2020-06-01' and platform ='mob'
+and cc.element_name = 'pdAddToCartSuccess'  and collector_tstamp is not null
+group by cc.buyer_id,dg.goods_id)t1
+order by t1.last_time desc
+)t2
+group by t2.buyer_id
+)tmp_add_cat
+ on db.buyer_id = tmp_add_cat.buyer_id
+left join
+-- 近60天收藏商品集合
+(
+select
+t2.buyer_id,
+concat_ws(",",collect_list(t2.gs_id)) as gs_ids
+from
+(select
+t1.buyer_id,
+t1.goods_id as gs_id
+from
+(select
+cc.buyer_id,
+dg.goods_id,
+max(collector_tstamp) as last_time
+from
+dwd.fact_log_common_click cc
+inner join dwd.dim_goods dg on cc.element_id = dg.virtual_goods_id
+where cc.pt = '2020-06-01' and platform ='mob'
+and cc.element_name = 'pdAddToWishlistClick'  and collector_tstamp is not null
+group by cc.buyer_id,dg.goods_id)t1
+order by t1.last_time desc
+)t2
+group by t2.buyer_id
+)tmp_collect
+ on db.buyer_id = tmp_collect.buyer_id
+left join
+-- 购买订单
+(select
+t2.buyer_id,
+concat_ws(",",collect_list(t2.gs_id)) as gs_ids
+from
+(select
+t1.buyer_id,
+t1.gs_id as gs_id
+from
+(select
+fp.buyer_id,
+fp.goods_id as gs_id,
+max(fp.pay_time) as last_pay_time
+from dwd.fact_pay fp
+where to_date(fp.pay_time) = '2020-06-01' and fp.platform in ('ios','android')
+group by fp.buyer_id,fp.goods_id)t1
+order by last_pay_time desc
+)t2
+group by t2.buyer_id) tmp_ord
+on db.buyer_id = tmp_ord.buyer_id
+
+
+
+
+
+
+
+
+
+ SELECT
+        t2.buyer_id,
+        regexp_replace(
+                 concat_ws(',',
+                   sort_array(
+                     collect_list(
+                       concat_ws(':',lpad(cast(t2.rk as string),5,'0'),cast(t2.gs_id as string))
+                     )
+                   )
+                 ),
+        '\\d+\:','')
+      FROM
+        (
+      SELECT
+        t1.buyer_id,
+        t1.gs_id AS gs_id,
+        row_number() over(partition by t1.buyer_id order by last_pay_time DESC) rk
+      FROM
+        (
+      SELECT
+        fp.buyer_id,
+        fp.goods_id AS gs_id,
+        max( fp.order_time ) AS last_pay_time
+      FROM
+        dwd.fact_pay fp
+      WHERE
+         fp.platform IN ( 'ios', 'android' ) and buyer_id='4204455'
+      GROUP BY
+        fp.buyer_id,
+        fp.goods_id
+        ) t1
+        ) t2
+      GROUP BY
+        t2.buyer_id
+
+
+SELECT
+        t2.buyer_id,
+        regexp_replace(
+                         concat_ws(',',
+                           sort_array(
+                             collect_list(
+                               concat_ws(':',lpad(cast(t2.rk as string),5,'0'),cast(t2.gs_id as string))
+                             )
+                           )
+                         ),
+                '\\d+\:','') AS gs_ids
+      FROM
+        (
+      SELECT
+        t1.buyer_id,
+        t1.goods_id AS gs_id,
+        row_number() over(partition by t1.buyer_id order by last_time DESC) rk
+      FROM
+        (
+      SELECT
+        cc.buyer_id,
+        dg.goods_id,
+        max( collector_tstamp ) AS last_time
+      FROM
+        dwd.fact_log_common_click cc
+        INNER JOIN dwd.dim_goods dg ON cc.element_id = dg.virtual_goods_id
+      WHERE
+        cc.pt <= '${pre_date}' and cc.pt > date_sub( '${pre_date}', 60 )
+        AND cc.platform = 'mob'
+        AND cc.element_name = 'pdAddToWishlistClick'
+        AND collector_tstamp IS NOT NULL and buyer_id='4204455'
+      GROUP BY
+        cc.buyer_id,
+        dg.goods_id
+        ) t1
+        ) t2
+      GROUP BY
+        t2.buyer_id
+
+
+
+ SELECT
+        t2.buyer_id,
+        regexp_replace(
+             concat_ws(',',
+               sort_array(
+                 collect_list(
+                   concat_ws(':',lpad(cast(t2.rk as string),5,'0'),cast(t2.gs_id as string))
+                 )
+               )
+             ),
+        '\\d+\:','') AS gs_ids
+      FROM
+        (
+      SELECT
+        t1.buyer_id,
+        t1.goods_id AS gs_id,
+        row_number() over(partition by t1.buyer_id order by last_time DESC) rk
+      FROM
+        (
+      SELECT
+        cc.buyer_id,
+        dg.goods_id,
+        max( collector_tstamp ) AS last_time
+      FROM
+        dwd.fact_log_common_click cc
+        INNER JOIN dwd.dim_goods dg ON cc.element_id = dg.virtual_goods_id
+      WHERE
+        cc.pt <= '${pre_date}' and cc.pt > date_sub( '${pre_date}', 60 )
+        AND cc.platform = 'mob'
+        AND cc.element_name = 'pdAddToCartSuccess'
+        AND collector_tstamp IS NOT NULL
+      GROUP BY
+        cc.buyer_id,
+        dg.goods_id
+        ) t1
+        ) t2
+      GROUP BY
+        t2.buyer_id
+
+
+
+        SELECT
+        t2.buyer_id,
+        regexp_replace(
+                     concat_ws(',',
+                       sort_array(
+                         collect_list(
+                           concat_ws(':',lpad(cast(t2.rk as string),5,'0'),cast(t2.gs_id as string))
+                         )
+                       )
+                     ),
+        '\\d+\:','') AS gs_ids
+      FROM
+        (
+      SELECT
+        t1.buyer_id,
+        t1.goods_id AS gs_id,
+        row_number ( ) over ( PARTITION BY t1.buyer_id ORDER BY t1.last_clk_time DESC ) rk
+      FROM
+        (
+      SELECT
+        gc.buyer_id,
+        dg.goods_id,
+        max( collector_tstamp ) AS last_clk_time
+      FROM
+        dwd.fact_log_goods_click gc
+        INNER JOIN dwd.dim_goods dg ON gc.virtual_goods_id = dg.virtual_goods_id
+      WHERE
+        gc.pt <= '${pre_date}' and gc.pt > date_sub( '${pre_date}', 30 )
+        AND gc.platform = 'mob'
+        AND gc.collector_tstamp IS NOT NULL
+      GROUP BY
+        gc.buyer_id,
+        dg.goods_id
+        ) t1
+        ) t2
+      WHERE
+        rk <= 100
+      GROUP BY
+        t2.buyer_id
+
+
+
+
+
+
+
+
+

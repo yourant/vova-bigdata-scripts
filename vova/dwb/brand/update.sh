@@ -33,7 +33,7 @@ FROM (
          FROM (--step1商品曝光
                   SELECT log.virtual_goods_id,
                          nvl(log.os_type, 'NA')                  AS platform,
-                         nvl(log.geo_country, 'NULL')            AS region_code,
+                         nvl(log.geo_country, 'NALL')            AS region_code,
                          log.device_id,
                          nvl(dg.first_cat_name, '')              AS first_cat_name,
                          nvl(IF(dg.brand_id > 0, 'Y', 'N'), 'N') AS is_brand
@@ -55,7 +55,7 @@ FROM (
          FROM (--step2商品点击
                   SELECT log.virtual_goods_id,
                          nvl(log.os_type, 'NA')                  AS platform,
-                         nvl(log.geo_country, 'NULL')            AS region_code,
+                         nvl(log.geo_country, 'NALL')            AS region_code,
                          log.device_id,
                          nvl(dg.first_cat_name, '')              AS first_cat_name,
                          nvl(IF(dg.brand_id > 0, 'Y', 'N'), 'N') AS is_brand
@@ -82,7 +82,7 @@ FROM (
          FROM (--step3商品加购
                   SELECT CAST(log.element_id AS BIGINT)                                   AS virtual_goods_id,
                          nvl(log.os_type, 'NA')                                           AS platform,
-                         nvl(log.geo_country, 'NULL')                                     AS region_code,
+                         nvl(log.geo_country, 'NALL')                                     AS region_code,
                          nvl(dg.first_cat_name, '')                                       AS first_cat_name,
                          nvl(IF(dg.brand_id > 0, 'Y', 'N'), 'N')                          AS is_brand,
                          if(log.element_name = 'pdAddToCartSuccess', log.device_id, NULL) AS pdAddToCartSuccess_device_id,
@@ -110,7 +110,7 @@ FROM (
          FROM (--step4商详页
                   SELECT log.virtual_goods_id,
                          nvl(log.os_type, 'NA')                  AS platform,
-                         nvl(log.geo_country, 'NULL')            AS region_code,
+                         nvl(log.geo_country, 'NALL')            AS region_code,
                          log.device_id,
                          nvl(dg.first_cat_name, '')              AS first_cat_name,
                          nvl(IF(dg.brand_id > 0, 'Y', 'N'), 'N') AS is_brand
@@ -161,7 +161,7 @@ FROM (
                 nvl(region_code, 'all')   AS region_code,
                 count(DISTINCT device_id) AS dau
          FROM dwd.dwd_vova_fact_start_up
-         WHERE pt = '${cur_date}'
+         WHERE pt = '${cur_date}' and region_code is not null
          GROUP BY CUBE (platform, region_code)
      ) AS start_up
      ON impression.region_code = start_up.region_code

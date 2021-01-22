@@ -7,8 +7,7 @@ cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 ###更新用户首单
 sql="
-drop table if exists ods_vova_vts.ods_vova_user_mission_record;
-create table if not exists ods_vova_vts.ods_vova_user_mission_record as
+insert overwrite table ods_vova_vts.ods_vova_user_mission_record
 select *
 from ods_vova_vts.ods_vova_user_mission_record_0
 union
