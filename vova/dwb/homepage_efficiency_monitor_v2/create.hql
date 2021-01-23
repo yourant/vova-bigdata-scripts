@@ -60,3 +60,25 @@ where pt='2021-01-10'
   and element_position = 'all'
   and element_name = 'all'
 ;
+
+
+首页效率监控体系-V2
+2021-01-23 历史数据迁移
+dwb.dwb_vova_homepage_total_efficiency_v2
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_homepage_total_efficiency_v2/*
+
+hadoop fs -rm -r s3://bigdata-offline/warehouse/dwb/dwb_vova_homepage_total_efficiency_v2/*
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_homepage_total_efficiency_v2/*
+
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_homepage_total_efficiency_v2/*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_homepage_total_efficiency_v2/  s3://bigdata-offline/warehouse/dwb/dwb_vova_homepage_total_efficiency_v2
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_homepage_total_efficiency_v2/*
+
+emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_homepage_total_efficiency_v2/
+
+msck repair table dwb.dwb_vova_homepage_total_efficiency_v2;
+select * from dwb.dwb_vova_homepage_total_efficiency_v2 limit 20;

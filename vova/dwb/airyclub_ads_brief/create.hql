@@ -133,6 +133,8 @@ campaign
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 2021-01-09
+AiryClub Ads Brief
+
 ods_yx_cy.ods_yx_ads_ga_channel_daily_gmv_flat_report
 ods_yx_cy.ods_yx_ads_ga_channel_daily_flat_report
 
@@ -178,3 +180,45 @@ CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_fb_ads_ctr
 PARTITIONED BY (pt string) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE
 LOCATION "s3://bigdata-offline/warehouse/dwb/dwb_vova_fb_ads_ctr/"
 ;
+
+
+2021-01-22 历史数据迁移
+dwb.dwb_vova_airyclub_daily_ratio
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_airyclub_daily_ratio/*
+
+hadoop fs -rm -r s3://bigdata-offline/warehouse/dwb/dwb_vova_airyclub_daily_ratio/*
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_airyclub_daily_ratio/*
+
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_airyclub_daily_ratio/*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_airyclub_daily_ratio/  s3://bigdata-offline/warehouse/dwb/dwb_vova_airyclub_daily_ratio
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_airyclub_daily_ratio/*
+
+emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_airyclub_daily_ratio/
+
+msck repair table dwb.dwb_vova_airyclub_daily_ratio;
+select * from dwb.dwb_vova_airyclub_daily_ratio limit 20;
+
+
+2021-01-23 历史数据迁移
+dwb.dwb_vova_fb_ads_ctr
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_fb_ads_ctr/*
+
+hadoop fs -rm -r s3://bigdata-offline/warehouse/dwb/dwb_vova_fb_ads_ctr/*
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_fb_ads_ctr/*
+
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_fb_ads_ctr/*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_fb_ads_ctr/  s3://bigdata-offline/warehouse/dwb/dwb_vova_fb_ads_ctr
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_fb_ads_ctr/*
+
+emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_fb_ads_ctr/
+
+msck repair table dwb.dwb_vova_fb_ads_ctr;
+select * from dwb.dwb_vova_fb_ads_ctr limit 20;

@@ -34,3 +34,24 @@ aws s3 ls s3://vomkt-emr-rec/jar/dwb-vova-recall-pool/
 
 aws s3 rm s3://vomkt-emr-rec/jar/dwb-vova-recall-pool/vova-bigdata-sparkbatch-1.0-SNAPSHOT.jar
 
+
+recall_pool_va
+2021-01-23 历史数据迁移
+dwb.dwb_vova_recall_pool
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_recall_pool/*
+
+hadoop fs -rm -r s3://bigdata-offline/warehouse/dwb/dwb_vova_recall_pool/*
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_recall_pool/*
+
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_recall_pool/*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_recall_pool/  s3://bigdata-offline/warehouse/dwb/dwb_vova_recall_pool
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_recall_pool/*
+
+emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_recall_pool/
+
+msck repair table dwb.dwb_vova_recall_pool;
+select * from dwb.dwb_vova_recall_pool limit 20;

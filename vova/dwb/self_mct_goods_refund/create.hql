@@ -1,5 +1,7 @@
 5027 自营店铺商品退款率数据报表
 
+历史数据不用迁
+
 drop table if exists dwb.dwb_vova_sel_mct_goods_refund;
 create external table if not exists dwb.dwb_vova_sel_mct_goods_refund(
 datasource                              STRING         COMMENT '平台数据源',

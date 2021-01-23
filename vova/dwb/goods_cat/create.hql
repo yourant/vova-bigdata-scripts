@@ -34,3 +34,26 @@ CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_goods_gcr_gmv_report
 LOCATION "s3://bigdata-offline/warehouse/dwb/dwb_vova_goods_gcr_gmv_report/"
 ;
 
+
+商品数据统计报表
+2021-01-23 历史数据迁移
+
+dwb.dwb_vova_goods_gcr_gmv_report
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_goods_gcr_gmv_report/*
+
+hadoop fs -rm -r s3://bigdata-offline/warehouse/dwb/dwb_vova_goods_gcr_gmv_report/*
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_goods_gcr_gmv_report/*
+
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/goods_gcr_gmv_report/*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/goods_gcr_gmv_report/  s3://bigdata-offline/warehouse/dwb/dwb_vova_goods_gcr_gmv_report
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_goods_gcr_gmv_report/*
+
+emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_goods_gcr_gmv_report/
+
+msck repair table dwb.dwb_vova_goods_gcr_gmv_report;
+select * from dwb.dwb_vova_goods_gcr_gmv_report limit 20;
+

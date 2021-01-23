@@ -51,3 +51,24 @@ homepage_uv                          string  COMMENT 'i_首页dau'
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE
 LOCATION "s3://bigdata-offline/warehouse/dwb/dwb_vova_homepage_flow_distribution/"
 ;
+
+首页各资源位流量分配报表
+2021-01-23 历史数据迁移
+dwb.dwb_vova_homepage_flow_distribution
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_homepage_flow_distribution/*
+
+hadoop fs -rm -r s3://bigdata-offline/warehouse/dwb/dwb_vova_homepage_flow_distribution/*
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_homepage_flow_distribution/*
+
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_homepage_flow_distribution/*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_homepage_flow_distribution/  s3://bigdata-offline/warehouse/dwb/dwb_vova_homepage_flow_distribution
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_homepage_flow_distribution/*
+
+emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_homepage_flow_distribution/
+
+msck repair table dwb.dwb_vova_homepage_flow_distribution;
+select * from dwb.dwb_vova_homepage_flow_distribution limit 20;
