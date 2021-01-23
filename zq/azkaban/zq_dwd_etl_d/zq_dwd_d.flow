@@ -230,6 +230,8 @@ nodes:
       - judge_zq_order_goods
       - judge_zq_virtual_goods
       - dim_zq_site
+      - dim_zq_order_goods
+      - dim_zq_goods
 
   - name: judge_dwd_vova_log_goods_click
     type: command
