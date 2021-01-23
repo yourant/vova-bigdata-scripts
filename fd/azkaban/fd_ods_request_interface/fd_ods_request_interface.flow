@@ -1,0 +1,21 @@
+---
+config:
+ failure.emails: yankexun@vova.com.hk
+ retries: 6
+ retry.backoff: 300000
+
+nodes:
+  - name: fd_ods_request_interface_start
+    type: noop
+
+  - name: ods_fd_goods_test_source_channel
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ods/full_table/goods_test_source_channel/update.sh
+    dependsOn:
+      - fd_ods_request_interface_start
+
+  - name: fd_ods_request_interface_end
+    type: noop
+    dependsOn:
+      - ods_fd_goods_test_source_channel

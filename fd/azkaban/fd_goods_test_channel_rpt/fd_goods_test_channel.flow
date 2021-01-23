@@ -1,0 +1,36 @@
+---
+config:
+  failure.emails: yankexun@i9i8.com
+  retries: 6
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_goods_test_channel_start
+    type: noop
+
+  - name: judge_dwd_fd_goods_test_detail
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_goods_test_detail
+    dependsOn:
+      - fd_goods_test_channel_start
+
+  - name: judge_dwd_fd_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_goods
+    dependsOn:
+      - fd_goods_test_channel_start
+
+  - name: dwb_fd_goods_test_channel_rpt
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_test_channel_rpt/run.sh "${pt}"
+    dependsOn:
+      - judge_dwd_fd_goods_test_detail
+      - judge_dwd_fd_order_goods
+
+  - name: fd_goods_test_channel_end
+    type: noop
+    dependsOn:
+      - dwb_fd_goods_test_channel_rpt

@@ -92,6 +92,20 @@ nodes:
     dependsOn:
       - fd_daily_job_start
 
+  - name: judge_ods_fd_vb_goods_extension
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_goods_extension
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: judge_ods_fd_goods_test_source_channel
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_goods_test_source_channel
+    dependsOn:
+      - fd_daily_job_start
+
   - name: dwd_fd_session_channel
     type: command
     config:
@@ -148,6 +162,17 @@ nodes:
       - judge_ods_fd_vb_goods_preorder_plan
       - judge_fd_dim_category
 
+  - name: dwd_fd_goods_test_detail
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_goods_test_detail/run.sh
+    dependsOn:
+      - judge_ods_fd_vb_goods_test_goods
+      - judge_ods_fd_vb_goods_test_pipeline
+      - judge_fd_dim_goods
+      - judge_ods_fd_vb_goods_extension
+      - judge_ods_fd_goods_test_source_channel
+
   - name: fd_daily_job_end
     type: noop
     dependsOn:
@@ -157,4 +182,5 @@ nodes:
       - dwd_fd_finished_goods_test
       - dwd_fd_goods_purchase_shop_price
       - dwd_fd_finished_preorder
+      - dwd_fd_goods_test_detail
 
