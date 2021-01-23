@@ -1,0 +1,101 @@
+---
+config:
+  retries: 10
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - dwb_zq_goods
+      - dwb_zq_rec_report
+      - dwb_zq_user_cohort
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: dwb_zq_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/zq/dwb/goods/update.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_log_goods_impression
+      - judge_dwd_vova_log_goods_click
+      - judge_dim_zq_goods
+
+  - name: judge_dwd_vova_fact_log_goods_impression
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_goods_impression
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_goods_click
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_goods_click
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_zq_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_zq_goods
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: dwb_zq_rec_report
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/zq/dwb/rec_report/update.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_zq_fact_order_cause
+      - judge_dwd_zq_fact_cart_cause
+
+  - name: dwb_zq_user_cohort
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/zq/dwb/user_cohort/update.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_zq_domain_userid
+      - judge_dwd_zq_fact_order_cause
+
+  - name: judge_dwd_zq_fact_order_cause
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_zq_fact_order_cause
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_zq_fact_cart_cause
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_zq_fact_cart_cause
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_zq_domain_userid
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_zq_domain_userid
+    dependsOn:
+      - start_flag
+
+
+
