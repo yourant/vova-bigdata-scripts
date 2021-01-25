@@ -28,6 +28,7 @@ nodes:
       - judge_dwd_vova_fact_log_goods_impression
       - judge_dwd_vova_log_goods_click
       - judge_dim_zq_goods
+      - judge_dim_zq_site
 
   - name: judge_dwd_vova_fact_log_goods_impression
     type: command
@@ -65,6 +66,7 @@ nodes:
     dependsOn:
       - judge_dwd_zq_fact_order_cause
       - judge_dwd_zq_fact_cart_cause
+      - judge_dim_zq_site
 
   - name: dwb_zq_user_cohort
     type: command
@@ -80,6 +82,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_zq_fact_order_cause
+      retries: 10
+      retry.backoff: 600000
     dependsOn:
       - start_flag
 
@@ -87,6 +91,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_zq_fact_cart_cause
+      retries: 10
+      retry.backoff: 600000
     dependsOn:
       - start_flag
 
@@ -94,8 +100,17 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_zq_domain_userid
+      retries: 10
+      retry.backoff: 600000
     dependsOn:
       - start_flag
 
-
+  - name: judge_dim_zq_site
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_zq_site
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
 
