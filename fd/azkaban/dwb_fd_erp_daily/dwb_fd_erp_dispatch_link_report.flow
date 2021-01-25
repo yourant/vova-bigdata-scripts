@@ -1,0 +1,105 @@
+---
+config:
+  failure.emails: shihu@i9i8.com
+  retries: 5
+  retry.backoff: 300000
+
+nodes:
+  - name: dwb_fd_erp_dispatch_link_report_start
+    type: noop
+
+  - name: dwb_fd_erp_dispatch_link_report_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: dwb_fd_erp_dispatch_link_report_flow_start
+        type: noop
+      
+      - name: judge_fd_ecshop_inc_flow_end
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fd_ecshop_inc_flow_end
+        dependsOn:
+          - dwb_fd_erp_dispatch_link_report_flow_start
+
+      - name: judge_fd_mps_inc_flow_end
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fd_mps_inc_flow_end
+        dependsOn:
+          - dwb_fd_erp_dispatch_link_report_flow_start
+
+      - name: judge_fd_romeo_inc_flow_end
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fd_romeo_inc_flow_end
+        dependsOn:
+          - dwb_fd_erp_dispatch_link_report_flow_start
+
+
+
+      - name: dwd_fd_erp_dispatch_link_goods_state_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_erp_dispatch_link_goods_state_info/run.sh ${pt}
+        dependsOn:
+          - judge_fd_ecshop_inc_flow_end
+          - judge_fd_mps_inc_flow_end
+          - judge_fd_romeo_inc_flow_end
+
+
+      - name: dwd_fd_erp_dispatch_link_goods_stock_state_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_erp_dispatch_link_goods_stock_state_info/run.sh ${pt}
+        dependsOn:
+          - judge_fd_ecshop_inc_flow_end
+          - judge_fd_mps_inc_flow_end
+          - judge_fd_romeo_inc_flow_end
+
+      - name: dwd_fd_erp_dispatch_link_work_order_info
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_erp_dispatch_link_work_order_info/run.sh ${pt}
+        dependsOn:
+          - judge_fd_ecshop_inc_flow_end
+          - judge_fd_ecshop_inc_flow_end
+          - judge_fd_romeo_inc_flow_end
+
+
+      - name: dwd_fd_erp_order_dispatch_status_detail
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_erp_order_dispatch_status_detail/run.sh ${pt}
+        dependsOn:
+          - judge_fd_ecshop_inc_flow_end
+          - judge_fd_ecshop_inc_flow_end
+          - judge_fd_romeo_inc_flow_end
+
+      - name: dwd_fd_erp_order_dispatch_status_detail02
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_erp_order_dispatch_status_detail/run2.sh ${pt}
+        dependsOn:
+          - dwd_fd_erp_order_dispatch_status_detail
+
+
+      - name: dwb_fd_erp_dispatch_link_report
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_erp_dispatch_link_report/run.sh ${pt}
+        dependsOn:
+          - dwd_fd_erp_dispatch_link_goods_state_info
+          - dwd_fd_erp_dispatch_link_goods_stock_state_info
+          - dwd_fd_erp_dispatch_link_work_order_info
+          - dwd_fd_erp_order_dispatch_status_detail02
+
+
+    dependsOn:
+      - dwb_fd_erp_dispatch_link_report_start
+
+  - name: dwb_fd_erp_dispatch_link_report_end
+    type: noop
+    dependsOn:
+      - dwb_fd_erp_dispatch_link_report_flow
