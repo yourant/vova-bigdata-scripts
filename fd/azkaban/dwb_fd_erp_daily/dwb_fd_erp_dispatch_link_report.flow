@@ -1,7 +1,7 @@
 ---
 config:
   failure.emails: shihu@i9i8.com
-  retries: 5
+  retries: 20
   retry.backoff: 300000
 
 nodes:

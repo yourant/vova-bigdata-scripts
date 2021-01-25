@@ -34,7 +34,7 @@ if [ ${Hour} -lt '13' ]; then
   --conf "spark.dynamicAllocation.maxExecutors=60" \
   -d pt="${pt}" \
   -H hour_str="${hour_str}" \
-  -f ${shell_path}/${table}_insert01.hql
+  -f ${shell_path}/${table}_insert01.sql
 else
    hour_str='21:00:00'
    echo "Hour: ${hour_str}"
@@ -43,7 +43,7 @@ else
   --conf "spark.dynamicAllocation.maxExecutors=60" \
   -d pt="${pt}" \
   -H hour_str="${hour_str}" \
-  -f ${shell_path}/${table}_insert02.hql
+  -f ${shell_path}/${table}_insert02.sql
 fi
 
 
