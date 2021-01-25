@@ -1,7 +1,7 @@
 ---
 config:
   failure.emails: shihu@i9i8.com
-  retries: 5
+  retries: 20
   retry.backoff: 300000
 
 nodes:
@@ -77,13 +77,6 @@ nodes:
           - judge_fd_ecshop_inc_flow_end
           - judge_fd_romeo_inc_flow_end
 
-      - name: dwd_fd_erp_order_dispatch_status_detail02
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_erp_order_dispatch_status_detail/run2.sh ${pt}
-        dependsOn:
-          - dwd_fd_erp_order_dispatch_status_detail
-
 
       - name: dwb_fd_erp_dispatch_link_report
         type: command
@@ -93,7 +86,7 @@ nodes:
           - dwd_fd_erp_dispatch_link_goods_state_info
           - dwd_fd_erp_dispatch_link_goods_stock_state_info
           - dwd_fd_erp_dispatch_link_work_order_info
-          - dwd_fd_erp_order_dispatch_status_detail02
+          - dwd_fd_erp_order_dispatch_status_detail
 
 
     dependsOn:

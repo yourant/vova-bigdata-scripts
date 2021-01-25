@@ -25,7 +25,7 @@ spark-sql \
   --conf "spark.dynamicAllocation.maxExecutors=60" \
   --conf "spark.sql.crossJoin.enabled=true" \
   -d pt="${pt}" \
-  -f ${shell_path}/${table}_insert01.hql
+  -f ${shell_path}/${table}_insert.sql
 
 
 if [ $? -ne 0 ]; then
