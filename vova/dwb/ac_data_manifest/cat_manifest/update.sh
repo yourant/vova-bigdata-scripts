@@ -10,7 +10,7 @@ fi
 
 echo "cur_date: $cur_date"
 
-job_name="dwb_vova_second_cat_manifest_req4947_chenkai"
+job_name="dwb_vova_second_cat_manifest_req4947_chenkai_${cur_date}"
 
 #
 sql="
@@ -96,7 +96,7 @@ left join
  left join
    dim.dim_vova_goods dg
  on dog.goods_id = dg.goods_id
- where to_date(dog.order_time) = '${cur_date}' and dog.sku_pay_status = 2 and dg.goods_id is not null and dg.second_cat_id is not null and datasource = 'airyclub'
+ where to_date(dog.pay_time) = '${cur_date}' and dog.pay_status >= 1 and dg.goods_id is not null and dg.second_cat_id is not null and datasource = 'airyclub'
  group by cube(dog.datasource, dog.region_code, dg.second_cat_id)
  HAVING region_code in ('all','GB','FR','DE','IT','ES','NL','PT','US','CS','PL','BE','MX','SI','RU','JP','BR','TW','NA','AU')
 ) tmp_pay_uv

@@ -292,3 +292,36 @@ nodes:
           command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=cy --table_name=campaign_mapping --etl_type=ALL --mapers=1 --period_type=day --partition_num=3 --primary_key=CampaignId
         dependsOn:
           - report_ychen_start
+
+
+# flow: ods_vova_ext
+  - name: ods_vova_ext_flow
+    type: flow
+    config:
+      retries: 4
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+    nodes:
+      - name: ods_vova_ext_end
+        type: noop
+        dependsOn:
+          - vova_app_push_logs
+
+      - name: ods_vova_ext_start
+        type: noop
+
+      - name: vova_app_push_logs
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/vova/ods/app_push_logs/update.sh
+        dependsOn:
+          - ods_vova_ext_start
+
+
+
+
+
+
