@@ -35,7 +35,6 @@ nodes:
           - vova_order_info_h
           - vova_order_relation_h
           - vova_order_goods_h
-          - fn_order_info_h
 
 
       - name: vova_order_info_h
@@ -65,14 +64,6 @@ nodes:
         dependsOn:
           - trd_start
 
-      - name: fn_order_info_h
-        type: command
-        config:
-          retries: 10
-          retry.backoff: 120000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=zsp --table_name=order_info --mapers=1 --etl_type=INIT  --period_type=hour --partition_num=1
-        dependsOn:
-          - trd_start
 
 # flow: 商品域数据抽取
   - name: goods_flow
