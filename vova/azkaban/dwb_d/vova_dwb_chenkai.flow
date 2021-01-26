@@ -11,7 +11,25 @@ nodes:
       command: echo "stop job"
     dependsOn:
       - dwb_vova_second_cat_manifest
-
+      - dwb_vova_ac_order_daily
+      - dwb_vova_bonus_card
+      - dwb_vova_monitor_cmb
+      - dwb_vova_devices_tag
+      - dwb_vova_group_goods_day7_top50
+      - dwb_vova_homepage_total_efficiency_v2
+      - dwb_vova_homepage_flow_distribution
+      - dwb_vova_markdown_order_daily
+      - dwb_vova_mct_first_cat_rank_downgrading
+      - dwb_vova_push_click_behavior
+      - dwb_vova_refund_process
+      - dwb_vova_refund_report
+      - dwb_vova_pay_refund_process
+      - dwb_vova_pay_refund_report
+      - dwb_vova_search_no_result
+      - dwb_vova_first_order_buyer
+      - dwb_vova_user_cohort
+      - dwb_vova_order_month_cohort
+      - dwb_vova_user_month_cohort
 
   - name: start_flag
     type: command
