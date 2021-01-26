@@ -1,0 +1,281 @@
+#!/bin/bash
+echo "start_time:"  `date +"%Y-%m-%d %H:%M:%S" -d "8 hour"`
+
+#指定日期和引擎
+cur_date=$1
+
+#默认日期为昨天
+if [ ! -n "$1" ];then
+cur_date=`date -d "-1 day" +%Y-%m-%d`
+fi
+echo "cur_date: ${cur_date}"
+
+table_suffix=`date -d "${cur_date}" +%Y%m%d`
+echo "table_suffix: ${table_suffix}"
+
+job_name="rpt_markdown_goods_daily"
+
+###逻辑sql
+sql="
+insert OVERWRITE TABLE rpt.rpt_markdown_goods_daily PARTITION (pt='${cur_date}')
+select
+/*+ REPARTITION(1) */
+'vova' datasource,
+tmp1.region_code region_code,
+tmp1.platform platform,
+nvl(tmp1.impression_goods_cnt, 0) impression_goods_cnt,
+nvl(tmp2.pay_goods_cnt, 0) pay_goods_cnt
+from
+(
+  select
+  nvl(geo_country,'all') region_code,
+  nvl(os_type,'all') platform,
+  count(distinct(virtual_goods_id)) impression_goods_cnt
+  from dwd.fact_log_goods_impression flgi
+  where pt = '${cur_date}' and page_code in ('markdown_homepage','markdown_under','markdown_selection')
+  and flgi.datasource = 'vova' and platform='mob' and geo_country is not null
+  group by cube(geo_country, os_type)
+) tmp1
+left join
+(
+  select
+  nvl(dog.region_code, 'all') region_code,
+  nvl(foc2.platform, 'all') platform,
+  count(distinct(foc2.goods_id)) pay_goods_cnt
+  from dwd.fact_order_cause_v2 foc2
+  left join
+  dwd.dim_order_goods dog
+  on foc2.datasource = dog.datasource and foc2.order_goods_id = dog.order_goods_id
+  where foc2.pt='${cur_date}' and pre_page_code in ('markdown_homepage','markdown_under','markdown_selection')
+  and foc2.datasource = 'vova' and foc2.platform in ('android','ios') and dog.sku_pay_status = 2
+  group by cube(dog.region_code, foc2.platform)
+) tmp2
+on tmp1.region_code = tmp2.region_code and tmp1.platform = tmp2.platform
+;
+"
+#如果使用spark-sql运行，则执行spark-sql -e
+spark-sql \
+--executor-memory 10G --executor-cores 1 \
+--conf "spark.sql.parquet.writeLegacyFormat=true"  \
+--conf "spark.dynamicAllocation.minExecutors=10" \
+--conf "spark.dynamicAllocation.initialExecutors=20" \
+--conf "spark.app.name=${job_name}" \
+--conf "spark.sql.crossJoin.enabled=true" \
+--conf "spark.default.parallelism = 300" \
+--conf "spark.sql.shuffle.partitions=300" \
+--conf "spark.dynamicAllocation.maxExecutors=100" \
+--conf "spark.sql.adaptive.enabled=true" \
+--conf "spark.sql.adaptive.join.enabled=true" \
+--conf "spark.shuffle.sort.bypassMergeThreshold=10000" \
+--conf "spark.sql.autoBroadcastJoinThreshold=-1" \
+-e "$sql"
+#如果脚本失败，则报错
+if [ $? -ne 0 ];then
+  exit 1
+fi
+echo "${job_name} end_time:"  `date +"%Y-%m-%d %H:%M:%S" -d "8 hour"`
+
+
+job2_name="rpt_markdown_order_daily"
+###逻辑sql
+sql2="
+create table if not EXISTS tmp.tmp_markdown_order_goods_${table_suffix} as
+select
+/*+ REPARTITION(1) */
+foc2.pt pt,
+dog.region_code region_code,
+foc2.platform platform,
+foc2.device_id device_id,
+dog.order_id order_id,
+dog.order_goods_id order_goods_id,
+if(dog.sku_pay_status = 2, dog.shipping_fee+dog.shop_price*dog.goods_number, 0) markdown_order_goods_gmv,
+if(dog.sku_pay_status = 2, foc2.device_id, null) markdown_pay_device_id,
+if(dd.first_pay_time < foc2.pt, foc2.device_id, null) not_first_pay_device_id,
+foc2_his.device_id not_markdown_first_pay_device_id
+from
+dwd.fact_order_cause_v2 foc2
+left join
+dwd.dim_order_goods dog
+on foc2.datasource = dog.datasource and foc2.order_goods_id = dog.order_goods_id
+left join
+dwd.dim_devices dd
+on foc2.device_id = dd.device_id
+left join
+(
+  select
+    distinct
+    tmp1.pt,
+    foc2.datasource,
+    foc2.device_id
+  from
+  (
+    select distinct pt
+    from dwd.fact_order_cause_v2
+    where pt <='${cur_date}' and pt >= date_sub('${cur_date}', 1)
+  ) tmp1
+  left join
+    dwd.fact_order_cause_v2 foc2
+  on tmp1.pt > foc2.pt
+  left join
+    dwd.dim_order_goods dog
+  on foc2.datasource = dog.datasource and foc2.order_goods_id = dog.order_goods_id
+  where foc2.datasource = 'vova' and foc2.platform in ('android','ios')
+    and foc2.pre_page_code in ('markdown_homepage','markdown_under','markdown_selection')
+    and foc2.device_id is not null and dog.sku_pay_status = 2
+) foc2_his
+on foc2_his.datasource = foc2.datasource and foc2_his.device_id = foc2.device_id and foc2_his.pt = foc2.pt
+where foc2.datasource = 'vova' and foc2.platform in ('android','ios')
+  and to_date(dog.order_time) <='${cur_date}' and to_date(dog.order_time) >= date_sub('${cur_date}', 1)
+  and foc2.pre_page_code in ('markdown_homepage','markdown_under','markdown_selection')
+  and foc2.device_id is not null
+;
+
+
+
+set hive.exec.dynamic.partition=true;
+set hive.exec.dynamic.partition.mode=nonstrict;
+insert overwrite table rpt.rpt_markdown_order_daily PARTITION (pt)
+select
+/*+ REPARTITION(1) */
+'vova',
+t1.region_code,
+t1.platform,
+t1.markdown_impression_uv, -- 低价会场曝光UV
+t1.morrow_markdown_impression_uv, -- 低价会场次日曝光uv
+t2.dau,  -- 主流程DAU
+t3.gmv,  -- 主流程GMV
+t4.markdown_order_gmv,  -- 会场订单GMV
+t5.markdown_order_goods_gmv, -- 会场商品GMV
+t5.markdown_order_uv, -- 会场下单uv
+t5.markdown_pay_uv, -- 会场支付成功uv
+t5.not_markdown_first_pay_uv, -- 当日非首次支付uv
+t1.pt
+from
+(
+  select
+  nvl(tmp1.pt, 'all') pt,
+  nvl(tmp1.geo_country, 'all') region_code,
+  nvl(tmp1.os_type, 'all') platform,
+  count(distinct(tmp1.device_id)) markdown_impression_uv, -- 低价专区首页UV
+  count(distinct(if(tmp2.device_id is not null, tmp1.device_id, null))) morrow_markdown_impression_uv -- 低价专区首页次日UV
+  from
+  (
+    select
+    distinct pt, geo_country, os_type, device_id
+    from dwd.fact_log_screen_view flsv
+    where flsv.datasource ='vova' and flsv.os_type in ('android','ios')
+    and flsv.pt <= '${cur_date}' and flsv.pt >= date_sub('${cur_date}', 1)
+    and flsv.device_id is not null and geo_country is not null
+    and flsv.page_code = 'markdown_homepage'
+  ) tmp1
+  left join
+  (
+    select
+    distinct pt, geo_country, os_type, device_id
+    from dwd.fact_log_screen_view flsv
+    where flsv.datasource ='vova' and flsv.os_type in ('android','ios')
+    and flsv.pt <= date_sub('${cur_date}', -1) and flsv.pt >= '${cur_date}'
+    and flsv.device_id is not null and geo_country is not null
+    and flsv.page_code = 'markdown_homepage'
+  ) tmp2
+  on datediff(tmp2.pt, tmp1.pt) = 1
+    and tmp2.os_type = tmp1.os_type and tmp2.device_id = tmp1.device_id
+    and tmp2.geo_country = tmp1.geo_country
+  group by cube(tmp1.pt, tmp1.os_type, tmp1.geo_country)
+  HAVING pt !='all'
+) t1
+left join
+(
+  select
+  nvl(flsv.pt, 'all') pt,
+  nvl(flsv.geo_country, 'all') region_code,
+  nvl(flsv.os_type, 'all') platform,
+  count(distinct(flsv.device_id)) dau --DAU
+  from dwd.fact_log_screen_view flsv
+  where flsv.datasource ='vova' and flsv.os_type in ('android','ios')
+    and flsv.pt <= '${cur_date}' and flsv.pt >= date_sub('${cur_date}', 1)
+    and flsv.device_id is not null and geo_country is not null
+  group by cube(flsv.pt, flsv.geo_country, flsv.os_type)
+  HAVING pt !='all'
+) t2
+on t1.pt = t2.pt and t1.region_code = t2.region_code and t1.platform = t2.platform
+left join
+(
+  select
+  nvl(to_date(dog.order_time), 'all') pt,
+  nvl(dog.region_code, 'all') region_code,
+  nvl(dog.platform, 'all') platform,
+  sum(dog.shipping_fee+dog.shop_price*dog.goods_number) gmv -- GMV
+  from dwd.dim_order_goods dog
+  where dog.datasource = 'vova' and dog.platform in ('android','ios')
+    and to_date(dog.order_time) <='${cur_date}' and to_date(dog.order_time) >= date_sub('${cur_date}', 1)
+    and device_id is not null and pay_status >= 1
+  group by cube(to_date(dog.order_time), dog.region_code, dog.platform)
+  HAVING pt != 'all'
+) t3
+on t1.pt = t3.pt and t1.region_code = t3.region_code and t1.platform = t3.platform
+left join
+(
+  select
+  nvl(tmp1.pt, 'all') pt,
+  nvl(dog.region_code, 'all') region_code,
+  nvl(dog.platform, 'all') platform,
+  sum(dog.shipping_fee+dog.shop_price*dog.goods_number) markdown_order_gmv -- 会场订单GMV
+  from
+  (
+    select
+    distinct pt, order_id
+    from
+    tmp.tmp_markdown_order_goods_${table_suffix}
+    where markdown_pay_device_id is not null
+  ) tmp1
+  left join
+  dwd.dim_order_goods dog
+  on tmp1.order_id = dog.order_id
+  group by cube(tmp1.pt, dog.region_code, dog.platform)
+  HAVING pt != 'all'
+) t4
+on t1.pt = t4.pt and t1.region_code = t4.region_code and t1.platform = t4.platform
+left join
+(
+  select
+  nvl(pt, 'all') pt,
+  nvl(region_code, 'all') region_code,
+  nvl(platform, 'all') platform,
+  sum(markdown_order_goods_gmv) markdown_order_goods_gmv, -- 会场商品GMV
+  count(distinct(device_id)) markdown_order_uv, -- 低价会场订单gmv
+  count(distinct(markdown_pay_device_id)) markdown_pay_uv, -- 会场支付成功uv
+  count(distinct(not_first_pay_device_id)) not_first_pay_uv, -- 当日非首次支付uv
+  count(distinct(not_markdown_first_pay_device_id)) not_markdown_first_pay_uv -- 当日非低价会场首次支付uv
+  from
+  tmp.tmp_markdown_order_goods_${table_suffix}
+  group by cube(pt, region_code, platform)
+  HAVING pt != 'all'
+) t5
+on t1.pt = t5.pt and t1.region_code = t5.region_code and t1.platform = t5.platform
+;
+
+drop table if EXISTS tmp.tmp_markdown_order_goods_${table_suffix};
+"
+#如果使用spark-sql运行，则执行spark-sql -e
+spark-sql \
+--executor-memory 12G --executor-cores 1 \
+--conf "spark.sql.parquet.writeLegacyFormat=true"  \
+--conf "spark.dynamicAllocation.minExecutors=10" \
+--conf "spark.dynamicAllocation.initialExecutors=20" \
+--conf "spark.app.name=${job2_name}" \
+--conf "spark.sql.crossJoin.enabled=true" \
+--conf "spark.default.parallelism = 300" \
+--conf "spark.sql.shuffle.partitions=300" \
+--conf "spark.dynamicAllocation.maxExecutors=100" \
+--conf "spark.sql.adaptive.enabled=true" \
+--conf "spark.sql.adaptive.join.enabled=true" \
+--conf "spark.shuffle.sort.bypassMergeThreshold=10000" \
+--conf "spark.sql.autoBroadcastJoinThreshold=-1" \
+-e "$sql2"
+#如果脚本失败，则报错
+if [ $? -ne 0 ];then
+  exit 1
+fi
+echo "${job2_name} end_time:"  `date +"%Y-%m-%d %H:%M:%S" -d "8 hour"`
+

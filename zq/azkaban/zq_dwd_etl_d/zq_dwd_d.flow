@@ -220,7 +220,7 @@ nodes:
   - name: dwd_zq_fact_order_cause
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/zq/dwd/web_start_up/update.sh
+      command: sh /mnt/vova-bigdata-scripts/zq/dwd/order_cause/order_cause_update.sh
       retries: 10
       retry.backoff: 600000
     dependsOn:
@@ -230,6 +230,8 @@ nodes:
       - judge_zq_order_goods
       - judge_zq_virtual_goods
       - dim_zq_site
+      - dim_zq_order_goods
+      - dim_zq_goods
 
   - name: judge_dwd_vova_log_goods_click
     type: command
@@ -252,7 +254,7 @@ nodes:
   - name: dwd_zq_fact_cart_cause
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/zq/dwd/web_start_up/update.sh
+      command: sh /mnt/vova-bigdata-scripts/zq/dwd/cart_cause/cart_cause_update.sh
       retries: 10
       retry.backoff: 600000
     dependsOn:
