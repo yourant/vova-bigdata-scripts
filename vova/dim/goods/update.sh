@@ -5,11 +5,12 @@ cur_date=$1
 if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
-
+hadoop fs -mkdir s3://bigdata-offline/warehouse/dim/dim_vova_goods
 ###更新goods维度
 sql="
 insert overwrite table dim.dim_vova_goods
-select 'vova' as datasource,
+select /*+ REPARTITION(300) */
+       'vova' as datasource,
        g.goods_id,
        vg.virtual_goods_id,
        g.cp_goods_id,
@@ -41,7 +42,8 @@ select 'vova' as datasource,
        got.last_on_time,
        got.last_off_time,
        g.goods_thumb,
-       g.old_goods_id
+       g.old_goods_id,
+       nvl(r.group_id,-1) group_id
 from ods_vova_vts.ods_vova_goods g
          inner join ods_vova_vts.ods_vova_virtual_goods vg on g.goods_id = vg.goods_id
          inner join dim.dim_vova_category c on c.cat_id = g.cat_id
@@ -59,6 +61,7 @@ FROM
       goods_id) got
       on g.goods_id = got.goods_id
   left join ods_vova_vts.ods_vova_merchant m on g.merchant_id = m.merchant_id
+  left join ods_vova_vbts.ods_vova_rec_gid_pic_similar r on g.goods_id = r.goods_id
 
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e

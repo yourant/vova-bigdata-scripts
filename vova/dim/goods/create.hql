@@ -33,7 +33,8 @@ CREATE TABLE IF NOT EXISTS dim.dim_vova_goods
     last_on_time     timestamp COMMENT '最后一次上线时间',
     last_off_time    timestamp COMMENT '最后一次下线时间',
     goods_thumb      string COMMENT '商品主图',
-    old_goods_id      string COMMENT '来源平台的ID'
+    old_goods_id      string COMMENT '来源平台的ID',
+    group_id          BIGINT COMMENT '原始分组id，不是低价商品组的分组id，没有分到组则为-1'
 ) COMMENT '商品维度'
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
