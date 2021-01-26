@@ -73,7 +73,7 @@ nodes:
   - name: judge_dwd_vova_log_goods_click
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_log_goods_click
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_click
       retries: 30
       retry.backoff: 300000
     dependsOn:
@@ -82,7 +82,7 @@ nodes:
   - name: judge_dwd_vova_log_common_click
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_log_common_click
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_common_click
       retries: 30
       retry.backoff: 300000
     dependsOn:
@@ -91,7 +91,7 @@ nodes:
   - name: judge_dwd_vova_log_goods_impression
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_log_goods_impression
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_impression
       retries: 30
       retry.backoff: 300000
     dependsOn:
@@ -100,7 +100,7 @@ nodes:
   - name: judge_dwd_vova_log_screen_view
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_log_screen_view
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_screen_view
       retries: 30
       retry.backoff: 300000
     dependsOn:
@@ -109,7 +109,7 @@ nodes:
   - name: judge_dwd_vova_log_page_view
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_log_page_view
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_page_view
       retries: 30
       retry.backoff: 300000
     dependsOn:
@@ -219,7 +219,7 @@ nodes:
   - name: judge_dwd_vova_log_impressions
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_log_impressions
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_impressions
     dependsOn:
       - start_flag
 
