@@ -5,10 +5,12 @@ cur_date=$1
 if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
+hadoop fs -mkdir s3://bigdata-offline/warehouse/dwd/dwd_vova_fact_pay
 ###逻辑sql
 sql="
 insert overwrite table dwd.dwd_vova_fact_pay
-select case
+select /*+ REPARTITION(100) */
+       case
            when oi.from_domain like '%vova%' then 'vova'
            when oi.from_domain like '%airyclub%' then 'airyclub'
            end    as datasource,
@@ -27,7 +29,10 @@ select case
        og.goods_sn,
        og.goods_name,
        g.cat_id,
+       g.cat_name,
+       g.first_cat_id,
        g.first_cat_name,
+       g.second_cat_id,
        g.second_cat_name,
        oi.order_time,
        ogs.confirm_time,

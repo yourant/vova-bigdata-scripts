@@ -5,10 +5,11 @@ cur_date=$1
 if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
+hadoop fs -mkdir s3://bigdata-offline/warehouse/dim/dim_vova_languages
 ###逻辑sql
 sql="
 INSERT OVERWRITE TABLE dim.dim_vova_languages
-select 'vova' as datasource,
+select /*+ REPARTITION(1) */ 'vova' as datasource,
         languages_id,
         name as languages_name,
         code as languages_code

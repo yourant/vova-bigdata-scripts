@@ -1,5 +1,5 @@
 drop table if exists dwd.dwd_vova_fact_act_ord_gs;
-create table dwd.dwd_vova_fact_act_ord_gs
+create external table dwd.dwd_vova_fact_act_ord_gs
 (
     datasource        string comment '数据站点',
     act_id            bigint comment '活动id',

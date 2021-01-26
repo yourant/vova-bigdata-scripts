@@ -1,0 +1,274 @@
+---
+config:
+  retries: 10
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - dim_zq_category
+      - dim_zq_domain_userid
+      - dim_zq_goods
+      - dim_zq_order_goods
+      - dim_zq_site
+      - dwd_zq_fact_cart_cause
+      - dwd_zq_fact_order_cause
+      - dwd_zq_fact_web_start_up
+
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+
+  - name: dim_zq_category
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/zq/dim/category/update.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_zq_category
+
+  - name: judge_zq_category
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fn_category
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: dim_zq_domain_userid
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/zq/dim/domain_userid/update.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - dwd_zq_fact_web_start_up
+
+#  - name: judge_zq_fact_web_start_up
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh zq_fact_web_start_up
+#      retries: 10
+#      retry.backoff: 600000
+#    dependsOn:
+#      - start_flag
+
+
+  - name: dim_zq_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/zq/dim/goods/update.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_zq_goods
+      - judge_zq_goods_project
+      - judge_zq_virtual_goods
+      - judge_zq_goods_gallery
+      - judge_gvg_goods_info_relation
+      - judge_gpt_product_map
+      - dim_zq_category
+      - dim_zq_site
+
+  - name: judge_zq_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fn_goods
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_zq_goods_project
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fn_goods_project
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_zq_virtual_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fn_virtual_goods
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_zq_goods_gallery
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fn_goods_gallery
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_gvg_goods_info_relation
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh trigram_vega_goods_info_relation
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_gpt_product_map
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh trigram_prettyy_product_map
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: dim_zq_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/zq/dim/order_goods/update.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_zq_order_info
+      - judge_zq_order_goods
+      - judge_zq_virtual_goods
+      - judge_zq_order_extension
+
+  - name: judge_zq_order_info
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fn_order_info
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_zq_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fn_order_goods
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_zq_order_extension
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fn_order_extension
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+#  - name: judge_zq_region
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fn_region
+#      retries: 10
+#      retry.backoff: 600000
+#    dependsOn:
+#      - start_flag
+
+  - name: dim_zq_site
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/zq/dim/site/update.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_zq_site
+
+  - name: judge_zq_site
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fn_site
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: dwd_zq_fact_web_start_up
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/zq/dwd/web_start_up/update.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_goods_page_view
+      - dim_zq_site
+
+  - name: judge_dwd_vova_log_goods_page_view
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_page_view
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: dwd_zq_fact_order_cause
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/zq/dwd/order_cause/order_cause_update.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_goods_impression
+      - judge_zq_order_info
+      - judge_zq_order_goods
+      - judge_zq_virtual_goods
+      - dim_zq_site
+      - dim_zq_order_goods
+      - dim_zq_goods
+
+  - name: judge_dwd_vova_log_goods_click
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_goods_click
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_goods_impression
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_goods_impression
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: dwd_zq_fact_cart_cause
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/zq/dwd/cart_cause/cart_cause_update.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_common_click
+      - dim_zq_site
+
+  - name: judge_dwd_vova_log_common_click
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_common_click
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+

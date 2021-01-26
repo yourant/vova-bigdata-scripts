@@ -1,5 +1,5 @@
 drop table dwd.dwd_vova_fact_web_start_up;
-CREATE TABLE IF NOT EXISTS dwd.dwd_vova_fact_web_start_up
+CREATE EXTERNAL TABLE IF NOT EXISTS dwd.dwd_vova_fact_web_start_up
 (
     datasource     string comment '数据平台',
     domain_userid  string COMMENT '设备ID',
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS dwd.dwd_vova_fact_web_start_up
 
 
 drop table dim.dim_vova_web_domain_userid;
-CREATE TABLE IF NOT EXISTS dim.dim_vova_web_domain_userid
+CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_vova_web_domain_userid
 (
     domain_userid  string COMMENT 'domain_userid',
     buyer_id       bigint COMMENT '设备对应用户ID',

@@ -8,9 +8,12 @@ fi
 ###更新设备首单
 ### 取设备当前版本，当前的buyer_id，激活日期
 ### 更新设备维度
+hadoop fs -mkdir s3://bigdata-offline/warehouse/tmp/tmp_vova_device_first_pay
+hadoop fs -mkdir s3://bigdata-offline/warehouse/tmp/tmp_vova_device_app_version
+hadoop fs -mkdir s3://bigdata-offline/warehouse/dim/dim_vova_devices
 sql="
 insert overwrite table tmp.tmp_vova_device_first_pay
-SELECT datasource,
+SELECT /*+ REPARTITION(4) */ datasource,
        device_id,
        min(order_id) AS first_order_id,
        min(order_time)  AS first_order_time,
@@ -32,7 +35,7 @@ GROUP BY device_id, datasource;
 
 
 insert overwrite table tmp.tmp_vova_device_app_version
-select datasource,
+select /*+ REPARTITION(40) */ datasource,
        device_id,
        app_version,
        buyer_id,
@@ -54,7 +57,7 @@ where su.device_id is not null
   and su.rank = 1;
 
 INSERT overwrite TABLE dim.dim_vova_devices
-SELECT 'vova'                                                AS datasource,
+SELECT /*+ REPARTITION(100) */ 'vova'                                                AS datasource,
        if(ar.device_id IS NULL, dav.device_id, ar.device_id) AS device_id,
        cm.main_channel,
        ar.media_source as child_channel,

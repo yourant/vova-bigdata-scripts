@@ -5,10 +5,11 @@ cur_date=$1
 if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
-
+hadoop fs -mkdir s3://bigdata-offline/warehouse/dwd/dwd_vova_fact_act_ord_gs
 sql="
 insert overwrite table dwd.dwd_vova_fact_act_ord_gs
-select byr.datasource                               as datasource,
+select /*+ REPARTITION(3) */
+       byr.datasource                               as datasource,
        loi.activity_id                              as act_id,
        'luckystar'                                  as act_name,
        concat('luckystar_', loi.luckystar_order_id) as uiq_vtl_ord_id,

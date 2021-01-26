@@ -65,7 +65,7 @@ FROM
 
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
-spark-sql --conf "spark.app.name=dim_vova_goods" --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.sql.mergeSmallFileSize=10485760"  --conf "spark.sql.broadcastTimeout=36000"  --conf "spark.sql.output.merge=true"  -e "$sql"
+spark-sql --conf "spark.app.name=dim_vova_goods" --executor-memory 6G --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.sql.mergeSmallFileSize=10485760"  --conf "spark.sql.broadcastTimeout=36000"  --conf "spark.sql.output.merge=true"  -e "$sql"
 
 #如果脚本失败，则报错
 

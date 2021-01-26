@@ -6,9 +6,10 @@ if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 ###逻辑sql
+hadoop fs -mkdir s3://bigdata-offline/warehouse/dim/dim_vova_coupon
 sql="
 insert overwrite table dim.dim_vova_coupon
-select
+select /*+ REPARTITION(100) */
        byr.datasource,
        oc.coupon_id                   as cpn_id,
        oc.coupon_code                 as cpn_code,

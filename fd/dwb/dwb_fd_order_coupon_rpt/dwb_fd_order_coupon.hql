@@ -14,10 +14,10 @@ select
 	order_status,
 	pay_status,
 	platform_type,
-	country_code,
+	if(country_code in ('FR', 'DE', 'SE', 'GB', 'AU', 'US', 'IT', 'ES', 'NL', 'MX', 'NO', 'AT', 'BE', 'CH', 'DK', 'CZ', 'PL', 'IL', 'BR', 'SA'),country_code,'others') as country_code,
 	language_code
-from dwd.dwd_fd_order_info 
-where 
-coupon_code !='' 
-and email NOT REGEXP 'tetx.com|i9i8.com|jjshouse.com|jenjenhouse.com|163.com|qq.com'
-and date(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss')) = '${pt}';
+from dwd.dwd_fd_order_info
+where
+coupon_code !=''
+and pay_status = 2
+and date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${pt}';

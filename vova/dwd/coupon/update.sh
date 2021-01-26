@@ -5,10 +5,12 @@ cur_date=$1
 if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
+hadoop fs -mkdir s3://bigdata-offline/warehouse/dwd/dwd_vova_fact_coupon
 ###逻辑sql
 sql="
 insert overwrite table dwd.dwd_vova_fact_coupon
-select by.datasource,
+select /*+ REPARTITION(100) */
+       by.datasource,
        oc.coupon_id                     as cpn_id,
        oc.coupon_code                   as cpn_code,
        oc.user_id                       as buyer_id,

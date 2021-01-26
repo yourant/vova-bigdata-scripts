@@ -1,4 +1,4 @@
-INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_order_goods_inc  PARTITION (pt= '${hiveconf:pt}')
+INSERT overwrite table ods_fd_ecshop.ods_fd_ecs_order_goods_inc  PARTITION (pt= '${pt}')
 select rec_id, order_id, goods_id, goods_name, goods_sn, goods_number, market_price, goods_price, goods_attr, send_number, is_real, extension_code, parent_id, is_gift, goods_status, action_amt, action_reason_cat, action_note, carrier_bill_id, provider_id, invoice_num, return_points, return_bonus, biaoju_store_goods_id, subtitle, addtional_shipping_fee, style_id, customized, status_id, added_fee, external_order_goods_id
 from(
     select
@@ -42,5 +42,5 @@ from(
     from pdb.fd_ecshop_ecs_order_goods
     LATERAL VIEW json_tuple(value, 'kafka_table', 'kafka_ts', 'kafka_commit', 'kafka_xid','kafka_type' , 'kafka_old' , 'rec_id', 'order_id', 'goods_id', 'goods_name', 'goods_sn', 'goods_number', 'market_price', 'goods_price', 'goods_attr', 'send_number', 'is_real', 'extension_code', 'parent_id', 'is_gift', 'goods_status', 'action_amt', 'action_reason_cat', 'action_note', 'carrier_bill_id', 'provider_id', 'invoice_num', 'return_points', 'return_bonus', 'biaoju_store_goods_id', 'subtitle', 'addtional_shipping_fee', 'style_id', 'customized', 'status_id', 'added_fee', 'external_order_goods_id') o_raw
     AS `table`, ts, `commit`, xid, type, old, rec_id, order_id, goods_id, goods_name, goods_sn, goods_number, market_price, goods_price, goods_attr, send_number, is_real, extension_code, parent_id, is_gift, goods_status, action_amt, action_reason_cat, action_note, carrier_bill_id, provider_id, invoice_num, return_points, return_bonus, biaoju_store_goods_id, subtitle, addtional_shipping_fee, style_id, customized, status_id, added_fee, external_order_goods_id
-    where pt = '${hiveconf:pt}'
+    where pt in ('${pt}',date_add('${pt}',1))
 )inc where inc.rank = 1;

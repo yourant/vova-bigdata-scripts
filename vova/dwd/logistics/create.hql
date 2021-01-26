@@ -1,5 +1,5 @@
 drop table dwd.dwd_vova_fact_logistics;
-CREATE TABLE IF NOT EXISTS dwd.dwd_vova_fact_logistics
+CREATE EXTERNAL TABLE IF NOT EXISTS dwd.dwd_vova_fact_logistics
 (
     datasource               string comment '数据平台',
     tracking_detail_id       bigint COMMENT '物流明细ID',

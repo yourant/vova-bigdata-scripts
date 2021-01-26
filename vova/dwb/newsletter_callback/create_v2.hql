@@ -1,0 +1,87 @@
+DROP TABLE IF EXISTS dwb.dwb_vova_newsletter_callback_email_detail_v2;
+CREATE External TABLE IF NOT EXISTS dwb.dwb_vova_newsletter_callback_email_detail_v2(
+`datasource` STRING COMMENT 'd_datasource',
+`id` BIGINT COMMENT 'd_邮件id',
+`name` STRING COMMENT 'd_名称',
+`create_time` TIMESTAMP COMMENT 'i_创建时间',
+`send_time` TIMESTAMP COMMENT 'i_发送时间',
+`lag_id` STRING COMMENT 'i_语言id',
+`user_num` BIGINT COMMENT 'i_覆盖用户量',
+`send_num` BIGINT COMMENT 'i_邮件发送数量',
+`success_num` BIGINT COMMENT 'i_邮件成功发送数量',
+`open_num` BIGINT COMMENT 'i_邮件打开量',
+`buyer_callback` BIGINT COMMENT 'i_回归用户数',
+`gmv_1d` DECIMAL(13,2) COMMENT 'i_1日gmv',
+`gmv_3d` DECIMAL(13,2) COMMENT 'i_3日gmv',
+`gmv_7d` DECIMAL(13,2) COMMENT 'i_7日gmv',
+`gmv_brand_1d`     decimal(13,2)  comment   'i_brand 1日gmv',
+`gmv_brand_3d`     decimal(13,2)  comment   'i_brand 3日gmv',
+`gmv_brand_7d`     decimal(13,2)  comment   'i_brand 7日gmv',
+`gmv_no_brand_1d`  decimal(13,2)  comment   'i_no brand 1日gmv',
+`gmv_no_brand_3d`  decimal(13,2)  comment   'i_no brand 3日gmv',
+`gmv_no_brand_7d`  decimal(13,2)  comment   'i_no brand 7日gmv'
+)
+COMMENT 'newsletter召回邮件详情表v2' stored as parquetfile;
+
+
+DROP TABLE IF EXISTS dwb.dwb_vova_newsletter_callback_order_detail_v2;
+CREATE External TABLE IF NOT EXISTS dwb.dwb_vova_newsletter_callback_order_detail_v2(
+    `datasource`        string          COMMENT 'd_datasource',
+    `id`                BIGINT          COMMENT 'd_邮件id',
+    `name`              STRING          COMMENT 'd_名称',
+    `send_time`         TIMESTAMP       COMMENT 'i_发送时间',
+    `platform`          STRING          COMMENT 'i_p平台',
+    `ctry`              STRING          COMMENT 'i_国家id',
+    `back_uv`    BIGINT          COMMENT 'i_回归用户数',
+    `order_cnt`         BIGINT          COMMENT '订单量',
+    `pay_cnt`           BIGINT          COMMENT '支付订单量',
+    `pay_uv`            BIGINT          COMMENT '支付UV',
+    `gmv_1h`            DECIMAL(13,2)   COMMENT 'i_1小时gmv',
+    `gmv_3h`            DECIMAL(13,2)   COMMENT 'i_3小时gmv',
+    `gmv_1d`            DECIMAL(13,2)   COMMENT 'i_1日gmv',
+    `gmv_3d`            DECIMAL(13,2)   COMMENT 'i_3日gmv',
+    `gmv_7d`            DECIMAL(13,2)   COMMENT 'i_7日gmv',
+    `gmv_brand_1h`            decimal(13,2)   COMMENT     'i_brand 1小时gmv',
+    `gmv_brand_3h`            decimal(13,2)   COMMENT     'i_brand 3小时gmv',
+    `gmv_brand_1d`            decimal(13,2)   COMMENT     'i_brand 1日gmv',
+    `gmv_brand_3d`            decimal(13,2)   COMMENT     'i_brand 3日gmv',
+    `gmv_brand_7d`            decimal(13,2)   COMMENT     'i_brand 7日gmv',
+    `gmv_no_brand_1h`         decimal(13,2)   COMMENT     'i_非brand 1小时gmv',
+    `gmv_no_brand_3h`         decimal(13,2)   COMMENT     'i_非brand 3小时gmv',
+    `gmv_no_brand_1d`         decimal(13,2)   COMMENT     'i_非brand 1日gmv',
+    `gmv_no_brand_3d`         decimal(13,2)   COMMENT     'i_非brand 3日gmv',
+    `gmv_no_brand_7d`         decimal(13,2)   COMMENT     'i_非brand 7日gmv'
+) COMMENT 'newsletter召回订单详情表' STORED AS PARQUETFILE;
+
+
+
+DROP TABLE IF EXISTS dwb.dwb_vova_newsletter_callback_order_day_v2;
+CREATE External TABLE IF NOT EXISTS dwb.dwb_vova_newsletter_callback_order_day_v2(
+    `datasource`        string          COMMENT 'd_datasource',
+    `platform`          STRING          COMMENT 'd_平台',
+    `ctry`              STRING          COMMENT 'd_国家',
+    `back_uv`           BIGINT          COMMENT 'i_召回uv',
+    `ord_cnt`           BIGINT          COMMENT 'i_订单量',
+    `pay_cnt`           BIGINT          COMMENT 'i_支付订单量',
+    `pay_uv`            BIGINT          COMMENT 'i_支付uv',
+    `gmv`               DECIMAL(13,2)   COMMENT 'gmv',
+    `gmv_brand`         decimal(13,2)   COMMENT 'i_brand gmv',
+    `gmv_no_brand`      decimal(13,2)   COMMENT 'i_no brandgmv'
+)COMMENT 'newsletter召回订单详情每日表' partitioned by(pt string) STORED AS PARQUETFILE;
+
+
+
+DROP TABLE IF EXISTS dwb.dwb_fn_newsletter_email_detail;
+CREATE External TABLE IF NOT EXISTS dwb.dwb_fn_newsletter_email_detail(
+`id` BIGINT COMMENT 'd_邮件id',
+`task_name` STRING COMMENT 'd_名称',
+`create_time` TIMESTAMP COMMENT 'i_创建时间',
+`send_time` TIMESTAMP COMMENT 'i_发送时间',
+`user_num` BIGINT COMMENT 'i_覆盖用户量',
+`send_num` BIGINT COMMENT 'i_邮件发送数量',
+`success_num` BIGINT COMMENT 'i_邮件成功发送数量',
+`open_num` BIGINT COMMENT 'i_邮件打开量',
+`gmv_1d` DECIMAL(13,2) COMMENT 'i_1日gmv',
+`gmv_3d` DECIMAL(13,2) COMMENT 'i_3日gmv',
+`gmv_7d` DECIMAL(13,2) COMMENT 'i_7日gmv')
+COMMENT 'fn newsletter召回邮件详情表' stored as parquetfile;

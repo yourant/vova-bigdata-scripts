@@ -1,5 +1,5 @@
 drop table dim.dim_vova_shipping_carrier;
-CREATE TABLE IF NOT EXISTS dim.dim_vova_shipping_carrier
+CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_vova_shipping_carrier
 (
     datasource          string comment '数据平台',
     carrier_id         bigint COMMENT '物流方式ID',

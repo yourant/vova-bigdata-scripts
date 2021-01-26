@@ -5,10 +5,14 @@ cur_date=$1
 if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
+hadoop fs -mkdir s3://bigdata-offline/warehouse/tmp/tmp_vova_buyer_first_pay
+hadoop fs -mkdir s3://bigdata-offline/warehouse/tmp/tmp_vova_buyer_first_refund
+hadoop fs -mkdir s3://bigdata-offline/warehouse/tmp/tmp_vova_buyer_app_version
+hadoop fs -mkdir s3://bigdata-offline/warehouse/dim/dim_vova_buyers
 ###更新用户首单
 sql="
 insert overwrite table tmp.tmp_vova_buyer_first_pay
-select 'vova' as datasource,
+select /*+ REPARTITION(2) */  'vova' as datasource,
     oi.user_id as buyer_id,
     min(order_id) as first_order_id,
     min(order_time) as first_order_time,
@@ -18,7 +22,7 @@ where oi.pay_status >= 1
 group by user_id;
 
 insert overwrite table tmp.tmp_vova_buyer_first_refund
-select 'vova' as datasource,
+select /*+ REPARTITION(1) */ 'vova' as datasource,
     oi.user_id          AS buyer_id,
     min(rr.create_time) AS first_refund_time
 FROM ods_vova_vts.ods_vova_refund_reason rr
@@ -28,7 +32,8 @@ GROUP BY oi.user_id;
 
 drop table if exists tmp.tmp_vova_buyer_app_version;
 create table tmp.tmp_vova_buyer_app_version as
-select datasource,
+select /*+ REPARTITION(60) */
+       datasource,
        buyer_id,
        device_id,
        app_version,
@@ -43,7 +48,8 @@ from (select buyer_id,
 where su.rank = 1;
 
 insert overwrite table dim.dim_vova_buyers
-SELECT u.reg_site_name   as datasource,
+SELECT /*+ REPARTITION(100) */
+       u.reg_site_name   as datasource,
        u.user_id         as buyer_id,
        u.email,
        u.user_name       as buyer_name,
@@ -86,5 +92,4 @@ spark-sql --conf "spark.app.name=dim_vova_buyers"  --conf "spark.sql.parquet.wri
 if [ $? -ne 0 ];then
   exit 1
 fi
-
 

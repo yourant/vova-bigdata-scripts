@@ -1,0 +1,25 @@
+drop table if exists dwb.dwb_vova_goods_sn_top500_avg_price_his;
+create table if  not exists dwb.dwb_vova_goods_sn_top500_avg_price_his (
+    `goods_sn`                      string        COMMENT 'd_商品id',
+    `sales_vol_1w`                  bigint        COMMENT 'i_最近一周销量',
+    `price_avg_1w`                  decimal(13,2) COMMENT 'i_最近一周销量最好的goods_id出单均价',
+    `avg_price_current_month`       decimal(13,2) COMMENT 'i_本月goods_sn出单均价',
+    `avg_price_last_1_month`        decimal(13,2) COMMENT 'i_最近第1个月goods_sn出单均价',
+    `avg_price_last_2_month`        decimal(13,2) COMMENT 'i_最近第2个月goods_sn出单均价',
+    `avg_price_last_3_month`        decimal(13,2) COMMENT 'i_最近第3个月goods_sn出单均价',
+    `avg_price_last_4_month`        decimal(13,2) COMMENT 'i_最近第4个月goods_sn出单均价',
+    `avg_price_last_5_month`        decimal(13,2) COMMENT 'i_最近第5个月goods_sn出单均价',
+    `avg_price_last_6_month`        decimal(13,2) COMMENT 'i_最近第6个月goods_sn出单均价',
+    `avg_price_last_7_month`        decimal(13,2) COMMENT 'i_最近第7个月goods_sn出单均价',
+    `avg_price_last_8_month`        decimal(13,2) COMMENT 'i_最近第8个月goods_sn出单均价',
+    `avg_price_last_9_month`        decimal(13,2) COMMENT 'i_最近第9个月goods_sn出单均价',
+    `avg_price_last_10_month`       decimal(13,2) COMMENT 'i_最近第10个月goods_sn出单均价',
+    `avg_price_last_11_month`       decimal(13,2) COMMENT 'i_最近第11个月goods_sn出单均价',
+    `avg_price_last_12_month`       decimal(13,2) COMMENT 'i_最近第12个个月goods_sn出单均价',
+    `avg_price_last_13_month`       decimal(13,2) COMMENT 'i_最近第13个月goods_sn出单均价',
+    `avg_price_last_14_month`       decimal(13,2) COMMENT 'i_最近第14个月goods_sn出单均价',
+    `avg_price_last_15_month`       decimal(13,2) COMMENT 'i_最近第15个月goods_sn出单均价',
+    `avg_price_last_16_month`       decimal(13,2) COMMENT 'i_最近第16个月goods_sn出单均价',
+    `avg_price_last_17_month`       decimal(13,2) COMMENT 'i_最近第17个月goods_sn出单均价',
+    `avg_price_last_18_month`       decimal(13,2) COMMENT 'i_最近第18个月goods_sn出单均价'
+)  COMMENT 'goods_sn历史均价表' PARTITIONED BY (pt string) STORED AS PARQUETFILE;

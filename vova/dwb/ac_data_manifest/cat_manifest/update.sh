@@ -1,16 +1,16 @@
 #!/bin/bash
 echo "start_time:"  `date +"%Y-%m-%d %H:%M:%S" -d "8 hour"`
 
-#Ö¸¶¨ÈÕÆÚºÍÒıÇæ
+#æŒ‡å®šæ—¥æœŸå’Œå¼•æ“
 cur_date=$1
-#Ä¬ÈÏÈÕÆÚÎª×òÌì
+#é»˜è®¤æ—¥æœŸä¸ºæ˜¨å¤©
 if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 
 echo "cur_date: $cur_date"
 
-job_name="dwb_vova_second_cat_manifest_req4947_chenkai"
+job_name="dwb_vova_second_cat_manifest_req4947_chenkai_${cur_date}"
 
 #
 sql="
@@ -27,8 +27,8 @@ nvl(search_second_cat_uv, 0),
 nvl(add_cart_uv, 0),
 nvl(pd_uv, 0),
 nvl(pay_uv, 0)
-from 
-(select 
+from
+(select
 result1.datasource datasource,
 result1.region_code region_code,
 if(result1.second_cat_id = 'all', 'all', result2.first_cat_id) first_cat_id,
@@ -38,26 +38,26 @@ result1.search_second_cat_uv search_second_cat_uv,
 result1.add_cart_uv add_cart_uv,
 result1.pd_uv pd_uv,
 tmp_pay_uv.pay_uv pay_uv
-from 
+from
  (select
-   nvl(t2.datasource,'all') datasource, -- Êı¾İÔ´
-   nvl(t2.region_code,'all') region_code, -- ¹ú¼Ò
-   nvl(t2.second_cat_id,'all') second_cat_id, -- ¶ş¼¶Æ·Àà
-   nvl(count(distinct(search_second_cat_device_id)),0) search_second_cat_uv, -- searchÒ³Êı¾İ¶ş¼¶Æ·Ààµã»÷UV
-   nvl(count(distinct(add_cart_device_id)),0) add_cart_uv, -- ¼Ó¹º°´Å¥UV
-   nvl(count(distinct(pd_device_id)),0) pd_uv -- ÉÌÏêÒ³UV
+   nvl(t2.datasource,'all') datasource, -- æ•°æ®æº
+   nvl(t2.region_code,'all') region_code, -- å›½å®¶
+   nvl(t2.second_cat_id,'all') second_cat_id, -- äºŒçº§å“ç±»
+   nvl(count(distinct(search_second_cat_device_id)),0) search_second_cat_uv, -- searché¡µæ•°æ®äºŒçº§å“ç±»ç‚¹å‡»UV
+   nvl(count(distinct(add_cart_device_id)),0) add_cart_uv, -- åŠ è´­æŒ‰é’®UV
+   nvl(count(distinct(pd_device_id)),0) pd_uv -- å•†è¯¦é¡µUV
   from (
      select
-      nvl(t1.datasource,'NA') datasource, -- Êı¾İÔ´
-      nvl(t1.region_code,'NA') region_code, -- ¹ú¼Ò
-      nvl(dg.second_cat_id,'NA') second_cat_id, -- ¶ş¼¶Æ·Àà
-   
-      case when t1.page_code = 'search_result' and t1.event_name ='goods_click' then t1.device_id end search_second_cat_device_id, -- searchÒ³Êı¾İ¶ş¼¶Æ·Ààµã»÷UV
-      case when t1.element_name='pdAddToCartClick'  and t1.event_name ='common_click' then t1.device_id end add_cart_device_id, -- ¼Ó¹º°´Å¥UV
-      CASE when t1.page_code='product_detail' and t1.view_type='show' and t1.event_name ='screen_view' THEN t1.device_id end pd_device_id -- ÉÌÏêÒ³UV
+      nvl(t1.datasource,'NA') datasource, -- æ•°æ®æº
+      nvl(t1.region_code,'NA') region_code, -- å›½å®¶
+      nvl(dg.second_cat_id,'NA') second_cat_id, -- äºŒçº§å“ç±»
 
-     from 
-     ( -- platform os_type,page_code,device_id,NULL element_name 
+      case when t1.page_code = 'search_result' and t1.event_name ='goods_click' then t1.device_id end search_second_cat_device_id, -- searché¡µæ•°æ®äºŒçº§å“ç±»ç‚¹å‡»UV
+      case when t1.element_name='pdAddToCartClick'  and t1.event_name ='common_click' then t1.device_id end add_cart_device_id, -- åŠ è´­æŒ‰é’®UV
+      CASE when t1.page_code='product_detail' and t1.view_type='show' and t1.event_name ='screen_view' THEN t1.device_id end pd_device_id -- å•†è¯¦é¡µUV
+
+     from
+     ( -- platform os_type,page_code,device_id,NULL element_name
       select datasource,event_name,platform,os_type,page_code,view_type,virtual_goods_id,
           geo_country as region_code,device_id,dvce_created_tstamp,'goods_click' element_name,1 clks,0 expres,pt
        from dwd.dwd_vova_log_goods_click
@@ -69,65 +69,65 @@ from
        where pt = '${cur_date}'
        and element_name ='pdAddToCartClick' and page_code='product_detail' and device_id is not null
        and dp='airyclub'
-      union all 
+      union all
       select datasource,event_name,platform,os_type,page_code,view_type,virtual_goods_id,
           geo_country as region_code,device_id,dvce_created_tstamp,null element_name ,0 clks,0 expres,pt
        from dwd.dwd_vova_log_screen_view
        where pt = '${cur_date}'
        and page_code = 'product_detail' and view_type='show' and device_id is not null and dp='airyclub'
-     ) t1 
-    left join 
+     ) t1
+    left join
       dim.dim_vova_goods dg
     on t1.virtual_goods_id = dg.virtual_goods_id
     where dg.virtual_goods_id is not null and dg.second_cat_id is not null
    ) t2
    group by cube(t2.datasource, t2.region_code, t2.second_cat_id)
    HAVING region_code in ('all','GB','FR','DE','IT','ES','NL','PT','US','CS','PL','BE','MX','SI','RU','JP','BR','TW','NA','AU')
-) result1 
+) result1
 
 left join
 (
- select 
-  nvl(dog.datasource,'all') datasource, -- Êı¾İÔ´
-  nvl(dog.region_code, 'all') region_code, -- ¹ú¼Ò
-  nvl(dg.second_cat_id, 'all') second_cat_id, -- ¶ş¼¶Æ·Àà
-  nvl(count(distinct(dog.device_id)),0) pay_uv -- ËùÓĞÉÌÆ·ÒÑ¸¶¿îUV
+ select
+  nvl(dog.datasource,'all') datasource, -- æ•°æ®æº
+  nvl(dog.region_code, 'all') region_code, -- å›½å®¶
+  nvl(dg.second_cat_id, 'all') second_cat_id, -- äºŒçº§å“ç±»
+  nvl(count(distinct(dog.device_id)),0) pay_uv -- æ‰€æœ‰å•†å“å·²ä»˜æ¬¾UV
  from dim.dim_vova_order_goods dog
  left join
    dim.dim_vova_goods dg
  on dog.goods_id = dg.goods_id
- where to_date(dog.order_time) = '${cur_date}' and dog.sku_pay_status = 2 and dg.goods_id is not null and dg.second_cat_id is not null and datasource = 'airyclub'
+ where to_date(dog.pay_time) = '${cur_date}' and dog.pay_status >= 1 and dg.goods_id is not null and dg.second_cat_id is not null and datasource = 'airyclub'
  group by cube(dog.datasource, dog.region_code, dg.second_cat_id)
  HAVING region_code in ('all','GB','FR','DE','IT','ES','NL','PT','US','CS','PL','BE','MX','SI','RU','JP','BR','TW','NA','AU')
 ) tmp_pay_uv
 on result1.region_code = tmp_pay_uv.region_code and result1.second_cat_id = tmp_pay_uv.second_cat_id and result1.datasource = tmp_pay_uv.datasource
 
-left join 
+left join
 (
- select 
+ select
  t_re.datasource,
  region_code,
  t_re.first_cat_id,
  search_first_cat_uv,
  second_cat_id
- from 
- (select 
-  nvl(t2.datasource,'all') datasource, -- Êı¾İÔ´
-  nvl(t2.region_code,'all') region_code, -- ¹ú¼Ò
-  nvl(t2.first_cat_id,'all') first_cat_id, -- Ò»¼¶Æ·Àà
-  nvl(count(distinct(search_first_cat_device_id)),0) search_first_cat_uv -- searchÒ³Êı¾İÒ»¼¶Æ·Ààµã»÷UV
-  from 
-  (select 
-   nvl(t1.datasource,'NA') datasource, -- Êı¾İÔ´
-   nvl(t1.region_code,'NA') region_code, -- ¹ú¼Ò
-   nvl(dg.first_cat_id,'NA') first_cat_id, -- Ò»¼¶Æ·Àà
-   case when t1.page_code = 'search_result' and t1.event_name ='goods_click' then t1.device_id end search_first_cat_device_id -- searchÒ³Êı¾İÒ»¼¶Æ·Ààµã»÷UV  
-   from 
+ from
+ (select
+  nvl(t2.datasource,'all') datasource, -- æ•°æ®æº
+  nvl(t2.region_code,'all') region_code, -- å›½å®¶
+  nvl(t2.first_cat_id,'all') first_cat_id, -- ä¸€çº§å“ç±»
+  nvl(count(distinct(search_first_cat_device_id)),0) search_first_cat_uv -- searché¡µæ•°æ®ä¸€çº§å“ç±»ç‚¹å‡»UV
+  from
+  (select
+   nvl(t1.datasource,'NA') datasource, -- æ•°æ®æº
+   nvl(t1.region_code,'NA') region_code, -- å›½å®¶
+   nvl(dg.first_cat_id,'NA') first_cat_id, -- ä¸€çº§å“ç±»
+   case when t1.page_code = 'search_result' and t1.event_name ='goods_click' then t1.device_id end search_first_cat_device_id -- searché¡µæ•°æ®ä¸€çº§å“ç±»ç‚¹å‡»UV
+   from
      (select datasource,event_name,platform,os_type,page_code,view_type,virtual_goods_id,
           geo_country as region_code,device_id,dvce_created_tstamp,'goods_click' element_name,1 clks,0 expres,pt
        from dwd.dwd_vova_log_goods_click
        where pt = '${cur_date}' and page_code = 'search_result' and dp='airyclub') t1
-     left join 
+     left join
       dim.dim_vova_goods dg
      on t1.virtual_goods_id = dg.virtual_goods_id
      where dg.virtual_goods_id is not null and dg.first_cat_id is not null
@@ -140,14 +140,14 @@ left join
   on dg.first_cat_id = t_re.first_cat_id
   where dg.second_cat_id is not null
 ) result2
-on result1.region_code = result2.region_code and result1.second_cat_id = result2.second_cat_id and result1.datasource = result2.datasource) re 
-left join 
+on result1.region_code = result2.region_code and result1.second_cat_id = result2.second_cat_id and result1.datasource = result2.datasource) re
+left join
 (select distinct first_cat_id, first_cat_name, second_cat_id, second_cat_name from dim.dim_vova_goods) dg
 on re.second_cat_id = dg.second_cat_id
 where datasource = 'airyclub'
 ;
 "
-#Èç¹ûÊ¹ÓÃspark-sqlÔËĞĞ£¬ÔòÖ´ĞĞspark-sql -e
+#å¦‚æœä½¿ç”¨spark-sqlè¿è¡Œï¼Œåˆ™æ‰§è¡Œspark-sql -e
 spark-sql \
 --executor-memory 8G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
@@ -162,7 +162,7 @@ spark-sql \
 --conf "spark.sql.adaptive.join.enabled=true" \
 --conf "spark.shuffle.sort.bypassMergeThreshold=10000" \
 -e "$sql"
-#Èç¹û½Å±¾Ê§°Ü£¬Ôò±¨´í
+#å¦‚æœè„šæœ¬å¤±è´¥ï¼Œåˆ™æŠ¥é”™
 if [ $? -ne 0 ];then
   exit 1
 fi

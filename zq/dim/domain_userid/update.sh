@@ -8,7 +8,8 @@ fi
 ###逻辑sql
 sql="
 INSERT OVERWRITE TABLE dim.dim_zq_domain_userid
-SELECT t1.datasource,
+SELECT /*+ REPARTITION(5) */
+       t1.datasource,
        t1.domain_userid,
        t1.platform,
        t1.activate_time,
@@ -54,9 +55,23 @@ inner join dwd.dwd_zq_fact_original_channel d2 on t1.datasource = d2.datasource 
 ;
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
-spark-sql --conf "spark.app.name=dim_zq_order_goods" --conf "spark.sql.parquet.writeLegacyFormat=true"  --conf "spark.sql.output.merge=true"  --conf "spark.sql.output.coalesceNum=20" -e "$sql"
-#如果脚本失败，则报错
-
+spark-sql \
+--executor-memory 8G --executor-cores 1 \
+--conf "spark.sql.parquet.writeLegacyFormat=true"  \
+--conf "spark.dynamicAllocation.minExecutors=5" \
+--conf "spark.dynamicAllocation.initialExecutors=20" \
+--conf "spark.dynamicAllocation.maxExecutors=150" \
+--conf "spark.app.name=dim_zq_domain_userid" \
+--conf "spark.default.parallelism = 380" \
+--conf "spark.sql.shuffle.partitions=380" \
+--conf "spark.sql.adaptive.enabled=true" \
+--conf "spark.sql.adaptive.join.enabled=true" \
+--conf "spark.shuffle.sort.bypassMergeThreshold=10000" \
+--conf "spark.sql.inMemoryColumnarStorage.compressed=true" \
+--conf "spark.sql.inMemoryColumnarStorage.partitionPruning=true" \
+--conf "spark.sql.inMemoryColumnarStorage.batchSize=100000" \
+--conf "spark.network.timeout=300" \
+-e "$sql"
 if [ $? -ne 0 ];then
   exit 1
 fi

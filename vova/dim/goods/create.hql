@@ -1,5 +1,5 @@
 drop table dim.dim_vova_goods;
-CREATE TABLE IF NOT EXISTS dim.dim_vova_goods
+CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_vova_goods
 (
     datasource       string comment '数据平台',
     goods_id         BIGINT COMMENT '商品ID',

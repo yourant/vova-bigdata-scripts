@@ -10,12 +10,22 @@ fi
 sql="
 INSERT OVERWRITE TABLE dim.dim_zq_site
 SELECT
+/*+ REPARTITION(1) */
 project_name as datasource,
 domain_group
+FROM
+(
+SELECT
+project_name,
+case
+when domain_group in ('FD_SZ', 'AD')
+then 'FD'
+else domain_group end AS domain_group2
 from
 ods_zq_zsp.ods_zq_site ss
 where ss.status = 1
 and ss.type = 1
+) t1
 group by project_name, domain_group
 
 "

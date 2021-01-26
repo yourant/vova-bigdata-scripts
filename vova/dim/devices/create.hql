@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS tmp.tmp_vova_device_app_version
 
 
 drop table dim.dim_vova_devices;
-CREATE TABLE IF NOT EXISTS dim.dim_vova_devices
+CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_vova_devices
 (
     datasource          string comment '数据平台',
     device_id           string COMMENT '设备ID',

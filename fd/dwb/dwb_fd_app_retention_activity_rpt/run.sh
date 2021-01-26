@@ -23,6 +23,8 @@ shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_retention_activity_rpt"
 spark-sql \
 --conf "spark.app.name=dwd_fd_app_retention_activity_rpt_gaohaitao"   \
 --conf "spark.dynamicAllocation.maxExecutors=100" \
+--conf "spark.executor.memoryOverhead=10G" \
+--driver-memory 4g \
 -d pt=$pt \
 -f ${shell_path}/app_retention_activity_rpt.hql
 
