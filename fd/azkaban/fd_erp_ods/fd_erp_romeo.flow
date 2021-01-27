@@ -110,7 +110,7 @@ nodes:
   - name: ods_remo_facility_location
     type: command
     config:
-        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL  --table_name=facility_location --mapers=1 --partition_num=1 --period_type=day --primary_key=location_capacity
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL  --table_name=facility_location --mapers=3 --partition_num=1 --period_type=day --primary_key=location_capacity
     dependsOn:
          - fd_romeo_flow_start
 
@@ -146,7 +146,7 @@ nodes:
   - name: ods_remo_order_shipment
     type: command
     config:
-        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=order_shipment --mapers=1 --partition_num=1 --period_type=day --primary_key=SHIPMENT_ID
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=order_shipment --mapers=15 --partition_num=5 --period_type=day --primary_key=SHIPMENT_ID
     dependsOn:
          - fd_romeo_flow_start
 
