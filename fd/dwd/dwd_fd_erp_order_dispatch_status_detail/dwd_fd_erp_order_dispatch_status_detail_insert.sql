@@ -33,7 +33,14 @@ LEFT JOIN ods_fd_ecshop.ods_fd_ecs_order_goods og ON og.order_id = oi.order_id
 LEFT JOIN ods_fd_ecshop.ods_fd_ecs_goods g ON g.goods_id = og.goods_id
 LEFT JOIN ods_fd_romeo.ods_fd_dispatch_list dl ON dl.order_goods_id = og.rec_id AND dl.dispatch_status_id NOT IN ('CANCELLED')
 LEFT JOIN ods_fd_mps.ods_fd_supplier_dispatch_list sdl ON dl.DISPATCH_LIST_ID = sdl.DISPATCH_LIST_ID
-LEFT JOIN ods_fd_romeo.ods_fd_order_inv_reserved_detail oird ON og.rec_id = oird.order_item_id
+
+LEFT JOIN (
+          select distinct order_item_id ,goods_number,ORDER_INV_RESERVED_detail_ID,reserved_quantity,
+            row_number() over (partition by order_item_id order by VERSION ) rank
+           from ods_fd_romeo.ods_fd_order_inv_reserved_detail ) oird
+           ON og.rec_id = oird.order_item_id
+
+
 INNER JOIN ods_fd_romeo.ods_fd_party_config pc on oi.party_id =pc.party_id
 -- 关联质检新流程记录主表qc_workload，判断 R-待检验 S-鞋子和配件的检验' is_qt和is_receive的状态
 left join ods_fd_mps.ods_fd_qc_workload qw on qw.dispatch_sn = dl.DISPATCH_SN
@@ -46,6 +53,7 @@ left join ods_fd_romeo.ods_fd_basket_shipment_detail bsd on bsd.dispatch_sn = dl
 
 
 WHERE  pc.party_code = 2
+and oird.rank=1
 AND oi.facility_id = '383497303'
 AND oi.order_time > date_sub('${pt}', 365)
 AND oi.order_type_id ='SALE'
