@@ -21,10 +21,10 @@ FROM (
                 rgp.shop_price_usd as shop_price,
                 floor(rgp.shop_price_usd * 6.7 / rgp.purchase_price_rmb) as price_rate,
                 og.goods_number_day                               as goods_number_day,
-                nvl(dc.second_cat_id,"")                          as first_cat_id,
-                nvl(dc.second_cat_name,"")                        as first_cat_name,
-                nvl(dc.third_cat_id,"")                           as second_cat_id,
-                nvl(dc.third_cat_name,"")                         as second_cat_name
+                nvl(dc.first_cat_id,"")                          as first_cat_id,
+                nvl(dc.first_cat_name,"")                        as first_cat_name,
+                nvl(dc.second_cat_id,"")                           as second_cat_id,
+                nvl(dc.second_cat_name,"")                         as second_cat_name
          FROM (
             SELECT
                 project_name,

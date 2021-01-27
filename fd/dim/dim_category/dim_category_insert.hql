@@ -8,32 +8,32 @@ case
     when c.depth = 1 then c.cat_id
     when c1.depth = 1 then c1.cat_id
     when c2.depth = 1 then c2.cat_id
-    when c3.depth = 1 then c3.cat_id  end as fisrt_cat_id,
+    when c3.depth = 1 then c3.cat_id  end as root_cat_id,
 case
     when c.depth = 1 then c.cat_name
     when c1.depth = 1 then c1.cat_name
     when c2.depth = 1 then c2.cat_name
-    when c3.depth = 1 then c3.cat_name  end as fisrt_cat_name,
+    when c3.depth = 1 then c3.cat_name  end as root_cat_name,
 case
     when c.depth = 2 then c.cat_id
     when c1.depth = 2 then c1.cat_id
     when c2.depth = 2 then c2.cat_id
-    when c3.depth = 2 then c3.cat_id  end as second_cat_id,
+    when c3.depth = 2 then c3.cat_id  end as first_cat_id,
 case
     when c.depth = 2 then c.cat_name
     when c1.depth = 2 then c1.cat_name
     when c2.depth = 2 then c2.cat_name
-    when c3.depth = 2 then c3.cat_name  end as second_cat_name,
+    when c3.depth = 2 then c3.cat_name  end as first_cat_name,
 case
     when c.depth = 3 then c.cat_id
     when c1.depth = 3 then c1.cat_id
     when c2.depth = 3 then c2.cat_id
-    when c3.depth = 3 then c3.cat_id  end as third_cat_id,
+    when c3.depth = 3 then c3.cat_id  end as second_cat_id,
 case
     when c.depth = 3 then c.cat_name
     when c1.depth = 3 then c1.cat_name
     when c2.depth = 3 then c2.cat_name
-    when c3.depth = 3 then c3.cat_name  end as third_cat_name,
+    when c3.depth = 3 then c3.cat_name  end as second_cat_name,
 case
     when c.depth > 0 THEN  1 ELSE 0 END AS is_leaf
 FROM ods_fd_vb.ods_fd_category c
