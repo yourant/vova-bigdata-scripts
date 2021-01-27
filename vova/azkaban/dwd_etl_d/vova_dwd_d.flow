@@ -31,6 +31,7 @@ nodes:
       - dwd_vova_fact_ab
       - dwd_vova_fact_log_bonus_card
       - dwd_vova_fact_log_click_cause
+      - dwd_vova_rec_report
 
   - name: start_flag
     type: command
@@ -88,6 +89,21 @@ nodes:
       - judge_dim_vova_devices
       - dwd_vova_fact_pay
 
+  - name: dwd_vova_rec_report
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwd/dwd_rec_report/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_log_goods_impression
+      - judge_dwd_vova_fact_log_goods_click
+      - dwd_vova_fact_cart_cause_v2
+      - dwd_vova_fact_order_cause_v2
+      - judge_dim_vova_devices
+      - judge_dim_vova_goods
+      - judge_dim_vova_order_goods
+      - dwd_vova_fact_pay
 
   - name: judge_dim_vova_devices
     type: command
