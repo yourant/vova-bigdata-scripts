@@ -1,4 +1,4 @@
-insert overwrite table dwb.dwb_fd_erp_daily_workload  partition (pt = '2021-01-18')
+insert overwrite table dwb.dwb_fd_erp_daily_workload  partition (pt = '${pt}')
 select
  /*+ REPARTITION(1) */
     t1.report_date as report_date ,
@@ -20,5 +20,5 @@ inner join
 dwd.dwd_fd_erp_daily_order_goods_nums_info t2 on t1.report_date=t2.report_date
 inner join
 dwd.dwd_fd_erp_daily_stock_package_info  t3 on t1.report_date=t3.report_date
-where t1.report_date='2021-01-17'
+where t1.report_date='${pt}'
 ;

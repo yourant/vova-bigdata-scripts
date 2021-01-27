@@ -7,7 +7,7 @@ select
       t2.st_dispatch_num as st_dispatch_num
 
 from
--- record_time, no_sj_dispatch_num 入库未上架, onlocing_dispatch_num 上架中
+-- record_time, no_sj_dispatch_num 入库中, onlocing_dispatch_num 上架中
  (select
             '${pt}' as record_time,
             sum(if(multi_rk and not sj, 1, 0)) as no_sj_dispatch_num,
