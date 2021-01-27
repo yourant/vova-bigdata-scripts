@@ -4,6 +4,9 @@
 3.m值划分表现
 4.f值划分表现
 5.新老用户下单率
+# 2021-01-27
+下掉
+数据对不上，逻辑贼复杂，也没人看
 
 drop table dwb.dwb_vova_devices_tag;
 CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_devices_tag
