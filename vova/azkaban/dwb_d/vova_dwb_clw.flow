@@ -64,47 +64,77 @@ nodes:
       - start_flag
 
 
-  - name: judge_dwd_vova_fact_log_goods_click
+  - name: judge_dwd_vova_log_goods_click
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_goods_click
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_click
       retries: 30
       retry.backoff: 300000
     dependsOn:
       - start_flag
 
 
-  - name: judge_dwd_vova_fact_log_common_click
+  - name: judge_dwd_vova_log_common_click
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_common_click
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_common_click
       retries: 30
       retry.backoff: 300000
     dependsOn:
       - start_flag
 
-  - name: judge_dwd_vova_fact_log_goods_impression
+  - name: judge_dwd_vova_log_goods_impression
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_goods_impression
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_impression
       retries: 30
       retry.backoff: 300000
     dependsOn:
       - start_flag
 
-  - name: judge_dwd_vova_fact_log_screen_view
+  - name: judge_dwd_vova_log_screen_view
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_screen_view
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_screen_view
       retries: 30
       retry.backoff: 300000
     dependsOn:
       - start_flag
 
-  - name: judge_dwd_vova_fact_log_page_view
+  - name: judge_dwd_vova_log_page_view
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_page_view
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_page_view
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_dwd_vova_fact_supply_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_supply_order_goods
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_dim_vova_supply_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_supply_goods
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_dim_vova_merchant
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_merchant
       retries: 30
       retry.backoff: 300000
     dependsOn:
@@ -122,10 +152,10 @@ nodes:
       - judge_dwd_vova_fact_pay
       - judge_dim_vova_goods
       - judge_dwd_vova_fact_start_up
-      - judge_dwd_vova_fact_log_goods_click
-      - judge_dwd_vova_fact_log_common_click
-      - judge_dwd_vova_fact_log_goods_impression
-      - judge_dwd_vova_fact_log_screen_view
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_common_click
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_screen_view
 
   - name: rpt_board_rank_v2
     type: command
@@ -135,10 +165,23 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_dwd_vova_fact_pay
-      - judge_dwd_vova_fact_log_page_view
-      - judge_dwd_vova_fact_log_screen_view
-      - judge_dwd_vova_fact_log_common_click
+      - judge_dwd_vova_log_page_view
+      - judge_dwd_vova_log_screen_view
+      - judge_dwd_vova_log_common_click
       - judge_dwd_vova_fact_start_up
       - judge_dim_vova_order_goods
       - judge_vova_order_info
+
+
+  -  name: rpt_self_profit
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/financial_self/update_new.sh
+       retries: 3
+       retry.backoff: 600000
+     dependsOn:
+       - judge_dwd_vova_fact_supply_order_goods
+       - judge_dim_vova_supply_goods
+       - judge_dim_vova_order_goods
+       - judge_dim_vova_merchant
 

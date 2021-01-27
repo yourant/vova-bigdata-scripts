@@ -1,0 +1,606 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - dwb_vova_second_cat_manifest
+      - dwb_vova_ac_order_daily
+      - dwb_vova_bonus_card
+      - dwb_vova_monitor_cmb
+#      - dwb_vova_devices_tag
+      - dwb_vova_group_goods_day7_top50
+      - dwb_vova_homepage_total_efficiency_v2
+      - dwb_vova_homepage_flow_distribution
+      - dwb_vova_markdown_order_daily
+      - dwb_vova_mct_first_cat_rank_downgrading
+      - dwb_vova_push_click_behavior
+      - dwb_vova_refund_process
+      - dwb_vova_refund_report
+      - dwb_vova_pay_refund_process
+      - dwb_vova_pay_refund_report
+      - dwb_vova_search_no_result
+      - dwb_vova_first_order_buyer
+      - dwb_vova_user_cohort
+      - dwb_vova_order_month_cohort
+      - dwb_vova_user_month_cohort
+      - dwb_vova_self_profit_summary
+      - dwb_vova_high_refund_goods_restrict_monitor
+      - dwb_vova_finance_self_mct_refund
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: judge_dwd_vova_fact_pay
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_devices
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_devices
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_order_goods
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_order_info
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_order_info
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_start_up
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_start_up
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_goods_click
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_click
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_common_click
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_common_click
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_goods_impression
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_impression
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_screen_view
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_screen_view
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_page_view
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_page_view
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_logistics
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_logistics
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_refund
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_refund
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_collection_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh collection_order_goods
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_bonus_card
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_bonus_card
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_buyers
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_buyers
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_coupon
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_coupon
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_dim_vova_coupon
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_coupon
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_order_cause_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_order_cause_v2
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_order_goods_extension
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_order_goods_extension
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_order_goods_extra
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_order_goods_extra
+    dependsOn:
+      - start_flag
+
+  - name: judge_dws_devices
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dws_devices
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_brand
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_brand
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_merchant
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_merchant
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_goods_restrict_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_restrict_d
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_impressions
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_impressions
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_push_click
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_push_click
+    dependsOn:
+      - start_flag
+
+  - name: judge_ods_gyl_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh trigram_pangu_order_goods
+    dependsOn:
+      - start_flag
+
+  - name: judge_ods_gyl_order_info
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh trigram_pangu_order_info
+    dependsOn:
+      - start_flag
+
+  - name: judge_ods_gyl_order_goods_purchase_plan
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh trigram_pangu_order_goods_purchase_plan
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_supply_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_supply_order_goods
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwb_vova_self_profit
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwb_vova_self_profit
+    dependsOn:
+      - start_flag
+############################################################
+# 报表
+# AC数据报表-search数据表现
+  - name: dwb_vova_second_cat_manifest
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/ac_data_manifest/cat_manifest/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_common_click
+      - judge_dim_vova_order_goods
+      - judge_dim_vova_goods
+
+# AC-日报表
+  - name: dwb_vova_ac_order_daily
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/ac_data_manifest/order_daily/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_pay
+      - judge_dim_vova_devices
+      - judge_dim_vova_order_goods
+      - judge_dwd_vova_fact_logistics
+      - judge_dwd_vova_log_common_click
+      - judge_dwd_vova_log_screen_view
+      - judge_dwd_vova_fact_refund
+
+# 省钱月卡报表
+  - name: dwb_vova_bonus_card
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/bonus_card/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_vova_bonus_card
+      - judge_dwd_vova_log_screen_view
+      - judge_dim_vova_devices
+      - judge_dim_vova_buyers
+      - judge_dwd_vova_fact_coupon
+      - judge_dim_vova_coupon
+      - judge_dim_vova_order_goods
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_common_click
+      - judge_dwd_vova_fact_order_cause_v2
+
+# vova集运项目监控报表
+  - name: dwb_vova_monitor_cmb
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/collection/sm_update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_order_goods
+      - judge_dim_vova_goods
+      - judge_vova_order_goods_extension
+      - judge_vova_order_goods_extra
+
+# 用户分层 数据对不上，逻辑贼复杂，也没人看
+#   - name: dwb_vova_devices_tag
+#     type: command
+#     config:
+#       command: sh /mnt/vova-bigdata-scripts/vova/dwb/devices_tag/devices_tag_update.sh
+#       retries: 5
+#       retry.backoff: 600000
+#     dependsOn:
+#       - judge_dws_devices
+#       - judge_dim_vova_devices
+#       - judge_dwd_vova_fact_start_up
+
+# 自营店铺退款率报表
+  - name: dwb_vova_finance_self_mct_refund
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/finance_self_merchant_refund/update.sh
+      retries: 3
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwb_vova_self_profit
+      - judge_dim_vova_order_goods
+      - judge_dim_vova_merchant
+      - judge_dwd_vova_fact_refund
+
+# 自营店铺日报表
+  - name: dwb_vova_self_profit_summary
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/financial_self_summary/update.sh
+      retries: 3
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ods_gyl_order_goods
+      - judge_ods_gyl_order_info
+      - judge_ods_gyl_order_goods_purchase_plan
+      - judge_dim_vova_order_goods
+      - judge_dim_vova_merchant
+      - judge_dwd_vova_fact_supply_order_goods
+
+# 7日Top50商品数据
+  - name: dwb_vova_group_goods_day7_top50
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/group_goods_day7_top50/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_dwd_vova_fact_pay
+      - judge_vova_brand
+      - judge_dim_vova_merchant
+
+# 高退款率屏蔽商品监控
+  - name: dwb_vova_high_refund_goods_restrict_monitor
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/high_refund_goods_restrict/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_order_goods
+      - judge_dim_vova_goods
+      - judge_ads_vova_goods_restrict_d
+
+
+# 首页效率监控体系-V2
+  - name: dwb_vova_homepage_total_efficiency_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/homepage_efficiency_monitor_v2/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_pay
+      - judge_dim_vova_devices
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_screen_view
+      - judge_dwd_vova_log_impressions
+      - judge_dwd_vova_fact_order_cause_v2
+
+# 首页各资源位流量分配报表
+  - name: dwb_vova_homepage_flow_distribution
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/homepage_flow_distribution/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_devices
+      - judge_dwd_vova_log_impressions
+      - judge_dwd_vova_log_common_click
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_screen_view
+
+# 低价会场报表
+  - name: dwb_vova_markdown_order_daily
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/markdown_daily/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_fact_order_cause_v2
+      - judge_dim_vova_order_goods
+      - judge_dim_vova_devices
+      - judge_dwd_vova_log_screen_view
+
+
+# 优质商家类目降级监控
+  - name: dwb_vova_mct_first_cat_rank_downgrading
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/mct_first_cat_rank_downgrading/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_dim_vova_merchant
+
+# 消息中心-推送报表v2
+  - name: dwb_vova_push_click_behavior
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/push_click_behavior/update_v2.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_push_click
+      - judge_dim_vova_order_goods
+      - judge_dim_vova_devices
+      - judge_dwd_vova_log_common_click
+      - judge_dwd_vova_log_goods_impression
+
+
+# 退款率报表
+  - name: dwb_vova_refund_process
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/refund_report/update_process.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_refund
+      - judge_dim_vova_buyers
+      - judge_dim_vova_order_goods
+
+  - name: dwb_vova_refund_report
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/refund_report/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - dwb_vova_refund_process
+
+  - name: dwb_vova_pay_refund_process
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/refund_report/pay_refund_report/update_process.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_refund
+      - judge_dim_vova_buyers
+      - judge_dim_vova_order_goods
+      - judge_dwd_vova_fact_pay
+
+  - name: dwb_vova_pay_refund_report
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/refund_report/pay_refund_report/update_final.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - dwb_vova_pay_refund_process
+
+
+# 搜索无结果推荐列表页监控
+  - name: dwb_vova_search_no_result
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/search_no_result/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_common_click
+      - judge_vova_brand
+      - judge_dim_vova_order_goods
+
+# 台湾新人首单返券报表
+  - name: dwb_vova_first_order_buyer
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/taiwan_first_order_buyer/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_screen_view
+      - judge_dim_vova_order_goods
+      - judge_dim_vova_coupon
+      - judge_dim_vova_devices
+      - judge_dwd_vova_fact_refund
+      - judge_dwd_vova_fact_logistics
+
+# 用户留存
+  - name: dwb_vova_user_cohort
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/user_cohort/user_cohort_update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_start_up
+      - judge_dim_vova_devices
+
+# app月度留存:
+  - name: dwb_vova_user_month_cohort
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/user_month_cohort/user_month_cohort_update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_start_up
+      - judge_dim_vova_devices
+      - judge_dwd_vova_fact_pay
+      - judge_vova_collection_order_goods
+
+  - name: dwb_vova_order_month_cohort
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/user_month_cohort/order_month_cohort.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_pay
+      - judge_dim_vova_devices
+      - judge_vova_collection_order_goods
+
+
+
+
+
+
+
+
+
+
+
+
+
+

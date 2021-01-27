@@ -40,12 +40,22 @@ nodes:
       - judge_vova_goods
       - judge_vova_virtual_goods
       - dim_vova_category
+      - judge_vova_rec_gid_pic_similar
     condition: all_success
 
   - name: judge_vova_virtual_goods
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_virtual_goods
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_rec_gid_pic_similar
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_rec_gid_pic_similar
       retries: 5
       retry.backoff: 600000
     dependsOn:

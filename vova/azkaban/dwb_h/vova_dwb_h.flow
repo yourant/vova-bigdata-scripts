@@ -1,0 +1,38 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - dwb_vova_recall_pool_h
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: judge_vova_fact_log_v2_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_v2_h
+      retries: 40
+      retry.backoff: 60000
+    dependsOn:
+      - start_flag
+
+######################################################################################
+# recall_pool_va
+  - name: dwb_vova_recall_pool_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/recall_pool/v1/update.sh
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - judge_vova_fact_log_v2_h

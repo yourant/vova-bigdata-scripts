@@ -14,6 +14,7 @@ mysql> desc facebook_goods_daily_report;
 7 rows in set (0.00 sec)
 
 Facebook 商品广告花费-vo
+mysql数据 不迁移 不调度
 
 mysql -h zkmarket.cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u vomktread -pvova_mkt_read
 report_ychen
