@@ -30,6 +30,9 @@ nodes:
       - dwb_vova_user_cohort
       - dwb_vova_order_month_cohort
       - dwb_vova_user_month_cohort
+      - dwb_vova_self_profit_summary
+      - dwb_vova_high_refund_goods_restrict_monitor
+      - dwb_vova_finance_self_mct_refund
 
   - name: start_flag
     type: command
@@ -248,7 +251,40 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_ods_gyl_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh trigram_pangu_order_goods
+    dependsOn:
+      - start_flag
 
+  - name: judge_ods_gyl_order_info
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh trigram_pangu_order_info
+    dependsOn:
+      - start_flag
+
+  - name: judge_ods_gyl_order_goods_purchase_plan
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh trigram_pangu_order_goods_purchase_plan
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_supply_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_supply_order_goods
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwb_vova_self_profit
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwb_vova_self_profit
+    dependsOn:
+      - start_flag
 ############################################################
 # 报表
 # AC数据报表-search数据表现
@@ -279,7 +315,6 @@ nodes:
       - judge_dwd_vova_log_common_click
       - judge_dwd_vova_log_screen_view
       - judge_dwd_vova_fact_refund
-
 
 # 省钱月卡报表
   - name: dwb_vova_bonus_card
@@ -326,28 +361,33 @@ nodes:
       - judge_dim_vova_devices
       - judge_dwd_vova_fact_start_up
 
-# todo: 自营店铺退款率报表
-#   - name: dwb_vova_finance_self_mct_refund
-#     type: command
-#     config:
-#       command: sh /mnt/vova-bigdata-scripts/vova/dwb/finance_self_merchant_refund/update.sh
-#       retries: 3
-#       retry.backoff: 600000
-#     dependsOn:
-#       - dwb_vova_self_profit
-#       - judge_dim_vova_order_goods
-#       - judge_dim_vova_merchant
-#       - judge_dwd_vova_fact_refund
+# 自营店铺退款率报表
+  - name: dwb_vova_finance_self_mct_refund
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/finance_self_merchant_refund/update.sh
+      retries: 3
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwb_vova_self_profit
+      - judge_dim_vova_order_goods
+      - judge_dim_vova_merchant
+      - judge_dwd_vova_fact_refund
 
-# todo: 自营店铺日报表
-#  - name: dwb_vova_self_profit_summary
-#    type: command
-#    config:
-#      command: sh /mnt/vova-bigdata-scripts/vova/dwb/financial_self_summary/update.sh
-#      retries: 3
-#      retry.backoff: 600000
-#    dependsOn:
-#      - dwb_vova_self_profit
+# 自营店铺日报表
+  - name: dwb_vova_self_profit_summary
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/financial_self_summary/update.sh
+      retries: 3
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ods_gyl_order_goods
+      - judge_ods_gyl_order_info
+      - judge_ods_gyl_order_goods_purchase_plan
+      - judge_dim_vova_order_goods
+      - judge_dim_vova_merchant
+      - judge_dwd_vova_fact_supply_order_goods
 
 # 7日Top50商品数据
   - name: dwb_vova_group_goods_day7_top50
@@ -362,17 +402,17 @@ nodes:
       - judge_vova_brand
       - judge_dim_vova_merchant
 
-# todo: 高退款率屏蔽商品监控
-#   - name: dwb_vova_high_refund_goods_restrict_monitor
-#     type: command
-#     config:
-#       command: sh /mnt/vova-bigdata-scripts/vova/dwb/high_refund_goods_restrict/update.sh
-#       retries: 5
-#       retry.backoff: 600000
-#     dependsOn:
-#       - judge_dim_vova_order_goods
-#       - judge_dim_vova_goods
-#       - judge_ads_vova_goods_restrict_d
+# 高退款率屏蔽商品监控
+  - name: dwb_vova_high_refund_goods_restrict_monitor
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/high_refund_goods_restrict/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_order_goods
+      - judge_dim_vova_goods
+      - judge_ads_vova_goods_restrict_d
 
 
 # 首页效率监控体系-V2
