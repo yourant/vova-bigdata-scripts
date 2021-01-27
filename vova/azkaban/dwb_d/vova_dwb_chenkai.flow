@@ -14,7 +14,7 @@ nodes:
       - dwb_vova_ac_order_daily
       - dwb_vova_bonus_card
       - dwb_vova_monitor_cmb
-      - dwb_vova_devices_tag
+#      - dwb_vova_devices_tag
       - dwb_vova_group_goods_day7_top50
       - dwb_vova_homepage_total_efficiency_v2
       - dwb_vova_homepage_flow_distribution
@@ -349,17 +349,17 @@ nodes:
       - judge_vova_order_goods_extension
       - judge_vova_order_goods_extra
 
-# 用户分层
-  - name: dwb_vova_devices_tag
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/dwb/devices_tag/devices_tag_update.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - judge_dws_devices
-      - judge_dim_vova_devices
-      - judge_dwd_vova_fact_start_up
+# 用户分层 数据对不上，逻辑贼复杂，也没人看
+#   - name: dwb_vova_devices_tag
+#     type: command
+#     config:
+#       command: sh /mnt/vova-bigdata-scripts/vova/dwb/devices_tag/devices_tag_update.sh
+#       retries: 5
+#       retry.backoff: 600000
+#     dependsOn:
+#       - judge_dws_devices
+#       - judge_dim_vova_devices
+#       - judge_dwd_vova_fact_start_up
 
 # 自营店铺退款率报表
   - name: dwb_vova_finance_self_mct_refund
