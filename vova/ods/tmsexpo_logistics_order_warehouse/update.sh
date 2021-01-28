@@ -5,9 +5,8 @@ his_date=$2
 #默认日期为昨天
 if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
-his_date=`date -d "-2 day" +%Y-%m-%d`
 fi
-
+his_date=`date -d "1 day ago ${cur_date}" +%Y-%m-%d`
 sql="
 msck repair table ods_vova_ext.tmsexpo_logistics_order_warehouse_inc;
 ALTER TABLE ods_vova_ext.tmsexpo_logistics_order_warehouse_arc DROP IF EXISTS PARTITION (pt = '${cur_date}');

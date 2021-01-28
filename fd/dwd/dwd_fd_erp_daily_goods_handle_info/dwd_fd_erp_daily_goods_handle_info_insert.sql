@@ -108,7 +108,7 @@ from
                       AND bsd.`status` = 'PK'
                       AND bsd.is_process = 'N'
                       AND bsd.created_stamp  >= '${pt}'
-                      AND bsd.created_stamp  < date_sub('${pt}',-1)
+                      AND bsd.created_stamp  < date_sub('${pt}',-2)
                       and pc.party_code = '2'
                       group by os.order_id
                 )
