@@ -211,7 +211,7 @@ nodes:
   - name: judge_dwd_vova_log_goods_page_view
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_page_view
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_page_view
       retries: 10
       retry.backoff: 300000
     dependsOn:
@@ -236,7 +236,7 @@ nodes:
   - name: judge_dwd_vova_log_goods_click
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_goods_click
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_click
       retries: 10
       retry.backoff: 300000
     dependsOn:
@@ -245,7 +245,7 @@ nodes:
   - name: judge_dwd_vova_log_goods_impression
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_goods_impression
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_impression
       retries: 10
       retry.backoff: 300000
     dependsOn:
@@ -266,7 +266,7 @@ nodes:
   - name: judge_dwd_vova_log_common_click
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_common_click
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_common_click
       retries: 10
       retry.backoff: 300000
     dependsOn:
