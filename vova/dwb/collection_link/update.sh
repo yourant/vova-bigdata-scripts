@@ -15,10 +15,10 @@ nvl(a.region_code,'all') region_code,
 nvl(c.carrier_name,'all') carrier_name,
 round(sum(datediff(b.logistic_delivered_time,a.confirm_time) + round((hour(b.logistic_delivered_time) - hour(a.confirm_time)) / 24,2)) / count(1),2) duan_to_duan,
 percentile_approx(datediff(b.logistic_delivered_time,a.confirm_time) + round((hour(b.logistic_delivered_time) - hour(a.confirm_time)) / 24,2),0.9) duan_to_duan_90,
-round(sum(datediff(d.valid_tracking_date,a.confirm_time) + round((hour(d.valid_tracking_date) - hour(a.confirm_time)) / 24,2)) / count(1),2) send_exp,
-percentile_approx(datediff(d.valid_tracking_date,a.confirm_time) + round((hour(d.valid_tracking_date) - hour(a.confirm_time)) / 24,2),0.9) send_exp_90,
-round(sum(datediff(e.epc_sign_time,d.valid_tracking_date) + round((hour(e.epc_sign_time) - hour(d.valid_tracking_date)) / 24,2)) / count(1),2) head_get_exp,
-percentile_approx(datediff(e.epc_sign_time,d.valid_tracking_date) + round((hour(e.epc_sign_time) - hour(d.valid_tracking_date)) / 24,2),0.9) head_get_exp_90,
+round(sum(datediff(e.pick_up_time,a.confirm_time) + round((hour(e.pick_up_time) - hour(a.confirm_time)) / 24,2)) / count(1),2) send_exp,
+percentile_approx(datediff(e.pick_up_time,a.confirm_time) + round((hour(e.pick_up_time) - hour(a.confirm_time)) / 24,2),0.9) send_exp_90,
+round(sum(datediff(e.epc_sign_time,e.pick_up_time) + round((hour(e.epc_sign_time) - hour(e.pick_up_time)) / 24,2)) / count(1),2) head_get_exp,
+percentile_approx(datediff(e.epc_sign_time,e.pick_up_time) + round((hour(e.epc_sign_time) - hour(e.pick_up_time)) / 24,2),0.9) head_get_exp_90,
 round(sum(datediff(f.out_warehouse_time,f.in_warehouse_time) + round((hour(f.out_warehouse_time) - hour(f.in_warehouse_time)) / 24,2)) / count(1),2) stock_in,
 percentile_approx(datediff(f.out_warehouse_time,f.in_warehouse_time) + round((hour(f.out_warehouse_time) - hour(f.in_warehouse_time)) / 24,2),0.9) stock_in_90,
 round(sum(datediff(f.in_warehouse_time,e.epc_sign_time) + round((hour(f.in_warehouse_time) - hour(e.epc_sign_time)) / 24,2)) / count(1),2) in_stock,
@@ -43,7 +43,7 @@ where date(a.confirm_time) >= date_sub('${start_date}',dayofweek('${start_date}'
 and a.datasource='vova'
 and to_date(b.logistic_delivered_time) > '2000-01-01'
 and to_date(a.confirm_time) > '2000-01-01'
-and to_date(d.valid_tracking_date) > '2000-01-01'
+and to_date(e.pick_up_time) > '2000-01-01'
 and to_date(e.epc_sign_time) > '2000-01-01'
 and to_date(f.out_warehouse_time) > '2000-01-01'
 and to_date(f.in_warehouse_time) > '2000-01-01'
