@@ -5,8 +5,8 @@ select
        gpsp.virtual_goods_id,
        gpsp.project_name,
        gpsp.cat_id,
-       c.three_cat_id,
-       c.three_cat_name,
+       c.first_cat_id,
+       c.first_cat_name,
        gpsp.shop_price_usd,
        gpsp.purchase_price_rmb
 from dwd.dwd_fd_goods_purchase_shop_price gpsp
