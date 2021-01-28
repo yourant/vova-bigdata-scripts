@@ -64,7 +64,7 @@ nodes:
           command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_erp_dispatch_link_work_order_info/run.sh ${pt}
         dependsOn:
           - judge_fd_ecshop_inc_flow_end
-          - judge_fd_ecshop_inc_flow_end
+          - judge_fd_mps_inc_flow_end
           - judge_fd_romeo_inc_flow_end
 
 
@@ -74,7 +74,7 @@ nodes:
           command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_erp_order_dispatch_status_detail/run.sh ${pt}
         dependsOn:
           - judge_fd_ecshop_inc_flow_end
-          - judge_fd_ecshop_inc_flow_end
+          - judge_fd_mps_inc_flow_end
           - judge_fd_romeo_inc_flow_end
 
 
