@@ -64,7 +64,7 @@ nodes:
           command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_erp_daily_stock_package_info/run.sh ${pt}
         dependsOn:
           - judge_fd_ecshop_inc_flow_end
-          - judge_fd_ecshop_inc_flow_end
+          - judge_fd_mps_inc_flow_end
           - judge_fd_romeo_inc_flow_end
 
 
