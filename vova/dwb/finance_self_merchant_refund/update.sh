@@ -113,7 +113,7 @@ WHERE dog.pay_status >= 1
 AND dog.sku_order_status != 5
 AND date(dog.confirm_time) >= date_sub('${cur_date}', 90)
 AND date(dog.confirm_time) <= '${cur_date}'
-AND dog.mct_id IN (11630, 36655)
+AND dog.mct_id IN (11630, 36655,61017,61028,61235,61310)
 GROUP BY date(dog.confirm_time),dm.mct_name
 ) final_data
 ;
@@ -163,7 +163,7 @@ AND dog.sku_pay_status = 4
 AND date(dog.confirm_time) >= date_sub('${cur_date}', 90)
 AND date(dog.confirm_time) <= '${cur_date}'
 AND (fspog.order_goods_shipping_status < 8 or fspog.order_goods_shipping_status is null)
-AND dog.mct_id IN (11630, 36655)
+AND dog.mct_id IN (11630, 36655,61017,61028,61235,61310)
 GROUP BY date(dog.confirm_time),dm.mct_name,rt.refund_type
 
 ;
