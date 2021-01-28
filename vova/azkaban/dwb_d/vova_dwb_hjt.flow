@@ -186,12 +186,7 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: judge_dws_devices
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dws_devices
-    dependsOn:
-      - start_flag
+
 
   - name: judge_vova_brand
     type: command
@@ -207,14 +202,6 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: judge_ads_vova_goods_restrict_d
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_restrict_d
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - start_flag
 
   - name: judge_dwd_vova_log_impressions
     type: command
