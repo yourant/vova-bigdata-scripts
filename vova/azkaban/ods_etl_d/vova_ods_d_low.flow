@@ -65,7 +65,7 @@ nodes:
           - vova_images_vector
           - vova_rec_gid_pic_similar
           - vova_mct_auth_status
-          - vova_ads_red_packet_goods_group_recommend
+          - vova_ads_lower_price_goods_red_packet
 
       - name: vova_images_vector # test
         type: command
