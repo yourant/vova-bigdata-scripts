@@ -24,27 +24,27 @@ nodes:
       retry.backoff: 120000
     dependsOn:
       - ods_zq_order_info_h
-      - judge_dim_zq_domain_userid
-      - judge_dim_zq_site
+#      - judge_dim_zq_domain_userid
+#      - judge_dim_zq_site
       - judge_vova_fact_log_v2_h
 
-  - name: judge_dim_zq_domain_userid
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_zq_domain_userid
-      retries: 20
-      retry.backoff: 120000
-    dependsOn:
-      - start_flag
-
-  - name: judge_dim_zq_site
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_zq_site
-      retries: 20
-      retry.backoff: 120000
-    dependsOn:
-      - start_flag
+#  - name: judge_dim_zq_domain_userid
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_zq_domain_userid
+#      retries: 20
+#      retry.backoff: 120000
+#    dependsOn:
+#      - start_flag
+#
+#  - name: judge_dim_zq_site
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_zq_site
+#      retries: 20
+#      retry.backoff: 120000
+#    dependsOn:
+#      - start_flag
 
   - name: ods_zq_order_info_h
     type: command
