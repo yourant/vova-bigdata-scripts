@@ -34,10 +34,9 @@ from
        first_value(dvce_created_ts) OVER (PARTITION BY log.datasource, buyer_id, domain_userid, geo_country, platform, pt ORDER BY pt, dvce_created_tstamp) AS min_create_time,
        dvce_created_ts AS max_create_time,
        log.pt
-FROM dwd.dwd_vova_log_page_view log
+FROM dwd.dwd_vova_log_page_view_arc log
 inner join dim.dim_zq_site se on se.datasource = log.datasource
 WHERE log.pt = '${cur_date}'
-  AND log.dp = 'others'
   AND log.platform in ('web', 'pc')) su
 WHERE su.rank = 1
 ;
@@ -57,10 +56,9 @@ log.datasource,
 log.domain_userid,
 log.pt,
 min(log.dvce_created_ts) as dvce_created_ts
-FROM dwd.dwd_vova_log_page_view log
+FROM dwd.dwd_vova_log_page_view_arc log
 inner join dim.dim_zq_site se on se.datasource = log.datasource
 WHERE log.pt = '${cur_date}'
-  AND log.dp = 'others'
   AND log.platform in ('web', 'pc')
 group by log.datasource, log.domain_userid, log.pt
 ) t1 left join
@@ -93,10 +91,9 @@ CASE
         THEN 'facebook'
     ELSE 'unknown' END AS original_channel,
 log.dvce_created_ts
-FROM dwd.dwd_vova_log_page_view log
+FROM dwd.dwd_vova_log_page_view_arc log
 inner join dim.dim_zq_site se on se.datasource = log.datasource
 WHERE log.pt = '${cur_date}'
-  AND log.dp = 'others'
   AND log.platform in ('web', 'pc')
 ) t1
 where t1.original_channel != 'unknown'

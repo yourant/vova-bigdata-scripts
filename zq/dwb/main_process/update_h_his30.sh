@@ -76,11 +76,11 @@ CASE when t1.event_name ='data' and t1.page_code='product_detail' and t1.element
 CASE when t1.event_name ='click' and t1.page_code='check_out' and t1.element_name = 'continue_checkout' THEN t1.domain_userId end continue_checkout_domain_userId
 from
 (
-select pt,hour,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,view_type,NULL element_name,NULL list_name from dwd.dwd_vova_log_page_view_arc where pt>=date_sub('${cur_date}', 1) and pt<='${cur_date}' and datasource NOT IN ('vova')
+select pt,hour,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,view_type,NULL element_name,NULL list_name from dwd.dwd_vova_log_page_view_arc where pt>=date_sub('${cur_date}', 30) and pt<='${cur_date}' and datasource NOT IN ('vova')
 union all
-select pt,hour,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,NULL view_type,element_name,NULL list_name from dwd.dwd_vova_log_data_arc where pt>=date_sub('${cur_date}', 1) and pt<='${cur_date}' and datasource NOT IN ('vova')
+select pt,hour,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,NULL view_type,element_name,NULL list_name from dwd.dwd_vova_log_data_arc where pt>=date_sub('${cur_date}', 30) and pt<='${cur_date}' and datasource NOT IN ('vova')
 union all
-select pt,hour,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,NULL view_type,element_name,NULL list_name from dwd.dwd_vova_log_click_arc where pt>=date_sub('${cur_date}', 1) and pt<='${cur_date}' and datasource NOT IN ('vova') and event_type='normal'
+select pt,hour,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,NULL view_type,element_name,NULL list_name from dwd.dwd_vova_log_click_arc where pt>=date_sub('${cur_date}', 30) and pt<='${cur_date}' and datasource NOT IN ('vova') and event_type='normal'
 ) t1
 LEFT JOIN dim.dim_zq_domain_userid fdu on fdu.domain_userid = t1.domain_userid AND fdu.datasource = t1.datasource
 INNER JOIN dim.dim_zq_site zs on zs.datasource = t1.datasource AND zs.domain_group = 'FN'
@@ -131,7 +131,7 @@ FROM ods_zq_zsp.ods_zq_order_info_h oi
 WHERE oi.pay_status >= 1
 group by oi.user_id, oi.project_name
 ) pre_order on pre_order.min_order_id = oi.order_id AND oi.project_name = pre_order.project_name
-WHERE date(oi.pay_time) >= date_sub('${cur_date}', 1)
+WHERE date(oi.pay_time) >= date_sub('${cur_date}', 30)
 AND date(oi.pay_time) <= '${cur_date}'
 AND oi.pay_status >= 1
 GROUP BY CUBE (if(oi.from_domain like '%api%', 'web', 'pc'), date(oi.pay_time), nvl(r.region_code,'NA'), nvl(oi.project_name,'NA'),
@@ -212,11 +212,11 @@ CASE when t1.event_name ='data' and t1.page_code='product_detail' and t1.element
 CASE when t1.event_name ='click' and t1.page_code='check_out' and t1.element_name = 'continue_checkout' THEN t1.domain_userId end continue_checkout_domain_userId
 from
 (
-select pt,hour,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,view_type,NULL element_name,NULL list_name from dwd.dwd_vova_log_page_view_arc where pt>=date_sub('${cur_date}', 1) and pt<='${cur_date}' and datasource NOT IN ('vova')
+select pt,hour,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,view_type,NULL element_name,NULL list_name from dwd.dwd_vova_log_page_view_arc where pt>=date_sub('${cur_date}', 30) and pt<='${cur_date}' and datasource NOT IN ('vova')
 union all
-select pt,hour,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,NULL view_type,element_name,NULL list_name from dwd.dwd_vova_log_data_arc where pt>=date_sub('${cur_date}', 1) and pt<='${cur_date}' and datasource NOT IN ('vova')
+select pt,hour,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,NULL view_type,element_name,NULL list_name from dwd.dwd_vova_log_data_arc where pt>=date_sub('${cur_date}', 30) and pt<='${cur_date}' and datasource NOT IN ('vova')
 union all
-select pt,hour,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,NULL view_type,element_name,NULL list_name from dwd.dwd_vova_log_click_arc where pt>=date_sub('${cur_date}', 1) and pt<='${cur_date}' and datasource NOT IN ('vova') and event_type='normal'
+select pt,hour,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,NULL view_type,element_name,NULL list_name from dwd.dwd_vova_log_click_arc where pt>=date_sub('${cur_date}', 30) and pt<='${cur_date}' and datasource NOT IN ('vova') and event_type='normal'
 ) t1
 LEFT JOIN dim.dim_zq_domain_userid fdu on fdu.domain_userid = t1.domain_userid AND fdu.datasource = t1.datasource
 INNER JOIN dim.dim_zq_site zs on zs.datasource = t1.datasource AND zs.domain_group = 'FD'
@@ -267,7 +267,7 @@ FROM ods_zq_zsp.ods_zq_order_info_h oi
 WHERE oi.pay_status >= 1
 group by oi.user_id, oi.project_name
 ) pre_order on pre_order.min_order_id = oi.order_id AND oi.project_name = pre_order.project_name
-WHERE date(oi.pay_time) >= date_sub('${cur_date}', 1)
+WHERE date(oi.pay_time) >= date_sub('${cur_date}', 30)
 AND date(oi.pay_time) <= '${cur_date}'
 AND oi.pay_status >= 1
 GROUP BY CUBE (if(oi.from_domain like '%api%', 'web', 'pc'), date(oi.pay_time), nvl(r.region_code,'NA'), nvl(oi.project_name,'NA'),
@@ -349,11 +349,11 @@ CASE when t1.event_name ='data' and t1.page_code='product_detail' and t1.element
 CASE when t1.event_name ='click' and t1.page_code='check_out' and t1.element_name = 'continue_checkout' THEN t1.domain_userId end continue_checkout_domain_userId
 from
 (
-select pt,hour,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,view_type,NULL element_name,NULL list_name from dwd.dwd_vova_log_page_view_arc where pt>=date_sub('${cur_date}', 1) and pt<='${cur_date}' and datasource NOT IN ('vova')
+select pt,hour,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,view_type,NULL element_name,NULL list_name from dwd.dwd_vova_log_page_view_arc where pt>=date_sub('${cur_date}', 30) and pt<='${cur_date}' and datasource NOT IN ('vova')
 union all
-select pt,hour,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,NULL view_type,element_name,NULL list_name from dwd.dwd_vova_log_data_arc where pt>=date_sub('${cur_date}', 1) and pt<='${cur_date}' and datasource NOT IN ('vova')
+select pt,hour,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,NULL view_type,element_name,NULL list_name from dwd.dwd_vova_log_data_arc where pt>=date_sub('${cur_date}', 30) and pt<='${cur_date}' and datasource NOT IN ('vova')
 union all
-select pt,hour,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,NULL view_type,element_name,NULL list_name from dwd.dwd_vova_log_click_arc where pt>=date_sub('${cur_date}', 1) and pt<='${cur_date}' and datasource NOT IN ('vova') and event_type='normal'
+select pt,hour,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,NULL view_type,element_name,NULL list_name from dwd.dwd_vova_log_click_arc where pt>=date_sub('${cur_date}', 30) and pt<='${cur_date}' and datasource NOT IN ('vova') and event_type='normal'
 ) t1
 LEFT JOIN dim.dim_zq_domain_userid fdu on fdu.domain_userid = t1.domain_userid AND fdu.datasource = t1.datasource
 INNER JOIN dim.dim_zq_site zs on zs.datasource = t1.datasource AND zs.domain_group IN ('FD', 'TRIGRAM')
@@ -404,7 +404,7 @@ FROM ods_zq_zsp.ods_zq_order_info_h oi
 WHERE oi.pay_status >= 1
 group by oi.user_id, oi.project_name
 ) pre_order on pre_order.min_order_id = oi.order_id AND oi.project_name = pre_order.project_name
-WHERE date(oi.pay_time) >= date_sub('${cur_date}', 1)
+WHERE date(oi.pay_time) >= date_sub('${cur_date}', 30)
 AND date(oi.pay_time) <= '${cur_date}'
 AND oi.pay_status >= 1
 GROUP BY CUBE (if(oi.from_domain like '%api%', 'web', 'pc'), date(oi.pay_time), nvl(r.region_code,'NA'), nvl(oi.project_name,'NA'),
@@ -466,7 +466,7 @@ FROM (
                   FROM dwd.dwd_vova_log_impressions_arc log
                    INNER JOIN dim.dim_zq_site zs on zs.datasource = log.datasource AND zs.domain_group = 'FN'
                    LEFT JOIN dim.dim_zq_domain_userid fdu on fdu.domain_userid = log.domain_userid AND fdu.datasource = log.datasource
-                  WHERE log.pt >= date_sub('${cur_date}', 1) AND log.pt <= '${cur_date}'
+                  WHERE log.pt >= date_sub('${cur_date}', 30) AND log.pt <= '${cur_date}'
                     AND log.platform IN ('pc', 'web')
                     AND log.event_type = 'goods'
                   GROUP BY CUBE (log.pt, log.hour, log.platform, nvl(log.geo_country,'NALL'), nvl(fdu.original_channel, 'unknown'),
@@ -497,7 +497,7 @@ FROM (
                   FROM dwd.dwd_vova_log_click_arc log
                    INNER JOIN dim.dim_zq_site zs on zs.datasource = log.datasource AND zs.domain_group = 'FN'
                    LEFT JOIN dim.dim_zq_domain_userid fdu on fdu.domain_userid = log.domain_userid AND fdu.datasource = log.datasource
-                  WHERE log.pt >= date_sub('${cur_date}', 1) AND log.pt <= '${cur_date}'
+                  WHERE log.pt >= date_sub('${cur_date}', 30) AND log.pt <= '${cur_date}'
                     AND log.platform IN ('pc', 'web')
                     AND log.event_type = 'goods'
                   GROUP BY CUBE (log.pt, log.hour, log.platform, nvl(log.geo_country,'NALL'), nvl(fdu.original_channel, 'unknown'),
