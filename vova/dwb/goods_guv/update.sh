@@ -7,6 +7,14 @@ cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 ###逻辑sql
 
+#dependence
+#dwd_vova_log_goods_click
+#dwd_vova_log_common_click
+#dwd_vova_log_screen_view
+#dwd_vova_fact_pay
+#dim_vova_goods
+#dim_vova_order_goods
+
 sql="
 INSERT OVERWRITE TABLE dwb.dwb_vova_app_goods_guv PARTITION (pt = '${cur_date}')
 SELECT
@@ -180,7 +188,6 @@ FROM (
                          0                                           AS order_guv
                   FROM dwd.dwd_vova_fact_pay fp
                            INNER JOIN dim.dim_vova_goods dg ON dg.goods_id = fp.goods_id
-                           left join dim.dim_vova_devices dd on dd.device_id = fp.device_id and dd.datasource = 'vova'
                   WHERE date(fp.pay_time) = '${cur_date}'
                     AND fp.from_domain like '%api.vova%'
                   GROUP BY CUBE (nvl(fp.region_code, 'NALL'), nvl(fp.platform, 'NALL'), nvl(dg.first_cat_name, 'NALL'),
@@ -205,7 +212,6 @@ FROM (
                          count(DISTINCT dog.goods_id, dog.buyer_id)  AS order_guv
                   FROM dim.dim_vova_order_goods dog
                            INNER JOIN dim.dim_vova_goods dg ON dg.goods_id = dog.goods_id
-                           left join dim.dim_vova_devices dd on dd.device_id = dog.device_id and dd.datasource = 'vova'
                   WHERE date(dog.order_time) = '${cur_date}'
                     AND dog.from_domain like '%api.vova%'
                     AND dog.parent_order_id = 0

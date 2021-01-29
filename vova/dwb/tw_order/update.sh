@@ -5,6 +5,14 @@ cur_date=$1
 if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
+#dependence
+#dwd_vova_fact_logistics
+#dim_vova_order_goods
+#dim_vova_devices
+#ods_vova_vts.ods_vova_order_info
+#ods_vova_vts.ods_vova_order_extension
+#ods_vova_vts.ods_vova_order_goods_extension
+#ods_vova_vts.ods_vova_shipping_method
 sql="
 set hive.exec.dynamici.partition=true;
 set hive.exec.dynamic.partition.mode=nonstrict;

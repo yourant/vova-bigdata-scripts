@@ -12,6 +12,11 @@ nodes:
     dependsOn:
       - dwb_vova_web_main_process
       - dwb_vova_web_rec_report
+      - dwb_vova_app_goods_guv
+      - dwb_ac_activate_add_cart_goods
+      - dwb_vova_brand_goods
+      - dwb_vova_region_top_gmv
+      - dwb_vova_tw_order
 
   - name: start_flag
     type: command
@@ -187,4 +192,71 @@ nodes:
        - judge_dwd_vova_fact_pay
        - judge_dim_vova_order_goods
 
+
+
+
+
+
+  -  name: dwb_vova_app_goods_guv
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/goods_guv/update.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - judge_dwd_vova_log_goods_click
+       - judge_dwd_vova_log_common_click
+       - judge_dwd_vova_log_screen_view
+       - judge_dwd_vova_fact_pay
+       - judge_dim_vova_goods
+       - judge_dim_vova_order_goods
+
+  -  name: dwb_ac_activate_add_cart_goods
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/ac_activate_add_cart_goods/update.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - judge_dwd_vova_log_common_click
+       - judge_dwd_vova_fact_pay
+       - judge_dim_vova_devices
+       - judge_dim_vova_goods
+       - judge_dim_vova_order_goods
+       - judge_dim_vova_merchant
+
+  -  name: dwb_vova_brand_goods
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/brand_goods/update.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - judge_dim_vova_goods
+       - judge_dwd_vova_log_goods_impression
+       - judge_dwd_vova_fact_pay
+
+  -  name: dwb_vova_region_top_gmv
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/top_region_goods_gmv/update.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - judge_dwd_vova_log_goods_impression
+       - judge_dwd_vova_fact_pay
+       - judge_dwd_vova_log_goods_click
+       - judge_dwd_vova_log_common_click
+       - judge_dim_vova_goods
+
+  -  name: dwb_vova_tw_order
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/tw_order/update.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - judge_dwd_vova_fact_logistics
+       - judge_dim_vova_order_goods
+       - judge_dim_vova_devices
 
