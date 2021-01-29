@@ -279,7 +279,7 @@ nvl(CASE WHEN datediff(date(oi.pay_time),fdu.activate_time)<=0 THEN 'new'
 nvl(fdu.original_channel, 'unknown'))
 ) fin
 group by fin.event_date, fin.region_code, fin.platform, fin.user_source, fin.is_new, fin.datasource, fin.hour
-having event_date != 'all'
+having event_date != 'all' AND hour = 'all'
 ;
 
 
@@ -416,7 +416,7 @@ nvl(CASE WHEN datediff(date(oi.pay_time),fdu.activate_time)<=0 THEN 'new'
 nvl(fdu.original_channel, 'unknown'))
 ) fin
 group by fin.event_date, fin.region_code, fin.platform, fin.user_source, fin.is_new, fin.hour, fin.datasource
-having event_date != 'all'
+having event_date != 'all' AND hour = 'all'
 ;
 
 
