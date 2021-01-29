@@ -36,7 +36,9 @@ select /*+ REPARTITION(10) */
        rat.audit_status,
        rat.audit_time,
        ogs.sku_pay_status,
-       rat.recheck_type
+       rat.recheck_type,
+       rr.audit_status rr_audit_status,
+       rr.audit_time rr_audit_time
 from ods_vova_vts.ods_vova_refund_reason rr
          left join (select *
                     FROM (select rrt.value as refund_reason,

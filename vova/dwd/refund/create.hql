@@ -29,3 +29,8 @@ CREATE EXTERNAL TABLE IF NOT EXISTS dwd.dwd_vova_fact_refund
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
 
+# 2021-01-29
+alter table dwd.dwd_vova_fact_refund add columns(`rr_audit_status` string comment '客服退款审核状态');
+alter table dwd.dwd_vova_fact_refund add columns(`rr_audit_time` timestamp comment '客服退款审核时间');
+
+
