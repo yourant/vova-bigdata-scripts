@@ -19,7 +19,7 @@ nodes:
   - name: dwb_zq_main_process
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/zq/dwb/main_process/update.sh
+      command: sh /mnt/vova-bigdata-scripts/zq/dwb/main_process/update_h.sh
       retries: 20
       retry.backoff: 120000
     dependsOn:
