@@ -17,6 +17,9 @@ nodes:
       - dwb_vova_brand_goods
       - dwb_vova_region_top_gmv
       - dwb_vova_tw_order
+      - dwb_vova_merchant_kpi
+      - dwb_vova_checkout
+      - dwb_vova_app_response
 
   - name: start_flag
     type: command
@@ -180,6 +183,15 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_vova_paypal_txn
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_paypal_txn
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
   -  name: dwb_vova_web_main_process
      type: command
      config:
@@ -277,4 +289,39 @@ nodes:
        - judge_dwd_vova_fact_logistics
        - judge_dim_vova_order_goods
        - judge_dim_vova_devices
+
+  -  name: dwb_vova_merchant_kpi
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/merchant_kpi/update.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - judge_dwd_vova_fact_pay
+       - judge_dim_vova_merchant
+
+
+  -  name: dwb_vova_checkout
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/checkout/update.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - judge_dwd_vova_log_screen_view
+       - judge_dwd_vova_log_common_click
+       - judge_dwd_vova_log_page_view
+       - judge_dim_vova_order_goods
+       - judge_vova_paypal_txn
+
+  -  name: dwb_vova_app_response
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/cdn_response/update.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - judge_dwd_vova_log_data
+
+
 
