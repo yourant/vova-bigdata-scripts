@@ -1,0 +1,95 @@
+---
+config:
+  failure.emails: jhlu@i9i8.com
+  retries: 10
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_hour_job_start
+    type: noop
+
+  - name: judge_ods_fd_snowplow_ecommerce_event
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_snowplow_ecommerce_event_hour
+    dependsOn:
+      - fd_hour_job_start
+
+  - name: judge_ods_fd_snowplow_view_event
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_snowplow_view_event_hour
+    dependsOn:
+      - fd_hour_job_start
+
+  - name: judge_ods_fd_snowplow_goods_event
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_snowplow_goods_event_hour
+    dependsOn:
+      - fd_hour_job_start
+
+  - name: ods_fd_vb_goods_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=goods --partition_num=1 --period_type=hour
+    dependsOn:
+      - fd_hour_job_start
+
+  - name: ods_fd_virtual_goods_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=virtual_goods  --partition_num=1 --period_type=hour
+    dependsOn:
+      - fd_hour_job_start
+
+  - name: ods_fd_order_status_change_history_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCID --inc_column=id --table_name=order_status_change_history --mapers=5 --partition_num=5 --period_type=hour
+    dependsOn:
+      - fd_hour_job_start
+
+  - name: ods_fd_user_agent_analysis_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCID --inc_column=user_agent_id --table_name=user_agent_analysis  --partition_num=2  --period_type=hour
+    dependsOn:
+      - fd_hour_job_start
+
+  - name: ods_fd_vb_region_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=region --partition_num=1 --period_type=hour
+    dependsOn:
+      - fd_ods_newsletter_flow_start
+
+  - name: ods_fd_order_goods_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal_hourly/ods_fd_order_goods_h/run.sh
+    dependsOn:
+      - fd_hour_job_start
+
+  - name: ods_fd_order_info_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal_hourly/ods_fd_order_info_h/run.sh
+    dependsOn:
+      - fd_hour_job_start
+
+  - name: ods_fd_vb_user_agent_analysis_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_druid_goods/run.sh ${azkaban.flow.start.timestamp} ${pt} ${hour}
+    dependsOn:
+      - ods_fd_vb_goods_h
+      - ods_fd_virtual_goods_h
+      - ods_fd_order_info_h
+      - ods_fd_order_goods_h
+      - ods_fd_user_agent_analysis_h
+      - ods_fd_order_status_change_history_h
+      - ods_fd_vb_region_h
+      - judge_ods_fd_snowplow_goods_event
+      - judge_ods_fd_snowplow_view_event
+      - judge_ods_fd_snowplow_ecommerce_event
