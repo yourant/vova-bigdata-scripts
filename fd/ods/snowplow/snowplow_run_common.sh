@@ -9,18 +9,20 @@ hour_delta=0
 hour_range=1
 
 ts=$(date -d "$1" +"%Y-%m-%d %H")
-pt_now=$ts
+
 
 if [ "$#" -ne 3 ]; then
   pt=$(date -d "$ts -1 hours" +"%Y-%m-%d")
   hour=$(date -d "$ts -1 hours" +"%H")
   start=$(date -d "$ts -1 hours" +"%Y-%m-%d %H:00:00")
   end=$(date -d "$ts" +"%Y-%m-%d %H:00:00")
+  pt_now=$ts
 else
   pt=$2
   hour=$3
   start=$(date -d "${pt} ${hour} -1 hours" +"%Y-%m-%d %H:00:00")
   end=$(date -d "${pt} ${hour}" +"%Y-%m-%d %H:00:00")
+  pt_now="${pt} ${hour}"
 fi
 
 #filter
