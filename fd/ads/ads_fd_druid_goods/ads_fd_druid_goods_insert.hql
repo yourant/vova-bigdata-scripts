@@ -42,7 +42,7 @@ with goods_info as (
                              where rn = 1
          ) pe on pe.order_sn = oi.order_sn
      )
-insert overwrite table ads.ads_fd_druid_goods partition (pt = '${pt}', hour = '${hour}')
+insert overwrite table ads.ads_fd_druid_goods_event partition (pt = '${pt}', hour = '${hour}')
 select
     /*+ REPARTITION(5) */
     tmp.event_time,

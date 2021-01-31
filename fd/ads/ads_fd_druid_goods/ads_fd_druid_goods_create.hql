@@ -1,4 +1,4 @@
-create external table if not exists tmp.druid_goods_json
+create external table if not exists ads.ads.ads_fd_druid_goods_event
 (
     event_time        string,
     record_type       string,
