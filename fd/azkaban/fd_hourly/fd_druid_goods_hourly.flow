@@ -97,6 +97,6 @@ nodes:
   - name: fd_druid_goods_event_index_h
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal_hourly/ods_fd_order_info_h/druid_index.sh
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_druid_goods_event/druid_index.sh ${azkaban.flow.start.timestamp} ${pt} ${hour}
     dependsOn:
       - ads_fd_druid_goods_event_h
