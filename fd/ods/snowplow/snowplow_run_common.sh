@@ -8,22 +8,20 @@ cd $home
 hour_delta=0
 hour_range=1
 
-if [ ! -n "$1" ]; then
-  pt_now=$(date +"%Y-%m-%d %H")
-else
-  echo $1 | grep -Eq "[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}" && date -d "$1" +"%Y-%m-%d %H:%M:%S" >/dev/null
-  if [[ $? -ne 0 ]]; then
-    echo "接收的时间格式${1}不符合:%Y-%m-%d %H:%M:%S，请输入正确的格式!"
-    exit
-  fi
-  pt_now=$(date -d "$1" +"%Y-%m-%d %H")
-fi
+ts=$(date -d "$1" +"%Y-%m-%d %H")
+pt_now=$ts
 
-#collector开始时间
-start=$(date -d "$pt_now - $hour_range hours" +"%Y-%m-%d %H:00:00")
-end=$(date -d "$pt_now" +"%Y-%m-%d %H:00:00")
-pt=$(date -d "$pt_now - 1 hours" +"%Y-%m-%d")
-hour=$(date -d "$pt_now - 1 hours" +"%H")
+if [ "$#" -ne 3 ]; then
+  pt=$(date -d "$ts -1 hours" +"%Y-%m-%d")
+  hour=$(date -d "$ts -1 hours" +"%H")
+  start=$(date -d "$ts -1 hours" +"%Y-%m-%d %H:00:00")
+  end=$(date -d "$ts" +"%Y-%m-%d %H:00:00")
+else
+  pt=$2
+  hour=$3
+  start=$(date -d "${pt} ${hour} -1 hours" +"%Y-%m-%d %H:00:00")
+  end=$(date -d "${pt} ${hour}" +"%Y-%m-%d %H:00:00")
+fi
 
 #filter
 pt_filter=""
