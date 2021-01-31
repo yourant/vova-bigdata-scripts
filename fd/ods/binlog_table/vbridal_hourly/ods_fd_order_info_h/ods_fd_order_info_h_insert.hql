@@ -661,9 +661,7 @@ from (
                                   cast(o_raw.display_goods_amount_exchange AS DECIMAL(10, 2))                        AS display_goods_amount_exchange,
                                   cast(o_raw.display_bonus_exchange AS DECIMAL(10, 2))                               AS display_bonus_exchange,
                                   o_raw.token                                                                        AS token,
-                                  o_raw.payer_id                                                                     AS payer_id,
-                                  row_number()
-                                          OVER (PARTITION BY o_raw.order_id ORDER BY cast(o_raw.xid as BIGINT) DESC) AS rank
+                                  o_raw.payer_id                                                                     AS payer_id
                            from pdb.fd_vb_order_info
                                     LATERAL VIEW json_tuple(value, 'kafka_table', 'kafka_ts', 'kafka_commit',
                                                             'kafka_xid', 'kafka_type', 'kafka_old', 'order_id',

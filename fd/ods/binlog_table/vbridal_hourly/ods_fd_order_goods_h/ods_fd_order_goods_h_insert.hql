@@ -64,7 +64,7 @@ select /*+ REPARTITION(10) */
     heel_type_price_exchange,
     display_heel_type_price_exchange
 from (
-         select pt,
+         select
                 rec_id,
                 order_id,
                 goods_style_id,
@@ -329,11 +329,7 @@ from (
                                   cast(o_raw.display_wrap_price_exchange AS DECIMAL(10, 2))                        AS display_wrap_price_exchange,
                                   cast(o_raw.heel_type_price AS DECIMAL(10, 2))                                    AS heel_type_price,
                                   cast(o_raw.heel_type_price_exchange AS DECIMAL(10, 2))                           AS heel_type_price_exchange,
-                                  cast(o_raw.display_heel_type_price_exchange AS DECIMAL(10, 2))                   AS display_heel_type_price_exchange,
-                                  row_number()
-                                          OVER (PARTITION BY o_raw.rec_id ORDER BY cast(o_raw.xid as BIGINT) DESC) AS rank,
-                                  pt,
-                                  hour
+                                  cast(o_raw.display_heel_type_price_exchange AS DECIMAL(10, 2))                   AS display_heel_type_price_exchange
                            FROM pdb.fd_vb_order_goods
                                     LATERAL VIEW json_tuple(value, 'kafka_table', 'kafka_ts', 'kafka_commit',
                                                             'kafka_xid', 'kafka_type', 'kafka_old', 'rec_id',
