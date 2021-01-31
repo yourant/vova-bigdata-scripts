@@ -62,7 +62,7 @@ nodes:
     config:
       command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=ALL --table_name=region --partition_num=1 --period_type=hour
     dependsOn:
-      - fd_ods_newsletter_flow_start
+      - fd_hour_job_start
 
   - name: ods_fd_order_goods_h
     type: command
@@ -78,10 +78,10 @@ nodes:
     dependsOn:
       - fd_hour_job_start
 
-  - name: ods_fd_vb_user_agent_analysis_h
+  - name: ads_fd_druid_goods_event_h
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_druid_goods/run.sh ${azkaban.flow.start.timestamp} ${pt} ${hour}
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_druid_goods_event/run.sh ${azkaban.flow.start.timestamp} ${pt} ${hour}
     dependsOn:
       - ods_fd_vb_goods_h
       - ods_fd_virtual_goods_h
@@ -93,3 +93,10 @@ nodes:
       - judge_ods_fd_snowplow_goods_event
       - judge_ods_fd_snowplow_view_event
       - judge_ods_fd_snowplow_ecommerce_event
+
+  - name: fd_druid_goods_event_index_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal_hourly/ods_fd_order_info_h/druid_index.sh
+    dependsOn:
+      - ads_fd_druid_goods_event_h

@@ -1,5 +1,5 @@
 #bin/sh
-table="ads_fd_druid_goods"
+table="ads_fd_druid_goods_event"
 user="lujiaheng"
 
 base_path="/mnt/vova-bigdata-scripts/fd/ads"

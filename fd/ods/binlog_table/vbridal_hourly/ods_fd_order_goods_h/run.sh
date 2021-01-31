@@ -19,6 +19,12 @@ echo "pt: ${pt}"
 shell_path="${base_path}/${table}"
 
 hive -f ${shell_path}/${table}_create.hql
+
+hive -e "MSCK REPAIR TABLE pdb.fd_vb_order_goods;"
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
 spark-sql \
   --conf "spark.app.name=${table}_${user}" \
   --conf "spark.dynamicAllocation.maxExecutors=60" \
