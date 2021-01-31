@@ -2,7 +2,7 @@
 table="ods_fd_order_goods_h"
 user="lujiaheng"
 
-base_path="/mnt/vova-bigdata-scripts/fd/ods/vbridal_hourly"
+base_path="/mnt/vova-bigdata-scripts/fd/ods/binlog_table/vbridal_hourly"
 
 if [ ! -n "$1" ]; then
   pt=$(date -d "- 1 hours" +"%Y-%m-%d")
