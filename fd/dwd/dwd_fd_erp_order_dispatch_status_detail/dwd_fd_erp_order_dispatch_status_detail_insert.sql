@@ -57,7 +57,7 @@ and oird.rank=1
 AND oi.facility_id = '383497303'
 AND oi.order_time > date_sub('${pt}', 365)
 AND oi.order_type_id ='SALE'
-AND oi.shipping_status IN('0','8','9')
+AND oi.shipping_status IN(0,8,9)
 AND oi.order_status !='2'
 AND (substr(oi.email,8)!='tetx.com' or oi.email in ('ytlu@tetx.com','ssqin@tetx.com','xdli@tetx.com'))
 AND substr(oi.email,8)!='i9i8.com'
@@ -111,7 +111,7 @@ and  iid.QUANTITY_ON_HAND_DIFF > 0
 AND oi.facility_id = '383497303'
 AND oi.order_time > date_sub('${pt}',365)
 AND oi.order_type_id ='SALE'
-AND oi.shipping_status IN('0','8','9')
+AND oi.shipping_status IN(0,8,9)
 AND oi.order_status !='2'
 AND (substr(oi.email,8)!='tetx.com' or oi.email in ('ytlu@tetx.com','ssqin@tetx.com','xdli@tetx.com'))
 AND substr(oi.email,8)!='i9i8.com'
