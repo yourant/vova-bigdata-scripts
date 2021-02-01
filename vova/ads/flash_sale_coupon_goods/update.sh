@@ -15,13 +15,15 @@ SELECT
     res.first_cat_id,
     res.gmv,
     res.gcr,
-    row_number() OVER(PARTITION BY res.first_cat_id ORDER BY res.gmv DESC) gmv_rank,
-    row_number() OVER(PARTITION BY res.first_cat_id ORDER BY res.gcr DESC) gcr_rank
+    res.clicks,
+    row_number() OVER(PARTITION BY res.first_cat_id ORDER BY res.gmv DESC, res.clicks DESC) gmv_rank,
+    row_number() OVER(PARTITION BY res.first_cat_id ORDER BY res.gcr DESC, res.clicks DESC) gcr_rank
 FROM (
          SELECT vac.goods_id,
                 nvl(dvg.first_cat_id, 0) AS first_cat_id,
                 nvl(fin.gmv, 0)          AS gmv,
-                nvl(fin.gcr, 0)          AS gcr
+                nvl(fin.gcr, 0)          AS gcr,
+                nvl(fin.clicks, 0)       AS clicks
          FROM (SELECT DISTINCT goods_id
                FROM ods_vova_vts.ods_vova_activity_coupon vac
                WHERE vac.activity_id = 415334) vac

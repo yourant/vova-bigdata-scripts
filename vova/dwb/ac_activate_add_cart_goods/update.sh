@@ -6,6 +6,13 @@ if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 echo "$cur_date"
+#dependence
+#dwd_vova_log_common_click
+#dwd_vova_fact_pay
+#dim_vova_devices
+#dim_vova_goods
+#dim_vova_order_goods
+#dim_vova_merchant
 sql="
 INSERT OVERWRITE TABLE dwb.dwb_ac_activate_add_cart_goods PARTITION (pt = '${cur_date}')
 select

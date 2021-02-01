@@ -5,6 +5,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS ads.ads_flash_sale_coupon_goods
     first_cat_id BIGINT COMMENT 'first_cat_id',
     gmv          decimal(15, 2) COMMENT 'gmv',
     gcr          decimal(15, 4) COMMENT 'gcr',
+    clicks       BIGINT COMMENT 'clicks',
     gmv_rank     BIGINT COMMENT 'gmv_rank gmv desc',
     gcr_rank     BIGINT COMMENT 'gcr_rank gcr desc'
 ) COMMENT 'flashsale红包商品' PARTITIONED BY (pt STRING)

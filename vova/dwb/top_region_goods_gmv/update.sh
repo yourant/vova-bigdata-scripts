@@ -7,6 +7,12 @@ cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 ###逻辑sql
 
+#dependence
+#dwd_vova_log_goods_impression
+#dwd_vova_fact_pay
+#dwd_vova_log_goods_click
+#dwd_vova_log_common_click
+#dim_vova_goods
 #TEST
 sql="
 INSERT overwrite TABLE dwb.dwb_region_top_gmv PARTITION (pt='${cur_date}')

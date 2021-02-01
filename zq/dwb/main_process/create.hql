@@ -1,5 +1,5 @@
 DROP TABLE dwb.dwb_zq_main_process;
-CREATE TABLE IF NOT EXISTS dwb.dwb_zq_main_process
+CREATE EXTERNAL TABLE IF NOT EXISTS dwb.dwb_zq_main_process
 (
     event_date           string COMMENT 'd_date',
     datasource           string COMMENT 'd_datasource',
@@ -17,12 +17,13 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_zq_main_process
     paid_uv              bigint COMMENT 'i_支付uv',
     paid_order_cnt       bigint COMMENT 'i_支付订单数',
     first_order_cnt      bigint COMMENT 'i_新用户支付uv',
-    is_new               string COMMENT 'd_用户激活时段类型'
+    is_new               string COMMENT 'd_用户激活时段类型',
+    hour                string COMMENT 'd_hour'
 ) COMMENT 'dwb_zq_main_process' PARTITIONED BY (domain_group STRING, pt STRING)
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
 DROP TABLE dwb.dwb_zq_main_goods;
-CREATE TABLE IF NOT EXISTS dwb.dwb_zq_main_goods
+CREATE EXTERNAL TABLE IF NOT EXISTS dwb.dwb_zq_main_goods
 (
     event_date           string COMMENT 'd_date',
     datasource           string COMMENT 'd_datasource',
@@ -33,7 +34,8 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_zq_main_goods
     impressions          bigint COMMENT 'i_impressions',
     impressions_uv       bigint COMMENT 'i_impressions_uv',
     clicks               bigint COMMENT 'i_clicks',
-    clicks_uv            bigint COMMENT 'i_clicks_uv'
+    clicks_uv            bigint COMMENT 'i_clicks_uv',
+    hour                string COMMENT 'd_hour'
 ) COMMENT 'dwb_zq_main_goods' PARTITIONED BY (domain_group STRING, pt STRING)
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
