@@ -19,10 +19,7 @@ SELECT /*+ REPARTITION(4) */ datasource,
        min(order_time)  AS first_order_time,
        min(pay_time)    AS first_pay_time
 FROM (
-         SELECT CASE
-                    WHEN oi.from_domain LIKE '%vova%' THEN 'vova'
-                    WHEN oi.from_domain LIKE '%airyclub%' THEN 'airyclub'
-                    END          AS datasource,
+         SELECT oi.project_name  AS datasource,
                 ore.device_id,
                 oi.order_id,
                 oi.order_time,

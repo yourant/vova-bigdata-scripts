@@ -15,9 +15,7 @@ drop table if exists tmp.tmp_vova_fact_order_cause_order_goods_h;
 create table tmp.tmp_vova_fact_order_cause_order_goods_h  STORED AS PARQUETFILE as
 select
 /*+ REPARTITION(1) */
-case when oi.from_domain like '%vova%' then 'vova'
-     when oi.from_domain like '%airyclub%' then 'airyclub'
-     end                                           as datasource,
+oi.project_name  AS datasource,
 og.rec_id                                          as order_goods_id,
 og.order_id,
 oi.user_id                                         as buyer_id,
