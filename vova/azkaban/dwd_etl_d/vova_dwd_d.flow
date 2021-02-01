@@ -31,6 +31,10 @@ nodes:
       - dwd_vova_fact_ab
       - dwd_vova_fact_log_bonus_card
       - dwd_vova_fact_log_click_cause
+      - dwd_vova_rec_report
+      - dwd_vova_fact_original_channel
+      - dwd_vova_web_fact_order_cause
+      - dwd_vova_web_fact_cart_cause
 
   - name: start_flag
     type: command
@@ -44,8 +48,8 @@ nodes:
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - judge_dwd_vova_fact_log_goods_click
-      - judge_dwd_vova_fact_log_page_view
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_page_view
 
   - name: dwd_vova_fact_shield_goods
     type: command
@@ -81,13 +85,28 @@ nodes:
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - judge_dwd_vova_fact_log_goods_impression
-      - judge_dwd_vova_fact_log_goods_click
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_goods_click
       - dwd_vova_fact_cart_cause_v2
       - dwd_vova_fact_order_cause_v2
       - judge_dim_vova_devices
       - dwd_vova_fact_pay
 
+  - name: dwd_vova_rec_report
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwd/dwd_rec_report/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_goods_click
+      - dwd_vova_fact_cart_cause_v2
+      - dwd_vova_fact_order_cause_v2
+      - judge_dim_vova_devices
+      - judge_dim_vova_goods
+      - judge_dim_vova_order_goods
+      - dwd_vova_fact_pay
 
   - name: judge_dim_vova_devices
     type: command
@@ -283,8 +302,8 @@ nodes:
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - judge_dwd_vova_fact_log_goods_click
-      - judge_dwd_vova_fact_log_goods_impression
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_goods_impression
       - judge_dim_vova_order_goods
       - judge_dim_vova_goods
 
@@ -313,23 +332,23 @@ nodes:
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - judge_dwd_vova_fact_log_goods_click
-      - judge_dwd_vova_fact_log_goods_impression
-      - judge_dwd_vova_fact_log_common_click
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_common_click
 
-  - name: judge_dwd_vova_fact_log_page_view
+  - name: judge_dwd_vova_log_page_view
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_page_view
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_page_view
       retries: 10
       retry.backoff: 300000
     dependsOn:
       - start_flag
 
-  - name: judge_dwd_vova_fact_log_goods_impression
+  - name: judge_dwd_vova_log_goods_impression
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_goods_impression
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_impression
       retries: 10
       retry.backoff: 300000
     dependsOn:
@@ -550,13 +569,13 @@ nodes:
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - judge_dwd_vova_fact_log_screen_view
+      - judge_dwd_vova_log_screen_view
     condition: all_success
 
-  - name: judge_dwd_vova_fact_log_screen_view
+  - name: judge_dwd_vova_log_screen_view
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_screen_view
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_screen_view
       retries: 10
       retry.backoff: 300000
     dependsOn:
@@ -590,8 +609,8 @@ nodes:
     dependsOn:
       - judge_dim_vova_category
       - dwd_vova_fact_pay
-      - judge_dwd_vova_fact_log_goods_click
-      - judge_dwd_vova_fact_log_common_click
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_common_click
       - dwd_vova_fact_comment
       - dwd_vova_fact_refund
     condition: all_success
@@ -605,21 +624,28 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: judge_dwd_vova_fact_log_goods_click
+  - name: judge_dwd_vova_log_goods_click
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_goods_click
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_click
       retries: 10
       retry.backoff: 300000
     dependsOn:
       - start_flag
 
-
-
-  - name: judge_dwd_vova_fact_log_common_click
+  - name: judge_dwd_vova_log_data
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_common_click
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_data
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_common_click
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_common_click
       retries: 10
       retry.backoff: 300000
     dependsOn:
@@ -664,7 +690,7 @@ nodes:
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - judge_dwd_vova_fact_log_page_view
+      - judge_dwd_vova_log_page_view
       - judge_dim_vova_buyers
 
   - name: dwd_vova_fact_rec_log
@@ -764,7 +790,39 @@ nodes:
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - judge_dwd_vova_fact_log_common_click
+      - judge_dwd_vova_log_common_click
       - judge_dim_vova_buyers
+
+  - name: dwd_vova_fact_original_channel
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwd/web/web_start_up/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_page_view
+
+  - name: dwd_vova_web_fact_order_cause
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwd/web/order_cause/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_order_goods
+      - judge_dim_vova_goods
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_goods_impression
+
+  - name: dwd_vova_web_fact_cart_cause
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwd/web/cart_cause/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_data
 
 

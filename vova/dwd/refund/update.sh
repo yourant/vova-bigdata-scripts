@@ -9,11 +9,7 @@ hadoop fs -mkdir s3://bigdata-offline/warehouse/dwd/dwd_vova_fact_refund
 sql="
 insert overwrite table dwd.dwd_vova_fact_refund
 select /*+ REPARTITION(10) */
-      CASE
-           WHEN oi.from_domain LIKE '%vova%' THEN 'vova'
-           WHEN oi.from_domain LIKE '%airyclub%' THEN 'airyclub'
-           ELSE 'NA'
-           END                                                                   AS datasource,
+       oi.project_name  AS datasource,
        rr.refund_id,
        rr.order_goods_id,
        rr.refund_type_id,
@@ -36,7 +32,9 @@ select /*+ REPARTITION(10) */
        rat.audit_status,
        rat.audit_time,
        ogs.sku_pay_status,
-       rat.recheck_type
+       rat.recheck_type,
+       rr.audit_status rr_audit_status,
+       rr.audit_time rr_audit_time
 from ods_vova_vts.ods_vova_refund_reason rr
          left join (select *
                     FROM (select rrt.value as refund_reason,

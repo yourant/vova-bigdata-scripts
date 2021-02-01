@@ -6,6 +6,10 @@ if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 echo "$cur_date"
+#dependence
+#dim_vova_goods
+#dwd_vova_log_goods_impression
+#dwd_vova_fact_pay
 sql="
 set hive.exec.dynamici.partition=true;
 set hive.exec.dynamic.partition.mode=nonstrict;

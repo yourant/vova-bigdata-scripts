@@ -1,0 +1,65 @@
+---
+config:
+  retries: 10
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - dwb_zq_main_process
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: dwb_zq_main_process
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/zq/dwb/main_process/update_h.sh
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - ods_zq_order_info_h
+#      - judge_dim_zq_domain_userid
+#      - judge_dim_zq_site
+      - judge_vova_fact_log_v2_h
+
+#  - name: judge_dim_zq_domain_userid
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_zq_domain_userid
+#      retries: 20
+#      retry.backoff: 120000
+#    dependsOn:
+#      - start_flag
+#
+#  - name: judge_dim_zq_site
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_zq_site
+#      retries: 20
+#      retry.backoff: 120000
+#    dependsOn:
+#      - start_flag
+
+  - name: ods_zq_order_info_h
+    type: command
+    config:
+      retries: 20
+      retry.backoff: 120000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=zsp --table_name=order_info --etl_type=ALL --mapers=1 --period_type=hour --partition_num=3
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_fact_log_v2_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_v2_h
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag

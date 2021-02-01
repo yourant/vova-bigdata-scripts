@@ -1,6 +1,7 @@
 insert overwrite table dwb.dwb_fd_erp_dispatch_link_report  partition (pt = '${pt}')
 select
-     concat(t1.record_time,' ${hour_str}') as record_time,
+ /*+ REPARTITION(1) */
+     concat(date_sub('${pt}', -1),' ${hour_str}') as record_time,
      t1.undelivered_goods_num as undelivered_goods_num,
      t4.due_dispatch_num as due_dispatch_num ,
      t4.no_dispatch_goods_num as no_dispatch_goods_num,
