@@ -221,7 +221,7 @@ group by t1.mct_id,t1.first_cat_id
 ) t7 on t0.mct_id=t7.mct_id and t0.first_cat_id = t7.first_cat_id
 left join
 (
---step9七天上网率
+--step9七天上网率 7天前再往前一个月的确认订单，上网时间减确认时间小于7天的子订单数/7天前再往前一个月的确认子订单数
 select
 t1.mct_id,
 t1.first_cat_id,
@@ -233,19 +233,16 @@ select
 og.mct_id,
 c.first_cat_id,
 og.order_goods_id,
-case when datediff(fl.valid_tracking_date,fl.confirm_time)<=7 then 1 else 0 end so_order_cnt_3_6w
+case when datediff(fl.valid_tracking_date,fl.confirm_time)<7  and og.sku_pay_status>1 and og.sku_shipping_status > 0 then 1 else 0 end so_order_cnt_3_6w
 from dim.dim_vova_order_goods og
 left join dwd.dwd_vova_fact_logistics fl on fl.order_goods_id=og.order_goods_id
-left join dim.dim_vova_category c on og.cat_id = c.cat_id
-where datediff('${pre_date}', date(og.confirm_time)) between 21 and 42
-and og.sku_pay_status>1
-and og.sku_shipping_status > 0
+where datediff('${pre_date}', date(og.confirm_time)) between 6 and 36
 ) t1
 group by t1.mct_id,t1.first_cat_id
 ) t8 on t0.mct_id=t8.mct_id and t0.first_cat_id = t8.first_cat_id
 left join
 (
---step10 5到8周非物流退款率
+--step10 5到8周非物流退款率 63天前再往前一个月的确认订单，非物流退款时间减确认时间小于63天的子订单数/63天前再往前一个月的确认子订单数
 select
 t1.mct_id,
 t1.first_cat_id,
@@ -255,22 +252,19 @@ from
 (
 select
 og.mct_id,
-c.first_cat_id,
+og.first_cat_id,
 og.order_goods_id,
-case when fr.refund_reason_type_id != 8 and fr.refund_type_id=2 then 1 else 0 end nlrf_order_cnt_5_8w
+case when datediff(fr.audit_time,og.confirm_time)<63 and  fr.refund_reason_type_id != 8 and fr.refund_type_id=2 and fr.rr_audit_status='audit_passed' and og.sku_pay_status>1 and og.sku_shipping_status > 0 then 1 else 0 end nlrf_order_cnt_5_8w
 from dim.dim_vova_order_goods og
 left join dwd.dwd_vova_fact_refund fr on fr.order_goods_id=og.order_goods_id
 left join dwd.dwd_vova_fact_logistics fl on fr.order_goods_id=fl.order_goods_id
-left join dim.dim_vova_category c on og.cat_id = c.cat_id
-where datediff('${pre_date}', date(og.confirm_time)) between 35 and 56
-and og.sku_pay_status>1
-and og.sku_shipping_status > 0
+where datediff('${pre_date}', date(og.confirm_time)) between 62 and 92
 ) t1
 group by t1.mct_id,t1.first_cat_id
 ) t9 on t0.mct_id=t9.mct_id and t0.first_cat_id = t9.first_cat_id
 left join
 (
---step11 9到12周物流退款率
+--step11 9到12周物流退款率 84天前再往前一个月的确认订单，物流退款时间减确认时间小于84天的子订单数/84天前再往前一个月的确认子订单数
 select
 t1.mct_id,
 t1.first_cat_id,
@@ -280,16 +274,14 @@ from
 (
 select
 og.mct_id,
-c.first_cat_id,
+og.first_cat_id,
 og.order_goods_id,
-case when fr.refund_reason_type_id=8 and fr.refund_type_id=2 then 1 else 0 end lrf_order_cnt_9_12w
+case when datediff(fr.audit_time,og.confirm_time)<84 and fr.refund_reason_type_id=8 and fr.refund_type_id=2 and og.sku_pay_status>1
+and og.sku_shipping_status > 0 and fr.rr_audit_status='audit_passed' then 1 else 0 end lrf_order_cnt_9_12w
 from  dim.dim_vova_order_goods og
 left join dwd.dwd_vova_fact_refund fr on fr.order_goods_id=og.order_goods_id
 left join dwd.dwd_vova_fact_logistics fl on fr.order_goods_id=fl.order_goods_id
-left join dim.dim_vova_category c on og.cat_id = c.cat_id
-where datediff('${pre_date}', date(og.confirm_time)) between 63 and 84
-and og.sku_pay_status>1
-and og.sku_shipping_status > 0
+where datediff('${pre_date}', date(og.confirm_time)) between 83 and 113
 ) t1
 group by t1.mct_id,t1.first_cat_id
 ) t10 on t0.mct_id=t10.mct_id and t0.first_cat_id = t10.first_cat_id
@@ -320,7 +312,7 @@ group by t1.mct_id,t1.first_cat_id
 ) t11 on t0.mct_id=t11.mct_id and t0.first_cat_id = t11.first_cat_id
 left join
 (
---step13 5到8周妥投率
+--step13 5到8周妥投率 63天前再往前一个月的确认订单，妥投时间减确认时间小于63天的子订单数/63天前再往前一个月的确认子订单数
 select
 t1.mct_id,
 t1.first_cat_id,
@@ -330,16 +322,12 @@ from
 (
 select
 og.mct_id,
-fp.first_cat_id,
+c.first_cat_id,
 og.order_goods_id,
-case when fl.process_tag = 'Delivered' and fp.shipping_fee + fp.shop_price * fp.goods_number > 10 then 1 else 0 end proper_order_cnt_5_8w
+case when datediff(fl.delivered_time,og.confirm_time)<63 and fl.process_tag = 'Delivered' and og.sku_shipping_status > 0 and og.sku_pay_status>1 then 1 else 0 end proper_order_cnt_5_8w
 from dim.dim_vova_order_goods og
 left join dwd.dwd_vova_fact_logistics fl on fl.order_goods_id = og.order_goods_id
-left join dwd.dwd_vova_fact_pay fp on og.order_goods_id = fp.order_goods_id
-where datediff('${pre_date}', date(og.confirm_time)) between 35 and 56
-and fl.delivered_date > '2018-03-01'
-and og.sku_shipping_status > 0
-and og.sku_pay_status>1
+where datediff('${pre_date}', date(og.confirm_time)) between 62 and 92
 ) t1
 group by t1.mct_id,t1.first_cat_id
 ) t12 on t0.mct_id=t12.mct_id and t0.first_cat_id = t12.first_cat_id
