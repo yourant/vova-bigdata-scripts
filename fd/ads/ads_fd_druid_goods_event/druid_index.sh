@@ -10,8 +10,8 @@ if [ "$#" -ne 3 ]; then
 else
   pt=$2
   hour=$3
-  start=$(date -d "${pt} ${hour} -1 hours" +"%Y-%m-%dT%H:00:00.000Z")
-  end=$(date -d "${pt} ${hour}" +"%Y-%m-%dT%H:00:00.000Z")
+  start=$(date -d "${pt} ${hour}" +"%Y-%m-%dT%H:00:00.000Z")
+  end=$(date -d "${pt} ${hour} +1 hours" +"%Y-%m-%dT%H:00:00.000Z")
 fi
 
 echo "pt: ${pt}"
