@@ -13,7 +13,9 @@ CREATE TABLE IF NOT EXISTS `dwb.dwb_fd_rpt_main_process_rpt`(
   `orders` bigint COMMENT '订单号',
   `goods_amount` decimal(15,4) COMMENT '订单商品金额',
   `bonus` decimal(15,4) COMMENT '订单折扣',
-  `shipping_fee` decimal(15,4) COMMENT '订单运费')
+  `shipping_fee` decimal(15,4) COMMENT '订单运费',
+  `pv_session` bigint COMMENT '用来计算用户访问一次的session_id'
+ )
 COMMENT '主流程数据表'
 PARTITIONED BY (
   `pt` string)

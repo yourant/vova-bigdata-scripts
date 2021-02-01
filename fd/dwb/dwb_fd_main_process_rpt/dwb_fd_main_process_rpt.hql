@@ -93,7 +93,7 @@ from (
 
                     ) fms
                     left join (
-                        select 
+                        select
                             session_id, collect_set(ga_channel)[0] as ga_channel
                         from dwd.dwd_fd_session_channel
                         where pt BETWEEN date_sub('${pt}', 4) AND date_add('${pt}', 1)
@@ -130,7 +130,7 @@ from (
                        , oi.bonus
                        , oi.shipping_fee
                   from (
-                        select 
+                        select
                             lower(project_name) as project_name,
                             country_code,
                             platform_type,
@@ -144,53 +144,123 @@ from (
                         and project_name is not NULL
                         and length(project_name) > 2
 
-                        union all
-
-                        select
-                            'website_cluster' as project_name,
-                            country_code,
-                            platform_type,
-                            order_id,
-                            goods_amount,
-                            bonus,
-                            shipping_fee
-                        from dwd.dwd_fd_order_info oi
-                        where date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${pt}'
-                        and pay_status = 2
-                        and project_name is not NULL
-                        and lower(project_name) in ('beautlly','merecloth','cosydress', 'baltershop', 'chichut', 'joycedays', 'blessrose', 'shinynight', 'vividpretty', 'jollyweek', 'eoschoice', 'cherbow', 'cherlady')
-                        and length(project_name) > 2
                   ) oi
                   left join (select order_id,sp_session_id from ods_fd_vb.ods_fd_order_marketing_data group by order_id,sp_session_id) om on om.order_id = oi.order_id
                   left join (
 
-                      select soe.session_id,collect_set(soe.is_new_user)[0] as is_new_user 
+                      select soe.session_id,collect_set(soe.is_new_user)[0] as is_new_user
                         from (
-                            select 
+                            select
                                 session_id,
                                 case
                                 when platform = 'web' and session_idx = 1 then 'new'
                                 when platform = 'web' and session_idx > 1 then 'old'
                                 when platform = 'mob' and session_idx = 1 then 'new'
                                 when platform = 'mob' and session_idx > 1 then 'old'
-                                end as is_new_user 
+                                end as is_new_user
                             from ods_fd_snowplow.ods_fd_snowplow_all_event
                             where pt BETWEEN date_sub('${pt}', 4) AND '${pt}' and event_name in ('page_view', 'screen_view')
                         ) soe group by soe.session_id
 
                   ) fms on fms.session_id = om.sp_session_id
                   left join (
-                       select 
-                            session_id, 
+                       select
+                            session_id,
                             collect_set(ga_channel)[0] as ga_channel
                         from dwd.dwd_fd_session_channel
                         where pt BETWEEN date_sub('${pt}', 4) AND date_add('${pt}', 1)
                         group by session_id
 
                   ) fdpsc on fdpsc.session_id = om.sp_session_id
-            
+
               ) t2
          group by t2.country, t2.project_name, t2.platform_type, t2.is_new_user, t2.ga_channel with cube
+
+         union all
+
+         select wsc.country,
+         		wsc.project,
+         		wsc.platform_type,
+         		wsc.is_new_user,
+         		wsc.ga_channel,
+         		wsc.orders,
+         		wsc.goods_amount,
+         		wsc.bonus,
+         		wsc.shipping_fee
+         from (
+         	select nvl(t2.country, 'all')        as country
+	              , nvl(t2.project_name, 'all')   as project
+	              , nvl(t2.platform_type, 'all')  as platform_type
+	              , nvl(t2.is_new_user, 'all')    as is_new_user
+	              , nvl(t2.ga_channel, 'all')     as ga_channel
+	              , count(distinct (t2.order_id)) as orders
+	              , sum(t2.goods_amount)          as goods_amount
+	              , sum(t2.bonus)                 as bonus
+	              , sum(t2.shipping_fee)          as shipping_fee
+	         from (
+	                  select oi.project_name
+	                       , nvl(oi.country_code, 'others')    as country
+	                       , nvl(oi.platform_type,'others')    as platform_type
+	                       ,case
+	                           when lower(fdpsc.ga_channel) = 'others' then 'others'
+	                           when length(fdpsc.ga_channel) > 1 and lower(fdpsc.ga_channel) != 'others' then fdpsc.ga_channel
+	                       else 'others' end as ga_channel
+	                       , nvl(fms.is_new_user, 'old')       as is_new_user
+
+	                       , oi.order_id
+	                       , oi.goods_amount
+	                       , oi.bonus
+	                       , oi.shipping_fee
+	                  from (
+	                        select
+	                            'website_cluster' as project_name,
+	                            country_code,
+	                            platform_type,
+	                            order_id,
+	                            goods_amount,
+	                            bonus,
+	                            shipping_fee
+	                        from dwd.dwd_fd_order_info oi
+	                        where date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${pt}'
+	                        and pay_status = 2
+	                        and project_name is not NULL
+	                        and lower(project_name) in ('beautlly','merecloth','cosydress', 'baltershop', 'chichut', 'joycedays', 'blessrose', 'shinynight', 'vividpretty', 'jollyweek', 'eoschoice', 'cherbow', 'cherlady')
+	                        and length(project_name) > 2
+
+	                  ) oi
+	                  left join (select order_id,sp_session_id from ods_fd_vb.ods_fd_order_marketing_data group by order_id,sp_session_id) om on om.order_id = oi.order_id
+	                  left join (
+
+	                      select soe.session_id,collect_set(soe.is_new_user)[0] as is_new_user
+	                        from (
+	                            select
+	                                session_id,
+	                                case
+	                                when platform = 'web' and session_idx = 1 then 'new'
+	                                when platform = 'web' and session_idx > 1 then 'old'
+	                                when platform = 'mob' and session_idx = 1 then 'new'
+	                                when platform = 'mob' and session_idx > 1 then 'old'
+	                                end as is_new_user
+	                            from ods_fd_snowplow.ods_fd_snowplow_all_event
+	                            where pt BETWEEN date_sub('${pt}', 4) AND '${pt}' and event_name in ('page_view', 'screen_view')
+	                        ) soe group by soe.session_id
+
+	                  ) fms on fms.session_id = om.sp_session_id
+	                  left join (
+	                       select
+	                            session_id,
+	                            collect_set(ga_channel)[0] as ga_channel
+	                        from dwd.dwd_fd_session_channel
+	                        where pt BETWEEN date_sub('${pt}', 4) AND date_add('${pt}', 1)
+	                        group by session_id
+
+	                  ) fdpsc on fdpsc.session_id = om.sp_session_id
+
+	              ) t2
+	         group by t2.country, t2.project_name, t2.platform_type, t2.is_new_user, t2.ga_channel with cube
+
+         )wsc where wsc.project != 'all'
+
 
      ) order_table on session_table.country = order_table.country
          and session_table.project = order_table.project
