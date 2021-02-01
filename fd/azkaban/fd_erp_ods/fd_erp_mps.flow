@@ -40,7 +40,7 @@ nodes:
   - name: ods_mps_supplier_dispatch_list
     type: command
     config:
-        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=mps --etl_type=INCTIME --inc_column=supplier_dispatch_list_id --table_name=supplier_dispatch_list --mapers=1 --partition_num=1 --period_type=day
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=mps --etl_type=INCTIME --inc_column=supplier_dispatch_list_id --table_name=supplier_dispatch_list --mapers=10 --partition_num=50 --period_type=day
     dependsOn:
          - fd_mps_flow_start
 
