@@ -393,7 +393,7 @@ from (
                          token,
                          payer_id
                   from ods_fd_vb.ods_fd_order_info_arc
-                  where pt = date_add('${pt}', 1)
+                  where pt = date_sub('${pt}', 1)
                   UNION ALL
                   select event_id,
                          order_id,
