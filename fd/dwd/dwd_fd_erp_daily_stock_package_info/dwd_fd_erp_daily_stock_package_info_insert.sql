@@ -12,11 +12,11 @@ from
          count(*) as package_num
      FROM ods_fd_ecshop.ods_fd_package_workload_statistics pws
      INNER JOIN ods_fd_romeo.ods_fd_order_shipment os on os.SHIPMENT_ID = pws.shipment_id
-     INNER JOIN ods_fd_ecshop.ods_fd_ecs_order_info eoi on cast(eoi.order_id as string) =os.ORDER_ID
-     INNER JOIN ods_fd_romeo.ods_fd_party_config pc on cast(eoi.party_id as string) =pc.party_id
+     INNER JOIN ods_fd_ecshop.ods_fd_ecs_order_info eoi on eoi.order_id  =os.ORDER_ID
+     INNER JOIN ods_fd_romeo.ods_fd_party_config pc on eoi.party_id  =pc.party_id
 
-              WHERE cast(pws.created_time as string) >= '${pt}'
-                AND cast(pws.created_time as string) < cast(date_sub('${pt}',-1) as string)
+              WHERE pws.created_time  >= '${pt}'
+                AND pws.created_time  < date_sub('${pt}',-1)
                 AND pws.status = 'F'
                 AND eoi.facility_id ='383497303'
                 and pc.party_code = '2'
@@ -38,8 +38,8 @@ from
               WHERE
                 eoi.facility_id ='383497303'
                  and pc.party_code = '2'
-                AND pws.created_time  >= '2021-01-17'
-                AND pws.created_time < '2021-01-18'
+                AND pws.created_time  >= '${pt}'
+                AND pws.created_time < date_sub('${pt}',-1)
                 AND pws.status = 'F'
               group by eoi.order_id
               ) t
