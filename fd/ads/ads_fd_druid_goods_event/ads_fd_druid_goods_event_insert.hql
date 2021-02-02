@@ -62,10 +62,11 @@ select
     tmp.absolute_position,
     tmp.url_route_sn,
     tmp.event_num,
+    order_id,
     tmp.order_num,
     tmp.paying_order_num,
     tmp.paid_order_num,
-    order_id
+
 from (
          -- click impression
          select collector_ts                         as `event_time`,
