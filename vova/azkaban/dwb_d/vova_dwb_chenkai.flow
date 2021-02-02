@@ -33,6 +33,7 @@ nodes:
       - dwb_vova_self_profit_summary
       - dwb_vova_high_refund_goods_restrict_monitor
       - dwb_vova_finance_self_mct_refund
+      - dwb_vova_buyer_life_cycle_monitor
 
   - name: start_flag
     type: command
@@ -591,6 +592,16 @@ nodes:
       - judge_dim_vova_devices
       - judge_vova_collection_order_goods
 
+# 用户生命周期监控报表
+  - name: dwb_vova_buyer_life_cycle_monitor
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/buyer_life_cycle_monitor/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_pay
+      - judge_dim_vova_devices
 
 
 
