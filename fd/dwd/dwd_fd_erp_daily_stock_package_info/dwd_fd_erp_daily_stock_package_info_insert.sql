@@ -16,7 +16,7 @@ from
      INNER JOIN ods_fd_romeo.ods_fd_party_config pc on eoi.party_id  =pc.party_id
 
               WHERE pws.created_time  >= '${pt}'
-                AND pws.created_time  < date_sub('${pt}',-1)
+                AND pws.created_time  < date_add('${pt}',1)
                 AND pws.status = 'F'
                 AND eoi.facility_id ='383497303'
                 and pc.party_code = '2'
@@ -39,7 +39,7 @@ from
                 eoi.facility_id ='383497303'
                  and pc.party_code = '2'
                 AND pws.created_time  >= '${pt}'
-                AND pws.created_time < date_sub('${pt}',-1)
+                AND pws.created_time < date_add('${pt}',1)
                 AND pws.status = 'F'
               group by eoi.order_id
               ) t
@@ -65,7 +65,7 @@ from
                  AND bsd.status = 'CK'
                  AND bsd.is_process = 'N'
                  AND bsd.created_stamp  >= '${pt}'
-                 AND bsd.created_stamp < date_sub('${pt}',-1)
+                 AND bsd.created_stamp < date_add'${pt}',1)
               )
               UNION
               (
@@ -81,7 +81,7 @@ from
                     AND bsd.status = 'CK'
                     AND bsd.is_process = 'N'
                 AND bsd.created_stamp  >= '${pt}'
-                 AND bsd.created_stamp< date_sub('${pt}',-1)
+                 AND bsd.created_stamp< date_add('${pt}',1)
               )
               UNION
               (
@@ -104,7 +104,7 @@ from
                     AND ro.status = 'CK'
                     AND ro.is_process = 'N'
                     AND ro.create_time >= '${pt}'
-                    AND ro.create_time < date_sub('${pt}',-1)
+                    AND ro.create_time < date_add('${pt}',1)
               )
               UNION
               (
@@ -129,7 +129,7 @@ from
                     and ii.status_id = 'INV_STTS_AVAILABLE'
                     and ii.facility_id ='383497303'
                     AND ro.create_time >= '${pt}'
-                    AND ro.create_time  < date_sub('${pt}',-1)
+                    AND ro.create_time  < date_add('${pt}',1)
               )) as t
     ) t3
     on t1.report_date=t3.report_date
@@ -154,7 +154,7 @@ from
                        AND ro.is_process = 'N'
                        and pc.party_code = '2'
                        AND ro.create_time >= '${pt}'
-                       AND ro.create_time  < date_sub('${pt}',-1)
+                       AND ro.create_time  < date_add('${pt}',1)
                  )
                  UNION
                  (
@@ -169,6 +169,6 @@ from
                        AND roh.STATUS = 'RK'
                        and pc.party_code = '2'
                        AND roh.create_time >= '${pt}'
-                       AND roh.create_time < date_sub('${pt}',-1)
+                       AND roh.create_time < date_add('${pt}',1)
                  )) AS t ) t4
     on t1.report_date=t4.report_date ;
