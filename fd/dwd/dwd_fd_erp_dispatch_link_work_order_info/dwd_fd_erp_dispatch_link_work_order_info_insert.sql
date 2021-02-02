@@ -12,7 +12,7 @@ from
             FROM ods_fd_ecshop.ods_fd_fd_provider_daily_report AS fpdr
              INNER JOIN ods_fd_romeo.ods_fd_party_config pc on fpdr.party_id= pc.party_id
             WHERE
-               fpdr.created_date = date_sub('${pt}',1)
+               fpdr.created_date = '${pt}'
               AND  pc.party_code = 2 ) t1
 left join
 -- no_dispatch_goods_num 未创建工单
