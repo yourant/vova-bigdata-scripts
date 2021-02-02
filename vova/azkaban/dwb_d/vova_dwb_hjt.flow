@@ -245,12 +245,6 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: judge_dwb_vova_self_profit
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwb_vova_self_profit
-    dependsOn:
-      - start_flag
 
   - name: judge_ods_vova_fisher_order_ship_product
     type: command

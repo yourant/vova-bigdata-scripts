@@ -2,7 +2,7 @@
 config:
   failure.emails: shihu@i9i8.com
   retries: 20
-  retry.backoff: 300000
+  retry.backoff: 600000
 
 nodes:
   - name: dwb_fd_erp_daily_workload_start

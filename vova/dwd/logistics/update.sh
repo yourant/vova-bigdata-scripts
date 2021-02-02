@@ -11,10 +11,7 @@ hadoop fs -mkdir s3://bigdata-offline/warehouse/dwd/dwd_vova_fact_logistics
 sql="
 insert overwrite table dwd.dwd_vova_fact_logistics
 select /*+ REPARTITION(100) */
-       case
-           when oi.from_domain like '%vova%' then 'vova'
-           when oi.from_domain like '%airyclub%' then 'airyclub'
-           end as datasource,
+       oi.project_name  AS datasource,
        tracking_detail_id,
        ost.tracking_id,
        ost.order_goods_id,
