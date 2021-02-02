@@ -21,8 +21,8 @@ FROM (
                 rgp.shop_price_usd as shop_price,
                 floor(rgp.shop_price_usd * 6.7 / rgp.purchase_price_rmb) as price_rate,
                 og.goods_number_day                               as goods_number_day,
-                nvl(dc.first_cat_id,"")                          as first_cat_id,
-                nvl(dc.first_cat_name,"")                        as first_cat_name,
+                nvl(dc.first_cat_id,"")                           as first_cat_id,
+                nvl(dc.first_cat_name,"")                         as first_cat_name,
                 nvl(dc.second_cat_id,"")                           as second_cat_id,
                 nvl(dc.second_cat_name,"")                         as second_cat_name
          FROM (
@@ -39,7 +39,7 @@ FROM (
             AND project_name IN ('floryday','airydress','eoschoice')
          ) rgp
 
-         LEFT JOIN dim.dim_fd_category_new dc ON dc.cat_id = rgp.cat_id
+         LEFT JOIN dim.dim_fd_category dc ON dc.cat_id = rgp.cat_id
          LEFT JOIN (
 
           SELECT virtual_goods_id,sum(goods_number) as goods_number_day
