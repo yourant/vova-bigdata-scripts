@@ -65,7 +65,7 @@ select
     order_id,
     tmp.order_num,
     tmp.paying_order_num,
-    tmp.paid_order_num,
+    tmp.paid_order_num
 
 from (
          -- click impression
