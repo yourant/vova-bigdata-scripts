@@ -16,6 +16,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS dwd.dwd_vova_fact_web_start_up
 drop table dim.dim_vova_web_domain_userid;
 CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_vova_web_domain_userid
 (
+    datasource     string COMMENT 'datasource',
     domain_userid  string COMMENT 'domain_userid',
     buyer_id       bigint COMMENT '设备对应用户ID',
     activate_time  TIMESTAMP COMMENT '激活时间',
@@ -30,12 +31,12 @@ CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_vova_web_domain_userid
 
 
 drop table tmp.tmp_vova_web_main_process_register;
-CREATE TABLE tmp.tmp_vova_web_main_process_register
+CREATE EXTERNAL TABLE tmp.tmp_vova_web_main_process_register
 (
     datasource      STRING COMMENT '数据平台',
     domain_userid   STRING COMMENT '',
     min_create_time TIMESTAMP COMMENT '当日登录最小时间'
-) COMMENT '点击注册按钮返回成功'
-  PARTITIONED BY (pt STRING);
+) COMMENT '点击注册按钮返回成功' PARTITIONED BY (pt STRING)
+  STORED AS PARQUETFILE;
 
 
