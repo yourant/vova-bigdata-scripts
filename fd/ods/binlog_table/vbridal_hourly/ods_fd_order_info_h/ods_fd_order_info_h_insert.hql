@@ -1,4 +1,4 @@
-INSERT INTO table ods_fd_vb.ods_fd_order_info_h
+INSERT OVERWRITE table ods_fd_vb.ods_fd_order_info_h
 select /*+ REPARTITION(10) */
     order_id,
     party_id,

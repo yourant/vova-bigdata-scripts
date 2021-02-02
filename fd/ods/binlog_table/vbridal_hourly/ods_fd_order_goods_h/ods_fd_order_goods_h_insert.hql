@@ -1,4 +1,4 @@
-INSERT INTO table ods_fd_vb.ods_fd_order_goods_h
+INSERT OVERWRITE table ods_fd_vb.ods_fd_order_goods_h
 select /*+ REPARTITION(10) */
     rec_id,
     order_id,
