@@ -27,7 +27,7 @@ with goods_info as (
 
          from ods_fd_vb.ods_fd_order_info_h oi
                   inner join
-                  (select order_id,goods_id from ods_fd_vb.ods_fd_order_goods_h group order_id,goods_id) og on oi.order_id = og.order_id
+                  (select order_id,goods_id from ods_fd_vb.ods_fd_order_goods_h group by order_id,goods_id) og on oi.order_id = og.order_id
                   left join ods_fd_vb.ods_fd_user_agent_analysis_h   uaa on uaa.user_agent_id = oi.user_agent_id
                   left join ods_fd_vb.ods_fd_region_h r on r.region_id = oi.country
                   left join goods_info gi on gi.goods_id = og.goods_id and lower(gi.project_name) = lower(oi.project_name)
