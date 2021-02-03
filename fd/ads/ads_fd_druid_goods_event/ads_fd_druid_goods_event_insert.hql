@@ -23,7 +23,8 @@ with goods_info as (
                 oi.order_time,
                 pe.event_time as paying_time,
                 oi.pay_time,
-                oi.order_id
+                oi.order_id,
+                oi.pay_status
 
          from ods_fd_vb.ods_fd_order_info_h oi
                   inner join
@@ -180,6 +181,7 @@ from (
          from order_goods
          where date(to_utc_timestamp(pay_time, 'PST')) = '${pt}'
          and hour(to_utc_timestamp(pay_time, 'PST')) = cast('${hour}' as bigint)
+         and pay_status = 2
          union all
          -- 下单订单
          select to_utc_timestamp(order_time, 'PST') as `event_time`,
