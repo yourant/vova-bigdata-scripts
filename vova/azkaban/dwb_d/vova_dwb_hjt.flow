@@ -423,7 +423,7 @@ nodes:
   - name: dwb_vova_recall_pool_v2
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/zq/dwb/recall_pool/update.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/recall_pool/v2/update.sh
       retries: 5
       retry.backoff: 600000
       job.priority: 10
