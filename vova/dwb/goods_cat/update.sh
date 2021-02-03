@@ -114,7 +114,8 @@ from  dwd.dwd_vova_fact_pay  py
 inner join  dim.dim_vova_order_goods ddog on ddog.order_goods_id = py.order_goods_id
 left join dim.dim_vova_goods g on g.goods_id=py.goods_id
 left join (select * from dwd.dwd_vova_fact_order_cause_v2 where pre_page_code is not null and pt='${cur_date}') oc on py.order_goods_id=oc.order_goods_id
-where to_date(py.pay_time)='${cur_date}' and (py.from_domain like '%api.vova%' or py.from_domain like '%api.airyclub%')
+where to_date(py.pay_time)='${cur_date}'
+-- and (py.from_domain like '%api.vova%' or py.from_domain like '%api.airyclub%')
 and (ddog.order_tag not like '%luckystar_activity_id%' or ddog.order_tag is null)
 )t group by datasource,first_cat_name,second_cat_name,third_cat_name,region_code,is_brand,rec_page_code with cube
 ),
