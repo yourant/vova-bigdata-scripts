@@ -1,4 +1,4 @@
-INSERT INTO table ods_fd_vb.ods_fd_order_goods_h
+INSERT OVERWRITE table ods_fd_vb.ods_fd_order_goods_h
 select /*+ REPARTITION(10) */
     rec_id,
     order_id,
@@ -195,7 +195,7 @@ from (
                          heel_type_price_exchange,
                          display_heel_type_price_exchange
                   from ods_fd_vb.ods_fd_order_goods_arc
-                  where pt = date_add('${pt}', 1)
+                  where pt = date_sub('${pt}', 1)
                   union all
                   select event_id,
                          rec_id,

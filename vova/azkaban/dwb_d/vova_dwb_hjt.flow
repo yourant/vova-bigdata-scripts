@@ -172,6 +172,27 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_dwd_vova_fact_cart_cause_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_cart_cause_v2
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_fn_fact_order_cause
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_zq_fact_order_cause
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_fn_fact_cart_cause
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_zq_fact_cart_cause
+    dependsOn:
+      - start_flag
+
   - name: judge_vova_order_goods_extension
     type: command
     config:
@@ -253,6 +274,13 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_ods_vova_region
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_region
+    dependsOn:
+      - start_flag
+
   - name: judge_ods_vova_fisher_order_ship
     type: command
     config:
@@ -290,18 +318,133 @@ nodes:
       - judge_tmsexpo_logistics_order_tracking
       - judge_vova_collection_order_goods
 
+# 自营店铺top数据
+  - name: dwb_vova_self_mct_top50
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/self_mct_top50/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_common_click
+      - judge_dim_vova_goods
+      - judge_dwd_vova_fact_pay
+      - judge_dim_vova_order_goods
 
 
+# 智能导购机器人
+  - name: dwb_vova_shopping_guide_robot
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/guide_robot/update.sh
+      retries: 3
+      retry.backoff: 600000
+      job.priority: 10
+    dependsOn:
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_fact_cart_cause_v2
+      - judge_dwd_vova_fact_order_cause_v2
+      - judge_dwd_vova_log_impressions
+      - judge_dwd_vova_log_common_click
+      - judge_dwd_vova_fact_pay
+
+# flashsale品类入选情况
+  - name: dwb_vova_flashsale_cats
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/flashsale_cats/update.sh
+      retries: 5
+      retry.backoff: 600000
+      job.priority: 10
+    dependsOn:
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_fact_order_cause_v2
+      - judge_dwd_vova_fact_pay
 
 
+# banner_ab
+  - name: dwb_vova_banner_ab
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/banner_ab/update.sh
+      retries: 5
+      retry.backoff: 600000
+      job.priority: 10
+    dependsOn:
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_common_click
+
+# FN算法召回
+  - name: dwb_fn_recall_pool
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/zq/dwb/recall_pool/update.sh
+      retries: 5
+      retry.backoff: 600000
+      job.priority: 10
+    dependsOn:
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_fn_fact_cart_cause
+      - judge_dwd_fn_fact_order_cause
+
+# 算法召回
+  - name: dwb_vova_recall_pool_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/zq/dwb/recall_pool/update.sh
+      retries: 5
+      retry.backoff: 600000
+      job.priority: 10
+    dependsOn:
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_fact_cart_cause_v2
+      - judge_dwd_vova_fact_order_cause_v2
+      - judge_dim_vova_devices
+      - judge_dwd_vova_fact_pay
+
+#推荐ab实验(过滤重复)
+  - name: dwb_vova_ab_test_norepeat
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/ab_test/update_norepeat.sh
+      retries: 3
+      retry.backoff: 600000
+      job.priority: 10
+    dependsOn:
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_fact_cart_cause_v2
+      - judge_dwd_vova_fact_order_cause_v2
+      - judge_dim_vova_devices
+      - judge_dwd_vova_fact_pay
+
+# 台湾一级品类商品数据报表
+  - name: dwb_vova_tw_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/tw_first_cat_goods/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_goods_impression
+      - judge_dim_vova_goods
+      - judge_dim_vova_devices
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_fact_pay
 
 
-
-
-
-
-
-
-
-
-
+  - name: dwb_vova_goods_attribute
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/goods_attribute/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ods_vova_region
+      - judge_dim_vova_goods
+      - judge_dwd_vova_fact_pay
