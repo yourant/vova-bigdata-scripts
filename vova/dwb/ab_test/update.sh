@@ -25,9 +25,8 @@ spark-sql   --conf "spark.sql.autoBroadcastJoinThreshold=31457280"  \
 --conf "spark.network.timeout=300" \
 -e "
 
-DROP TABLE IF EXISTS tmp.tmp_ab_expre_pv;
-CREATE TABLE IF NOT EXISTS tmp.tmp_ab_expre_pv as
-select nvl(a.datasource, 'all')    datasource,
+INSERT OVERWRITE TABLE  tmp.tmp_ab_expre_pv
+select /*+ REPARTITION(10) */ nvl(a.datasource, 'all')    datasource,
     nvl(a.platform, 'all')      platform,
     nvl(if(b.brand_id >0,'Y','N'), 'all')            is_brand,
     nvl(a.rec_page_code, 'all') rec_page_code,
@@ -41,8 +40,7 @@ where pt = '${cur_date}'
 group by cube (a.datasource, a.platform, if(b.brand_id >0,'Y','N'), a.rec_page_code, a.rec_code, a.rec_version,if(a.rp_name like '%47%','Y','N'))
 ;
 
-DROP TABLE IF EXISTS tmp.tmp_ab_expre_uv_pre;
-CREATE TABLE IF NOT EXISTS tmp.tmp_ab_expre_uv_pre as
+INSERT OVERWRITE TABLE  tmp.tmp_ab_expre_uv_pre
 select /*+ REPARTITION(60) */ a.datasource,
     a.platform,
     if(b.brand_id >0,'Y','N') is_brand,
@@ -63,9 +61,8 @@ group by a.datasource,
       a.device_id, a.buyer_id
 ;
 
-DROP TABLE IF EXISTS tmp.ab_expre_uv;
-CREATE TABLE IF NOT EXISTS tmp.ab_expre_uv as
-select nvl(datasource, 'all')              datasource,
+INSERT OVERWRITE TABLE  tmp.ab_expre_uv
+select /*+ REPARTITION(10) */ nvl(datasource, 'all')              datasource,
        nvl(platform, 'all')                platform,
        nvl(is_brand, 'all')                      is_brand,
        nvl(rec_page_code, 'all')           rec_page_code,
@@ -77,9 +74,8 @@ from tmp.tmp_ab_expre_uv_pre
 group by cube (datasource, platform, is_brand, rec_page_code, rec_code, rec_version,brand_status)
 ;
 
-DROP TABLE IF EXISTS tmp.ab_clk_uv;
-CREATE TABLE IF NOT EXISTS tmp.ab_clk_uv as
- select nvl(datasource, 'all')              datasource,
+INSERT OVERWRITE TABLE  tmp.ab_clk_uv
+ select /*+ REPARTITION(10) */ nvl(datasource, 'all')              datasource,
        nvl(platform, 'all')                platform,
        nvl(is_brand, 'all')                      is_brand,
        nvl(rec_page_code, 'all')           rec_page_code,
