@@ -36,3 +36,13 @@ nodes:
       retry.backoff: 300000
     dependsOn:
       - judge_vova_fact_log_v2_h
+
+# 今日订单数据分析
+  - name: dwb_vova_order_data_analysis_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/order_data_analysis_h/update.sh
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
