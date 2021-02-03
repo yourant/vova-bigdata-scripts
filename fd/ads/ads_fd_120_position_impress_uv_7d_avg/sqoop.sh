@@ -23,7 +23,7 @@ ar_host="artemis-data.cpbbe5ehgjpf.us-east-1.rds.amazonaws.com"
 ar_user="data-report"
 ar_pwd='C27PoowhAZIU$LHeI%Gs'
 
-old_data="DELETE FROM data_report.rpt_120_position_impression_avg  WHERE data_time = ${pt_8d};"
+old_data="DELETE FROM data_report.rpt_120_position_impression_avg  WHERE data_time = '${pt_8d}';"
 result_pt=`mysql -h "${ar_host}" -u"${ar_user}" -p"${ar_pwd}" -N -e "${old_data}"`
 
 sqoop export \
