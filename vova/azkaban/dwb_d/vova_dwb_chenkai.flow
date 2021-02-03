@@ -238,6 +238,15 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_ads_vova_buyer_gmv_stage_3m
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_buyer_gmv_stage_3m
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
   - name: judge_dwd_vova_log_impressions
     type: command
     config:
@@ -286,6 +295,25 @@ nodes:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwb_vova_self_profit
     dependsOn:
       - start_flag
+
+  - name: judge_ads_vova_mct_rank
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_mct_rank
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_min_price_goods_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_min_price_goods_h
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
 ############################################################
 # 报表
 # AC数据报表-search数据表现
@@ -336,6 +364,7 @@ nodes:
       - judge_dwd_vova_log_goods_click
       - judge_dwd_vova_log_common_click
       - judge_dwd_vova_fact_order_cause_v2
+      - judge_ads_vova_buyer_gmv_stage_3m
 
 # vova集运项目监控报表
   - name: dwb_vova_monitor_cmb
@@ -402,6 +431,8 @@ nodes:
       - judge_dwd_vova_fact_pay
       - judge_vova_brand
       - judge_dim_vova_merchant
+      - judge_ads_vova_mct_rank
+      - judge_ads_vova_min_price_goods_h
 
 # 高退款率屏蔽商品监控
   - name: dwb_vova_high_refund_goods_restrict_monitor
@@ -414,7 +445,6 @@ nodes:
       - judge_dim_vova_order_goods
       - judge_dim_vova_goods
       - judge_ads_vova_goods_restrict_d
-
 
 # 首页效率监控体系-V2
   - name: dwb_vova_homepage_total_efficiency_v2
@@ -471,6 +501,7 @@ nodes:
     dependsOn:
       - judge_dim_vova_goods
       - judge_dim_vova_merchant
+      - judge_ads_vova_mct_rank
 
 # 消息中心-推送报表v2
   - name: dwb_vova_push_click_behavior
