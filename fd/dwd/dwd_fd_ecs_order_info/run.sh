@@ -23,6 +23,8 @@ hive -f ${shell_path}/${table}_create.hql
 spark-sql \
   --conf "spark.app.name=${table}_${user}" \
   --conf "spark.dynamicAllocation.maxExecutors=60" \
+  --conf "spark.executor.memoryOverhead=8G" \
+  --driver-memory 4g \
   -d pt="${pt}" \
   -f ${shell_path}/${table}_insert.hql
 
