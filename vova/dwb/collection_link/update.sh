@@ -50,6 +50,8 @@ and to_date(f.in_warehouse_time) > '2000-01-01'
 and to_date(c.create_time) > '2000-01-01'
 and to_date(e.transfer_last_mile_time) > '2000-01-01'
 and to_date(e.arrive_dest_airport_time) > '2000-01-01'
+and (datediff(e.epc_sign_time,e.pick_up_time) + round((hour(e.epc_sign_time) - hour(e.pick_up_time)) / 24,2)) > 0
+and (datediff(f.out_warehouse_time,f.in_warehouse_time) + round((hour(f.out_warehouse_time) - hour(f.in_warehouse_time)) / 24,2)) > 0
 group by cube(a.weekday,a.region_code,c.carrier_name)
 "
 
