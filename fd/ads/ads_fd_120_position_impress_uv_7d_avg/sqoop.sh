@@ -40,7 +40,8 @@ sqoop export \
 --hcatalog-table ads_fd_120_position_impression_uv_7d_avg \
 --hcatalog-partition-keys pt \
 --hcatalog-partition-values ${pt} \
---fields-terminated-by '\001'
+--fields-terminated-by '\001' \
+-m 1
 
 if [ $? -ne 0 ]; then
   exit 1
