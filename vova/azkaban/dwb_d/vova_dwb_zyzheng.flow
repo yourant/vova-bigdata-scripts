@@ -20,6 +20,8 @@ nodes:
       - dwb_vova_merchant_kpi
       - dwb_vova_checkout
       - dwb_vova_app_response
+      - dwb_ac_web_main_process
+      - dwb_vova_payment
 
   - name: start_flag
     type: command
@@ -192,6 +194,13 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_dim_vova_buyers
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_buyers
+    dependsOn:
+      - start_flag
+
   -  name: dwb_vova_web_main_process
      type: command
      config:
@@ -323,5 +332,37 @@ nodes:
      dependsOn:
        - judge_dwd_vova_log_data
 
+  -  name: dwb_ac_web_main_process
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/web_main_process/ac/update.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - judge_dwd_vova_log_data
+       - judge_dwd_vova_log_page_view
+       - judge_dim_vova_web_domain_userid
+       - judge_dim_vova_order_goods
+       - judge_dim_vova_buyers
+
+  -  name: dwb_vova_payment_error_code
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/payment/error_code_update.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - judge_dwd_vova_log_common_click
+       - judge_dim_vova_order_goods
+       - judge_vova_paypal_txn
+
+  -  name: dwb_vova_payment
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/payment/update_history.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - dwb_vova_payment_error_code
 
 
