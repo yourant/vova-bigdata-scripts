@@ -52,6 +52,30 @@ FROM (
                 sum(paid_guv)             AS paid_guv,
                 sum(order_guv)            AS order_guv
          FROM (
+                  SELECT nvl(nvl(log.geo_country, 'NALL'), 'all')    AS region_code,
+                         nvl(nvl(log.os_type, 'NALL'), 'all')        AS os_type,
+                         nvl(nvl(dg.first_cat_name, 'NALL'), 'all')  AS first_cat_name,
+                         nvl(nvl(dg.second_cat_name, 'NALL'), 'all') AS second_cat_name,
+                         nvl(nvl(dg.third_cat_name, 'NALL'), 'all')  AS third_cat_name,
+                         nvl(if(dg.brand_id > 0, 'Y', 'N'), 'all') AS is_brand,
+                         count(DISTINCT dg.goods_id, log.device_id)  AS impressions_guv,
+                         count(DISTINCT log.device_id)               AS impressions_uv,
+                         count(*)                                    AS impressions,
+                         0                                           AS click_guv,
+                         0                                           AS pd2cart_guv,
+                         0                                           AS pd2cart_success_guv,
+                         0                                           AS pd2cart_referrer_guv,
+                         0                                           AS paid_guv,
+                         0                                           AS order_guv
+                  FROM dwd.dwd_vova_log_goods_impression log
+                           INNER JOIN dim.dim_vova_goods dg ON log.virtual_goods_id = dg.virtual_goods_id
+                  WHERE log.pt = '${cur_date}'
+                    AND log.datasource = 'vova'
+                    AND log.dp = 'vova'
+                    AND log.platform = 'mob'
+                  GROUP BY CUBE (nvl(log.geo_country, 'NALL'), nvl(log.os_type, 'NALL'), nvl(dg.first_cat_name, 'NALL'),
+                                 nvl(dg.second_cat_name, 'NALL'), nvl(dg.third_cat_name, 'NALL'),
+                                 if(dg.brand_id > 0, 'Y', 'N'))
 
                   UNION ALL
                   SELECT nvl(nvl(log.geo_country, 'NALL'), 'all')    AS region_code,
@@ -225,7 +249,7 @@ FROM (
 ;
 "
 spark-sql \
---executor-memory 6G --executor-cores 1 \
+--executor-memory 10G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=10" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
@@ -233,7 +257,7 @@ spark-sql \
 --conf "spark.sql.crossJoin.enabled=true" \
 --conf "spark.default.parallelism = 280" \
 --conf "spark.sql.shuffle.partitions=280" \
---conf "spark.dynamicAllocation.maxExecutors=100" \
+--conf "spark.dynamicAllocation.maxExecutors=180" \
 --conf "spark.sql.adaptive.enabled=true" \
 --conf "spark.sql.adaptive.join.enabled=true" \
 --conf "spark.shuffle.sort.bypassMergeThreshold=10000" \
