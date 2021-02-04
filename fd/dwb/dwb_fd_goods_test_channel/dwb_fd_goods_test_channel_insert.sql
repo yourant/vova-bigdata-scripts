@@ -67,7 +67,7 @@ from (
         sum(goods_number * shop_price) as last_7_days_goods_sales
     from dwd.dwd_fd_order_goods
     where pay_status = 2 and project_name in ('airydress','floryday')
-    and from_unixtime(pay_time) between date_add('${pt}',-6) and '${pt}'
+    and from_unixtime(pay_time) between date_sub('${pt}',6) and '${pt}'
     group by
         project_name,
         goods_id
@@ -81,7 +81,7 @@ from (
         sum(goods_number * shop_price) as last_7_days_cat_sales
     from dwd.dwd_fd_order_goods
     where pay_status = 2 and project_name in ('airydress','floryday')
-    and from_unixtime(pay_time) between date_add('${pt}',-6) and '${pt}'
+    and from_unixtime(pay_time) between date_sub('${pt}',6) and '${pt}'
     group by
         project_name,
         cat_id
