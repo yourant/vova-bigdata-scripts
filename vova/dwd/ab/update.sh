@@ -1,11 +1,10 @@
 #!/bin/bash
 cur_date=$1
-his_date=$2
 #默认日期为昨天
 if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
-his_date=`date -d "-11 day" +%Y-%m-%d`
 fi
+his_date=`date -d "10 days ago ${cur_date}" +%Y-%m-%d`
 
 spark-submit --master yarn   \
 --conf spark.executor.memory=10g \
