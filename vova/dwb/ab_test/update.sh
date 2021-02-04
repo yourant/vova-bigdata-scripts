@@ -25,47 +25,42 @@ spark-sql   --conf "spark.sql.autoBroadcastJoinThreshold=31457280"  \
 --conf "spark.network.timeout=300" \
 -e "
 
-DROP TABLE IF EXISTS tmp.tmp_ab_expre_pv;
-CREATE TABLE IF NOT EXISTS tmp.tmp_ab_expre_pv as
-select nvl(a.datasource, 'all')    datasource,
+INSERT OVERWRITE TABLE  tmp.tmp_ab_expre_pv
+select /*+ REPARTITION(10) */ nvl(a.datasource, 'all')    datasource,
     nvl(a.platform, 'all')      platform,
-    nvl(if(b.brand_id >0,'Y','N'), 'all')            is_brand,
+    nvl(a.is_brand, 'all')            is_brand,
     nvl(a.rec_page_code, 'all') rec_page_code,
     nvl(a.rec_code, 'all')      rec_code,
     nvl(a.rec_version, 'all')   rec_version,
     nvl(if(a.rp_name like '%47%','Y','N'), 'all')   brand_status,
     count(1)                  expre_pv
 from dwd.dwd_vova_ab_test_expre a
-left join dim.dim_vova_goods b on a.virtual_goods_id = b.virtual_goods_id
 where pt = '${cur_date}'
-group by cube (a.datasource, a.platform, if(b.brand_id >0,'Y','N'), a.rec_page_code, a.rec_code, a.rec_version,if(a.rp_name like '%47%','Y','N'))
+group by cube (a.datasource, a.platform, a.is_brand, a.rec_page_code, a.rec_code, a.rec_version,if(a.rp_name like '%47%','Y','N'))
 ;
 
-DROP TABLE IF EXISTS tmp.tmp_ab_expre_uv_pre;
-CREATE TABLE IF NOT EXISTS tmp.tmp_ab_expre_uv_pre as
+INSERT OVERWRITE TABLE  tmp.tmp_ab_expre_uv_pre
 select /*+ REPARTITION(60) */ a.datasource,
     a.platform,
-    if(b.brand_id >0,'Y','N') is_brand,
+    a.is_brand,
     a.rec_page_code,
     a.rec_code,
     a.rec_version,if(a.rp_name like '%47%','Y','N') brand_status,
     a.device_id,
     a.buyer_id
 from dwd.dwd_vova_ab_test_expre a
-left join dim.dim_vova_goods b on a.virtual_goods_id = b.virtual_goods_id
 where pt = '${cur_date}'
 group by a.datasource,
       a.platform,
-      if(b.brand_id >0,'Y','N'),
+      a.is_brand,
       a.rec_page_code,
       a.rec_code,
       a.rec_version,if(a.rp_name like '%47%','Y','N'),
       a.device_id, a.buyer_id
 ;
 
-DROP TABLE IF EXISTS tmp.ab_expre_uv;
-CREATE TABLE IF NOT EXISTS tmp.ab_expre_uv as
-select nvl(datasource, 'all')              datasource,
+INSERT OVERWRITE TABLE  tmp.ab_expre_uv
+select /*+ REPARTITION(10) */ nvl(datasource, 'all')              datasource,
        nvl(platform, 'all')                platform,
        nvl(is_brand, 'all')                      is_brand,
        nvl(rec_page_code, 'all')           rec_page_code,
@@ -77,9 +72,8 @@ from tmp.tmp_ab_expre_uv_pre
 group by cube (datasource, platform, is_brand, rec_page_code, rec_code, rec_version,brand_status)
 ;
 
-DROP TABLE IF EXISTS tmp.ab_clk_uv;
-CREATE TABLE IF NOT EXISTS tmp.ab_clk_uv as
- select nvl(datasource, 'all')              datasource,
+INSERT OVERWRITE TABLE  tmp.ab_clk_uv
+ select /*+ REPARTITION(10) */ nvl(datasource, 'all')              datasource,
        nvl(platform, 'all')                platform,
        nvl(is_brand, 'all')                      is_brand,
        nvl(rec_page_code, 'all')           rec_page_code,
@@ -90,18 +84,17 @@ CREATE TABLE IF NOT EXISTS tmp.ab_clk_uv as
 from (
      select a.datasource,
         a.platform,
-        if(b.brand_id >0,'Y','N') is_brand,
+        a.is_brand,
         a.rec_page_code,
         a.rec_code,
         a.rec_version,if(a.rp_name like '%47%','Y','N') brand_status,
         a.device_id,
         a.buyer_id
     from dwd.dwd_vova_ab_test_clk a
-    left join dim.dim_vova_goods b on a.virtual_goods_id = b.virtual_goods_id
     where pt = '${cur_date}'
     group by a.datasource,
           a.platform,
-          if(b.brand_id >0,'Y','N'),
+          a.is_brand,
           a.rec_page_code,
           a.rec_code,
           a.rec_version,if(a.rp_name like '%47%','Y','N'),
@@ -147,16 +140,15 @@ from tmp.tmp_ab_expre_pv a
          left join (
              select nvl(e.datasource, 'all')              datasource,
                    nvl(e.platform, 'all')                platform,
-                   nvl(if(b.brand_id >0,'Y','N'), 'all')                      is_brand,
+                   nvl(e.is_brand, 'all')                      is_brand,
                    nvl(e.rec_page_code, 'all')           rec_page_code,
                    nvl(e.rec_code, 'all')                rec_code,
                    nvl(e.rec_version, 'all')             rec_version,
                    nvl(if(e.rp_name like '%47%','Y','N'), 'all')             brand_status,
                    count(1)                            clk_pv
             from dwd.dwd_vova_ab_test_clk e
-             left join dim.dim_vova_goods b on e.virtual_goods_id = b.virtual_goods_id
             where pt = '${cur_date}'
-            group by cube (e.datasource, e.platform, if(b.brand_id >0,'Y','N'), e.rec_page_code, e.rec_code, e.rec_version,if(e.rp_name like '%47%','Y','N'))
+            group by cube (e.datasource, e.platform, e.is_brand, e.rec_page_code, e.rec_code, e.rec_version,if(e.rp_name like '%47%','Y','N'))
              ) e
                    on a.datasource = e.datasource
                        and a.platform = e.platform
@@ -176,16 +168,15 @@ from tmp.tmp_ab_expre_pv a
          left join (
     select nvl(c.datasource, 'all')              datasource,
            nvl(c.platform, 'all')                platform,
-           nvl(if(b.brand_id >0,'Y','N'), 'all')                      is_brand,
+           nvl(c.is_brand, 'all')                      is_brand,
            nvl(c.rec_page_code, 'all')           rec_page_code,
            nvl(c.rec_code, 'all')                rec_code,
            nvl(c.rec_version, 'all')             rec_version,
            nvl(if(c.rp_name like '%47%','Y','N'), 'all')             brand_status,
            count(distinct c.device_id, c.buyer_id) cart_uv
     from dwd.dwd_vova_ab_test_cart c
-    left join dim.dim_vova_goods b on c.virtual_goods_id = b.virtual_goods_id
     where pt = '${cur_date}'
-    group by cube (c.datasource, c.platform, if(b.brand_id >0,'Y','N'), c.rec_page_code, c.rec_code, c.rec_version,if(c.rp_name like '%47%','Y','N'))
+    group by cube (c.datasource, c.platform, c.is_brand, c.rec_page_code, c.rec_code, c.rec_version,if(c.rp_name like '%47%','Y','N'))
 ) b
                    on a.datasource = b.datasource
                        and a.platform = b.platform
@@ -197,7 +188,7 @@ from tmp.tmp_ab_expre_pv a
          full join (
     select nvl(c.datasource, 'all')              datasource,
            nvl(c.platform, 'all')                platform,
-           nvl(if(b.brand_id >0,'Y','N'), 'all')                      is_brand,
+           nvl(c.is_brand, 'all')                      is_brand,
            nvl(c.rec_page_code, 'all')           rec_page_code,
            nvl(c.rec_code, 'all')                rec_code,
            nvl(c.rec_version, 'all')             rec_version,
@@ -205,9 +196,8 @@ from tmp.tmp_ab_expre_pv a
            count(distinct c.device_id, c.buyer_id) pay_uv,
            sum(price)                          gmv
     from dwd.dwd_vova_ab_test_pay c
-    left join dim.dim_vova_goods b on c.virtual_goods_id = b.virtual_goods_id
     where pt = '${cur_date}'
-    group by cube (c.datasource, c.platform, if(b.brand_id >0,'Y','N'), c.rec_page_code, c.rec_code, c.rec_version,if(c.rp_name like '%47%','Y','N'))
+    group by cube (c.datasource, c.platform, c.is_brand, c.rec_page_code, c.rec_code, c.rec_version,if(c.rp_name like '%47%','Y','N'))
 ) c
                    on a.datasource = c.datasource
                        and a.platform = c.platform

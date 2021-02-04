@@ -27,7 +27,7 @@ CASE WHEN datediff(gi.pt,d.activate_time)<=0 THEN 'new'
      else '30+' END activate_time,
 gi.device_id device_id_expre
 from dwd.fact_log_goods_impression gi
-left join dwd.dim_devices d on d.device_id = gi.device_id and d.datasource=gi.datasource
+join dwd.dim_devices d on gi.device_id = d.device_id and gi.datasource=d.datasource
 where pt='$cur_date'  and os_type in ('ios','android')
 union all
 select
@@ -45,7 +45,7 @@ CASE WHEN datediff(gi.pt,d.activate_time)<=0 THEN 'new'
      else '30+' END activate_time,
 gi.device_id device_id_expre
 from dwd.fact_log_impressions gi
-left join dwd.dim_devices d on d.device_id = gi.device_id and d.datasource=gi.datasource
+join dwd.dim_devices d on gi.device_id = d.device_id and gi.datasource=d.datasource
 where pt='$cur_date'  and os_type in ('ios','android')
 ;
 

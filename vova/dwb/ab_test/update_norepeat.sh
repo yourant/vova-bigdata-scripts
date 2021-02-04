@@ -24,9 +24,8 @@ spark-sql \
 --conf "spark.sql.autoBroadcastJoinThreshold=31457280" \
 -e "
 
-DROP TABLE IF EXISTS tmp.tmp_ab_expre_not_repeat;
-CREATE TABLE IF NOT EXISTS tmp.tmp_ab_expre_not_repeat as
-select a.datasource,
+INSERT OVERWRITE TABLE tmp.tmp_ab_expre_not_repeat
+select /*+ REPARTITION(100) */ a.datasource,
        a.platform,
        a.os,
        a.rec_page_code,
@@ -53,9 +52,8 @@ where a.pt = '${cur_date}'
   and b.device_id is null
 ;
 
-DROP TABLE IF EXISTS tmp.tmp_ab_clk_not_repeat;
-CREATE TABLE IF NOT EXISTS tmp.tmp_ab_clk_not_repeat as
-select a.datasource,
+INSERT OVERWRITE TABLE  tmp.tmp_ab_clk_not_repeat
+select /*+ REPARTITION(50) */ a.datasource,
        a.platform,
        a.os,
        a.rec_page_code,
@@ -82,9 +80,8 @@ where a.pt = '${cur_date}'
   and b.device_id is null
 ;
 
-DROP TABLE IF EXISTS tmp.tmp_ab_cart_not_repeat;
-CREATE TABLE IF NOT EXISTS tmp.tmp_ab_cart_not_repeat as
-select a.datasource,
+INSERT OVERWRITE TABLE  tmp.tmp_ab_cart_not_repeat
+select /*+ REPARTITION(10) */ a.datasource,
        a.platform,
        a.os,
        a.rec_page_code,
@@ -111,9 +108,8 @@ where a.pt = '${cur_date}'
   and b.device_id is null
 ;
 
-DROP TABLE IF EXISTS tmp.tmp_ab_pay_not_repeat;
-CREATE TABLE IF NOT EXISTS tmp.tmp_ab_pay_not_repeat as
-select a.datasource,
+INSERT OVERWRITE TABLE  tmp.tmp_ab_pay_not_repeat
+select  /*+ REPARTITION(5) */ a.datasource,
        a.platform,
        a.os,
        a.rec_page_code,

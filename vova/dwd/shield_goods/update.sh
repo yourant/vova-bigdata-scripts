@@ -2,9 +2,14 @@
 hadoop fs -mkdir s3://bigdata-offline/warehouse/dwd/dwd_vova_fact_shield_goods
 #指定日期和引擎
 sql="
-drop table if exists tmp.tmp_vova_fact_shield_goods_01;
-create table tmp.tmp_vova_fact_shield_goods_01  STORED AS PARQUETFILE as
-select /*+ REPARTITION(20) */
+insert overwrite table dwd.dwd_vova_fact_shield_goods
+select /*+ REPARTITION(200) */
+goods_id,
+region_id,
+mct_id,
+shield_type,
+create_time
+from  (select
     key_id goods_id,
     region_id,
     merchant_id mct_id,
@@ -21,18 +26,7 @@ select
     m.create_time
 from ods_vova_vts.ods_vova_goods g
 left join ods_vova_vts.ods_vova_merchant_region m on g.merchant_id = m.key_id
-where key_type = 'merchant'
-
-;
-
-insert overwrite table dwd.dwd_vova_fact_shield_goods
-select /*+ REPARTITION(200) */
-goods_id,
-region_id,
-mct_id,
-shield_type,
-create_time
-from  tmp.tmp_vova_fact_shield_goods_01 t
+where key_type = 'merchant') t
 group by goods_id,
 region_id,
 mct_id,

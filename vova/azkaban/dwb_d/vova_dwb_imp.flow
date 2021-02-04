@@ -15,6 +15,8 @@ nodes:
       #- dwb_vova_rec_report
       - dwb_vova_airyclub_ads_brief
       - dwb_vova_goods_cat
+      - dwb_vova_ab_test
+      - dwb_vova_rec_report
 
   - name: start_flag
     type: command
@@ -191,6 +193,14 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_dwd_vova_rec_report
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_rec_report
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
 
 #################################################################
 
@@ -266,5 +276,31 @@ nodes:
       - judge_vova_ads_ga_channel_daily_flat_report
       - judge_vova_campaign_mapping
 
+#推荐ab实验
+  - name: dwb_vova_ab_test
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/ab_test/update.sh
+      retries: 3
+      retry.backoff: 600000
+      job.priority: 10
+    dependsOn:
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_fact_cart_cause_v2
+      - judge_dwd_vova_fact_order_cause_v2
+      - judge_dim_vova_devices
+      - judge_dwd_vova_fact_pay
 
-
+# 订单归因报表
+  - name: dwb_vova_rec_report
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/rec_report/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_devices
+      - judge_dim_vova_order_goods
+      - judge_dwd_vova_fact_pay
+      - judge_dwd_vova_rec_report

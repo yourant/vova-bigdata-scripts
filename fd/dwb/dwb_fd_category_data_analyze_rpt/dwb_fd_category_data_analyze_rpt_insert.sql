@@ -22,7 +22,9 @@ from
 where project in ('floryday','airydress')
 and event_name='goods_impression'
 -- 指定的几个品类
-and category_name in ('Dress','Blouses','Shoes','Coats','Swimwear','Sweaters','Pants&Leggings','Sweatshirts','T-shirts')
+--and category_name in ('Dress','Blouses','Shoes','Coats','Swimwear','Sweaters','Pants & Leggings','Sweatshirts','T-shirts')
+-- 使用品类id代替品类名称进行对上述9个品类的限定 （存在几个id->一个名称的情况）
+and cat_id in (163,168,141,154,167,162,195,84,174,171,3001,164)
 -- 指定页面的曝光量
 and (
 (source_type='PC' and page_code in ('list','sale','search','finalSaleV2List','promotion','activityList','homepage'))
@@ -46,8 +48,6 @@ left join
 where project in ('floryday','airydress')
 -- 点击事件
 and event_name='goods_click'
--- 指定的几个品类
-and category_name in ('Dress','Blouses','Shoes','Coats','Swimwear','Sweaters','Pants&Leggings','Sweatshirts','T-shirts')
 -- 指定页面的点击量
 and (
 (source_type='PC' and page_code in ('list','sale','search','finalSaleV2List','promotion','activityList','homepage'))
@@ -123,7 +123,9 @@ from
 (select project,category_name,count(*) as impression_num from dwd.dwd_fd_category_data_analyze_goods_event_detail
 where project in ('floryday','airydress')
 -- 指定的几个品类
-and category_name in ('Dress','Blouses','Shoes','Coats','Swimwear','Sweaters','Pants&Leggings','Sweatshirts','T-shirts')
+-- and category_name in ('Dress','Blouses','Shoes','Coats','Swimwear','Sweaters','Pants & Leggings','Sweatshirts','T-shirts')
+-- 使用品类id代替品类名称进行对上述9个品类的限定 （存在几个id->一个名称的情况）
+and cat_id in (163,168,141,154,167,162,195,84,174,171,3001,164)
 and event_name='goods_impression'
 -- 指定页面的曝光
 and (
