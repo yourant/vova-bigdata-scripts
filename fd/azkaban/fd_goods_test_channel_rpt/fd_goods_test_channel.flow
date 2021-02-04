@@ -22,10 +22,10 @@ nodes:
     dependsOn:
       - fd_goods_test_channel_start
 
-  - name: dwb_fd_goods_test_channel_rpt
+  - name: dwb_fd_goods_test_channel
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_test_channel_rpt/run.sh "${pt}"
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_test_channel/run.sh "${pt}"
     dependsOn:
       - judge_dwd_fd_goods_test_detail
       - judge_dwd_fd_order_goods
@@ -33,4 +33,4 @@ nodes:
   - name: fd_goods_test_channel_end
     type: noop
     dependsOn:
-      - dwb_fd_goods_test_channel_rpt
+      - dwb_fd_goods_test_channel
