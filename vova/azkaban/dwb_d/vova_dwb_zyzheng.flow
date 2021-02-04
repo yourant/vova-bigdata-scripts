@@ -201,6 +201,13 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_dwd_vova_fact_web_start_up
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_web_start_up
+    dependsOn:
+      - start_flag
+
   -  name: dwb_vova_web_main_process
      type: command
      config:
@@ -341,7 +348,7 @@ nodes:
      dependsOn:
        - judge_dwd_vova_log_data
        - judge_dwd_vova_log_page_view
-       - judge_dim_vova_web_domain_userid
+       - judge_dwd_vova_fact_web_start_up
        - judge_dim_vova_order_goods
        - judge_dim_vova_buyers
 
