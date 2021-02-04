@@ -18,7 +18,7 @@ echo "pt: ${pt}"
 
 shell_path="${base_path}/${table}"
 
-hive -f ${shell_path}/${table}_create.hql
+# hive -f ${shell_path}/${table}_create.hql
 
 spark-sql \
   --conf "spark.app.name=${table}_${user}" \
