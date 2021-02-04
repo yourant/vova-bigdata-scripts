@@ -1,4 +1,4 @@
-insert overwrite table dwb.dwb_fd_goods_test_channel_rpt_new
+insert overwrite table dwb.dwb_fd_goods_test_channel
 select
      /*+ REPARTITION(1) */
     nvl(project,'all') as project,

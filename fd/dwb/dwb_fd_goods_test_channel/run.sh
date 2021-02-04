@@ -1,5 +1,5 @@
 #bin/sh
-table="dwb_fd_goods_test_channel_rpt"
+table="dwb_fd_goods_test_channel"
 user="zhangchenhao"
 
 base_path="/mnt/vova-bigdata-scripts/fd/dwb"

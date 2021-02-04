@@ -1,4 +1,4 @@
-create table if not exists dwb.dwb_fd_goods_test_channel_rpt_new (
+create table if not exists dwb.dwb_fd_goods_test_channel (
 project                             string COMMENT '组织',
 cat_name                            string COMMENT '品类名',
 end_day                             string COMMENT '测款结束日期',
