@@ -34,6 +34,7 @@ from (
             selection_channel,
             channel_type,
             end_day
+ --从
         from (
             select
                 goods_id,
