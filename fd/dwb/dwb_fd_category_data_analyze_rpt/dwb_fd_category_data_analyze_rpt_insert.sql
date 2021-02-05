@@ -82,7 +82,7 @@ left join
  (select  project, category_name,country,
  sum(cast(goods_number as bigint)) as sales, --销量
  sum(cast(goods_number as bigint)*cast (shop_price as double)) as sales_volume,--销售额
- count(*) as order_valume --订单量
+ count(distinct order_id ) as order_valume --订单量
  from dwd.dwd_fd_category_data_analyze_order_detail
  where project in('floryday','airydress') and pt='${pt}'
  group by project,category_name,country) t5
@@ -92,11 +92,12 @@ left join
 -- 连单的数量
 (
 -- 统计国家，品类，项目维度下的连单数量（单笔订单同一品类的商品数量大于2的订单）的订单个数
-select t1.project,t1.category_name,t1.country, count(*) as link_order_num from (
+select t1.project,t1.category_name,t1.country, count(distinct order_id) as link_order_num from (
 -- 单笔订单同一品类的商品数量大于2的订单（订单号）
-     select order_id,count(*),project,category_name,country from dwd.dwd_fd_category_data_analyze_order_detail
+     select order_id,sum(goods_number),project,category_name,country from dwd.dwd_fd_category_data_analyze_order_detail
      where pt='${pt}'
-     group by order_id,project,category_name,country  having count(*) >=2 ) t1
+     group by order_id,project,category_name,country  having sum(goods_number) >=2
+     ) t1
 group by t1.project,t1.category_name,t1.country ) t6
 on t1.project=t6.project and t1.category_name=t6.category_name and t1.country=t6.country
 
@@ -186,7 +187,7 @@ left join
  (select  project, category_name,
  sum(cast(goods_number as bigint)) as sales, --销量
  sum(cast(goods_number as bigint)*cast (shop_price as double)) as sales_volume,--销售额
- count(*) as order_valume --订单量
+ count(distinct order_id ) as order_valume --订单量
  from dwd.dwd_fd_category_data_analyze_order_detail
  where project in('floryday','airydress') and pt='${pt}'
  group by project,category_name) t5
@@ -196,11 +197,11 @@ left join
 -- 连单的数量
 (
 -- 统计国家，品类，项目维度下的连单数量（单笔订单同一品类的商品数量大于2的订单）的订单个数
-select t1.project,t1.category_name, count(*) as link_order_num from (
+select t1.project,t1.category_name, count(distinct order_id) as link_order_num from (
 -- 单笔订单同一品类的商品数量大于2的订单（订单号）
-     select order_id,count(*),project,category_name from dwd.dwd_fd_category_data_analyze_order_detail
+     select order_id,sum(goods_number),project,category_name from dwd.dwd_fd_category_data_analyze_order_detail
      where pt='${pt}'
-     group by order_id,project,category_name  having count(*) >=2 ) t1
+     group by order_id,project,category_name  having sum(goods_number) >=2 ) t1
 group by t1.project,t1.category_name) t6
 on t1.project=t6.project and t1.category_name=t6.category_name ;
 
