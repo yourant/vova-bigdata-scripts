@@ -178,6 +178,12 @@ nodes:
         dependsOn:
           - fd_ods_goods_flow_start
 
+      - name: ods_fd_vb_goods_extension
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCTIME --inc_column=last_update_time --table_name=goods_extension  --partition_num=1 --period_type=day
+        dependsOn:
+          - fd_ods_goods_flow_start
 
     dependsOn:
       - fd_ods_vb_start

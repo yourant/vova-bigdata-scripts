@@ -26,7 +26,7 @@ spark-sql   --conf "spark.sql.autoBroadcastJoinThreshold=31457280"  \
 -e "
 
 INSERT OVERWRITE TABLE  tmp.tmp_ab_expre_pv
-select /*+ REPARTITION(10) */ nvl(a.datasource, 'all')    datasource,
+select /*+ REPARTITION(100) */ nvl(a.datasource, 'all')    datasource,
     nvl(a.platform, 'all')      platform,
     nvl(a.is_brand, 'all')            is_brand,
     nvl(a.rec_page_code, 'all') rec_page_code,
@@ -40,7 +40,7 @@ group by cube (a.datasource, a.platform, a.is_brand, a.rec_page_code, a.rec_code
 ;
 
 INSERT OVERWRITE TABLE  tmp.tmp_ab_expre_uv_pre
-select /*+ REPARTITION(60) */ a.datasource,
+select /*+ REPARTITION(200) */ a.datasource,
     a.platform,
     a.is_brand,
     a.rec_page_code,
@@ -60,7 +60,7 @@ group by a.datasource,
 ;
 
 INSERT OVERWRITE TABLE  tmp.ab_expre_uv
-select /*+ REPARTITION(10) */ nvl(datasource, 'all')              datasource,
+select /*+ REPARTITION(100) */ nvl(datasource, 'all')              datasource,
        nvl(platform, 'all')                platform,
        nvl(is_brand, 'all')                      is_brand,
        nvl(rec_page_code, 'all')           rec_page_code,
@@ -73,7 +73,7 @@ group by cube (datasource, platform, is_brand, rec_page_code, rec_code, rec_vers
 ;
 
 INSERT OVERWRITE TABLE  tmp.ab_clk_uv
- select /*+ REPARTITION(10) */ nvl(datasource, 'all')              datasource,
+ select /*+ REPARTITION(100) */ nvl(datasource, 'all')              datasource,
        nvl(platform, 'all')                platform,
        nvl(is_brand, 'all')                      is_brand,
        nvl(rec_page_code, 'all')           rec_page_code,

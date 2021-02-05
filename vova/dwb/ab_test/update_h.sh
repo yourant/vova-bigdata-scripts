@@ -25,9 +25,8 @@ spark-sql   --conf "spark.sql.autoBroadcastJoinThreshold=31457280"  \
 -e "
 
 
-DROP TABLE IF EXISTS tmp.vova_ab_expre_tmp_h;
-CREATE TABLE IF NOT EXISTS tmp.vova_ab_expre_tmp_h  STORED AS PARQUETFILE as
- select nvl(datasource, 'NA')                                         datasource,
+INSERT OVERWRITE TABLE tmp.vova_ab_expre_tmp_h
+ select /*+ REPARTITION(60) */ nvl(datasource, 'NA')                                         datasource,
            nvl(hour, 'NA')                                               hour,
            nvl(platform, 'NA')                                           platform,
            nvl(os, 'NA')                                                 os,
@@ -93,13 +92,11 @@ CREATE TABLE IF NOT EXISTS tmp.vova_ab_expre_tmp_h  STORED AS PARQUETFILE as
 
 
 
-DROP TABLE IF EXISTS tmp.vova_ab_expre_tmp_distinct_h;
-CREATE TABLE IF NOT EXISTS tmp.vova_ab_expre_tmp_distinct_h  STORED AS PARQUETFILE as
-select
+INSERT OVERWRITE TABLE tmp.vova_ab_expre_tmp_distinct_h
+select /*+ REPARTITION(20) */
 datasource,
 hour,
 platform,
-os,
 rec_page_code,
 rec_code,
 rec_version,
@@ -109,37 +106,33 @@ group by
 datasource,
 hour,
 platform,
-os,
 rec_page_code,
 rec_code,
 rec_version,
 device_id_expre
 ;
 
-DROP TABLE IF EXISTS tmp.vova_ab_expre_tmp_uv_h;
-CREATE TABLE IF NOT EXISTS tmp.vova_ab_expre_tmp_uv_h  STORED AS PARQUETFILE as
-select
-nvl(datasource,'all') datasource,nvl(hour,'all') hour,nvl(platform,'all') platform,nvl(os,'all') os,nvl(rec_page_code,'all') rec_page_code,nvl(rec_code,'all') rec_code,nvl(rec_version,'all') rec_version,
+INSERT OVERWRITE TABLE tmp.vova_ab_expre_tmp_uv_h
+select /*+ REPARTITION(5) */
+nvl(datasource,'all') datasource,nvl(hour,'all') hour,nvl(platform,'all') platform,nvl(rec_page_code,'all') rec_page_code,nvl(rec_code,'all') rec_code,nvl(rec_version,'all') rec_version,
 count(distinct device_id_expre) expre_uv
 from tmp.vova_ab_expre_tmp_distinct_h
-group by cube (datasource,hour,platform,os,rec_page_code,rec_code,rec_version)
+group by cube (datasource,hour,platform,rec_page_code,rec_code,rec_version)
 ;
 
 
 
-DROP TABLE IF EXISTS tmp.vova_ab_expre_tmp_pv_h;
-CREATE TABLE IF NOT EXISTS tmp.vova_ab_expre_tmp_pv_h  STORED AS PARQUETFILE as
-select
-nvl(datasource,'all') datasource,nvl(hour,'all') hour,nvl(platform,'all') platform,nvl(os,'all') os,nvl(rec_page_code,'all') rec_page_code,nvl(rec_code,'all') rec_code,nvl(rec_version,'all') rec_version,
+INSERT OVERWRITE TABLE tmp.vova_ab_expre_tmp_pv_h
+select /*+ REPARTITION(5) */
+nvl(datasource,'all') datasource,nvl(hour,'all') hour,nvl(platform,'all') platform,nvl(rec_page_code,'all') rec_page_code,nvl(rec_code,'all') rec_code,nvl(rec_version,'all') rec_version,
 count(device_id_expre) expre_pv
 from tmp.vova_ab_expre_tmp_h
-group by cube (datasource,hour,platform,os,rec_page_code,rec_code,rec_version)
+group by cube (datasource,hour,platform,rec_page_code,rec_code,rec_version)
 ;
 
 
-DROP TABLE IF EXISTS tmp.vova_ab_clk_tmp_h;
-CREATE TABLE IF NOT EXISTS tmp.vova_ab_clk_tmp_h  STORED AS PARQUETFILE as
-    select nvl(datasource, 'NA')                                         datasource,
+INSERT OVERWRITE TABLE tmp.vova_ab_clk_tmp_h
+    select /*+ REPARTITION(1) */ nvl(datasource, 'NA')                                         datasource,
            nvl(hour, 'NA')                                         hour,
            nvl(platform, 'NA')                                           platform,
            nvl(os, 'NA')                                                 os,
@@ -201,12 +194,10 @@ CREATE TABLE IF NOT EXISTS tmp.vova_ab_clk_tmp_h  STORED AS PARQUETFILE as
 ;
 
 
-DROP TABLE IF EXISTS tmp.vova_ab_clk_tmp_uv_h;
-CREATE TABLE IF NOT EXISTS tmp.vova_ab_clk_tmp_uv_h  STORED AS PARQUETFILE as
-select nvl(datasource, 'all')        datasource,
+INSERT OVERWRITE TABLE tmp.vova_ab_clk_tmp_uv_h
+select /*+ REPARTITION(1) */ nvl(datasource, 'all')        datasource,
        nvl(hour, 'all')              hour,
        nvl(platform, 'all')          platform,
-       nvl(os, 'all')                os,
        nvl(rec_page_code, 'all')     rec_page_code,
        nvl(rec_code, 'all')          rec_code,
        nvl(rec_version, 'all')       rec_version,
@@ -215,7 +206,6 @@ from (
          select datasource,
                 hour,
                 platform,
-                os,
                 rec_page_code,
                 rec_code,
                 rec_version,
@@ -224,31 +214,28 @@ from (
          group by datasource,
                   hour,
                   platform,
-                  os,
                   rec_page_code,
                   rec_code,
                   rec_version,
                   device_id_clk
      ) tmp
-group by cube (datasource, hour, platform, os, rec_page_code, rec_code, rec_version)
+group by cube (datasource, hour, platform, rec_page_code, rec_code, rec_version)
 ;
 
-DROP TABLE IF EXISTS tmp.vova_ab_clk_tmp_pv_h;
-CREATE TABLE IF NOT EXISTS tmp.vova_ab_clk_tmp_pv_h  STORED AS PARQUETFILE as
-select
-nvl(datasource,'all') datasource,nvl(hour,'all') hour,nvl(platform,'all') platform,nvl(os,'all') os,nvl(rec_page_code,'all') rec_page_code,nvl(rec_code,'all') rec_code,nvl(rec_version,'all') rec_version,
+INSERT OVERWRITE TABLE tmp.vova_ab_clk_tmp_pv_h
+select /*+ REPARTITION(1) */
+nvl(datasource,'all') datasource,nvl(hour,'all') hour,nvl(platform,'all') platform,nvl(rec_page_code,'all') rec_page_code,nvl(rec_code,'all') rec_code,nvl(rec_version,'all') rec_version,
 count(device_id_clk) clk_pv
 from tmp.vova_ab_clk_tmp_h
-group by cube (datasource,hour,platform,os,rec_page_code,rec_code,rec_version)
+group by cube (datasource,hour,platform,rec_page_code,rec_code,rec_version)
 ;
 
 
-DROP TABLE IF EXISTS tmp.vova_ab_cart_h;
-CREATE TABLE IF NOT EXISTS tmp.vova_ab_cart_h  STORED AS PARQUETFILE as
+INSERT OVERWRITE TABLE tmp.vova_ab_cart_h
 
-select nvl(datasource, 'all')    datasource,
+select /*+ REPARTITION(1) */ nvl(datasource, 'all')    datasource,
        nvl(platform, 'all')      platform,
-       nvl(os, 'all')            os,
+       nvl(hour, 'all')      hour,
        nvl(rec_page_code, 'all') rec_page_code,
        nvl(rec_code, 'all')      rec_code,
        nvl(rec_version, 'all')   rec_version,
@@ -256,7 +243,7 @@ select nvl(datasource, 'all')    datasource,
 from (
     select datasource,
            platform,
-           os,
+           hour,
            rec_page_code,
            nvl(substr(ab_test, 0,
                       length(ab_test) - length(split(ab_test, '_')[size(split(ab_test, '_')) - 1]) - 1),
@@ -265,8 +252,8 @@ from (
            device_id cart_id
     from (
              select nvl(a.datasource, 'NALL')       datasource,
+                    nvl(hour(from_unixtime(a.collector_tstamp / 1000,'yyyy-MM-dd HH:mm:ss')), 'NALL')       hour,
                     nvl(b.platform, 'NALL')         platform,
-                    nvl(a.pre_app_version, 'NALL')       os,
                     case
                         when pre_page_code = 'homepage' and pre_list_type = '/popular' then 'rec_best_selling'
                         when pre_page_code in ('homepage', 'product_list') and
@@ -318,16 +305,15 @@ from (
          ) t LATERAL VIEW explode(t.test_info) ab_tes as ab_test
     where ab_test like 'rec_%'
 ) tmp
-group by cube (datasource, platform, os, rec_page_code, rec_code, rec_version)
+group by cube (datasource,hour, platform, rec_page_code, rec_code, rec_version)
 ;
 
 
 
-DROP TABLE IF EXISTS tmp.vova_ab_pay_h;
-CREATE TABLE IF NOT EXISTS tmp.vova_ab_pay_h  STORED AS PARQUETFILE as
-select nvl(datasource, 'all')    datasource,
+INSERT OVERWRITE TABLE tmp.vova_ab_pay_h
+select /*+ REPARTITION(1) */ nvl(datasource, 'all')    datasource,
        nvl(platform, 'all')      platform,
-       nvl(os, 'all')            os,
+       nvl(hour, 'all')            hour,
        nvl(rec_page_code, 'all') rec_page_code,
        nvl(rec_code, 'all')      rec_code,
        nvl(rec_version, 'all')   rec_version,
@@ -336,7 +322,7 @@ select nvl(datasource, 'all')    datasource,
 from (
     select datasource,
            platform,
-           os,
+           hour,
            rec_page_code,
            nvl(substr(ab_test, 0,
                       length(ab_test) - length(split(ab_test, '_')[size(split(ab_test, '_')) - 1]) - 1),
@@ -347,7 +333,7 @@ from (
     from (
              select nvl(a.datasource, 'NALL')       datasource,
                     nvl(b.platform, 'NALL')         platform,
-                    nvl(a.pre_app_version, 'NALL')       os,
+                    nvl(hour(c.order_time), 'NALL')       hour,
                     case
                         when pre_page_code = 'homepage' and pre_list_type = '/popular' then 'rec_best_selling'
                         when pre_page_code in ('homepage', 'product_list') and
@@ -399,13 +385,22 @@ from (
              from dwd.dwd_vova_fact_order_cause_h a
                       left join dim.dim_vova_devices b
                                 on a.device_id = b.device_id
-                      join dwd.dwd_vova_fact_pay c
+                      join (select
+       og.rec_id  as order_goods_id,oi.order_time,
+       og.goods_number,
+       og.shop_price,
+       og.shipping_fee
+from ods_vova_vts.ods_vova_order_goods_h og
+join ods_vova_vts.ods_vova_order_info_h oi on oi.order_id = og.order_id
+where oi.pay_status >= 1
+  and oi.email not regexp '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
+  and oi.parent_order_id = 0) c
                            on a.order_goods_id = c.order_goods_id
              where a.pt = '${cur_date}'
          ) t LATERAL VIEW explode(t.test_info) ab_tes as ab_test
     where ab_test like 'rec_%'
 ) tmp
-group by cube (datasource, platform, os, rec_page_code, rec_code, rec_version)
+group by cube (datasource, platform, hour, rec_page_code, rec_code, rec_version)
 ;
 
 insert overwrite table dwb.dwb_vova_ab_test_h PARTITION (pt = '${cur_date}')
@@ -415,19 +410,18 @@ select
 a.hour,
 a.datasource,
 a.platform,
-a.os,
+'all' os,
 a.rec_page_code,
 a.rec_code,
 a.rec_version,
 a.expre_pv,e.clk_pv,concat(round(e.clk_pv * 100 / a.expre_pv,2),'%') ctr,d.expre_uv,f.clk_uv,
 nvl(b.cart_uv,0) cart_uv,concat(nvl(round(b.cart_uv * 100 / d.expre_uv,2),0),'%') cart_rate,
-nvl(c.gmv,0),0,nvl(c.pay_uv,0),concat(nvl(round(c.pay_uv * 100 / d.expre_uv,3),0),'%') cr,
+nvl(round(c.gmv,2),0),0,nvl(c.pay_uv,0),concat(nvl(round(c.pay_uv * 100 / d.expre_uv,3),0),'%') cr,
 nvl(round(c.pay_uv / d.expre_uv,6),0) impressions_cr,nvl(round(c.gmv  / d.expre_uv,6),0) gmv_cr
 from tmp.vova_ab_expre_tmp_pv_h a
 left join tmp.vova_ab_expre_tmp_uv_h d
 on a.datasource = d.datasource
 and a.platform = d.platform
-and a.os = d.os
 and a.rec_page_code = d.rec_page_code
 and a.rec_code = d.rec_code
 and a.rec_version = d.rec_version
@@ -435,7 +429,6 @@ and a.hour = d.hour
 left join tmp.vova_ab_clk_tmp_pv_h e
 on a.datasource = e.datasource
 and a.platform = e.platform
-and a.os = e.os
 and a.rec_page_code = e.rec_page_code
 and a.rec_code = e.rec_code
 and a.rec_version = e.rec_version
@@ -443,7 +436,6 @@ and a.hour = e.hour
 left join tmp.vova_ab_clk_tmp_uv_h f
 on a.datasource = f.datasource
 and a.platform = f.platform
-and a.os = f.os
 and a.rec_page_code = f.rec_page_code
 and a.rec_code = f.rec_code
 and a.rec_version = f.rec_version
@@ -451,14 +443,14 @@ and a.hour = f.hour
 left join tmp.vova_ab_cart_h b
 on a.datasource = b.datasource
 and a.platform = b.platform
-and a.os = b.os
+and a.hour = b.hour
 and a.rec_page_code = b.rec_page_code
 and a.rec_code = b.rec_code
 and a.rec_version = b.rec_version
 left join tmp.vova_ab_pay_h c
 on a.datasource = c.datasource
 and a.platform = c.platform
-and a.os = c.os
+and a.hour = c.hour
 and a.rec_page_code = c.rec_page_code
 and a.rec_code = c.rec_code
 and a.rec_version = c.rec_version
