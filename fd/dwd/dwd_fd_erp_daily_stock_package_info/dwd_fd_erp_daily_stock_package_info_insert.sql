@@ -65,7 +65,7 @@ from
                  AND bsd.status = 'CK'
                  AND bsd.is_process = 'N'
                  AND bsd.created_stamp  >= '${pt}'
-                 AND bsd.created_stamp < date_add'${pt}',1)
+                 AND bsd.created_stamp < date_add('${pt}',1)
               )
               UNION
               (
