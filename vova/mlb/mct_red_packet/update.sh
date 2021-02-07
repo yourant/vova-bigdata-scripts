@@ -62,10 +62,10 @@ select
 from
 (
   select
-    distinct recommend_goods_id as goods_id
+    distinct goods_id
   from
     themis.ads_lower_price_goods_red_packet
-  where is_invalid = 0 and is_delete = 0 and red_packet_cnt > 0
+  where is_invalid = 0 and is_delete = 0 and red_packet_cnt > 0 and goods_id = recommend_goods_id
 ) t1
 ;
 "
