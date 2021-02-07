@@ -227,7 +227,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=gvg --table_name=goods_info_relation --etl_type=ALL  --mapers=10 --period_type=day --partition_num=10
+          command: echo 1
         dependsOn:
           - trigram_fn_start
 
