@@ -1,21 +1,21 @@
 
 insert overwrite table dwb.dwb_fd_category_data_analyze_rpt partition (pt='${pt}')
 select
-concat('${pt}') as reporte_date,
+'${pt}'as reporte_date,
 t1.project,
 t1.category_name,
 t1.country ,
 t1.impression_num,
 nvl(t2.advs_product_pv,0),
 nvl(t3.click_num,0),
-concat(cast(nvl(t3.click_num/t1.impression_num ,0) *100 as decimal(10,2)),'%')as ctr_rate,
-concat(cast(nvl(t4.add_click_num/t7.product_impression_num ,0)*100 as decimal(10,2)),'%') as add_car_rate,
+nvl(t3.click_num/t1.impression_num ,0) as ctr_rate,
+nvl(t4.add_click_num/t7.product_impression_num ,0) as add_car_rate,
 nvl(t5.sales_volume,0) as sales_volume,
 nvl(t5.sales,0) as sales,
 nvl(t5.order_valume,0) as order_numbers,
 nvl(t5.sales_volume/t5.order_valume ,0)as avg_order_fees,
-concat(cast(nvl(t6.link_order_num/t5.order_valume,0) *100 as decimal(10,2)),'%')as link_order_rate,
-concat(cast(nvl(t5.order_valume/t1.impression_num ,0) *100 as decimal(10,2)),'%')as all_ctr_rate
+nvl(t6.link_order_num/t5.order_valume,0) as link_order_rate,
+nvl(t5.order_valume/t1.impression_num ,0)as all_ctr_rate
 from
 ----根据国家，品类，项目计算指定页面下的曝光量
 (select project,category_name,country ,count(*) as impression_num from dwd.dwd_fd_category_data_analyze_goods_event_detail
@@ -105,21 +105,21 @@ on t1.project=t6.project and t1.category_name=t6.category_name and t1.country=t6
 union all
 -- 所有国家的聚合结果
 select
-concat('${pt}') as reporte_date,
+'${pt}' as reporte_date,
 t1.project,
 t1.category_name,
 'all' as country,
 t1.impression_num,
 nvl(t2.advs_product_pv,0),
 nvl(t3.click_num,0),
-concat(cast(nvl(t3.click_num/t1.impression_num ,0)*100 as decimal(10,2)),'%')as ctr_rate,
-concat(cast(nvl(t4.add_click_num/t7.product_impression_num ,0)*100 as decimal(10,2)),'%') as add_car_rate,
+nvl(t3.click_num/t1.impression_num ,0) as ctr_rate,
+nvl(t4.add_click_num/t7.product_impression_num ,0) as add_car_rate,
 nvl(t5.sales_volume,0) as sales_volume,
 nvl(t5.sales,0) as sales,
 nvl(t5.order_valume,0) as order_numbers,
 nvl(t5.sales_volume/t5.order_valume ,0)as avg_order_fees,
-concat(cast(nvl(t6.link_order_num/t5.order_valume,0)*100 as decimal(10,2)) ,'%')as link_order_rate,
-concat(cast(nvl(t5.order_valume/t1.impression_num ,0)*100 as decimal(10,2)),'%')as all_ctr_rate
+nvl(t6.link_order_num/t5.order_valume,0)as link_order_rate,
+nvl(t5.order_valume/t1.impression_num ,0)as all_ctr_rate
 from
 ----根据国家，品类，项目计算指定页面下的曝光量
 (select project,category_name,count(*) as impression_num from dwd.dwd_fd_category_data_analyze_goods_event_detail
