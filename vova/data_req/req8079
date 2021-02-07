@@ -1,0 +1,81 @@
+create table tmp.req8079_device_nc as
+select
+dd.device_id,
+dd.current_buyer_id,
+if(t1.device_id is not null,1,0) as is_next_day_come
+from
+dim.dim_vova_devices dd
+left join (select pt,device_id from dwd.dwd_vova_fact_start_up where datasource='vova' and pt>='2020-12-01' group by pt,device_id) t1
+on dd.device_id = t1.device_id and date(date_add(dd.activate_time,1))= t1.pt
+where date(activate_time)>='2020-12-01' and datasource='vova';
+
+
+create table tmp.req8079_device_7dc as
+select
+dd.device_id,
+dd.current_buyer_id,
+sum(if(t1.device_id is not null,1,0)) as is_next7_day_come
+from
+dim.dim_vova_devices dd
+left join (select pt,device_id from dwd.dwd_vova_fact_start_up where datasource='vova' and pt>='2020-12-01' group by pt,device_id) t1
+on dd.device_id = t1.device_id and datediff(date(t1.pt),date(dd.activate_time))<7 and date(t1.pt)!=date(dd.activate_time)
+where date(activate_time)>='2020-12-01' and datasource='vova'
+group by dd.device_id,dd.current_buyer_id;
+
+
+create table tmp.req8079_device as
+select
+device_id,
+current_buyer_id as buyer_id,
+if(is_next_day_come=1,'group1','group2') as group
+from
+tmp.req8079_device_nc
+union all
+select
+device_id,
+current_buyer_id as buyer_id,
+'group3' as group
+from
+tmp.req8079_device_7dc
+where is_next7_day_come = 0;
+
+create table tmp.req8079_device_c as
+select
+t1.device_id,
+t1.buyer_id,
+t1.group,
+case when lower(t2.child_channel)='facebook ads' then 'Facebook'
+when lower(t2.child_channel)='googleadwords_int' then 'Google'
+when lower(t2.child_channel)='apple search ads' then 'Apple Search Ads'
+when lower(t2.child_channel) in ('freebies','freebies_draw_line','freebies_dice_line','freebies_line','luckyminer','luckyminer_line') then '拉新游戏'
+when lower(t2.child_channel)='organic' then 'Organic'
+else 'others' end channel,
+hour(activate_time) as act_time_h
+from
+tmp.req8079_device t1
+left join dim.dim_vova_devices t2
+on t1.device_id = t2.device_id;
+
+create table tmp.req8079_t1_4 as
+select
+sv.pt,
+nvl(if(sv.country in ('EN','FR','DE','IT','ES'),sv.country,'other'),'all') country,
+nvl(t1.group,'all') group,
+nvl(t1.channel,'all') channel,
+nvl(t1.act_time_h,'all') act_time_h,
+nvl(count(distinct sv.device_id),0) as dau,
+nvl(cast(avg(if(sv.page_code='homepage' and sv.leave_ts-sv.enter_ts>0,(sv.leave_ts-sv.enter_ts)/1000,null)) as decimal(5,2) ),0) home_page_stay_time,
+nvl(cast(avg(if(sv.page_code in ('product_list','search_result')  and sv.leave_ts-sv.enter_ts>0,(sv.leave_ts-sv.enter_ts)/1000,null)) as decimal(5,2)),0) pl_stay_time,
+nvl(cast(avg(if(sv.page_code = 'product_detail'  and sv.leave_ts-sv.enter_ts>0,(sv.leave_ts-sv.enter_ts)/1000,null)) as decimal(5,2)),0) pd_stay_time,
+nvl(cast(avg(if(sv.page_code = 'cart'  and sv.leave_ts-sv.enter_ts>0,(sv.leave_ts-sv.enter_ts)/1000,null)) as decimal(5,2)),0) ct_stay_time,
+nvl(cast(avg(if(sv.page_code = 'checkout_new'  and sv.leave_ts-sv.enter_ts>0,(sv.leave_ts-sv.enter_ts)/1000,null)) as decimal(5,2)),0) cn_stay_time,
+nvl(cast(avg(if(sv.page_code = 'checkout_address_list'  and sv.leave_ts-sv.enter_ts>0,(sv.leave_ts-sv.enter_ts)/1000,null)) as decimal(5,2)),0) ca_stay_time,
+nvl(cast(avg(if(sv.page_code not in ('product_list','search_result','homepage','product_detail','cart','checkout_new','checkout_address_list')  and sv.leave_ts-sv.enter_ts>0,(sv.leave_ts-sv.enter_ts)/1000,null)) as decimal(5,2)),0) other_stay_time,
+nvl(cast(avg((sv.leave_ts-sv.enter_ts)/1000) as decimal(5,2)),0) as  all_stay_time
+from  dwd.dwd_vova_log_page_view_arc  sv
+inner join tmp.req8079_device_c t1 on sv.device_id = t1.device_id
+left join dwd.dwd_vova_fact_pay fp  on t1.buyer_id = fp.buyer_id
+where pt>='2020-12-01' and pt<='2021-01-27'  and view_type='hide' and sv.platform = 'mob' and os_type is not null
+and sv.leave_ts>=sv.enter_ts
+and sv.enter_ts>0
+group by sv.pt,if(sv.country in ('EN','FR','DE','IT','ES'),sv.country,'other'),t1.group,t1.channel,t1.act_time_h with cube

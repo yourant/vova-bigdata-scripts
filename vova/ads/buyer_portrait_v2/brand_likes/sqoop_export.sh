@@ -36,7 +36,7 @@ PRIMARY KEY (\`id\`) USING BTREE,
 UNIQUE KEY \`buyer_id_brand_id\` (\`buyer_id\`,\`brand_id\`) USING BTREE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='用户画像品牌偏好统计表(有近15日点击数据)';
 "
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -psYG2Ri3yIDu2NPki -e "${sql}"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
 
 if [ $? -ne 0 ];then
   exit 1
@@ -44,23 +44,23 @@ fi
 
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
--Dmapreduce.job.queuename=important \
 -Dsqoop.export.records.per.statement=3000 \
---connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
---username bimaster --password sYG2Ri3yIDu2NPki \
---m 2 \
+--connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis?rewriteBatchedStatements=true \
+--username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
+--m 1 \
 --table ads_buyer_portrait_brand_likes_new \
 --hcatalog-database ads \
---hcatalog-table ads_buyer_portrait_brand_likes_with_click_15d \
+--hcatalog-table ads_vova_buyer_portrait_brand_likes_with_click_15d \
 --columns buyer_id,brand_id,expre_cnt_1w,expre_cnt_15d,expre_cnt_1m,clk_cnt_1w,clk_cnt_15d,clk_cnt_1m,clk_valid_cnt_1w,clk_valid_cnt_15d,clk_valid_cnt_1m,collect_cnt_1w,collect_cnt_15d,collect_cnt_1m,add_cat_cnt_1w,add_cat_cnt_15d,add_cat_cnt_1m,ord_cnt_1w,ord_cnt_15d,ord_cnt_1m \
---fields-terminated-by '\001'
+--fields-terminated-by '\001' \
+--batch
 
 if [ $? -ne 0 ];then
   exit 1
 fi
 
 echo "----------开始rename-------"
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -psYG2Ri3yIDu2NPki <<EOF
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
 rename table themis.ads_buyer_portrait_brand_likes to themis.ads_buyer_portrait_brand_likes_pre,themis.ads_buyer_portrait_brand_likes_new to themis.ads_buyer_portrait_brand_likes;
 EOF
 echo "-------rename结束--------"
