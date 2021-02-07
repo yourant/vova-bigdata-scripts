@@ -1,0 +1,56 @@
+create table tmp.req8079_t1_3 as
+select
+sv.pt,
+nvl(count(distinct sv.device_id),0) as dau,
+nvl(cast(sum(if(sv.page_code='homepage',(sv.leave_ts-sv.enter_ts)/1000,null))/count(distinct if(sv.page_code='homepage' ,sv.device_id,null)) as decimal(10,2) ),0) home_page_stay_time,
+nvl(cast(sum(if(sv.page_code in ('product_list','search_result') ,(sv.leave_ts-sv.enter_ts)/1000,null))/count(distinct(sv.page_code in ('product_list','search_result') ,sv.device_id,null)) as decimal(5,2)),0) pl_stay_time,
+nvl(cast(sum(if(sv.page_code = 'product_detail',(sv.leave_ts-sv.enter_ts)/1000,null))/count(distinct(sv.page_code = 'product_detail',sv.device_id,null)) as decimal(5,2)),0) pd_stay_time,
+nvl(cast(sum(if(sv.page_code = 'cart' ,(sv.leave_ts-sv.enter_ts)/1000,null))/count(distinct(sv.page_code = 'cart' ,sv.device_id,null)) as decimal(5,2)),0) ct_stay_time,
+nvl(cast(sum(if(sv.page_code = 'checkout_new' ,(sv.leave_ts-sv.enter_ts)/1000,null))/count(distinct(sv.page_code = 'checkout_new' ,sv.device_id,null)) as decimal(5,2)),0) cn_stay_time,
+nvl(cast(sum(if(sv.page_code = 'checkout_address_list' ,(sv.leave_ts-sv.enter_ts)/1000,null))/count(distinct(sv.page_code = 'checkout_address_list' ,sv.device_id,null)) as decimal(5,2)),0) ca_stay_time,
+nvl(cast(sum(if(sv.page_code not in ('product_list','search_result','homepage','product_detail','cart','checkout_new','checkout_address_list') ,(sv.leave_ts-sv.enter_ts)/1000,null))/count(distinct(sv.page_code not in ('product_list','search_result','homepage','product_detail','cart','checkout_new','checkout_address_list') ,sv.device_id,null)) as decimal(10,2)),0) other_stay_time,
+nvl(cast(sum((sv.leave_ts-sv.enter_ts)/1000)/count(distinct sv.device_id) as decimal(10,2)),0) as  all_stay_time
+from  dwd.dwd_vova_log_page_view_arc  sv
+inner join tmp.req8079_device_c t1 on sv.device_id = t1.device_id
+where pt>='2020-12-01' and pt<='2021-01-27'
+and view_type='hide'
+and sv.platform = 'mob'
+and os_type is not null
+and sv.leave_ts is not null
+and sv.leave_ts>=sv.enter_ts
+and date( cast(enter_ts/1000 as timestamp))>'1970-01-01'
+and date( cast(enter_ts/1000 as timestamp)) = date( cast(leave_ts/1000 as timestamp))
+group by sv.pt
+
+
+
+
+
+create table tmp.req8079_t1_4 as
+select
+sv.pt,
+if(sv.country in ('EN','FR','DE','IT','ES'),sv.country,'other') country,
+t1.group,
+t1.channel,
+t1.act_time_h,
+nvl(count(distinct sv.device_id),0) as dau,
+nvl(cast(sum(if(sv.page_code='homepage',(sv.leave_ts-sv.enter_ts)/1000,null))/count(distinct if(sv.page_code='homepage' ,sv.device_id,null)) as decimal(10,2) ),0) home_page_stay_time,
+nvl(cast(sum(if(sv.page_code in ('product_list','search_result') ,(sv.leave_ts-sv.enter_ts)/1000,null))/count(distinct(sv.page_code in ('product_list','search_result') ,sv.device_id,null)) as decimal(5,2)),0) pl_stay_time,
+nvl(cast(sum(if(sv.page_code = 'product_detail',(sv.leave_ts-sv.enter_ts)/1000,null))/count(distinct(sv.page_code = 'product_detail',sv.device_id,null)) as decimal(5,2)),0) pd_stay_time,
+nvl(cast(sum(if(sv.page_code = 'cart' ,(sv.leave_ts-sv.enter_ts)/1000,null))/count(distinct(sv.page_code = 'cart' ,sv.device_id,null)) as decimal(5,2)),0) ct_stay_time,
+nvl(cast(sum(if(sv.page_code = 'checkout_new' ,(sv.leave_ts-sv.enter_ts)/1000,null))/count(distinct(sv.page_code = 'checkout_new' ,sv.device_id,null)) as decimal(5,2)),0) cn_stay_time,
+nvl(cast(sum(if(sv.page_code = 'checkout_address_list' ,(sv.leave_ts-sv.enter_ts)/1000,null))/count(distinct(sv.page_code = 'checkout_address_list' ,sv.device_id,null)) as decimal(5,2)),0) ca_stay_time,
+nvl(cast(sum(if(sv.page_code not in ('product_list','search_result','homepage','product_detail','cart','checkout_new','checkout_address_list') ,(sv.leave_ts-sv.enter_ts)/1000,null))/count(distinct(sv.page_code not in ('product_list','search_result','homepage','product_detail','cart','checkout_new','checkout_address_list') ,sv.device_id,null)) as decimal(10,2)),0) other_stay_time,
+nvl(cast(sum((sv.leave_ts-sv.enter_ts)/1000)/count(distinct sv.device_id) as decimal(10,2)),0) as  all_stay_time
+from  dwd.dwd_vova_log_page_view_arc  sv
+inner join tmp.req8079_device_c t1 on sv.device_id = t1.device_id
+where pt>='2020-12-01' and pt<='2021-01-27'
+and view_type='hide'
+and sv.platform = 'mob'
+and os_type is not null
+and sv.leave_ts is not null
+and sv.leave_ts>=sv.enter_ts
+and date( cast(enter_ts/1000 as timestamp))>'1970-01-01'
+and date( cast(enter_ts/1000 as timestamp)) = date( cast(leave_ts/1000 as timestamp))
+group by sv.pt,if(sv.country in ('EN','FR','DE','IT','ES'),sv.country,'other'),t1.group,t1.channel,t1.act_time_h
+

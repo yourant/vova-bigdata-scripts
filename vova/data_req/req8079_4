@@ -1,0 +1,20 @@
+insert overwrite table tmp.req8079_t4
+select
+/*+ broadcast(t1) */
+sv.pt,
+t1.group,
+concat('[',prt.min_val,',',prt.max_val,')') as price_range,
+count(distinct if(type='common_clk',sv.device_id,null)) add_cart_uv,
+count(distinct if(type='goods_clk',sv.device_id,null)) pd_uv
+from  (
+select pt,device_id,'common_clk' as type,country,element_id as virtual_goods_id from dwd.dwd_vova_log_common_click where pt>='2020-12-01' and pt<='2021-01-27' and platform ='mob' and datasource='vova' and element_name ='pdAddToCartSuccess'
+union all
+select pt,device_id,'goods_clk' as type,country,virtual_goods_id from dwd.dwd_vova_log_goods_click where pt>='2020-12-01' and pt<='2021-01-27' and platform ='mob' and datasource='vova'
+)  sv
+inner join tmp.req8079_device_c t1 on sv.device_id = t1.device_id
+inner join dim.dim_vova_goods dg on sv.virtual_goods_id = dg.virtual_goods_id
+inner join tmp.tmp_vova_dictionary_price_range_type prt
+on (dg.shop_price+dg.shipping_fee) >=prt.min_val and (dg.shop_price+dg.shipping_fee) <prt.max_val
+group by sv.pt,t1.group,concat('[',prt.min_val,',',prt.max_val,')')
+
+
