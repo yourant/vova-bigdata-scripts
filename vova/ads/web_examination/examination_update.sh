@@ -345,9 +345,9 @@ ges.ctr,
 ges.gcr,
 ges.gmv_cr,
 ges.goods_score,
-nvl(ges.gcr, 0) AS gcr_1w,
-nvl(ges.gmv_cr, 0) AS gmv_cr_1w,
-nvl(ges.impressions, 0) AS impressions_1w,
+nvl(ep.gcr, 0) AS gcr_1w,
+nvl(ep.gmv_cr, 0) AS gmv_cr_1w,
+nvl(ep.impressions, 0) AS impressions_1w,
 ges.test_goods_status,
 case
 when
@@ -393,6 +393,20 @@ from
 ads.ads_vova_web_goods_examination_summary ges
 LEFT JOIN ads.ads_vova_web_examination_poll poll on poll.goods_id = ges.goods_id
 left join dim.dim_vova_goods dg on dg.goods_id = ges.goods_id
+LEFT JOIN (
+select
+ep1.goods_id,
+ep1.impressions,
+ep1.gcr,
+ep1.gmv_cr
+from
+(
+select
+max(pt) as max_pt
+from ads.ads_vova_web_examination_1w_pre ep2
+) ep2
+inner join ads.ads_vova_web_examination_1w_pre ep1 on ep1.pt = ep2.max_pt
+) ep on ep.goods_id = ges.goods_id
 ;
 
 
@@ -418,7 +432,7 @@ where pt = '${cur_date}'
 
 "
 
-spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"  --conf "spark.dynamicAllocation.minExecutors=20" --conf "spark.dynamicAllocation.initialExecutors=40" --conf "spark.app.name=ads_vova_web_goods_examination_summary" -e "$sql"
+spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"  --conf "spark.dynamicAllocation.minExecutors=20" --conf "spark.dynamicAllocation.initialExecutors=40" --conf "spark.app.name=ads_vova_web_examination_pre" -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
