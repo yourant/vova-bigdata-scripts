@@ -1,0 +1,19 @@
+create table tmp.req8079_t1 as
+select
+sv.pt,
+nvl(if(sv.country in ('EN','FR','DE','IT','ES'),sv.country,'other'),'all') country,
+t1.group,
+t1.channel,
+t1.act_time_h
+from  dwd.dwd_vova_log_page_view_arc  sv
+inner join tmp.req8079_device_c t1 on sv.device_id = t1.device_id
+left join dwd.dwd_vova_fact_pay fp  on t1.buyer_id = fp.buyer_id
+where pt>='2020-12-01' and pt<='2021-01-27'  and view_type='hide' and platform = 'mob' and os_type is not null
+group by sv.pt,if(sv.country in ('EN','FR','DE','IT','ES'),sv.country,'other'),t1.group,t1.channel,t1.act_time_h
+grouping sets(
+(sv.pt,if(sv.country in ('EN','FR','DE','IT','ES'),sv.country,'other'),t1.group,t1.channel,t1.act_time_h),
+(sv.pt,t1.group,t1.channel,t1.act_time_h),
+(sv.pt,if(sv.country in ('EN','FR','DE','IT','ES'),sv.country,'other'),t1.group,t1.act_time_h),
+(sv.pt,if(sv.country in ('EN','FR','DE','IT','ES'),sv.country,'other'),t1.group,t1.channel),
+)
+

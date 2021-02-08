@@ -8,8 +8,8 @@ fi
 pre_3m=`date -d "89 day ago ${pre_date}" +%Y-%m-%d`
 pre_1m=`date -d "29 day ago ${pre_date}" +%Y-%m-%d`
 sql="
-drop table if exists tmp.ads_buyer_portrait_act_score;
-create table tmp.ads_buyer_portrait_act_score as
+ALTER TABLE ads.ads_vova_buyer_portrait_feature DROP if exists partition(pt = '$(date -d "${pre_date:0:10} -180day" +%Y-%m-%d)');
+with tmp_ads_vova_buyer_portrait_act_score as (
 select
 buyer_id,
 sum(buyer_act_score) buyer_act_score
@@ -41,15 +41,14 @@ from
 select
 pt,
 buyer_id
-from dwd.fact_start_up where pt>='$pre_3m' and buyer_id>0
+from dwd.dwd_vova_fact_start_up where pt>='$pre_3m' and buyer_id>0
 group by pt,buyer_id
 ) t
 ) t group by buyer_act,buyer_id
 ) t
-) t group by buyer_id;
+) t group by buyer_id),
 
-drop table if exists tmp.ads_buyer_portrait_trade;
-create table tmp.ads_buyer_portrait_trade as
+tmp_ads_vova_buyer_portrait_trade as (
 select
 b.buyer_id,
 nvl(t1.is_receive,0) is_receive,
@@ -57,16 +56,15 @@ nvl(t2.is_pay,0) is_pay,
 nvl(t3.is_order,0) is_order,
 nvl(t4.is_cart,0) is_cart,
 nvl(t5.is_clk,0) is_clk
-from dwd.dim_buyers b
-left join (select distinct buyer_id, 1 is_receive from dwd.dim_order_goods where sku_shipping_status=2) t1 on b.buyer_id = t1.buyer_id
-left join (select distinct buyer_id, 1 is_pay from dwd.fact_pay) t2 on b.buyer_id = t2.buyer_id
-left join (select distinct buyer_id, 1 is_order from dwd.dim_order_goods where to_date(order_time)>='$pre_3m') t3 on b.buyer_id = t3.buyer_id
-left join (select distinct buyer_id, 1 is_cart from dwd.fact_log_common_click where pt>='$pre_3m' and buyer_id>0 and element_name='pdAddToCartSuccess') t4 on b.buyer_id = t4.buyer_id
-left join (select distinct buyer_id, 1 is_clk from dwd.fact_log_goods_click where pt>='$pre_1m' and buyer_id>0) t5 on b.buyer_id = t5.buyer_id
-;
+from dim.dim_vova_buyers b
+left join (select distinct buyer_id, 1 is_receive from dim.dim_vova_order_goods where sku_shipping_status=2) t1 on b.buyer_id = t1.buyer_id
+left join (select distinct buyer_id, 1 is_pay from dwd.dwd_vova_fact_pay) t2 on b.buyer_id = t2.buyer_id
+left join (select distinct buyer_id, 1 is_order from dim.dim_vova_order_goods where to_date(order_time)>='$pre_3m') t3 on b.buyer_id = t3.buyer_id
+left join (select distinct buyer_id, 1 is_cart from dwd.dwd_vova_log_common_click where pt>='$pre_3m' and buyer_id>0 and element_name='pdAddToCartSuccess') t4 on b.buyer_id = t4.buyer_id
+left join (select distinct buyer_id, 1 is_clk from dwd.dwd_vova_log_goods_click where pt>='$pre_1m' and buyer_id>0) t5 on b.buyer_id = t5.buyer_id
+)
 
-ALTER TABLE ads.ads_buyer_portrait_feature DROP if exists partition(pt = '$(date -d "${pre_date:0:10} -180day" +%Y-%m-%d)');
-INSERT overwrite TABLE ads.ads_buyer_portrait_feature partition(pt='$pre_date')
+INSERT overwrite TABLE ads.ads_vova_buyer_portrait_feature partition(pt='$pre_date')
 SELECT
   db.buyer_id,
   db.gender AS reg_gender,
@@ -112,8 +110,8 @@ SELECT
   gs.gmv_stage,
   nvl(bbl.is_brand,0) as is_brand
 FROM
-  dwd.dim_buyers db
-  LEFT JOIN dwd.dim_devices dd ON dd.device_id = db.current_device_id
+  dim.dim_vova_buyers db
+  LEFT JOIN dim.dim_vova_devices dd ON dd.device_id = db.current_device_id
   AND dd.datasource = db.datasource
   LEFT JOIN
   -- 近30天点击商品集合
@@ -142,8 +140,8 @@ FROM
         dg.goods_id,
         max( collector_tstamp ) AS last_clk_time
       FROM
-        dwd.fact_log_goods_click gc
-        INNER JOIN dwd.dim_goods dg ON gc.virtual_goods_id = dg.virtual_goods_id
+        dwd.dwd_vova_log_goods_click gc
+        INNER JOIN dim.dim_vova_goods dg ON gc.virtual_goods_id = dg.virtual_goods_id
       WHERE
         gc.pt <= '${pre_date}' and gc.pt > date_sub( '${pre_date}', 30 )
         AND gc.platform = 'mob'
@@ -185,8 +183,8 @@ FROM
         dg.goods_id,
         max( collector_tstamp ) AS last_time
       FROM
-        dwd.fact_log_common_click cc
-        INNER JOIN dwd.dim_goods dg ON cc.element_id = dg.virtual_goods_id
+        dwd.dwd_vova_log_common_click cc
+        INNER JOIN dim.dim_vova_goods dg ON cc.element_id = dg.virtual_goods_id
       WHERE
         cc.pt <= '${pre_date}' and cc.pt > date_sub( '${pre_date}', 60 )
         AND cc.platform = 'mob'
@@ -227,8 +225,8 @@ FROM
         dg.goods_id,
         max( collector_tstamp ) AS last_time
       FROM
-        dwd.fact_log_common_click cc
-        INNER JOIN dwd.dim_goods dg ON cc.element_id = dg.virtual_goods_id
+        dwd.dwd_vova_log_common_click cc
+        INNER JOIN dim.dim_vova_goods dg ON cc.element_id = dg.virtual_goods_id
       WHERE
         cc.pt <= '${pre_date}' and cc.pt > date_sub( '${pre_date}', 60 )
         AND cc.platform = 'mob'
@@ -278,7 +276,7 @@ FROM
             sum(shop_price*goods_number + shipping_fee) as gmv,
             max( fp.order_time ) AS last_pay_time
           FROM
-            dwd.fact_pay fp
+            dwd.dwd_vova_fact_pay fp
           --WHERE fp.platform IN ( 'ios', 'android' )
           GROUP BY
             fp.buyer_id,
@@ -288,8 +286,8 @@ FROM
           GROUP BY
             t2.buyer_id
   ) tmp_ord ON db.buyer_id = tmp_ord.buyer_id
- LEFT JOIN tmp.ads_buyer_portrait_act_score bas ON bas.buyer_id = db.buyer_id
- LEFT JOIN tmp.ads_buyer_portrait_trade bt on bt.buyer_id = db.buyer_id
+ LEFT JOIN tmp_ads_vova_buyer_portrait_act_score bas ON bas.buyer_id = db.buyer_id
+ LEFT JOIN tmp_ads_vova_buyer_portrait_trade bt on bt.buyer_id = db.buyer_id
  LEFT JOIN(
  SELECT
 buyer_id,
@@ -323,7 +321,7 @@ FROM
             pay_time,
             datediff( '$pre_date', pay_time ) AS day_gap
         FROM
-            dwd.fact_pay
+            dwd.dwd_vova_fact_pay
         WHERE
             to_date ( pay_time ) > date_sub( '$pre_date', 90 )
             AND to_date ( pay_time ) <= '$pre_date'
@@ -349,7 +347,7 @@ select
       send_time,
       open_time
   from
-      ods.vova_newsletter_send_email_all
+      ods_vova_vtp.ods_vova_newsletter_send_email_his
     where http_code=200
     and send_time is not null
   union all
@@ -358,7 +356,7 @@ select
     create_time as send_time,
     if(open=1,update_time,null) as open_time
     from
-    ods.vova_email_send_log_a
+    ods_vova_vtp.ods_vova_email_send_log_a
     where status = 0
   union all
   select
@@ -366,7 +364,7 @@ select
     create_time as send_time,
     if(open=1,update_time,null) as open_time
     from
-    ods.vova_email_send_log_b
+    ods_vova_vtp.ods_vova_email_send_log_b
     where status = 0
   union all
   select
@@ -374,7 +372,7 @@ select
     create_time as send_time,
     if(open=1,update_time,null) as open_time
     from
-    ods.vova_email_send_log_c
+    ods_vova_vtp.ods_vova_email_send_log_c
     where status = 0
   )
   )
@@ -385,9 +383,9 @@ select
 on db.email = tmp_email.email
 
 
-left join ads.ads_buyer_gmv_stage_3m gs
+left join ads.ads_vova_buyer_gmv_stage_3m gs
 on db.buyer_id = gs.buyer_id
-left join ads.ads_buyer_brand_level bbl
+left join ads.ads_vova_buyer_brand_level bbl
 on db.buyer_id = bbl.buyer_id
 
 "
