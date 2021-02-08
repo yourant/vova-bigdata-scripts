@@ -171,6 +171,31 @@ CREATE EXTERNAL TABLE IF NOT EXISTS ads.ads_vova_web_goods_examination_summary_h
 ) COMMENT 'ads_vova_web_goods_examination_summary_history_export' PARTITIONED BY (pt STRING)
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
+DROP TABLE ads.ads_vova_web_goods_examination_summary_history_display;
+CREATE EXTERNAL TABLE IF NOT EXISTS ads.ads_vova_web_goods_examination_summary_history_display
+(
+    datasource         STRING,
+    goods_id           bigint,
+    cat_id             bigint,
+    first_cat_id       bigint,
+    second_cat_id      bigint,
+    impressions        bigint,
+    ctr                decimal(20, 6),
+    gcr                decimal(20, 6),
+    gmv_cr             decimal(20, 6),
+    goods_score        decimal(20, 6),
+    gcr_1w             decimal(20, 6),
+    gmv_cr_1w          decimal(20, 6),
+    impressions_1w     bigint,
+    test_goods_status  bigint,
+    test_goods_status_comment  string,
+    test_goods_result_status  bigint,
+    test_goods_result_comment  string,
+    add_test_time      TIMESTAMP,
+    status_change_time TIMESTAMP
+) COMMENT 'ads_vova_web_goods_examination_summary_history_display'
+    ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
+
 DROP TABLE dwb.dwb_vova_web_goods_examination;
 CREATE EXTERNAL TABLE IF NOT EXISTS dwb.dwb_vova_web_goods_examination
 (

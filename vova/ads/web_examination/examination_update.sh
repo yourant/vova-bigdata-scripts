@@ -409,6 +409,33 @@ inner join ads.ads_vova_web_examination_1w_pre ep1 on ep1.pt = ep2.max_pt
 ) ep on ep.goods_id = ges.goods_id
 ;
 
+INSERT OVERWRITE TABLE ads.ads_vova_web_goods_examination_summary_history_display
+SELECT
+/*+ REPARTITION(1) */
+datasource,
+goods_id,
+cat_id,
+first_cat_id,
+second_cat_id,
+impressions,
+ctr,
+gcr,
+gmv_cr,
+goods_score,
+gcr_1w,
+gmv_cr_1w,
+impressions_1w,
+test_goods_status,
+test_goods_status_comment,
+test_goods_result_status,
+test_goods_result_comment,
+add_test_time,
+status_change_time
+FROM
+ads.ads_vova_web_goods_examination_summary_history_export
+WHERE pt = '${cur_date}'
+;
+
 
 INSERT OVERWRITE TABLE dwb.dwb_vova_web_goods_examination PARTITION (pt = '${cur_date}')
 select
