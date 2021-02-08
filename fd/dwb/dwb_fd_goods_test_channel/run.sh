@@ -24,7 +24,7 @@ spark-sql \
   --conf "spark.app.name=${table}_${user}" \
   --conf "spark.dynamicAllocation.maxExecutors=60" \
   -d pt="${pt}" \
-  -f ${shell_path}/${table}_insert.hql
+  -f ${shell_path}/${table}_insert.sql
 
 if [ $? -ne 0 ]; then
   exit 1
