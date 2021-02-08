@@ -1,0 +1,60 @@
+create table tmp.req8079_t3_1 as
+select
+/*+ broadcast(t1) */
+sv.pt,
+t1.group,
+concat(cast(count(distinct if(page_code='search_result' and type='sv',sv.device_id,null))/count(distinct sv.device_id)*100 as decimal(13,2)),'%') search_rate,
+percentile_approx(if(type='goods_clk',dg.shop_price+dg.shipping_fee,null),array(0.25,0.5,0.75))[1] as goods_price_mid,
+percentile_approx(if(type='goods_clk',dg.shop_price+dg.shipping_fee,null),array(0.25,0.5,0.75))[2] as goods_price_75,
+percentile_approx(if(type='goods_clk',dg.shop_price+dg.shipping_fee,null),array(0.25,0.5,0.75))[0] as goods_price25,
+percentile_approx(if(element_name ='pdAddToCartSuccess' and type='common_clk',dg.shop_price+dg.shipping_fee,null),array(0.25,0.5,0.75))[1] as add_cart_price_mid,
+percentile_approx(if(element_name ='pdAddToCartSuccess' and type='common_clk',dg.shop_price+dg.shipping_fee,null),array(0.25,0.5,0.75))[2] as add_cart_price_75,
+percentile_approx(if(element_name ='pdAddToCartSuccess' and type='common_clk',dg.shop_price+dg.shipping_fee,null),array(0.25,0.5,0.75))[0] as add_cart_price_25
+from  (
+select pt,device_id,page_code,null as list_type,null as element_name,'sv' as type,null as virtual_goods_id from dwd.dwd_vova_log_screen_view where pt='2020-12-01' and pt<='2021-01-27'  and platform ='mob' and datasource='vova'
+union all
+select pt,device_id,page_code,null as list_type,element_name,'common_clk' as type,element_id as virtual_goods_id from dwd.dwd_vova_log_common_click where pt='2020-12-01' and pt<='2021-01-27' and platform ='mob' and datasource='vova'
+union all
+select pt,device_id,page_code,list_type,null as element_name,'goods_clk' as type,null as virtual_goods_id from dwd.dwd_vova_log_goods_click where pt='2020-12-01' and pt<='2021-01-27' and platform ='mob' and datasource='vova'
+union all
+select pt,device_id,page_code,list_type,element_name,'exp' as type,null as virtual_goods_id from dwd.dwd_vova_log_impressions where pt='2020-12-01' and pt<='2021-01-27' and platform ='mob' and datasource='vova'
+union all
+select pt,device_id,page_code,list_type,null as element_name,'goods_exp' as type,null as virtual_goods_id from dwd.dwd_vova_log_goods_impression where pt='2020-12-01' and pt<='2021-01-27' and platform ='mob' and datasource='vova'
+union all
+select pt,device_id,page_code,null as  list_type,element_name,'ord' as type,null as virtual_goods_id from dwd.dwd_vova_log_order_process where pt='2020-12-01' and pt<='2021-01-27' and platform ='mob' and datasource='vova'
+)  sv
+inner join tmp.req8079_device_c t1 on sv.device_id = t1.device_id
+left join dim.dim_vova_goods dg on sv.virtual_goods_id = dg.virtual_goods_id
+group by sv.pt,t1.group
+
+
+
+
+
+cast(count(distinct if(page_code ='theme_activity' and type='sv',sv.device_id,null),if(page_code ='theme_activity' and type='sv',sv.element_type,null)) /count(distinct if(page_code ='theme_activity' and type='sv',sv.device_id,null)) as decimal(13,2)) as act_pv_cnt,
+cast(count(distinct if(type='common_clk',sv.device_id,null),if(type='common_clk',sv.virtual_goods_id,null)) /count(distinct if( type='common_clk',sv.device_id,null)) as decimal(13,2)) as avg_gs_cnt,
+
+
+create table tmp.req8079_t3_1 as
+select
+/*+ broadcast(t1) */
+sv.pt,
+t1.group,
+percentile_approx(if(type='goods_clk',dg.shop_price+dg.shipping_fee,null),array(0.25,0.5,0.75)) as goods_price_mid
+from  (
+select pt,device_id,page_code,null as list_type,null as element_name,'sv' as type,null as virtual_goods_id from dwd.dwd_vova_log_screen_view where pt='2020-12-01' and pt<='2021-01-27'  and platform ='mob' and datasource='vova'
+union all
+select pt,device_id,page_code,null as list_type,element_name,'common_clk' as type,element_id as virtual_goods_id from dwd.dwd_vova_log_common_click where pt='2020-12-01' and pt<='2021-01-27' and platform ='mob' and datasource='vova'
+union all
+select pt,device_id,page_code,list_type,null as element_name,'goods_clk' as type,null as virtual_goods_id from dwd.dwd_vova_log_goods_click where pt='2020-12-01' and pt<='2021-01-27' and platform ='mob' and datasource='vova'
+union all
+select pt,device_id,page_code,list_type,element_name,'exp' as type,null as virtual_goods_id from dwd.dwd_vova_log_impressions where pt='2020-12-01' and pt<='2021-01-27' and platform ='mob' and datasource='vova'
+union all
+select pt,device_id,page_code,list_type,null as element_name,'goods_exp' as type,null as virtual_goods_id from dwd.dwd_vova_log_goods_impression where pt='2020-12-01' and pt<='2021-01-27' and platform ='mob' and datasource='vova'
+union all
+select pt,device_id,page_code,null as  list_type,element_name,'ord' as type,null as virtual_goods_id from dwd.dwd_vova_log_order_process where pt='2020-12-01' and pt<='2021-01-27' and platform ='mob' and datasource='vova'
+)  sv
+inner join tmp.req8079_device_c t1 on sv.device_id = t1.device_id
+left join dim.dim_vova_goods dg on sv.virtual_goods_id = dg.virtual_goods_id
+group by sv.pt,t1.group
+

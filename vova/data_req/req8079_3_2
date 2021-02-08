@@ -1,0 +1,273 @@
+
+create table tmp.req8079_3_search_result as
+select
+sv.pt,
+t1.group,
+concat(cast(count(distinct if(page_code='search_result' and type='sv',sv.device_id,null))/count(distinct sv.device_id)*100 as decimal(13,2)),'%') search_rate
+from
+(select pt,device_id,page_code,null as list_type,null as element_name,'sv' as type,null as virtual_goods_id
+from dwd.dwd_vova_log_screen_view where pt>='2020-12-01' and pt<='2021-01-27'  and platform ='mob' and datasource='vova') sv
+inner join tmp.req8079_device_c t1 on sv.device_id = t1.device_id
+left join dim.dim_vova_goods dg on sv.virtual_goods_id = dg.virtual_goods_id
+group by sv.pt,t1.group
+
+
+create table tmp.req8079_3_goods_price as
+select
+/*+ broadcast(t1) */
+sv.pt,
+t1.group,
+percentile_approx(if(type='goods_clk',dg.shop_price+dg.shipping_fee,null),array(0.25,0.5,0.75))[1] as goods_price_mid,
+percentile_approx(if(type='goods_clk',dg.shop_price+dg.shipping_fee,null),array(0.25,0.5,0.75))[2] as goods_price_75,
+percentile_approx(if(type='goods_clk',dg.shop_price+dg.shipping_fee,null),array(0.25,0.5,0.75))[0] as goods_price25
+from
+(select pt,device_id,page_code,list_type,null as element_name,'goods_clk' as type,virtual_goods_id
+from dwd.dwd_vova_log_goods_click where pt>='2020-12-01' and pt<='2021-01-27' and platform ='mob' and datasource='vova'
+) sv
+inner join tmp.req8079_device_c t1 on sv.device_id = t1.device_id
+left join dim.dim_vova_goods dg on sv.virtual_goods_id = dg.virtual_goods_id
+group by sv.pt,t1.group
+
+
+
+create table tmp.req8079_3_add_cart_goods_price as
+select
+/*+ broadcast(t1) */
+sv.pt,
+t1.group,
+percentile_approx(if(element_name ='pdAddToCartSuccess',dg.shop_price+dg.shipping_fee,null),array(0.25,0.5,0.75))[1] as goods_price_mid,
+percentile_approx(if(element_name ='pdAddToCartSuccess',dg.shop_price+dg.shipping_fee,null),array(0.25,0.5,0.75))[2] as goods_price_75,
+percentile_approx(if(element_name ='pdAddToCartSuccess',dg.shop_price+dg.shipping_fee,null),array(0.25,0.5,0.75))[0] as goods_price25
+from
+(select pt,device_id,page_code,null as list_type,element_name,'common_clk' as type,element_id as virtual_goods_id
+from dwd.dwd_vova_log_common_click where pt>='2020-12-01' and pt<='2021-01-27' and platform ='mob' and datasource='vova'
+) sv
+inner join tmp.req8079_device_c t1 on sv.device_id = t1.device_id
+left join dim.dim_vova_goods dg on sv.virtual_goods_id = dg.virtual_goods_id
+group by sv.pt,t1.group
+
+create table tmp.req8079_3_act_mid_cnt as
+select
+/*+ broadcast(t1) */
+pt,
+group,
+percentile_approx(cnt,0.5) as act_mid_cnt
+from
+(select
+/*+ broadcast(t1) */
+sv.pt,
+t1.group,
+sv.device_id,
+count(if(page_code ='theme_activity',1,null)) cnt
+from
+(select pt,device_id,page_code,null as element_name,'sv' as type,null as virtual_goods_id from
+dwd.dwd_vova_log_screen_view where pt>='2020-12-01' and pt<='2021-01-27'  and platform ='mob' and datasource='vova'
+) sv
+inner join tmp.req8079_device_c t1 on sv.device_id = t1.device_id
+left join dim.dim_vova_goods dg on sv.virtual_goods_id = dg.virtual_goods_id
+group by sv.pt,t1.group,sv.device_id)
+group by pt,group
+
+create table tmp.req8079_3_pt_goods_cnt_mid as
+select
+/*+ broadcast(t1) */
+pt,
+group,
+percentile_approx(cnt,0.5) as goods_cnt_mid
+from
+(select
+/*+ broadcast(t1) */
+sv.pt,
+t1.group,
+sv.device_id,
+count(distinct goods_id) cnt
+from
+(select pt,device_id,page_code,null as element_type,null as element_name,'sv' as type, virtual_goods_id from
+dwd.dwd_vova_log_goods_click where pt>='2020-12-01' and pt<='2021-01-27'  and platform ='mob' and datasource='vova'
+) sv
+inner join tmp.req8079_device_c t1 on sv.device_id = t1.device_id
+left join dim.dim_vova_goods dg on sv.virtual_goods_id = dg.virtual_goods_id
+group by sv.pt,t1.group,sv.device_id)
+group by pt,group
+
+
+create table tmp.req8079_3_pt_add_cart_gooods_cnt_mid as
+select
+/*+ broadcast(t1) */
+pt,
+group,
+percentile_approx(cnt,0.5) as goods_cnt_mid
+from
+(select
+/*+ broadcast(t1) */
+sv.pt,
+t1.group,
+sv.device_id,
+count(distinct goods_id) cnt
+from
+(select pt,device_id,page_code,element_type,null as element_name,'sv' as type,element_id as virtual_goods_id from
+dwd.dwd_vova_log_common_click where pt>='2020-12-01' and pt<='2021-01-27'  and platform ='mob' and datasource='vova' and element_name='pdAddToCartSuccess'
+) sv
+inner join tmp.req8079_device_c t1 on sv.device_id = t1.device_id
+left join dim.dim_vova_goods dg on sv.virtual_goods_id = dg.virtual_goods_id
+group by sv.pt,t1.group,sv.device_id)
+group by pt,group
+
+
+
+
+create table tmp.req8079_3_pay_rate as
+select
+t1.pt,
+t1.group,
+concat(cast(nvl(t1.pay_uv,0)/t2.dua*100 as decimal(10,2)),'%') ord_rate
+from
+(select
+date(fp.pay_time) pt,
+t1.group,
+count(distinct t1.device_id) as pay_uv
+from
+dwd.dwd_vova_fact_pay fp
+inner join tmp.req8079_device_c t1 on fp.buyer_id = t1.buyer_id
+where date(fp.pay_time)>='2020-12-01' and date(fp.pay_time)<='2021-01-27'
+group by date(fp.pay_time),t1.group) t1
+left join
+
+(select
+sv.pt,
+t1.group,
+count(distinct sv.device_id) dua
+from
+dwd.dwd_vova_log_screen_view sv
+inner join tmp.req8079_device_c t1 on sv.device_id = t1.device_id
+where sv.pt>='2020-12-01' and sv.pt<='2021-01-27'
+group by sv.pt,t1.group)t2
+on t1.pt=t2.pt and t1.group = t2.group
+
+create table tmp.req8079_3_coupon as
+select
+date(cpn_create_time) pt,
+t1.group,
+percentile_approx(cpn_cfg_val,0.5) as coupon_mid
+from
+dim.dim_vova_coupon sv
+inner join tmp.req8079_device_c t1 on sv.buyer_id = t1.buyer_id
+where date(cpn_create_time)>='2020-12-01' and date(cpn_create_time)<='2021-01-27'   and cpn_cfg_type = 'value'
+group by
+date(cpn_create_time),
+t1.group
+
+
+create table tmp.req8079_3_coupon_rate as
+select
+date(pay_time) pt,
+t1.group,
+concat(cast(count(distinct(if(coupon_code is not null and trim(coupon_code)!='',order_id,null)))/count(distinct(order_id))*100 as decimal(13,2)),'%') coupon_rate
+from
+dim.dim_vova_order_goods sv
+inner join tmp.req8079_device_c t1 on sv.buyer_id = t1.buyer_id
+where  date(pay_time)>='2020-12-01' and date(pay_time)<='2021-01-27'
+group by
+date(pay_time) ,
+t1.group
+
+create table tmp.req8079_3_trac_rate as
+select
+t1.pt,
+t1.group,
+concat(cast(t1.py_dau/t2.dua*100 as decimal(13,6)),'%') as py_rate,
+concat(cast(t1.jy_dau/t2.dua*100 as decimal(13,6)),'%') as jy_rate
+from
+(select
+sv.pt,
+t1.group,
+count(distinct (if(element_type=1,sv.device_id,null))) as py_dau,
+count(distinct (if(element_type=3,sv.device_id,null))) as jy_dau
+from
+(select pt,device_id,element_type from dwd.dwd_vova_log_common_click sv
+where pt>='2020-12-01' and pt<='2021-01-27' and datasource='vova' and page_code ='product_detail' and element_name='switch_shipping_method') sv
+inner join tmp.req8079_device_c t1 on sv.device_id = t1.device_id
+group by
+sv.pt,
+t1.group)t1
+left join
+(select
+sv.pt,
+t1.group,
+count(distinct sv.device_id) dua
+from
+dwd.dwd_vova_log_screen_view sv
+inner join tmp.req8079_device_c t1 on sv.device_id = t1.device_id
+where sv.pt>='2020-12-01' and sv.pt<='2021-01-27'
+group by sv.pt,t1.group)t2
+on t1.pt=t2.pt and t1.group = t2.group
+
+
+create table  tmp.req8079_3_game_rate as
+select
+t1.pt,
+t1.group,
+concat(cast(t1.uv/t2.dua*100 as decimal(13,2)),'%') game_rate
+from
+(select
+sv.pt,
+t1.group,
+count(distinct sv.device_id) uv
+from
+(select pt,device_id from
+dwd.dwd_vova_log_impressions sv where sv.pt>='2020-12-01' and
+sv.pt<='2021-01-27'and datasource='vova' and page_code ='me' and element_name like '%click_me_multiEntrance_%'
+union all
+select pt,device_id from
+dwd.dwd_vova_log_common_click sv where sv.pt>='2020-12-01' and
+sv.pt<='2021-01-27'and datasource='vova' and page_code ='me' and element_name like 'click_hp_activityEntrance_%'
+)sv
+inner join tmp.req8079_device_c t1 on sv.device_id = t1.device_id
+group by
+sv.pt,
+t1.group)t1
+left join
+(select
+sv.pt,
+t1.group,
+count(distinct sv.device_id) dua
+from
+dwd.dwd_vova_log_screen_view sv
+inner join tmp.req8079_device_c t1 on sv.device_id = t1.device_id
+where sv.pt>='2020-12-01' and sv.pt<='2021-01-27'
+group by sv.pt,t1.group)t2
+on t1.pt=t2.pt and t1.group = t2.group
+
+
+create table tmp.req8079_3 as
+select
+t1.pt,
+t1.group,
+t1.search_rate,
+t2.goods_price_mid,
+t2.goods_price_75,
+t2.goods_price25,
+t3.goods_price_mid as goods_price_mid_2,
+t3.goods_price_75 as goods_price_75_2,
+t3.goods_price25 as goods_price25_2,
+t4.act_mid_cnt,
+t5.goods_cnt_mid,
+t6.goods_cnt_mid goods_cnt_mid_2,
+t7.ord_rate,
+t8.coupon_mid,
+t9.coupon_rate,
+t10.py_rate,
+t10.jy_rate,
+t11.game_rate
+from
+tmp.req8079_3_search_result t1
+left join  tmp.req8079_3_goods_price t2 on t1.pt= t2.pt and t1.group =t2.group
+left join  tmp.req8079_3_add_cart_goods_price t3 on t1.pt= t3.pt and t1.group =t3.group
+left join  tmp.req8079_3_act_mid_cnt t4 on t1.pt= t4.pt and t1.group =t4.group
+left join  tmp.req8079_3_pt_goods_cnt_mid t5 on t1.pt= t5.pt and t1.group =t5.group
+left join  tmp.req8079_3_pt_add_cart_gooods_cnt_mid t6 on t1.pt= t6.pt and t1.group =t6.group
+left join  tmp.req8079_3_pay_rate t7 on t1.pt= t7.pt and t1.group =t7.group
+left join  tmp.req8079_3_coupon t8 on t1.pt= t8.pt and t1.group =t8.group
+left join  tmp.req8079_3_coupon_rate t9 on t1.pt= t9.pt and t1.group =t9.group
+left join  tmp.req8079_3_trac_rate t10 on t1.pt= t10.pt and t1.group =t10.group
+left join  tmp.req8079_3_game_rate t11 on t1.pt= t11.pt and t1.group =t11.group

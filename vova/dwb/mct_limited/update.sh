@@ -21,7 +21,7 @@ sum(fp.shop_price * fp.goods_number + fp.shipping_fee) as gmv
 from
 dwd.dwd_vova_fact_pay fp
  inner join (select mct_id from  mct_limited) mcl on fp.mct_id=mcl.mct_id
-where to_date(fp.pay_time) <='${cur_date}' and to_date(fp.pay_time) >='${pre_month}'
+where to_date(fp.pay_time) <='${cur_date}' and to_date(fp.pay_time) >'${pre_month}'
 ),
 mct_limited_goods_cnt(
 select count(distinct goods_id) as goods_cnt from
@@ -37,7 +37,7 @@ union
         inner join dim.dim_vova_goods dg on dg.goods_id= gos.goods_id
         inner join (select mct_id from  mct_limited) mcl on dg.mct_id=mcl.mct_id
         WHERE action = 'on'
-        and to_date(create_time) <='${cur_date}' and to_date(create_time) >='${pre_month}')
+        and to_date(create_time) <='${cur_date}' and to_date(create_time) >'${pre_month}')
 )
 insert overwrite table  dwb.dwb_vova_mct_limited PARTITION (pt = '${cur_date}')
 select
@@ -65,7 +65,7 @@ spark-sql \
 --conf "spark.sql.crossJoin.enabled=true" \
 --conf "spark.default.parallelism = 500" \
 --conf "spark.sql.shuffle.partitions=500" \
---conf "spark.dynamicAllocation.maxExecutors=50" \
+--conf "spark.dynamicAllocation.maxExecutors=100" \
 --conf "spark.sql.adaptive.enabled=true" \
 --conf "spark.sql.adaptive.join.enabled=true" \
 --conf "spark.shuffle.sort.bypassMergeThreshold=10000" \
