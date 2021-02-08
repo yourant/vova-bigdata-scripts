@@ -6,6 +6,12 @@ if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 
+##dependence
+#dwd_vova_log_goods_impression
+#dwd_vova_log_goods_click
+#dwd_vova_log_common_click
+#dwd_vova_fact_pay
+#dim_vova_goods
 sql="
 INSERT OVERWRITE TABLE ads.ads_vova_web_examination_pre PARTITION (pt = '${cur_date}')
 SELECT
