@@ -93,6 +93,8 @@ ads.ads_vova_buyer_portrait_brand_likes
 where pt='${pre_date}' and clk_cnt_15d >0 and brand_id > 0
 ;
 
+
+ALTER TABLE ads.ads_vova_buyer_portrait_brand_likes_medium_term DROP if exists partition(pt = '$(date -d "${pre_date:0:10} -30day" +%Y-%m-%d)');
 insert overwrite table ads.ads_vova_buyer_portrait_brand_likes_medium_term partition(pt='${pre_date}')
 SELECT
   /*+ REPARTITION(25) */
@@ -134,6 +136,8 @@ GROUP BY
   brand_id
 ;
 
+
+ALTER TABLE ads.ads_vova_buyer_portrait_brand_likes_long_term DROP if exists partition(pt = '$(date -d "${pre_date:0:10} -30day" +%Y-%m-%d)');
 insert overwrite table ads.ads_vova_buyer_portrait_brand_likes_long_term partition(pt='${pre_date}')
 select
 /*+ REPARTITION(1) */
