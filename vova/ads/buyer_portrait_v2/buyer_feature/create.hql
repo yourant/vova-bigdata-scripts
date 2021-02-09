@@ -1,6 +1,6 @@
 -- 用户画像子品类偏好统计表
 drop table if exists ads.ads_vova_buyer_portrait_feature;
-CREATE external TABLE ads.ads_vova_buyer_portrait_feature(
+CREATE TABLE `ads.ads_vova_buyer_portrait_feature`(
   `buyer_id` bigint COMMENT 'd_买家id',
   `reg_gender` string COMMENT 'i_注册性别',
   `reg_age_group` string COMMENT 'i_注册年龄段',
@@ -26,6 +26,32 @@ CREATE external TABLE ads.ads_vova_buyer_portrait_feature(
   `avg_price` decimal(13,2) COMMENT 'i_笔单价',
   `email_act` int COMMENT 'i_邮箱活跃度',
   `gmv_stage` int COMMENT 'd_gmv分层级别',
-  `is_brand` int COMMENT 'd_是否brand爱好者')
-COMMENT '用户画像子品类偏好统计表' PARTITIONED BY (pt string)  STORED AS PARQUETFILE;
+  `is_brand` int COMMENT 'd_是否brand爱好者'
+)  COMMENT '用户画像子品类偏好统计表' PARTITIONED BY (pt string)
+     STORED AS PARQUETFILE;
+
+
+CREATE TABLE ods_vova_vtp.ods_vova_newsletter_send_email_his(
+  `nse_id` bigint COMMENT '',
+  `nl_code` string COMMENT '',
+  `nl_type` string COMMENT 'nl_type',
+  `email` string COMMENT '用户email',
+  `send_time` timestamp COMMENT '发送时间',
+  `http_code` string COMMENT 'email发送是否成功的http code',
+  `open_count` bigint COMMENT '统计用户打开的次数',
+  `open_time` timestamp COMMENT '打开时间') stored as parquetfile;
+
+
+CREATE TABLE ads.ads_vova_buyer_gmv_stage_3m (
+  buyer_id int  COMMENT '用户id',
+  country  String COMMENT '国家',
+  gmv_stage int COMMENT '国家近三月客单价分层，1:小于1倍客单价，2：大于等于1倍客单价小于2倍客单价，3：大于等于2倍客单价小于等于3倍客单价，4：大于等于3倍客单价'
+)comment '用户近三月消费区间评级' STORED AS PARQUETFILE;
+
+
+用户近半年brand属性标签表
+CREATE TABLE ads.ads_vova_buyer_brand_level(
+  buyer_id int  COMMENT '用户id',
+  is_brand int  COMMENT 'is_brand :1是brand，0是非brand'
+)comment '用户近半年brand属性标签表' STORED AS PARQUETFILE;
 

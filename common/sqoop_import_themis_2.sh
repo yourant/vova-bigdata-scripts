@@ -1,12 +1,12 @@
 #!/bin/bash
-show_usage="args:[--db_code= MySQL地址CODE, --etl_type=etl类型, --pt=时间, --table_name=表名,--mapers=并发数量(数字)，--split_id=并发切割ID(默认MySQL第一个主键),--inc_column=增量字段(只允许日期类型或者数字ID),--partition_num=ods表文件数量, --period_type=间隔类型（day，hour两种,--primary_key=主键）,--table_type=表类型(1.外部表，2.内部表),--executor_memory=spark executor内存]"
+show_usage="args:[--db_code= MySQL地址CODE, --etl_type=etl类型, --pt=时间, --table_name=表名,--mapers=并发数量(数字)，--split_id=并发切割ID(默认MySQL第一个主键),--inc_column=增量字段(只允许日期类型或者数字ID),--partition_num=ods表文件数量, --period_type=间隔类型（day，hour两种,--primary_key=主键）,--table_type=表类型(1.外部表，2.内部表),--executor_memory=spark executor内存,--hive_delims=hive \r \n默认替换符]"
 #1 判断有没有传入参数
 if [ ! -n "$1" ];then
     echo $show_usage
     exit 1
 fi
-api_url=10.108.11.8:18082
-ARGS=$(getopt -o jn --long db_code:,etl_type:,pt:,table_name:,mapers:,split_id:,inc_column:,partition_num:,period_type:,primary_key:,table_type:,executor_memory: -- "$@")
+api_url=10.108.11.8:18081
+ARGS=$(getopt -o jn --long db_code:,etl_type:,pt:,table_name:,mapers:,split_id:,inc_column:,partition_num:,period_type:,primary_key:,table_type:,executor_memory:,hive_delims: -- "$@")
 eval set -- "${ARGS}"
 inc_column=""
 #2 定义一些变量　mapers 默认为３　date 默认为前1天
@@ -25,6 +25,7 @@ period_type=day
 yarn_queue=default
 table_type=1
 executor_memory=6G
+hive_delims=" "
 
 
 while true; do
@@ -77,6 +78,10 @@ while true; do
     executor_memory=$2
     shift 2
     ;;
+    --hive_delims)
+    hive_delims=$2
+    shift 2
+    ;;
   --)
     shift
     break
@@ -88,6 +93,8 @@ while true; do
     ;;
   esac
 done
+
+echo ======$hive_delims
 
 # if [ "$period_type" == "hour" ];then
 #     yarn_queue=important
@@ -130,15 +137,17 @@ fi
 
 #9 删除临时目录为后面做准备
 #note:sqoop先将数据导入到HDFS的临时目录,然后再将导入到HDFS的数据迁移到Hive仓库,第一步默认的临时目录是hdfs:///tmp/sqoop/themis/vova_order_info_inc
-tmp_path=s3://bigdata-offline/tmp/sqoop/${hiveDb}/${table_name}
+echo "${hiveTable}"
+tmp_path=s3://bigdata-offline/tmp/sqoop/${hiveDb}/${hiveTable}
 #tmp_path=hdfs:///tmp/sqoop/${hiveDb}/${table_name}
 hadoop fs -rm -r $tmp_path
-echo "tablePath:${tablePath}"
 hadoop fs -mkdir ${tablePath}
 #10 根据不同的etl_type　ALL,INIT,INCTIME,INCID　走不同的逻辑处理
 #note:target-dir #11已解释
 
-echo "url:${url},user:${user},pwd:${pwd}"
+#echo "======${hiveColumns}"
+
+#echo "url:${url},user:${user},pwd:${pwd}"
 if [[ "$etl_type" == "ALL" || "INIT" == "$etl_type" ]]; then
   sqoop import "-Dorg.apache.sqoop.splitter.allow_text_splitter=true" -Dmapreduce.job.queuename=${yarn_queue} \
     --connect ${url} \
@@ -154,7 +163,7 @@ if [[ "$etl_type" == "ALL" || "INIT" == "$etl_type" ]]; then
     --null-non-string '\\N' \
     --hive-partition-key pt \
     --hive-partition-value ${pt} \
-    --hive-delims-replacement ' ' \
+    --hive-delims-replacement '${hive_delims}' \
     --target-dir $tmp_path \
     --fetch-size 10000 \
     --query "select ${hiveColumns} from ${table_name} where \$CONDITIONS" \
@@ -181,7 +190,7 @@ if [ "$etl_type" == "INCTIME" ]; then
     --null-non-string '\\N' \
     --hive-partition-key pt \
     --hive-partition-value ${pt} \
-    --hive-delims-replacement ' ' \
+    --hive-delims-replacement '${hive_delims}' \
     --target-dir $tmp_path \
     --fetch-size 10000 \
     --boundary-query "select min($split_id),max($split_id) from ${table_name}" \
@@ -209,7 +218,7 @@ if [ "$etl_type" == "INCTIMENOMERGE" ]; then
     --null-non-string '\\N' \
     --hive-partition-key pt \
     --hive-partition-value ${pt} \
-    --hive-delims-replacement ' ' \
+    --hive-delims-replacement '${hive_delims}' \
     --target-dir $tmp_path \
     --fetch-size 10000 \
     --boundary-query "select min($split_id),max($split_id) from ${table_name}" \
@@ -251,7 +260,7 @@ if [ "$etl_type" == "INCID" ]; then
     --null-non-string '\\N' \
     --hive-partition-key pt \
     --hive-partition-value ${pt} \
-    --hive-delims-replacement ' ' \
+    --hive-delims-replacement '${hive_delims}' \
     --fetch-size 10000 \
     --target-dir $tmp_path \
     --boundary-query "select min($split_id),max($split_id) from ${table_name}" \

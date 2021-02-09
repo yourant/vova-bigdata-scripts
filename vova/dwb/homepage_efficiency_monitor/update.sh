@@ -7,15 +7,12 @@ cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 
 sql="
-DROP TABLE IF EXISTS tmp.tmp_homepage_expre_uv_pv_cc;
-CREATE TABLE IF NOT EXISTS tmp.tmp_homepage_expre_uv_pv_cc as
+insert overwrite table tmp.tmp_homepage_expre_uv_pv_cc
  select /*+ REPARTITION(1) */ device_id from dwd.dwd_vova_log_common_click where pt = '${cur_date}' group by device_id;
-DROP TABLE IF EXISTS tmp.tmp_homepage_expre_uv_pv_gc;
-CREATE TABLE IF NOT EXISTS tmp.tmp_homepage_expre_uv_pv_gc as
+insert overwrite table  tmp.tmp_homepage_expre_uv_pv_gc
 select /*+ REPARTITION(1) */ device_id from dwd.dwd_vova_log_goods_click where pt = '${cur_date}' group by device_id;
 
-DROP TABLE IF EXISTS tmp.tmp_homepage_expre_pv;
-CREATE TABLE IF NOT EXISTS tmp.tmp_homepage_expre_pv as
+insert overwrite table  tmp.tmp_homepage_expre_pv
 --首页曝光pv
 select
 nvl(tmp.country,'all') country, --国家
@@ -46,13 +43,11 @@ and a.pt = '${cur_date}'
 ) tmp
 group by cube(tmp.country,tmp.platform,tmp.app_version,tmp.channel_en,tmp.is_activate_user);
 
-DROP TABLE IF EXISTS tmp.tmp_homepage_expre_uv_tmp;
-CREATE TABLE IF NOT EXISTS tmp.tmp_homepage_expre_uv_tmp as
+insert overwrite table  tmp.tmp_homepage_expre_uv_tmp
 select /*+ REPARTITION(1) */ geo_country,platform,app_version,page_code,device_id,os_type from dwd.dwd_vova_log_impressions where page_code in ('homepage','launch_gender_select','start_ads','app_start') and pt = '${cur_date}'
 group by geo_country,platform,app_version,page_code,device_id,os_type;
 
-DROP TABLE IF EXISTS tmp.tmp_homepage_expre_uv;
-CREATE TABLE IF NOT EXISTS tmp.tmp_homepage_expre_uv as
+insert overwrite table  tmp.tmp_homepage_expre_uv
 --首页曝光uv
 select
 nvl(tmp.country,'all') country, --国家
@@ -91,8 +86,7 @@ group by cube(tmp.country,tmp.platform,tmp.app_version,tmp.channel_en,tmp.is_act
 
 
 --新老埋点数据汇总
-DROP TABLE IF EXISTS tmp.tmp_homepage_clk_cnt;
-CREATE TABLE IF NOT EXISTS tmp.tmp_homepage_clk_cnt as
+insert overwrite table  tmp.tmp_homepage_clk_cnt
 select /*+ REPARTITION(10) */
 distinct geo_country,
 platform,
@@ -113,8 +107,7 @@ and pt = '${cur_date}'
 
 
 
-DROP TABLE IF EXISTS tmp.tmp_homepage_clk_uv_pv;
-CREATE TABLE IF NOT EXISTS tmp.tmp_homepage_clk_uv_pv as
+insert overwrite table  tmp.tmp_homepage_clk_uv_pv
 --首页点击uv,pv
 select /*+ REPARTITION(1) */
 nvl(tmp.country,'all') country, --国家
@@ -147,8 +140,7 @@ on a.device_id = b.device_id
 group by cube(tmp.country,tmp.platform,tmp.app_version,tmp.channel_en,tmp.is_activate_user,tmp.element_name);
 
 
-DROP TABLE IF EXISTS tmp.tmp_homepage_income;
-CREATE TABLE IF NOT EXISTS tmp.tmp_homepage_income as
+insert overwrite table  tmp.tmp_homepage_income
 --首页营收
 select
 nvl(tmp.country,'all') country, --国家
@@ -249,8 +241,7 @@ and a.is_activate_user = c.is_activate_user
 ;
 
 
-DROP TABLE IF EXISTS tmp.tmp_homepage_active_expre_uv_pv;
-CREATE TABLE IF NOT EXISTS tmp.tmp_homepage_active_expre_uv_pv as
+insert overwrite table  tmp.tmp_homepage_active_expre_uv_pv
 --活动入口曝光uv,pv
 select /*+ REPARTITION(2) */
 nvl(tmp.country,'all') country, --国家
@@ -288,8 +279,7 @@ group by cube(tmp.country,tmp.platform,tmp.app_version,tmp.channel_en,tmp.is_act
 
 
 --新老埋点数据汇总
-DROP TABLE IF EXISTS tmp.tmp_homepage_clk_cnt_2;
-CREATE TABLE IF NOT EXISTS tmp.tmp_homepage_clk_cnt_2 as
+insert overwrite table  tmp.tmp_homepage_clk_cnt_2
 select /*+ REPARTITION(10) */
 distinct geo_country,
 platform,
@@ -310,8 +300,7 @@ and (a.element_name like '%click_hp_mainBanner_%' or a.element_name like '%click
  or a.element_name like '%click_hp_topNavigation_name&route_sn%' or a.element_name like '%click_hp_activityEntrance_%')
 ;
 
-DROP TABLE IF EXISTS tmp.tmp_homepage_active_clk_uv_pv;
-CREATE TABLE IF NOT EXISTS tmp.tmp_homepage_active_clk_uv_pv as
+insert overwrite table  tmp.tmp_homepage_active_clk_uv_pv
 --活动入口点击uv,pv
 select
 nvl(tmp.country,'all') country, --国家
@@ -343,8 +332,7 @@ on a.device_id = b.device_id
 ) tmp
 group by cube(tmp.country,tmp.platform,tmp.app_version,tmp.channel_en,tmp.is_activate_user,tmp.element_name);
 
-DROP TABLE IF EXISTS tmp.tmp_homepage_active_income_bef;
-CREATE TABLE IF NOT EXISTS tmp.tmp_homepage_active_income_bef as
+insert overwrite table  tmp.tmp_homepage_active_income_bef
 select
 *
 from (select
@@ -357,8 +345,7 @@ where tmp.rn = 1;
 
 
 
-DROP TABLE IF EXISTS tmp.tmp_homepage_active_income;
-CREATE TABLE IF NOT EXISTS tmp.tmp_homepage_active_income as
+insert overwrite table  tmp.tmp_homepage_active_income
 --活动入口营收   重新写一个归因带element_name
 select
 nvl(tmp.country,'all') country, --国家
@@ -392,8 +379,7 @@ group by cube(tmp.country,tmp.platform,tmp.app_version,tmp.channel_en,tmp.is_act
 
 
 --某入口产生的商详页访问量
-DROP TABLE IF EXISTS tmp.tmp_list_section_tmp1;
-CREATE TABLE IF NOT EXISTS tmp.tmp_list_section_tmp1 as
+insert overwrite table  tmp.tmp_list_section_tmp1
 select
 nvl(t1.datasource,'NA') datasource,
 nvl(t1.geo_country,'NA') country,
@@ -412,8 +398,7 @@ select datasource,event_name,geo_country,os_type,device_id,collector_ts collecto
 
 
 
-DROP TABLE IF EXISTS tmp.tmp_list_section_tmp2;
-CREATE TABLE IF NOT EXISTS tmp.tmp_list_section_tmp2 as
+insert overwrite table  tmp.tmp_list_section_tmp2
 select /*+ REPARTITION(100) */
 	a.country, --国家
 	a.device_id,
@@ -427,8 +412,7 @@ and a.list_type in ('hp_topNavigation','/banner','/hpMultiEntrance','/hpActivity
  or a.element_name like '%click_hp_topNavigation_name&route_sn%' or a.element_name like '%click_hp_activityEntrance_%'
 ;
 
-DROP TABLE IF EXISTS tmp.tmp_list_section_tmp4;
-CREATE TABLE IF NOT EXISTS tmp.tmp_list_section_tmp4 as
+insert overwrite table  tmp.tmp_list_section_tmp4
 select /*+ REPARTITION(5) */
 nvl(tmp.country,'all') country, --国家
 nvl(tmp.platform,'all') platform, --平台

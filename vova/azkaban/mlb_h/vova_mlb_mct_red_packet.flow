@@ -1,0 +1,29 @@
+---
+config:
+  failure.emails: andy.zhang@vova.com.hk,kaicheng@vova.com.hk
+  retries: 10
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - ads_mct_red_packet
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: ads_mct_red_packet
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/mct_red_packet/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag

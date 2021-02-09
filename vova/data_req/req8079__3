@@ -1,0 +1,23 @@
+create table tmp.req8079_t1_3 as
+select
+sv.pt,
+nvl(count(distinct sv.device_id),0) as dau,
+nvl(cast(avg(if(sv.page_code='homepage' and sv.leave_ts-sv.enter_ts>0,(sv.leave_ts-sv.enter_ts)/1000,null)) as decimal(10,2) ),0) home_page_stay_time,
+nvl(cast(avg(if(sv.page_code in ('product_list','search_result')  and sv.leave_ts-sv.enter_ts>0,(sv.leave_ts-sv.enter_ts)/1000,null)) as decimal(5,2)),0) pl_stay_time,
+nvl(cast(avg(if(sv.page_code = 'product_detail'  and sv.leave_ts-sv.enter_ts>0,(sv.leave_ts-sv.enter_ts)/1000,null)) as decimal(5,2)),0) pd_stay_time,
+nvl(cast(avg(if(sv.page_code = 'cart'  and sv.leave_ts-sv.enter_ts>0,(sv.leave_ts-sv.enter_ts)/1000,null)) as decimal(5,2)),0) ct_stay_time,
+nvl(cast(avg(if(sv.page_code = 'checkout_new'  and sv.leave_ts-sv.enter_ts>0,(sv.leave_ts-sv.enter_ts)/1000,null)) as decimal(5,2)),0) cn_stay_time,
+nvl(cast(avg(if(sv.page_code = 'checkout_address_list'  and sv.leave_ts-sv.enter_ts>0,(sv.leave_ts-sv.enter_ts)/1000,null)) as decimal(5,2)),0) ca_stay_time,
+nvl(cast(avg(if(sv.page_code not in ('product_list','search_result','homepage','product_detail','cart','checkout_new','checkout_address_list')  and sv.leave_ts-sv.enter_ts>0,(sv.leave_ts-sv.enter_ts)/1000,null)) as decimal(10,2)),0) other_stay_time,
+nvl(cast(avg((sv.leave_ts-sv.enter_ts)/1000) as decimal(10,2)),0) as  all_stay_time
+from  dwd.dwd_vova_log_page_view_arc  sv
+inner join tmp.req8079_device_c t1 on sv.device_id = t1.device_id
+where pt>='2020-12-01' and pt<='2021-01-27'
+and view_type='hide'
+and sv.platform = 'mob'
+and os_type is not null
+and sv.leave_ts is not null
+and sv.leave_ts>=sv.enter_ts
+and sv.enter_ts>0
+group by sv.pt
+

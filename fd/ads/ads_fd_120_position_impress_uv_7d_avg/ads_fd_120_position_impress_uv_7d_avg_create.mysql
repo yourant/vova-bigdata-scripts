@@ -1,0 +1,20 @@
+create table rpt_120_position_impression_avg
+(
+    id                  int(11) unsigned auto_increment comment '自增主键ID'
+        primary key,
+    project_name        varchar(16)    default '0000-00-00'      not null comment '组织',
+    platform_name       varchar(32)    default ''                not null comment '平台',
+    route_sn            varchar(32)    default ''                not null comment 'route_sn',
+    route_name          varchar(64)    default ''                not null comment 'route_name',
+    country             varchar(32)    default ''                not null comment '国家',
+    absolute_position   int            default 0          not null comment '在列表中的绝对位置',
+    impression_uv_avg   DECIMAL(15, 4) default 0.0          not null comment '最近7天平均impression uv',
+    data_time           varchar(32)    default '0000-00-00'      not null comment '数据对应日期',
+    ctime          timestamp      default CURRENT_TIMESTAMP not null comment '创建时间类型字段',
+    mtime          timestamp      default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间类型字段',
+    constraint uk_pt_prj_pt_rs_rn_ct
+        unique (data_time, project_name, platform_name, route_sn, route_name, country, absolute_position)
+)
+    comment '前7天分类列表页前120坑位的impression平均值';
+
+

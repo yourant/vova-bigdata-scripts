@@ -1,0 +1,42 @@
+create table tmp.req_8198_device as
+select
+t1.device_id,
+date(t2.activate_time) activate_time
+from
+tmp.rmp_7m_act_user_8198 t1
+left join dim.dim_vova_devices t2
+on t1.device_id = t2.device_id
+where t2.datasource='vova'
+
+
+
+
+
+
+create table tmp.req_8198_log as
+select
+/*+ repartition(100) */
+t1.pt,
+t1.collector_ts,
+t1.device_id,
+t1.page_code,
+list_type,
+element_name,
+element_type,
+element_position,
+type
+from
+(
+select pt,collector_ts,device_id,page_code,null as list_type,null as element_name,null as element_type,null as element_id, null as element_position,'screen_view' as type  from dwd.dwd_vova_log_screen_view where pt>='2020-07-18' and pt<='2020-08-03'
+union all
+select pt,collector_ts,device_id,page_code,list_type,element_name,element_type,element_id,element_position,'impressions' as type  from dwd.dwd_vova_log_impressions where pt>='2020-07-18' and pt<='2020-08-03'
+union all
+select pt,collector_ts,device_id,page_code,null as list_type,element_name,element_type,element_id,element_position,'common_click' as type  from dwd.dwd_vova_log_common_click where pt>='2020-07-18' and pt<='2020-08-03'
+union all
+select pt,collector_ts,device_id,page_code,null as list_type,element_name,element_type,element_id,element_position,'goods_impression' as type  from dwd.dwd_vova_log_common_click where pt>='2020-07-18' and pt<='2020-08-03'
+union all
+select pt,collector_ts,device_id,page_code,list_type,null as element_name,element_type,null as element_id,null as element_position,'goods_click' as type  from dwd.dwd_vova_log_goods_click where pt>='2020-07-18' and pt<='2020-08-03'
+union all
+select pt,collector_ts,device_id,page_code,null list_type,element_name,null element_type,element_id,null element_position,'data' as type  from dwd.dwd_vova_log_data where pt>='2020-07-18' and pt<='2020-08-03'
+) t1
+inner join tmp.req_8198_device t2 on t1.device_id = t2.device_id and datediff(t1.pt,t2.activate_time)<10

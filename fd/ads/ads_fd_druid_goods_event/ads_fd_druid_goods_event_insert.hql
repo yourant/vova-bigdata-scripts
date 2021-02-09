@@ -22,10 +22,13 @@ with goods_info as (
                 gi.virtual_goods_id,
                 oi.order_time,
                 pe.event_time as paying_time,
-                oi.pay_time
+                oi.pay_time,
+                oi.order_id,
+                oi.pay_status
 
          from ods_fd_vb.ods_fd_order_info_h oi
-                  inner join ods_fd_vb.ods_fd_order_goods_h og on oi.order_id = og.order_id
+                  inner join
+                  (select order_id,goods_id from ods_fd_vb.ods_fd_order_goods_h group by order_id,goods_id) og on oi.order_id = og.order_id
                   left join ods_fd_vb.ods_fd_user_agent_analysis_h   uaa on uaa.user_agent_id = oi.user_agent_id
                   left join ods_fd_vb.ods_fd_region_h r on r.region_id = oi.country
                   left join goods_info gi on gi.goods_id = og.goods_id and lower(gi.project_name) = lower(oi.project_name)
@@ -41,6 +44,7 @@ with goods_info as (
                                   ) pay_status_change_log
                              where rn = 1
          ) pe on pe.order_sn = oi.order_sn
+         where oi.email not regexp '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
      )
 insert overwrite table ads.ads_fd_druid_goods_event partition (pt = '${pt}', hour = '${hour}')
 select
@@ -60,9 +64,11 @@ select
     tmp.absolute_position,
     tmp.url_route_sn,
     tmp.event_num,
+    order_id,
     tmp.order_num,
     tmp.paying_order_num,
     tmp.paid_order_num
+
 from (
          -- click impression
          select collector_ts                         as `event_time`,
@@ -86,7 +92,8 @@ from (
                 1                                    as event_num,
                 0                                    as order_num,
                 0                                    as paying_order_num,
-                0                                    as paid_order_num
+                0                                    as paid_order_num,
+                null                                 as order_id
          from ods_fd_snowplow.ods_fd_snowplow_goods_event sp_ge
                   left join goods_info gi on gi.virtual_goods_id = sp_ge.goods_event_struct.virtual_goods_id
          where pt = '${pt}'
@@ -113,7 +120,8 @@ from (
                 1                    as event_num,
                 0                    as order_num,
                 0                    as paying_order_num,
-                0                    as paid_order_num
+                0                    as paid_order_num,
+                null                 as order_id
          from ods_fd_snowplow.ods_fd_snowplow_view_event sp_ve
                   left join goods_info gi on gi.virtual_goods_id = sp_ve.url_virtual_goods_id
          where pt = '${pt}'
@@ -140,7 +148,8 @@ from (
                 1                    as event_num,
                 0                    as order_num,
                 0                    as paying_order_num,
-                0                    as paid_order_num
+                0                    as paid_order_num,
+                null                 as order_id
          from ods_fd_snowplow.ods_fd_snowplow_ecommerce_event sp_ee
                   left join goods_info gi on gi.virtual_goods_id = sp_ee.ecommerce_product.id
          where pt = '${pt}'
@@ -167,10 +176,12 @@ from (
                 0                                              as event_num,
                 0                                              as order_num,
                 0                                              as paying_order_num,
-                1                                              as paid_order_num
+                1                                              as paid_order_num,
+                order_id
          from order_goods
          where date(to_utc_timestamp(pay_time, 'PST')) = '${pt}'
          and hour(to_utc_timestamp(pay_time, 'PST')) = cast('${hour}' as bigint)
+         and pay_status = 2
          union all
          -- 下单订单
          select to_utc_timestamp(order_time, 'PST') as `event_time`,
@@ -190,7 +201,8 @@ from (
                 0                                                as event_num,
                 1                                                as order_num,
                 0                                                as paying_order_num,
-                0                                                as paid_order_num
+                0                                                as paid_order_num,
+                order_id
          from order_goods
          where date(to_utc_timestamp(order_time, 'PST')) = '${pt}'
          and hour(to_utc_timestamp(order_time, 'PST')) = cast('${hour}' as bigint)
@@ -214,7 +226,8 @@ from (
                 0                                          as event_num,
                 0                                          as order_num,
                 1                                          as paying_order_num,
-                0                                          as paid_order_num
+                0                                          as paid_order_num,
+                order_id
          from order_goods
          where date(to_utc_timestamp(paying_time, 'PST')) = '${pt}'
     and hour(to_utc_timestamp(paying_time, 'PST')) = cast('${hour}' as bigint)

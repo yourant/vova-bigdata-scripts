@@ -6,3 +6,8 @@ spark-submit   \
 --conf spark.app.name=dwb_vova_order_data_analysis_h \
 --conf spark.executor.memoryOverhead=2048 \
 --class com.vova.rpt.OrderAndGMVAnalys s3://vomkt-emr-rec/jar/vova-order-and-gmv-analys.jar
+
+#如果脚本失败，则报错
+if [ $? -ne 0 ]; then
+  exit 1
+fi

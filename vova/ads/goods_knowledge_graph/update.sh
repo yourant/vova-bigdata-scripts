@@ -1,0 +1,51 @@
+#!/bin/bash
+#指定日期和引擎
+pre_date=$1
+#默认日期为昨天
+if [ ! -n "$1" ]; then
+  pre_date=$(date -d "-1 day" +%Y-%m-%d)
+fi
+sql="
+insert overwrite table ads.ads_vova_goods_knowledge_graph partition('2021-02-07')
+select
+/*+ repartition(1) */
+gs_id as goods_id,
+dg.goods_name,
+dg.goods_desc,
+dg.goods_sn,
+gp.second_cat_id,
+dg.brand_id,
+dg.is_on_sale,
+dg.is_delete
+from ads.ads_vova_goods_portrait gp
+inner join ods_vova_vts.ods_vova_goods dg
+on gp.gs_id = dg.goods_id
+where gp.pt='2021-02-07' and expre_cnt_1w>=500 and ord_cnt_1w>=1
+;
+"
+
+# score 计算
+job4_name="ads_vova_buyer_portrait_brand_likes_exp"
+
+#如果使用spark-sql运行，则执行spark-sql -e
+spark-sql \
+--executor-memory 15G --executor-cores 1 \
+--conf "spark.sql.parquet.writeLegacyFormat=true"  \
+--conf "spark.dynamicAllocation.minExecutors=5" \
+--conf "spark.dynamicAllocation.initialExecutors=20" \
+--conf "spark.app.name=${job4_name}" \
+--conf "spark.sql.crossJoin.enabled=true" \
+--conf "spark.default.parallelism = 300" \
+--conf "spark.sql.shuffle.partitions=300" \
+--conf "spark.dynamicAllocation.maxExecutors=100" \
+--conf "spark.sql.adaptive.enabled=true" \
+--conf "spark.sql.adaptive.join.enabled=true" \
+--conf "spark.shuffle.sort.bypassMergeThreshold=10000" \
+--conf "spark.sql.autoBroadcastJoinThreshold=-1" \
+-e "$sql"
+#如果脚本失败，则报错
+if [ $? -ne 0 ];then
+  exit 1
+fi
+echo "${job4_name} end_time:"  `date +"%Y-%m-%d %H:%M:%S" -d "8 hour"`
+

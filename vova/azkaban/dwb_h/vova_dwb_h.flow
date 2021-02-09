@@ -11,6 +11,8 @@ nodes:
       command: echo "stop job"
     dependsOn:
       - dwb_vova_recall_pool_h
+      - dwb_vova_order_data_analysis_h
+      - dwb_vova_ab_test_h
 
   - name: start_flag
     type: command
@@ -32,6 +34,26 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/vova/dwb/recall_pool/v1/update.sh
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - judge_vova_fact_log_v2_h
+
+# 今日订单数据分析
+  - name: dwb_vova_order_data_analysis_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/order_data_analysis_h/update.sh
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+# ab_test_h
+  - name: dwb_vova_ab_test_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/ab_test/update_h.sh
       retries: 30
       retry.backoff: 300000
     dependsOn:
