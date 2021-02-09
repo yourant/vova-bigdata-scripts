@@ -2,7 +2,7 @@
 config:
   retries: 5
   retry.backoff: 600000
-  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+  failure.emails: yzhang13@vova.com.hk
 
 nodes:
   - name: end_flag
@@ -16,6 +16,8 @@ nodes:
       - dwb_vova_buyer_partition
       - dwb_vova_goods_restrict
       - dwb_vova_goods_img_group_d
+      - dwb_vova_test_goods_result
+      - dwb_vova_country_match
 
   - name: start_flag
     type: command
@@ -220,3 +222,22 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_dim_vova_goods
+
+  - name: dwb_vova_test_goods_result
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/test_goods/update.sh
+      retries: 3
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      
+
+  - name: dwb_vova_country_match
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/country_match/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_screen_view

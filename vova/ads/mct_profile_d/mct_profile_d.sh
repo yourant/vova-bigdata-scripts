@@ -233,9 +233,10 @@ select
 og.mct_id,
 c.first_cat_id,
 og.order_goods_id,
-case when datediff(fl.valid_tracking_date,fl.confirm_time)<7  and og.sku_pay_status>1 and og.sku_shipping_status > 0 then 1 else 0 end so_order_cnt_3_6w
+case when datediff(fl.valid_tracking_date,fl.confirm_time)<7  and og.sku_pay_status>1 then 1 else 0 end so_order_cnt_3_6w
 from dim.dim_vova_order_goods og
 left join dwd.dwd_vova_fact_logistics fl on fl.order_goods_id=og.order_goods_id
+left join dim.dim_vova_category c on og.cat_id = c.cat_id
 where datediff('${pre_date}', date(og.confirm_time)) between 6 and 36
 ) t1
 group by t1.mct_id,t1.first_cat_id
@@ -252,12 +253,13 @@ from
 (
 select
 og.mct_id,
-og.first_cat_id,
+c.first_cat_id,
 og.order_goods_id,
-case when datediff(fr.audit_time,og.confirm_time)<63 and  fr.refund_reason_type_id != 8 and fr.refund_type_id=2 and fr.rr_audit_status='audit_passed' and og.sku_pay_status>1 and og.sku_shipping_status > 0 then 1 else 0 end nlrf_order_cnt_5_8w
+case when datediff(fr.audit_time,og.confirm_time)<63 and  fr.refund_reason_type_id not in (8,9) and fr.refund_type_id=2 and fr.rr_audit_status='audit_passed' and og.sku_pay_status>1 then 1 else 0 end nlrf_order_cnt_5_8w
 from dim.dim_vova_order_goods og
 left join dwd.dwd_vova_fact_refund fr on fr.order_goods_id=og.order_goods_id
 left join dwd.dwd_vova_fact_logistics fl on fr.order_goods_id=fl.order_goods_id
+left join dim.dim_vova_category c on og.cat_id = c.cat_id
 where datediff('${pre_date}', date(og.confirm_time)) between 62 and 92
 ) t1
 group by t1.mct_id,t1.first_cat_id
@@ -274,13 +276,14 @@ from
 (
 select
 og.mct_id,
-og.first_cat_id,
+c.first_cat_id,
 og.order_goods_id,
-case when datediff(fr.audit_time,og.confirm_time)<84 and fr.refund_reason_type_id=8 and fr.refund_type_id=2 and og.sku_pay_status>1
-and og.sku_shipping_status > 0 and fr.rr_audit_status='audit_passed' then 1 else 0 end lrf_order_cnt_9_12w
+case when datediff(fr.audit_time,og.confirm_time)<84 and fr.refund_reason_type_id in (8,9) and fr.refund_type_id=2 and og.sku_pay_status>1
+and fr.rr_audit_status='audit_passed' then 1 else 0 end lrf_order_cnt_9_12w
 from  dim.dim_vova_order_goods og
 left join dwd.dwd_vova_fact_refund fr on fr.order_goods_id=og.order_goods_id
 left join dwd.dwd_vova_fact_logistics fl on fr.order_goods_id=fl.order_goods_id
+left join dim.dim_vova_category c on og.cat_id = c.cat_id
 where datediff('${pre_date}', date(og.confirm_time)) between 83 and 113
 ) t1
 group by t1.mct_id,t1.first_cat_id
@@ -324,9 +327,10 @@ select
 og.mct_id,
 c.first_cat_id,
 og.order_goods_id,
-case when datediff(fl.delivered_time,og.confirm_time)<63 and fl.process_tag = 'Delivered' and og.sku_shipping_status > 0 and og.sku_pay_status>1 then 1 else 0 end proper_order_cnt_5_8w
+case when datediff(fl.delivered_time,og.confirm_time)<63 and fl.process_tag = 'Delivered'  and og.sku_pay_status>1 then 1 else 0 end proper_order_cnt_5_8w
 from dim.dim_vova_order_goods og
 left join dwd.dwd_vova_fact_logistics fl on fl.order_goods_id = og.order_goods_id
+left join dim.dim_vova_category c on og.cat_id = c.cat_id
 where datediff('${pre_date}', date(og.confirm_time)) between 62 and 92
 ) t1
 group by t1.mct_id,t1.first_cat_id

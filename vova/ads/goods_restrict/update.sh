@@ -24,7 +24,7 @@ select
 og.goods_id,
 og.order_goods_id,
 og.goods_number,
-case when datediff(fr.audit_time,og.confirm_time)<63 and  fr.refund_reason_type_id != 8 and fr.refund_type_id=2 and fr.rr_audit_status='audit_passed' and og.sku_pay_status>1 and og.sku_shipping_status > 0 then 1 else 0 end nlrf_order_cnt_5_8w
+case when datediff(fr.audit_time,og.confirm_time)<63 and  fr.refund_reason_type_id not in (8,9) and fr.refund_type_id=2 and fr.rr_audit_status='audit_passed' and og.sku_pay_status>1 then 1 else 0 end nlrf_order_cnt_5_8w
 from dim.dim_vova_order_goods og
 left join dwd.dwd_vova_fact_refund fr on fr.order_goods_id=og.order_goods_id
 left join dwd.dwd_vova_fact_logistics fl on fr.order_goods_id=fl.order_goods_id

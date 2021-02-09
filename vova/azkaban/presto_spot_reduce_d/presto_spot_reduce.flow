@@ -1,0 +1,25 @@
+---
+config:
+  failure.emails: yzhang13@vova.com.hk
+  retries: 3
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - presto_spot_instance_reduce
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: presto_spot_instance_reduce
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/presto_spot_instance_apply.sh 1
+    dependsOn:
+      - start_flag

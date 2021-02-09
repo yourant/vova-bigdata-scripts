@@ -27,6 +27,8 @@ FROM (
          FROM ods_vova_vts.ods_vova_order_info oi
                   INNER JOIN ods_vova_vts.ods_vova_order_relation ore ON oi.order_id = ore.order_id
          WHERE oi.pay_status >= 1
+           and oi.email not regexp '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
+           and oi.parent_order_id = 0
            AND ore.device_id IS NOT NULL) temp
 GROUP BY device_id, datasource;
 
@@ -54,8 +56,9 @@ where su.device_id is not null
   and su.rank = 1;
 
 INSERT overwrite TABLE dim.dim_vova_devices
-SELECT /*+ REPARTITION(100) */ 'vova'                                                AS datasource,
-       if(ar.device_id IS NULL, dav.device_id, ar.device_id) AS device_id,
+SELECT /*+ REPARTITION(100) */
+       dav.datasource,
+       if(dav.device_id IS NULL, ar.device_id, dav.device_id) AS device_id,
        cm.main_channel,
        ar.media_source as child_channel,
        if(dav.platform IS NULL, ar.platform, dav.platform) AS platform,
@@ -66,8 +69,6 @@ SELECT /*+ REPARTITION(100) */ 'vova'                                           
        ar.http_referrer,
        ar.campaign,
        ar.os_version,
-       ar.device_brand,
-       ar.device_model,
        if(dav.region_code IS NULL, ar.country_code, dav.region_code) AS region_code,
        if(dav.app_region_code IS NULL, ar.country_code, dav.app_region_code) AS app_region_code,
        ar.language                                           AS language_code,
@@ -78,57 +79,11 @@ SELECT /*+ REPARTITION(100) */ 'vova'                                           
        dav.activate_time,
        fp.first_order_id,
        fp.first_order_time,
-       fp.first_pay_time,
-       ar.click_url as clk_url
-FROM ods_vova_vtl.ods_vova_appsflyer_record ar
-         LEFT JOIN ods_vova_vtlr.ods_vova_channel_mapping cm ON cm.child_channel = ar.media_source
-         LEFT JOIN tmp.tmp_vova_device_first_pay fp ON fp.device_id = ar.device_id AND fp.datasource = 'vova'
-    FULL JOIN (SELECT device_id
-   , app_version
-   , platform
-   , region_code
-   , buyer_id
-   , app_region_code
-   , activate_time FROM tmp.tmp_vova_device_app_version WHERE datasource = 'vova') dav
-ON dav.device_id = ar.device_id
-UNION
-SELECT 'airyclub'                                            AS datasource,
-       if(ar.device_id IS NULL, dav.device_id, ar.device_id) AS device_id,
-       ar.media_source as main_channel,
-       ar.media_source as child_channel,
-       if(dav.platform IS NULL, ar.platform, dav.platform) AS platform,
-       ar.idfv,
-       ar.android_id,
-       ar.imei,
-       ar.advertising_id,
-       ar.http_referrer,
-       ar.campaign,
-       ar.os_version,
-       ar.device_brand,
-       ar.device_model,
-       if(dav.region_code IS NULL, ar.country_code, dav.region_code) AS region_code,
-       if(dav.app_region_code IS NULL, ar.country_code, dav.app_region_code) AS app_region_code,
-       ar.language                                           AS language_code,
-       ar.install_time,
-       ar.app_version                                        AS install_app_version,
-       dav.app_version                                       AS current_app_version,
-       dav.buyer_id                                          as current_buyer_id,
-       dav.activate_time,
-       fp.first_order_id,
-       fp.first_order_time,
-       fp.first_pay_time,
-       ar.click_url as clk_url
-FROM ods_ac_acl.ods_ac_appsflyer_record ar
-         LEFT JOIN ods_vova_vtlr.ods_vova_channel_mapping cm ON cm.child_channel = ar.media_source
-         LEFT JOIN tmp.tmp_vova_device_first_pay fp ON fp.device_id = ar.device_id AND fp.datasource = 'airyclub'
-    FULL JOIN (SELECT device_id
-   , app_version
-   , platform
-   , region_code
-   , app_region_code
-   , buyer_id
-   , activate_time FROM tmp.tmp_vova_device_app_version WHERE datasource = 'airyclub') dav
-ON dav.device_id = ar.device_id;
+       fp.first_pay_time
+FROM tmp.tmp_vova_device_app_version dav
+LEFT JOIN ods_vova_vtlr.ods_vova_appsflyer_record_merge ar on dav.datasource = ar.datasource and dav.device_id = ar.device_id
+LEFT JOIN ods_vova_vtlr.ods_vova_channel_mapping cm ON cm.child_channel = ar.media_source
+LEFT JOIN tmp.tmp_vova_device_first_pay fp ON fp.device_id = dav.device_id AND fp.datasource = dav.datasource
 "
 spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"  --conf "spark.app.name=dim_vova_devices"  --conf "spark.sql.output.merge=true"  --conf "spark.sql.output.coalesceNum=50" --conf "spark.dynamicAllocation.minExecutors=30" --conf "spark.dynamicAllocation.initialExecutors=60" -e "$sql"
 #如果脚本失败，则报错

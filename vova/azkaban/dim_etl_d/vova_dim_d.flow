@@ -477,17 +477,17 @@ nodes:
       retries: 10
       retry.backoff: 600000
     dependsOn:
-      - judge_vova_appsflyer_record
+      - judge_appsflyer_record_merge
       - judge_vova_order_info
       - judge_vova_order_relation
       - judge_vova_channel_mapping
       - judge_dwd_vova_fact_start_up
     condition: all_success
 
-  - name: judge_vova_appsflyer_record
+  - name: judge_appsflyer_record_merge
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_appsflyer_record
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh appsflyer_record_merge
       retries: 5
       retry.backoff: 600000
     dependsOn:

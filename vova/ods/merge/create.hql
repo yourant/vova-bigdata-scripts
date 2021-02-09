@@ -68,3 +68,4 @@ CREATE EXTERNAL TABLE `ods_vova_vts.ods_vova_user_wallet_part`(
   `last_update_time` timestamp COMMENT '') COMMENT 'ods_vova_user_wallet_part merge table'
 STORED AS PARQUETFILE;
 
+
