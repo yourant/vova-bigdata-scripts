@@ -11,7 +11,8 @@ CREATE EXTERNAL TABLE IF NOT EXISTS `dwd.dwd_fd_app_register`(
     `user_new_first_coupon_order_id` string COMMENT '新用户使用coupon首单总数',
     `user_new_first_success_order_id` string COMMENT '新用户支付成功首单总数',
     `user_new_first_success_coupon_order_id` string COMMENT '新用户使用coupon支付成功首单总数'
-)COMMENT '新用户注册'
+)
+COMMENT '新用户注册'
 PARTITIONED BY (
   `pt` string)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
