@@ -10,6 +10,33 @@ nodes:
     config:
       command: echo "stop job"
     dependsOn:
+      - dwb_vova_brand
+      - dwb_vova_board_rank_v2
+      - dwb_vova_self_profit
+      - dwb_vova_mct_main
+      - dwb_vova_search_goods_report
+      - dwb_merchant_monitor
+      - dwb_self_mct_show
+      - dwb_merchant_self_main_monitor
+      - dwb_mct_top1000
+      - dwb_mct_reduce_score
+      - dwb_mct_limited
+      - dwb_expre_and_ord_his
+      - dwb_element_device_uv
+      - dwb_self_mct_waybill
+      - dwb_register_time_rate
+      - dwb_goods_sn_top500_price_avg_his
+      - dwb_goods_sn_gmv_top1000_1w
+      - dwb_quality_control_core_tag
+      - rpt_quality_control_delivered
+      - dwb_quality_control_refund
+      - dwb_quality_control_shipments
+      - dwb_ac_category_distribute
+      - dwb_ac_category_price_range_distribute
+      - dwb_order_goods_life_cycle_cnt
+      - dwb_order_goods_life_cycle_type
+      - dwb_goods_cat_web_guv
+      - dwb_take_photo_for_buy
 
   - name: start_flag
     type: command
@@ -612,7 +639,7 @@ nodes:
       - judge_dim_vova_order_goods
 
 
-  - name: dwb_quality_control_redund
+  - name: dwb_quality_control_refund
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/vova/dwb/quality_control/update_refund.sh
