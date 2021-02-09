@@ -144,7 +144,7 @@ from
 dwd.dwd_vova_fact_pay fp
 left join dim.dim_vova_devices dd on dd.device_id = fp.device_id and dd.datasource=fp.datasource
 inner join dim.dim_vova_order_goods ddog on ddog.order_goods_id = fp.order_goods_id
-where to_date(fp.pay_time)='${cur_date}' and (fp.from_domain like '%api.vova%' or fp.from_domain like '%api.airyclub%')
+where to_date(fp.pay_time)='${cur_date}' and fp.from_domain like '%api%'
 and (ddog.order_tag not like '%luckystar_activity_id%' or ddog.order_tag is null)
 ) t1
 group by
@@ -181,7 +181,7 @@ ddog.buyer_id,
 ddog.device_id
 from dim.dim_vova_order_goods ddog
 left join dim.dim_vova_devices dd on dd.device_id = ddog.device_id and dd.datasource=ddog.datasource
-where to_date(ddog.order_time) = '${cur_date}' and (ddog.from_domain like '%api.vova%' or ddog.from_domain like '%api.airyclub%')
+where to_date(ddog.order_time) = '${cur_date}' and ddog.from_domain like '%api%'
 and (ddog.order_tag not like '%luckystar_activity_id%' or ddog.order_tag is null)
 ) t1
 group by
@@ -226,7 +226,7 @@ from
 dwd.dwd_vova_fact_pay fp
 left join dim.dim_vova_devices dd on dd.device_id = fp.device_id and dd.datasource=fp.datasource
 inner join dim.dim_vova_order_goods ddog on ddog.order_goods_id = fp.order_goods_id
-where to_date(fp.pay_time)='${cur_date}'and (fp.from_domain like '%api.vova%' or fp.from_domain like '%api.airyclub%')
+where to_date(fp.pay_time)='${cur_date}'and fp.from_domain like '%api%'
 and ddog.order_tag is null
 ) t1
 group by
