@@ -58,7 +58,23 @@ nvl(list_type,'all') list_type,
 nvl(activate_time,'all') activate_time,
 count(distinct device_id_expre)  as page_uv
 from
-tmp.fact_impressions_5883_page_uv
+(select datasource,
+if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),
+os_type,
+page_code,
+element_type,
+list_type,
+activate_time,
+device_id_expre
+from tmp.fact_impressions_5883_page_uv
+datasource,
+if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),
+os_type,
+page_code,
+element_type,
+list_type,
+activate_time,
+device_id_expre) t
 group by
 datasource,
 if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),
