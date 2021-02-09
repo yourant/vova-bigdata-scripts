@@ -1,0 +1,102 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_goods_portrait_v2
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: judge_dws_vova_buyer_goods_behave
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dws_buyer_goods_behave
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_goods_impression
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_impression
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_dwd_vova_log_goods_click
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_click
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_dwd_vova_fact_pay
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_dwd_vova_log_common_click
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_common_click
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_dwd_vova_fact_comment
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_comment
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+  - name: ads_vova_goods_portrait_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_portrait_v2/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_goods_behave
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_goods_click
+      - judge_dim_vova_goods
+      - judge_dim_vova_goods
+      - judge_dwd_vova_fact_pay
+      - judge_dwd_vova_log_common_click
+      - judge_dwd_vova_fact_comment

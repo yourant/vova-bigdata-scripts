@@ -25,6 +25,7 @@ nodes:
       - dwb_vova_new_lose_user
       - dwb_vova_dau_summary
       - dwb_vova_rec_active_report_analysis
+      - dwb_vova_mct_rank_data
 
 
   - name: start_flag
@@ -346,6 +347,15 @@ nodes:
       retry.backoff: 300000
     dependsOn:
       - start_flag
+
+  - name: judge_dim_vova_category
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_category
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
 ############################################################
 # 报表
 # 集运订单全链路时效监控
@@ -565,3 +575,20 @@ nodes:
       - judge_dwd_vova_log_page_view
       - judge_dwb_vova_rec_active_report
       - judge_dwd_vova_rec_report
+
+# 商家类目等级数据
+  - name: dwb_vova_mct_rank_data
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/mct_rank_data/update.sh
+      retries: 3
+      retry.backoff: 600000
+      job.priority: 10
+    dependsOn:
+      - judge_dwd_vova_log_goods_impression
+      - judge_dim_vova_goods
+      - judge_dwd_vova_fact_pay
+      - judge_dim_vova_order_goods
+      - judge_dwd_vova_fact_refund
+      - judge_dwd_vova_fact_logistics
+      - judge_dim_vova_category
