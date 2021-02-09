@@ -47,42 +47,39 @@ join dim.dim_vova_devices d on gi.device_id = d.device_id and gi.datasource=d.da
 where pt='$cur_date'  and os_type in ('ios','android')) t
 ;
 
-INSERT OVERWRITE TABLE  tmp.vova_rec_report_tmp
+INSERT OVERWRITE TABLE tmp.vova_rec_report_tmp
 select /*+ REPARTITION(4) */
-nvl(datasource,'all') datasource,
-nvl(if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),'all') country,
-nvl(os_type,'all') os_type,
-nvl(page_code,'all') page_code,
-nvl(element_type,'all') element_type,
-nvl(list_type,'all') list_type,
-nvl(activate_time,'all') activate_time,
-count(distinct device_id_expre)  as page_uv
-from
-(select datasource,
-if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),
-os_type,
-page_code,
-element_type,
-list_type,
-activate_time,
-device_id_expre
-from tmp.fact_impressions_5883_page_uv
-datasource,
-if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),
-os_type,
-page_code,
-element_type,
-list_type,
-activate_time,
-device_id_expre) t
-group by
-datasource,
-if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),
-os_type,
-page_code,
-element_type,
-list_type,
-activate_time
+    nvl(datasource, 'all')             datasource,
+    nvl(country,'all')                         country,
+    nvl(os_type, 'all')                os_type,
+    nvl(page_code, 'all')              page_code,
+    nvl(element_type, 'all')           element_type,
+    nvl(list_type, 'all')              list_type,
+    nvl(activate_time, 'all')          activate_time,
+    count(distinct device_id_expre) as page_uv
+from (select datasource,
+             if(country in ('FR', 'DE', 'IT', 'ES', 'GB', 'US', 'PL', 'BE', 'RN', 'CH', 'TW'), country, 'others') country,
+             os_type,
+             page_code,
+             element_type,
+             list_type,
+             activate_time,
+             device_id_expre
+      from tmp.fact_impressions_5883_page_uv group by datasource,
+           if(country in ('FR', 'DE', 'IT', 'ES', 'GB', 'US', 'PL', 'BE', 'RN', 'CH', 'TW'), country, 'others'),
+           os_type,
+           page_code,
+           element_type,
+           list_type,
+           activate_time,
+           device_id_expre) t
+group by datasource,
+         country,
+         os_type,
+         page_code,
+         element_type,
+         list_type,
+         activate_time
 with cube
 ;
 
