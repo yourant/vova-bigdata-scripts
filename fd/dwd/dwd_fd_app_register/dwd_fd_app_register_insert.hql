@@ -63,7 +63,6 @@ from(
             if(t2.user_id is not null and t3.coupon_code is not null and t3.coupon_code != '',t3.user_id,null) as user_new_first_coupon_order_id,
             if(t2.user_id is not null and t3.pay_status = 2,t3.user_id,null) as user_new_first_success_order_id,
             if(t2.user_id is not null and t3.coupon_code is not null and t3.coupon_code != '' and t3.pay_status = 2,t3.user_id,null) as user_new_first_success_coupon_order_id
-
         from(
             select user_id,order_id,country,user_agent_id,project_name,coupon_code,pay_status
             from ods_fd_vb.ods_fd_order_info
