@@ -26,6 +26,7 @@ nodes:
       - dwb_vova_dau_summary
       - dwb_vova_rec_active_report_analysis
       - dwb_vova_mct_rank_data
+      - dwb_vova_search_view_monitor
 
 
   - name: start_flag
@@ -356,6 +357,15 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - start_flag
+
+  - name: judge_ads_vova_traff_control
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_traff_control
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
 ############################################################
 # 报表
 # 集运订单全链路时效监控
@@ -592,3 +602,21 @@ nodes:
       - judge_dwd_vova_fact_refund
       - judge_dwd_vova_fact_logistics
       - judge_dim_vova_category
+      - judge_ads_vova_traff_control
+
+# 搜索场景效率监控报表
+  - name: dwb_vova_search_view_monitor
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/search_rate_monitor/update.sh
+      retries: 3
+      retry.backoff: 600000
+      job.priority: 10
+    dependsOn:
+      - judge_dwd_vova_log_common_click
+      - judge_dwd_vova_log_page_view
+      - judge_dwd_vova_log_impressions
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_fact_order_cause_v2
+      - judge_dwd_vova_fact_cart_cause_v2
+      - judge_dwd_vova_fact_pay
