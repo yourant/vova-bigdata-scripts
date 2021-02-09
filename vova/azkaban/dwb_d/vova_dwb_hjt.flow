@@ -337,6 +337,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwb_vova_rec_active_report
+      retries: 30
+      retry.backoff: 300000
     dependsOn:
       - start_flag
 
