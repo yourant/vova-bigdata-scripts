@@ -1,0 +1,964 @@
+---
+config:
+  retries: 4
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: noop
+    dependsOn:
+      - appsflyer_record_merge_flow
+
+  - name: start_flag
+    type: noop
+
+
+#merge_flow
+  - name: appsflyer_record_merge_flow
+    type: flow
+    config:
+      retries: 4
+      retry.backoff: 600000
+    dependsOn:
+      - appsflyer_record_flow
+    nodes:
+      - name: appsflyer_record_merge_flow_end
+        type: noop
+        dependsOn:
+          - appsflyer_record_merge
+
+      - name: appsflyer_record_merge_flow_start
+        type: noop
+
+      - name: appsflyer_record_merge
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/vova/ods/merge/appsflyer_record.sh
+        dependsOn:
+          - appsflyer_record_merge_flow_start
+
+#appsflyer_record新中台-商品服务
+  - name: appsflyer_record_flow
+    type: flow
+    config:
+      retries: 4
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+    nodes:
+      - name: appsflyer_record_end
+        type: noop
+        dependsOn:
+          - vova_appsflyer_record
+          - ac_appsflyer_record_new_0
+          - ac_appsflyer_record_new_1
+          - ac_appsflyer_record_new_2
+          - ac_appsflyer_record_new_3
+          - ac_appsflyer_record_new_4
+          - ac_appsflyer_record_new_5
+          - ac_appsflyer_record_new_6
+          - ac_appsflyer_record_new_7
+          - ac_appsflyer_record_new_8
+          - ac_appsflyer_record_new_9
+          - ac_appsflyer_record_new_10
+          - ac_appsflyer_record_new_11
+          - ac_appsflyer_record_new_12
+          - ac_appsflyer_record_new_13
+          - ac_appsflyer_record_new_14
+          - ac_appsflyer_record_new_15
+          - ac_appsflyer_record_new_16
+          - ac_appsflyer_record_new_17
+          - ac_appsflyer_record_new_18
+          - ac_appsflyer_record_new_19
+          - ac_appsflyer_record_new_20
+          - ac_appsflyer_record_new_21
+          - ac_appsflyer_record_new_22
+          - ac_appsflyer_record_new_23
+          - ac_appsflyer_record_new_24
+          - ac_appsflyer_record_new_25
+          - ac_appsflyer_record_new_26
+          - ac_appsflyer_record_new_27
+          - ac_appsflyer_record_new_28
+          - ac_appsflyer_record_new_29
+          - ac_appsflyer_record_new_30
+          - ac_appsflyer_record_new_31
+          - ac_appsflyer_record_new_32
+          - ac_appsflyer_record_new_33
+          - ac_appsflyer_record_new_34
+          - ac_appsflyer_record_new_35
+          - ac_appsflyer_record_new_36
+          - ac_appsflyer_record_new_37
+          - ac_appsflyer_record_new_38
+          - ac_appsflyer_record_new_39
+          - ac_appsflyer_record_new_40
+          - ac_appsflyer_record_new_41
+          - ac_appsflyer_record_new_42
+          - ac_appsflyer_record_new_43
+          - ac_appsflyer_record_new_44
+          - ac_appsflyer_record_new_45
+          - ac_appsflyer_record_new_46
+          - ac_appsflyer_record_new_47
+          - ac_appsflyer_record_new_48
+          - ac_appsflyer_record_new_49
+          - ac_appsflyer_record_new_50
+          - ac_appsflyer_record_new_51
+          - ac_appsflyer_record_new_52
+          - ac_appsflyer_record_new_53
+          - ac_appsflyer_record_new_54
+          - ac_appsflyer_record_new_55
+          - ac_appsflyer_record_new_56
+          - ac_appsflyer_record_new_57
+          - ac_appsflyer_record_new_58
+          - ac_appsflyer_record_new_59
+          - ac_appsflyer_record_new_60
+          - ac_appsflyer_record_new_61
+          - ac_appsflyer_record_new_62
+          - ac_appsflyer_record_new_63
+          - vova_appsflyer_record_new_0
+          - vova_appsflyer_record_new_1
+          - vova_appsflyer_record_new_2
+          - vova_appsflyer_record_new_3
+          - vova_appsflyer_record_new_4
+          - vova_appsflyer_record_new_5
+          - vova_appsflyer_record_new_6
+          - vova_appsflyer_record_new_7
+          - vova_appsflyer_record_new_8
+          - vova_appsflyer_record_new_9
+          - vova_appsflyer_record_new_10
+          - vova_appsflyer_record_new_11
+          - vova_appsflyer_record_new_12
+          - vova_appsflyer_record_new_13
+          - vova_appsflyer_record_new_14
+          - vova_appsflyer_record_new_15
+          - vova_appsflyer_record_new_16
+          - vova_appsflyer_record_new_17
+          - vova_appsflyer_record_new_18
+          - vova_appsflyer_record_new_19
+          - vova_appsflyer_record_new_20
+          - vova_appsflyer_record_new_21
+          - vova_appsflyer_record_new_22
+          - vova_appsflyer_record_new_23
+          - vova_appsflyer_record_new_24
+          - vova_appsflyer_record_new_25
+          - vova_appsflyer_record_new_26
+          - vova_appsflyer_record_new_27
+          - vova_appsflyer_record_new_28
+          - vova_appsflyer_record_new_29
+          - vova_appsflyer_record_new_30
+          - vova_appsflyer_record_new_31
+          - vova_appsflyer_record_new_32
+          - vova_appsflyer_record_new_33
+          - vova_appsflyer_record_new_34
+          - vova_appsflyer_record_new_35
+          - vova_appsflyer_record_new_36
+          - vova_appsflyer_record_new_37
+          - vova_appsflyer_record_new_38
+          - vova_appsflyer_record_new_39
+          - vova_appsflyer_record_new_40
+          - vova_appsflyer_record_new_41
+          - vova_appsflyer_record_new_42
+          - vova_appsflyer_record_new_43
+          - vova_appsflyer_record_new_44
+          - vova_appsflyer_record_new_45
+          - vova_appsflyer_record_new_46
+          - vova_appsflyer_record_new_47
+          - vova_appsflyer_record_new_48
+          - vova_appsflyer_record_new_49
+          - vova_appsflyer_record_new_50
+          - vova_appsflyer_record_new_51
+          - vova_appsflyer_record_new_52
+          - vova_appsflyer_record_new_53
+          - vova_appsflyer_record_new_54
+          - vova_appsflyer_record_new_55
+          - vova_appsflyer_record_new_56
+          - vova_appsflyer_record_new_57
+          - vova_appsflyer_record_new_58
+          - vova_appsflyer_record_new_59
+          - vova_appsflyer_record_new_60
+          - vova_appsflyer_record_new_61
+          - vova_appsflyer_record_new_62
+          - vova_appsflyer_record_new_63
+
+      - name: appsflyer_record_start
+        type: noop
+      
+      - name: vova_appsflyer_record
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vtl --table_name=appsflyer_record --inc_column=id --etl_type=INCID --period_type=day --partition_num=200
+        dependsOn:
+          - appsflyer_record_start
+
+      - name: ac_appsflyer_record_new_0
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=aclr --table_name=appsflyer_record_new_0 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+          
+      - name: ac_appsflyer_record_new_1
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_1 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_2
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_2 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_3
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_3 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_4
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_4 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_5
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_5 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_6
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_6 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_7
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_7 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_8
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_8 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_9
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_9 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_10
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_10 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_11
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_11 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_12
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_12 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_13
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_13 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_14
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_14 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_15
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_15 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_16
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_16 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_17
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_17 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_18
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_18 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_19
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_19 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_20
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_20 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_21
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_21 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_22
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_22 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_23
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_23 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_24
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_24 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_25
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_25 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_26
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_26 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_27
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_27 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_28
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_28 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_29
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_29 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_30
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_30 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_31
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_31 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_32
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_32 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_33
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_33 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_34
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_34 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_35
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_35 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_36
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_36 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_37
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_37 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_38
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_38 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_39
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_39 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_40
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_40 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_41
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_41 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_42
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_42 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_43
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_43 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_44
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_44 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_45
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_45 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_46
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_46 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_47
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_47 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_48
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_48 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_49
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_49 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_50
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_50 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_51
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_51 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_52
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_52 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_53
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_53 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_54
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_54 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_55
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_55 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_56
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_56 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_57
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_57 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_58
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_58 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_59
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_59 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_60
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_60 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_61
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_61 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_62
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_62 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+      - name: ac_appsflyer_record_new_63
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=aclr  --table_name=appsflyer_record_new_63 --inc_column=id --etl_type=INCID --period_type=day --partition_num=3
+        dependsOn:
+          - appsflyer_record_start
+
+      - name: vova_appsflyer_record_new_0
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vtlr --table_name=appsflyer_record_new_0 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+
+      - name: vova_appsflyer_record_new_1
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_1 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_2
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_2 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_3
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_3 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_4
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_4 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_5
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_5 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_6
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_6 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_7
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_7 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_8
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_8 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_9
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_9 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_10
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_10 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_11
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_11 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_12
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_12 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_13
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_13 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_14
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_14 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_15
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_15 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_16
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_16 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_17
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_17 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_18
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_18 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_19
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_19 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_20
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_20 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_21
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_21 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_22
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_22 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_23
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_23 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_24
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_24 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_25
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_25 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_26
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_26 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_27
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_27 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_28
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_28 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_29
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_29 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_30
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_30 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_31
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_31 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_32
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_32 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_33
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_33 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_34
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_34 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_35
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_35 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_36
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_36 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_37
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_37 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_38
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_38 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_39
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_39 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_40
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_40 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_41
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_41 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_42
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_42 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_43
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_43 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_44
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_44 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_45
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_45 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_46
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_46 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_47
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_47 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_48
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_48 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_49
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_49 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_50
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_50 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_51
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_51 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_52
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_52 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_53
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_53 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_54
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_54 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_55
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_55 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_56
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_56 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_57
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_57 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_58
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_58 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_59
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_59 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_60
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_60 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_61
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_61 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_62
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_62 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start
+      - name: vova_appsflyer_record_new_63
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh  --db_code=vtlr  --table_name=appsflyer_record_new_63 --inc_column=id --etl_type=INCID --period_type=day --partition_num=50
+        dependsOn:
+          - appsflyer_record_start

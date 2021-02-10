@@ -10,8 +10,7 @@ pre_date=`date -d "1 day ago ${cur_date}" +%Y-%m-%d`
 ###逻辑sql
 sql="
 
-drop table if exists tmp.fact_impressions_5883_page_uv;
-create table tmp.fact_impressions_5883_page_uv  STORED AS PARQUETFILE as
+INSERT OVERWRITE TABLE  tmp.fact_impressions_5883_page_uv
 select /*+ REPARTITION(40) */ datasource,country,os_type,page_code,element_type,list_type,activate_time,device_id_expre from (
 select
 nvl(gi.datasource,'NA') datasource,
@@ -48,32 +47,43 @@ join dim.dim_vova_devices d on gi.device_id = d.device_id and gi.datasource=d.da
 where pt='$cur_date'  and os_type in ('ios','android')) t
 ;
 
-drop table if exists tmp.vova_rec_report_tmp;
-create table tmp.vova_rec_report_tmp  STORED AS PARQUETFILE as
-select
-nvl(datasource,'all') datasource,
-nvl(if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),'all') country,
-nvl(os_type,'all') os_type,
-nvl(page_code,'all') page_code,
-nvl(element_type,'all') element_type,
-nvl(list_type,'all') list_type,
-nvl(activate_time,'all') activate_time,
-count(distinct device_id_expre)  as page_uv
-from
-tmp.fact_impressions_5883_page_uv
-group by
-datasource,
-if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),
-os_type,
-page_code,
-element_type,
-list_type,
-activate_time
+INSERT OVERWRITE TABLE tmp.vova_rec_report_tmp
+select /*+ REPARTITION(4) */
+    nvl(datasource, 'all')             datasource,
+    nvl(country,'all')                         country,
+    nvl(os_type, 'all')                os_type,
+    nvl(page_code, 'all')              page_code,
+    nvl(element_type, 'all')           element_type,
+    nvl(list_type, 'all')              list_type,
+    nvl(activate_time, 'all')          activate_time,
+    count(distinct device_id_expre) as page_uv
+from (select datasource,
+             if(country in ('FR', 'DE', 'IT', 'ES', 'GB', 'US', 'PL', 'BE', 'RN', 'CH', 'TW'), country, 'others') country,
+             os_type,
+             page_code,
+             element_type,
+             list_type,
+             activate_time,
+             device_id_expre
+      from tmp.fact_impressions_5883_page_uv group by datasource,
+           if(country in ('FR', 'DE', 'IT', 'ES', 'GB', 'US', 'PL', 'BE', 'RN', 'CH', 'TW'), country, 'others'),
+           os_type,
+           page_code,
+           element_type,
+           list_type,
+           activate_time,
+           device_id_expre) t
+group by datasource,
+         country,
+         os_type,
+         page_code,
+         element_type,
+         list_type,
+         activate_time
 with cube
 ;
 
-drop table if exists tmp.vova_rec_report;
-create table tmp.vova_rec_report  STORED AS PARQUETFILE as
+INSERT OVERWRITE TABLE  tmp.vova_rec_report
 select
 /*+ REPARTITION(4) */
 t1.datasource,

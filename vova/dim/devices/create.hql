@@ -40,8 +40,6 @@ CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_vova_devices
     http_referrer       string COMMENT '营销专用',
     campaign            string COMMENT '营销专用',
     os_version          string COMMENT '系统版本',
-    device_brand        string COMMENT '设备品牌',
-    device_model        string COMMENT '设备型号',
     region_code        string COMMENT '设备安装所在国',
     app_region_code        string COMMENT '设备安装所在国',
     language_code       string COMMENT '设备使用语言',
@@ -52,8 +50,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_vova_devices
     activate_time       timestamp COMMENT '设备激活时间',
     first_order_id      BIGINT COMMENT '设备支付的首单id',
     first_order_time    timestamp COMMENT '设备支付的首单下单时间',
-    first_pay_time    timestamp COMMENT '设备支付的首单支付时间',
-    clk_url           string COMMENT ''
+    first_pay_time    timestamp COMMENT '设备支付的首单支付时间'
 ) COMMENT '设备维度'
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
