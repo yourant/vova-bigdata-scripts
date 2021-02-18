@@ -32,7 +32,7 @@ from (
                        , nvl(lower(project), 'others')                                        as project
                        , if(country_code in
                             ('DE', 'FR', 'GB', 'ES', 'IT', 'SA', 'RU', 'SE', 'BR', 'NO', 'NL', 'MX', 'CH', 'DK', 'AT',
-                             'AU', 'PL', 'BE', 'ZA', 'CZ'), country_code, 'others')     as country_code
+                             'AU', 'PL', 'BE', 'ZA', 'CZ','US'), country_code, 'others')     as country_code
                        , nvl(goods_amount, 0.0)                                         as sale_amount
                        , nvl(bouns_amount, 0.0)                                         as coupon_cost
                        , nvl(ads_cost, 0.0)                                             as ads_cost
@@ -60,7 +60,7 @@ from (
                        , nvl(lower(project), 'others')                                        as project
                        , if(country_code in
                             ('DE', 'FR', 'GB', 'ES', 'IT', 'SA', 'RU', 'SE', 'BR', 'NO', 'NL', 'MX', 'CH', 'DK', 'AT',
-                             'AU', 'PL', 'BE', 'ZA', 'CZ'), country_code, 'others')    as country_code
+                             'AU', 'PL', 'BE', 'ZA', 'CZ','US'), country_code, 'others')    as country_code
                        , nvl(goods_amount, 0.0)                                        as sale_amount
                        , nvl(bouns_amount, 0.0)                                        as coupon_cost
                        , nvl(ads_cost, 0.0)                                            as ads_cost
