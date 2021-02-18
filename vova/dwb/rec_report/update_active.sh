@@ -10,10 +10,9 @@ pre_date=`date -d "1 day ago ${cur_date}" +%Y-%m-%d`
 ###逻辑sql
 sql="
 
-drop table if exists tmp.fact_impressions_5883_page_uv;
-create table tmp.fact_impressions_5883_page_uv  STORED AS PARQUETFILE as
+INSERT OVERWRITE TABLE  tmp.fact_impressions_5883_page_uv
+select /*+ REPARTITION(40) */ datasource,country,os_type,page_code,element_type,list_type,activate_time,device_id_expre from (
 select
-/*+ REPARTITION(40) */
 nvl(gi.datasource,'NA') datasource,
 nvl(geo_country,'NA') country,
 nvl(os_type,'NA') os_type,
@@ -26,12 +25,11 @@ CASE WHEN datediff(gi.pt,d.activate_time)<=0 THEN 'new'
      WHEN datediff(gi.pt,d.activate_time)>=7 and datediff(gi.pt,d.activate_time)<29 THEN '8-30'
      else '30+' END activate_time,
 gi.device_id device_id_expre
-from dwd.fact_log_goods_impression gi
-join dwd.dim_devices d on gi.device_id = d.device_id and gi.datasource=d.datasource
+from dwd.dwd_vova_log_goods_impression gi
+join dim.dim_vova_devices d on gi.device_id = d.device_id and gi.datasource=d.datasource
 where pt='$cur_date'  and os_type in ('ios','android')
 union all
 select
-/*+ REPARTITION(40) */
 nvl(gi.datasource,'NA') datasource,
 nvl(geo_country,'NA') country,
 nvl(os_type,'NA') os_type,
@@ -44,37 +42,48 @@ CASE WHEN datediff(gi.pt,d.activate_time)<=0 THEN 'new'
      WHEN datediff(gi.pt,d.activate_time)>=7 and datediff(gi.pt,d.activate_time)<29 THEN '8-30'
      else '30+' END activate_time,
 gi.device_id device_id_expre
-from dwd.fact_log_impressions gi
-join dwd.dim_devices d on gi.device_id = d.device_id and gi.datasource=d.datasource
-where pt='$cur_date'  and os_type in ('ios','android')
+from dwd.dwd_vova_log_impressions gi
+join dim.dim_vova_devices d on gi.device_id = d.device_id and gi.datasource=d.datasource
+where pt='$cur_date'  and os_type in ('ios','android')) t
 ;
 
-drop table if exists tmp.vova_rec_report_tmp;
-create table tmp.vova_rec_report_tmp  STORED AS PARQUETFILE as
-select
-nvl(datasource,'all') datasource,
-nvl(if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),'all') country,
-nvl(os_type,'all') os_type,
-nvl(page_code,'all') page_code,
-nvl(element_type,'all') element_type,
-nvl(list_type,'all') list_type,
-nvl(activate_time,'all') activate_time,
-count(distinct device_id_expre)  as page_uv
-from
-tmp.fact_impressions_5883_page_uv
-group by
-datasource,
-if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),
-os_type,
-page_code,
-element_type,
-list_type,
-activate_time
+INSERT OVERWRITE TABLE tmp.vova_rec_report_tmp
+select /*+ REPARTITION(4) */
+    nvl(datasource, 'all')             datasource,
+    nvl(country,'all')                         country,
+    nvl(os_type, 'all')                os_type,
+    nvl(page_code, 'all')              page_code,
+    nvl(element_type, 'all')           element_type,
+    nvl(list_type, 'all')              list_type,
+    nvl(activate_time, 'all')          activate_time,
+    count(distinct device_id_expre) as page_uv
+from (select datasource,
+             if(country in ('FR', 'DE', 'IT', 'ES', 'GB', 'US', 'PL', 'BE', 'RN', 'CH', 'TW'), country, 'others') country,
+             os_type,
+             page_code,
+             element_type,
+             list_type,
+             activate_time,
+             device_id_expre
+      from tmp.fact_impressions_5883_page_uv group by datasource,
+           if(country in ('FR', 'DE', 'IT', 'ES', 'GB', 'US', 'PL', 'BE', 'RN', 'CH', 'TW'), country, 'others'),
+           os_type,
+           page_code,
+           element_type,
+           list_type,
+           activate_time,
+           device_id_expre) t
+group by datasource,
+         country,
+         os_type,
+         page_code,
+         element_type,
+         list_type,
+         activate_time
 with cube
 ;
 
-drop table if exists tmp.vova_rec_report;
-create table tmp.vova_rec_report  STORED AS PARQUETFILE as
+INSERT OVERWRITE TABLE  tmp.vova_rec_report
 select
 /*+ REPARTITION(4) */
 t1.datasource,
@@ -193,8 +202,8 @@ left join
     (
        select
         sum(fp.shop_price * fp.goods_number + fp.shipping_fee) as total_gmv
-        from dwd.fact_pay fp
-        inner join dwd.dim_order_goods ddog on ddog.order_goods_id = fp.order_goods_id
+        from dwd.dwd_vova_fact_pay fp
+        inner join dim.dim_vova_order_goods ddog on ddog.order_goods_id = fp.order_goods_id
         where to_date(fp.pay_time)='${cur_date}' and (fp.from_domain like '%api.vova%' or fp.from_domain like '%api.airyclub%') and fp.platform in ('ios','android')
         and (ddog.order_tag not like '%luckystar_activity_id%' or ddog.order_tag is null)
         ) t5 on 1 = 1

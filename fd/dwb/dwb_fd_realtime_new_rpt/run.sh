@@ -37,4 +37,4 @@ spark-submit --master yarn \
   --jars s3://vomkt-emr-rec/jar/vova-bd-monitor/javamail.jar \
   --class com.vova.bigdata.sparkbatch.monitor.MonitorMain s3://vomkt-emr-rec/jar/vova-bd-monitor/vova-bigdata-monitor-main.jar \
   --envFile prod --db dwb --tlb dwb_fd_realtime_new_rpt --op check_index,send_message \
-  --date ${pt} --hour ${hour}
+  --date ${pt} --hour `echo -e $hour | sed -r 's/0*([0-9])/\1/'`
