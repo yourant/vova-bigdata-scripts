@@ -22,6 +22,8 @@ nodes:
       - dwb_vova_app_response
       - dwb_ac_web_main_process
       - dwb_vova_payment
+      - dwb_ac_web_cohort
+      - dwb_ac_web_ltv
 
   - name: start_flag
     type: command
@@ -371,5 +373,47 @@ nodes:
        retry.backoff: 600000
      dependsOn:
        - dwb_vova_payment_error_code
+
+  -  name: dwb_ac_web_cohort
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/web_main_process/ac/web_cohort/update_cohort.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - judge_dwd_vova_fact_web_start_up
+
+  -  name: dwb_ac_web_ltv
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/web_main_process/ac/web_cohort/update_ltv.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - judge_dwd_vova_fact_web_start_up
+       - judge_dwd_vova_log_page_view
+       - judge_dim_vova_buyers
+       - judge_dwd_vova_fact_pay
+
+#  -  name: dwb_vova_market
+#     type: command
+#     config:
+#       command: sh /mnt/vova-bigdata-scripts/vova/dwb/market/update.sh
+#       retries: 10
+#       retry.backoff: 600000
+#     dependsOn:
+#       - dwb_vova_market_process
+#
+#  -  name: dwb_vova_market_process
+#     type: command
+#     config:
+#       command: sh /mnt/vova-bigdata-scripts/vova/dwb/market/update_process.sh
+#       retries: 10
+#       retry.backoff: 600000
+#     dependsOn:
+#       - judge_dwd_vova_fact_start_up
+#       - judge_dim_vova_devices
+#       - judge_dwd_vova_fact_pay
+#       - judge_dwd_vova_fact_act_ord_gs
 
 
