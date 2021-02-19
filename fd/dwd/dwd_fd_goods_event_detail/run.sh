@@ -1,8 +1,8 @@
 #bin/sh
-table="dwb_fd_goods_detail"
+table="dwd_fd_goods_event_detail"
 user="ruimeng"
 
-base_path="/mnt/vova-bigdata-scripts/fd/dwb"
+base_path="/mnt/vova-bigdata-scripts/fd/dwd"
 
 if [ ! -n "$1" ]; then
   pt=$(date -d "- 1 days" +"%Y-%m-%d")
@@ -23,7 +23,6 @@ shell_path="${base_path}/${table}"
 spark-sql \
   --conf "spark.app.name=${table}_${user}" \
   --conf "spark.dynamicAllocation.maxExecutors=60" \
-  --conf "spark.sql.crossJoin.enabled=true" \
   -d pt="${pt}" \
   -f ${shell_path}/${table}_insert.sql
 
