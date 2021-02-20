@@ -258,7 +258,7 @@ nodes:
         type: noop
         dependsOn:
           - vova_channel_mapping
-          #- vova_appsflyer_record
+          - vova_appsflyer_record
           - ac_appsflyer_record
           - vova_app_push_logs_02
           - vova_ac_app_event_log_message_push
@@ -291,14 +291,14 @@ nodes:
         dependsOn:
           - other_mktcpn_start
 
-    #  - name: vova_appsflyer_record
-    #    type: command
-    #    config:
-    #      retries: 4
-    #      retry.backoff: 600000
-    #      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vtl --table_name=appsflyer_record --inc_column=id --etl_type=INCID --period_type=day --partition_num=200
-    #    dependsOn:
-    #      - other_mktcpn_start
+      - name: vova_appsflyer_record
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vtl --table_name=appsflyer_record --inc_column=id --etl_type=INCID --period_type=day --partition_num=200
+        dependsOn:
+          - other_mktcpn_start
 
       - name: ac_appsflyer_record # test 无库
         type: command
