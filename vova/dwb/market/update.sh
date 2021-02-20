@@ -105,7 +105,6 @@ AND rm.event_date >= date_sub('${cur_date}', 30)
 
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
 spark-sql \
---executor-memory 8G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=5" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
@@ -126,17 +125,3 @@ spark-sql \
 if [ $? -ne 0 ];then
   exit 1
 fi
-
-sql="
-INSERT overwrite TABLE rpt.rpt_market_web_dau PARTITION (pt = '${cur_date}')
-SELECT /*+ REPARTITION(1) */
-       pt as event_date,
-       datasource,
-       'all'                         AS region_code,
-       count(DISTINCT domain_userid) AS dau
-FROM dwd.fact_log_page_view
-WHERE pt = '${cur_date}'
-  AND datasource = 'airyclub'
-GROUP BY datasource, pt
-;
-"
