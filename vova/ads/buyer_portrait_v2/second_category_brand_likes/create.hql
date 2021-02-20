@@ -1,6 +1,6 @@
 -- 用户画像二级品类加品牌偏好统计表
-drop table if exists ads.ads_buyer_portrait_second_category_brand_likes;
-create table if  not exists  ads.ads_buyer_portrait_second_category_brand_likes (
+drop table if exists ads.ads_vova_buyer_portrait_second_category_brand_likes;
+create external table if  not exists  ads.ads_vova_buyer_portrait_second_category_brand_likes (
     `buyer_id`                    bigint COMMENT 'd_买家id',
     `second_cat_id`               bigint COMMENT 'd_品类id',
     `brand_id`                    bigint COMMENT 'i_品牌',
@@ -25,5 +25,5 @@ create table if  not exists  ads.ads_buyer_portrait_second_category_brand_likes 
     `gmv_1w`                      decimal(13,2) COMMENT 'i_近7天gmv',
     `gmv_15d`                     decimal(13,2) COMMENT 'i_近15天gmv',
     `gmv_1m`                      decimal(13,2) COMMENT 'i_近30天gmv'
-)PARTITIONED BY (pt string)   COMMENT '用户画像二级品类加品牌偏好统计表'
+)COMMENT '用户画像二级品类加品牌偏好统计表' PARTITIONED BY (pt string)
      STORED AS PARQUETFILE;
