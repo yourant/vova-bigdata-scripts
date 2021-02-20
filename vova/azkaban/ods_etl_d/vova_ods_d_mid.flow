@@ -472,6 +472,7 @@ nodes:
           - vova_activity_coupon_tag
           - vova_activity
           - vova_activity_coupon
+          - vova_shopping_cart
 
 #营销活动域数据抽取
       - name: vova_activity_valid_goods_record
@@ -1299,5 +1300,15 @@ nodes:
           retries: 4
           retry.backoff: 600000
           command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=activity_coupon --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_mktcpn_start
+
+# 购物车 blog
+      - name: vova_shopping_cart
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/vova/ods/shopping_cart/update.sh
         dependsOn:
           - themis_mktcpn_start
