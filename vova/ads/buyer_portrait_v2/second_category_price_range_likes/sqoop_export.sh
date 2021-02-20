@@ -52,7 +52,7 @@ sqoop export \
 --m 2 \
 --table ads_buyer_portrait_second_category_likes_new \
 --hcatalog-database ads \
---hcatalog-table ads_buyer_portrait_second_category_likes_with_click_15d \
+--hcatalog-table ads_vova_buyer_portrait_second_category_likes_with_click_15d \
 --columns buyer_id,second_cat_id,price_range,expre_cnt_1w,expre_cnt_15d,expre_cnt_1m,clk_cnt_1w,clk_cnt_15d,clk_cnt_1m,clk_valid_cnt_1w,clk_valid_cnt_15d,clk_valid_cnt_1m,collect_cnt_1w,collect_cnt_15d,collect_cnt_1m,add_cat_cnt_1w,add_cat_cnt_15d,add_cat_cnt_1m,ord_cnt_1w,ord_cnt_15d,ord_cnt_1m \
 --fields-terminated-by '\001'
 

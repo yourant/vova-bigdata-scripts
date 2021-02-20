@@ -62,8 +62,8 @@ with tmp_goods_portrait as
   nvl(tmp_clk.clk_uv_1m,  0) as clk_uv_1m,
   gkw.key_words,
   nvl(tmp_ord.ord_cnt_1w,0) as ord_cnt_1w,
-  nvl(tmp_ord.ord_cnt_15d) as ord_cnt_15d,
-  nvl(tmp_ord.ord_cnt_1m) as ord_cnt_1m
+  nvl(tmp_ord.ord_cnt_15d,0) as ord_cnt_15d,
+  nvl(tmp_ord.ord_cnt_1m,0) as ord_cnt_1m
 FROM
 dim.dim_vova_goods dg
 left  JOIN
@@ -505,10 +505,10 @@ spark-sql \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=30" \
 --conf "spark.dynamicAllocation.initialExecutors=30" \
---conf "spark.dynamicAllocation.maxExecutors=200" \
+--conf "spark.dynamicAllocation.maxExecutors=300" \
 --conf "spark.app.name=ads_vova_goods_portrait" \
---conf "spark.default.parallelism = 577" \
---conf "spark.sql.shuffle.partitions=577" \
+--conf "spark.default.parallelism = 777" \
+--conf "spark.sql.shuffle.partitions=777" \
 --conf "spark.sql.adaptive.enabled=true" \
 --conf "spark.sql.adaptive.join.enabled=true" \
 --conf "spark.shuffle.sort.bypassMergeThreshold=10000" \

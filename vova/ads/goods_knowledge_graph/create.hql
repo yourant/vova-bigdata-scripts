@@ -4,6 +4,7 @@ CREATE external TABLE `ads.ads_vova_goods_knowledge_graph`(
   `goods_name`    string COMMENT 'i_商品名称',
   `goods_desc`    string COMMENT 'i_商品描述',
   `goods_sn`      string COMMENT 'i_商品sn',
+  `first_cat_id` bigint COMMENT 'i_二级品类id',
   `second_cat_id` bigint COMMENT 'i_二级品类id',
   `brand_id`      bigint COMMENT 'i_brand id',
   `is_on_sale`    int    COMMENT 'i_是否在售',
@@ -15,7 +16,7 @@ ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
 WITH SERDEPROPERTIES (
 "separatorChar" = ",",
 "quoteChar" = "|",
-"escapeChar" = "\\",
-"LOCATION"="s3://vova-chatbot/kg/origin_data/ads_vova_goods_knowledge_graph"
+"escapeChar" = "\\"
 )
-stored as textfile;
+stored as textfile
+LOCATION "s3://vova-chatbot/kg/origin_data/ads_vova_goods_knowledge_graph";
