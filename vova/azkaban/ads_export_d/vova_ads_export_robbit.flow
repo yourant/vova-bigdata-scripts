@@ -1,0 +1,42 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - als_robot_end
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+
+      - name: als_robot_end
+        type: noop
+        dependsOn:
+          - ads_buyer_portrait_brand_likes_30d_export
+
+      - name: ads_buyer_portrait_brand_likes_30d_export
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_portrait_v2/brand_likes_30d/update.sh
+          retries: 5
+          retry.backoff: 600000
+        dependsOn:
+          - judge_ads_vova_buyer_portrait_brand_likes_exp
+
+      - name: judge_ads_vova_buyer_portrait_brand_likes_exp
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_buyer_portrait_brand_likes_exp
+          retries: 20
+          retry.backoff: 120000
+        dependsOn:
+          - als_robot_start
