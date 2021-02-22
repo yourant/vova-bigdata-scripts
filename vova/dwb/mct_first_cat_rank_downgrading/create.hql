@@ -35,7 +35,7 @@ hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_mct_first_cat_ra
 
 hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_mct_first_cat_rank_downgrading/*
 
-hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_mct_first_cat_rank_downgrading/  s3://bigdata-offline/warehouse/dwb/dwb_vova_mct_first_cat_rank_downgrading
+hadoop distcp -overwrite -m 30 hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_mct_first_cat_rank_downgrading/  s3://bigdata-offline/warehouse/dwb/dwb_vova_mct_first_cat_rank_downgrading
 
 hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_mct_first_cat_rank_downgrading/*
 
@@ -43,3 +43,6 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_mct_first_cat_rank_downgr
 
 msck repair table dwb.dwb_vova_mct_first_cat_rank_downgrading;
 select * from dwb.dwb_vova_mct_first_cat_rank_downgrading limit 20;
+
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_mct_first_cat_rank_downgrading/pt=2021-0*

@@ -202,7 +202,14 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_airyclub_daily_ratio/
 msck repair table dwb.dwb_vova_airyclub_daily_ratio;
 select * from dwb.dwb_vova_airyclub_daily_ratio limit 20;
 
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_airyclub_daily_ratio/pt=2021-0*
 
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_airyclub_daily_ratio/pt=2021-01-22  s3://bigdata-offline/warehouse/dwb/dwb_vova_airyclub_daily_ratio/pt=2021-01-22
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_airyclub_daily_ratio/pt=2021-01-23  s3://bigdata-offline/warehouse/dwb/dwb_vova_airyclub_daily_ratio/pt=2021-01-23
+
+
+#################################################################################################
 2021-01-23 历史数据迁移
 dwb.dwb_vova_fb_ads_ctr
 
@@ -222,3 +229,9 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_fb_ads_ctr/
 
 msck repair table dwb.dwb_vova_fb_ads_ctr;
 select * from dwb.dwb_vova_fb_ads_ctr limit 20;
+
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_fb_ads_ctr/pt=2021-0*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_fb_ads_ctr/pt=2021-01-22  s3://bigdata-offline/warehouse/dwb/dwb_vova_fb_ads_ctr/pt=2021-01-22
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_fb_ads_ctr/pt=2021-01-23  s3://bigdata-offline/warehouse/dwb/dwb_vova_fb_ads_ctr/pt=2021-01-23

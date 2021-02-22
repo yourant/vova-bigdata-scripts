@@ -55,3 +55,9 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_recall_pool/
 
 msck repair table dwb.dwb_vova_recall_pool;
 select * from dwb.dwb_vova_recall_pool limit 20;
+
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_recall_pool/event_date=2021*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_recall_pool/event_date=2021-01-24  s3://bigdata-offline/warehouse/dwb/dwb_vova_recall_pool/event_date=2021-01-24
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_recall_pool/event_date=2021-01-25  s3://bigdata-offline/warehouse/dwb/dwb_vova_recall_pool/event_date=2021-01-25

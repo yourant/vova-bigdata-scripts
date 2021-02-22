@@ -104,6 +104,26 @@ CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_refund_report
 LOCATION "s3://bigdata-offline/warehouse/dwb/dwb_vova_refund_report/"
 ;
 
+# 历史数据迁移
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_refund_report/*
+
+hadoop fs -rm -r s3://bigdata-offline/warehouse/dwb/dwb_vova_refund_report/*
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_refund_report/*
+
+hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_refund_report/*
+
+hadoop distcp -m 50 -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_refund_report/  s3://bigdata-offline/warehouse/dwb/dwb_vova_refund_report
+
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_refund_report/*
+
+emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_refund_report/
+
+msck repair table dwb.dwb_vova_refund_report;
+select * from dwb.dwb_vova_refund_report limit 20;
+
+
+##################################################################
 #mysql TABLE
 -- CREATE TABLE `rpt_refund_report` (
 --   `action_date` date NOT NULL COMMENT '事件发生日期',

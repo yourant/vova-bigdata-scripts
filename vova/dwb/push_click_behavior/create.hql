@@ -63,3 +63,17 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_push_click_behavior_v2/
 
 msck repair table dwb.dwb_vova_push_click_behavior_v2;
 select * from dwb.dwb_vova_push_click_behavior_v2 limit 20;
+
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_push_click_behavior_v2/pt=2021-0*
+
+hadoop distcp -overwrite -m 3 hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_push_click_behavior_v2/pt=2021-01-18  s3://bigdata-offline/warehouse/dwb/dwb_vova_push_click_behavior_v2/pt=2021-01-18
+hadoop distcp -overwrite -m 3 hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_push_click_behavior_v2/pt=2021-01-19  s3://bigdata-offline/warehouse/dwb/dwb_vova_push_click_behavior_v2/pt=2021-01-19
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_push_click_behavior_v2/pt=2021-01-20  s3://bigdata-offline/warehouse/dwb/dwb_vova_push_click_behavior_v2/pt=2021-01-20
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_push_click_behavior_v2/pt=2021-01-21  s3://bigdata-offline/warehouse/dwb/dwb_vova_push_click_behavior_v2/pt=2021-01-21
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_push_click_behavior_v2/pt=2021-01-22  s3://bigdata-offline/warehouse/dwb/dwb_vova_push_click_behavior_v2/pt=2021-01-22
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_push_click_behavior_v2/pt=2021-01-23  s3://bigdata-offline/warehouse/dwb/dwb_vova_push_click_behavior_v2/pt=2021-01-23
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_push_click_behavior_v2/pt=2021-01-24  s3://bigdata-offline/warehouse/dwb/dwb_vova_push_click_behavior_v2/pt=2021-01-24
+
+

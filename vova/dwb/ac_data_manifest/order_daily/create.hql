@@ -58,3 +58,6 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_ac_order_daily/
 
 msck repair table dwb.dwb_vova_ac_order_daily;
 select * from dwb.dwb_vova_ac_order_daily limit 20;
+
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_ac_order_daily/pt=2021-0*
