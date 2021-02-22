@@ -26,7 +26,7 @@ nodes:
   - name: dws_vova_buyer_portrait_process
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/dws/portrait/dws_vova_buyer_portrait_d.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/dws/portrait/dws_buyer_portrait_d.sh
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -38,7 +38,7 @@ nodes:
   - name: dws_vova_buyer_portrait
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/dws/portrait/dws_vova_buyer_portrait_d_final.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/dws/portrait/dws_buyer_portrait_d_final.sh
       retries: 5
       retry.backoff: 600000
     dependsOn:
