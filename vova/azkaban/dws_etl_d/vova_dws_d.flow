@@ -12,21 +12,21 @@ nodes:
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - dws_buyer_portrait
-      - dws_buyer_goods_behave
-      - dws_goods_1d
-      - dws_goods_core_feature_his
-      - dws_devices
+      - dws_vova_buyer_portrait
+      - dws_vova_buyer_goods_behave
+      - dws_vova_goods_1d
+      - dws_vova_goods_core_feature_his
+      - dws_vova_devices
 
   - name: start_flag
     type: command
     config:
       command: echo "start job"
 
-  - name: dws_buyer_portrait_process
+  - name: dws_vova_buyer_portrait_process
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/dws/portrait/dws_buyer_portrait_d.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/dws/portrait/dws_vova_buyer_portrait_d.sh
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -35,14 +35,14 @@ nodes:
       - judge_dim_vova_goods
     condition: all_success
 
-  - name: dws_buyer_portrait
+  - name: dws_vova_buyer_portrait
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/dws/portrait/dws_buyer_portrait_d_final.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/dws/portrait/dws_vova_buyer_portrait_d_final.sh
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - dws_buyer_portrait_process
+      - dws_vova_buyer_portrait_process
 
   - name: judge_vova_fact_buyer_portrait_base
     type: command
@@ -115,7 +115,7 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: dws_buyer_goods_behave
+  - name: dws_vova_buyer_goods_behave
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/vova/dws/buyer_goods/update.sh
@@ -128,7 +128,7 @@ nodes:
       - judge_dim_vova_goods
       - judge_vova_fact_pay
 
-  - name: dws_goods_1d
+  - name: dws_vova_goods_1d
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/vova/dws/goods/goods_1d/update.sh
@@ -141,7 +141,7 @@ nodes:
       - judge_vova_fact_pay
     condition: all_success
 
-  - name: dws_goods_core_feature_his
+  - name: dws_vova_goods_core_feature_his
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/vova/dws/goods/goods_core_feature_his/update.sh
@@ -153,7 +153,7 @@ nodes:
       - judge_fact_log_goods_click
       - judge_vova_fact_pay
 
-  - name: dws_devices
+  - name: dws_vova_devices
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/vova/dws/devices/update.sh
