@@ -27,6 +27,7 @@ nodes:
       - dwb_vova_rec_active_report_analysis
       - dwb_vova_mct_rank_data
       - dwb_vova_search_view_monitor
+      - dwb_vova_abnormal_low_price_goods
 
 
   - name: start_flag
