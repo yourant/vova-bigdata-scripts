@@ -622,3 +622,20 @@ nodes:
       - judge_dwd_vova_fact_order_cause_v2
       - judge_dwd_vova_fact_cart_cause_v2
       - judge_dwd_vova_fact_pay
+
+# 异常低价商品
+  - name: dwb_vova_abnormal_low_price_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/search_rate_monitor/update.sh
+      retries: 3
+      retry.backoff: 600000
+      job.priority: 10
+    dependsOn:
+      - judge_dwd_vova_log_common_click
+      - judge_dwd_vova_log_page_view
+      - judge_dwd_vova_log_impressions
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_fact_order_cause_v2
+      - judge_dwd_vova_fact_cart_cause_v2
+      - judge_dwd_vova_fact_pay
