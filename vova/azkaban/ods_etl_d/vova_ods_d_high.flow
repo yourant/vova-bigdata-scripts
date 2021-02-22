@@ -454,6 +454,7 @@ nodes:
           - vova_style_value
           - vova_style_name
           - vova_route
+          - front_storage_stock
 
 #商品域数据抽取
       - name: warehouse_shipping_order
@@ -491,6 +492,15 @@ nodes:
           command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=sku_warehouse_storage --mapers=1 --etl_type=ALL  --period_type=day --partition_num=3
         dependsOn:
           - themis_goods_start
+
+      - name: front_storage_stock
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/vova/ods/front_storage_stock/update.sh
+        dependsOn:
+          - sku_warehouse_storage
 
       - name: sku_warehouse_storage_log
         type: command
