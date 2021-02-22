@@ -82,3 +82,9 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_homepage_total_efficiency
 
 msck repair table dwb.dwb_vova_homepage_total_efficiency_v2;
 select * from dwb.dwb_vova_homepage_total_efficiency_v2 limit 20;
+
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_homepage_total_efficiency_v2/pt=2021-0*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_homepage_total_efficiency_v2/pt=2021-01-22  s3://bigdata-offline/warehouse/dwb/dwb_vova_homepage_total_efficiency_v2/pt=2021-01-22
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_homepage_total_efficiency_v2/pt=2021-01-23  s3://bigdata-offline/warehouse/dwb/dwb_vova_homepage_total_efficiency_v2/pt=2021-01-23
