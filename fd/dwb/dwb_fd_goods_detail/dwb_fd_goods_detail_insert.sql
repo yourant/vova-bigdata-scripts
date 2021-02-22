@@ -7,47 +7,16 @@ t1.source_type,
 t3.goods_id,
 t1.virtual_goods_id,
 t3.cat_name,
-t2.goods_impression_session,
-t2.goods_click_session,
-t2.goods_add_session,
-t2.cy_po_impression,
-t2.cy_po_click,
-t2.detail_add,
-t2.detail_view,
-t1.order_paid_number,
-t1.goods_amount
+t1.goods_impression_session,
+t1.goods_click_session,
+t1.goods_add_session,
+t1.cy_po_impression,
+t1.cy_po_click,
+t1.detail_add,
+t1.detail_view,
+t2.order_paid_number,
+t2.goods_amount
 from
---商品订单的相关信息,销量，价格
-(select
-    project_name,
-    country_code,
-    virtual_goods_id,
-    count(distinct order_id) order_paid_number, --支付订单数
-    sum(goods_number*shop_price*100) goods_amount ,--商品销售额
-    source_type
-from
--- 先进行一步过滤，对国家进行过滤筛选
--- 订单和平台挂钩的。。
- (
-  select
-    project_name,
-    if(country_code in ('DE','FR','PL','SE','GB','MX','BR','IT','CZ','US','NL','ES','CO','CL','CH','AT','AU','NO','DK','RU') ,country_code ,'others') as country_code,
-    virtual_goods_id,
-    order_id,
-    goods_number,
-    shop_price,
-    case
-      when platform_type ='pc_web' or platform_type ='tablet_web'  then 'PC'
-      when platform_type ='ios_app' or platform_type ='android_app'   then 'APP'
-      when platform_type='mobile_web'  then 'H5'
-      else 'others'
-    end as source_type
-    from  dwd.dwd_fd_order_goods
-    where pay_status=2 and date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${pt}'
- ) t
-group by virtual_goods_id,country_code,project_name,source_type
-) t1
-left join
 -- 商品打点事件相关信息，
 (
 select
@@ -82,7 +51,38 @@ where pt= '${pt}'
 ) t
 group by virtual_goods_id,project_name,country_code,source_type
  )
- t2
+ t1
+left join
+--商品订单的相关信息,销量，价格
+(select
+    project_name,
+    country_code,
+    virtual_goods_id,
+    count(distinct order_id) order_paid_number, --支付订单数
+    sum(goods_number*shop_price*100) goods_amount ,--商品销售额
+    source_type
+from
+-- 先进行一步过滤，对国家进行过滤筛选
+-- 订单和平台挂钩的。。
+ (
+  select
+    project_name,
+    if(country_code in ('DE','FR','PL','SE','GB','MX','BR','IT','CZ','US','NL','ES','CO','CL','CH','AT','AU','NO','DK','RU') ,country_code ,'others') as country_code,
+    virtual_goods_id,
+    order_id,
+    goods_number,
+    shop_price,
+    case
+      when platform_type ='pc_web' or platform_type ='tablet_web'  then 'PC'
+      when platform_type ='ios_app' or platform_type ='android_app'   then 'APP'
+      when platform_type='mobile_web'  then 'H5'
+      else 'others'
+    end as source_type
+    from  dwd.dwd_fd_order_goods
+    where pay_status=2 and date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${pt}'
+ ) t
+group by virtual_goods_id,country_code,project_name,source_type
+) t2
 on t1.virtual_goods_id=t2.virtual_goods_id and t1.project_name=t2.project_name
    and t1.country_code=t2.country_code and t1.source_type=t2.source_type
 --关联dim_fd_goods 获取goods_id,cat_name
