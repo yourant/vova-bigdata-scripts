@@ -107,6 +107,10 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_user_month_cohort/
 msck repair table dwb.dwb_vova_user_month_cohort;
 select * from dwb.dwb_vova_user_month_cohort limit 20;
 
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_user_month_cohort/pt=2021-0*
+
+
 ###############################################################################
 
 dwb.dwb_vova_order_month_start_up_cohort
@@ -145,6 +149,8 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_order_month_cohort/
 
 msck repair table dwb.dwb_vova_order_month_cohort;
 select * from dwb.dwb_vova_order_month_cohort limit 20;
+
+
 
 
 

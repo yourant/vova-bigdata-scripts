@@ -30,7 +30,7 @@ nodes:
       - dwd_vova_fact_search_word
       - dwd_vova_fact_ab
       - dwd_vova_fact_log_bonus_card
-      - dwd_vova_fact_log_click_cause
+      - dwd_vova_fact_goods_click_cause
       - dwd_vova_rec_report
       - dwd_vova_fact_original_channel
       - dwd_vova_web_fact_order_cause
@@ -41,7 +41,7 @@ nodes:
     config:
       command: echo "start job"
 
-  - name: dwd_vova_fact_log_click_cause
+  - name: dwd_vova_fact_goods_click_cause
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/vova/dwd/click_cause/update.sh

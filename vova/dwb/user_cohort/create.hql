@@ -67,3 +67,11 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_user_cohort/
 
 msck repair table dwb.dwb_vova_user_cohort;
 select * from dwb.dwb_vova_user_cohort limit 20;
+
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_user_cohort/pt=2021-0*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_user_cohort/pt=2021-01-22 s3://bigdata-offline/warehouse/dwb/dwb_vova_user_cohort/pt=2021-01-22
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_user_cohort/pt=2021-01-23 s3://bigdata-offline/warehouse/dwb/dwb_vova_user_cohort/pt=2021-01-23
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_user_cohort/pt=2021-01-24 s3://bigdata-offline/warehouse/dwb/dwb_vova_user_cohort/pt=2021-01-24
+

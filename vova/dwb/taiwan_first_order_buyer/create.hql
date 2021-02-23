@@ -116,6 +116,14 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_coupon/
 msck repair table dwb.dwb_vova_first_order_coupon;
 select * from dwb.dwb_vova_first_order_coupon limit 20;
 
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_coupon/pt=2021-0*
+
+hadoop distcp -m 30 -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_first_order_coupon/pt=2021-01-21  s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_coupon/pt=2021-01-21
+hadoop distcp -m 30 -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_first_order_coupon/pt=2021-01-22  s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_coupon/pt=2021-01-22
+hadoop distcp -m 30 -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_first_order_coupon/pt=2021-01-23  s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_coupon/pt=2021-01-23
+hadoop distcp -m 30 -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_first_order_coupon/pt=2021-01-24  s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_coupon/pt=2021-01-24
+
 @@@@@@@@@@@@@@@@@@@@@@@
 
 dwb.dwb_vova_first_order_detail
@@ -136,6 +144,16 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_detail/
 
 msck repair table dwb.dwb_vova_first_order_detail;
 select * from dwb.dwb_vova_first_order_detail limit 20;
+
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_detail/pt=2021-0*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_first_order_detail/pt=2021-01-21  s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_detail/pt=2021-01-21
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_first_order_detail/pt=2021-01-22  s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_detail/pt=2021-01-22
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_first_order_detail/pt=2021-01-23  s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_detail/pt=2021-01-23
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_first_order_detail/pt=2021-01-24  s3://bigdata-offline/warehouse/dwb/dwb_vova_first_order_detail/pt=2021-01-24
+
+
 
 @@@@@@@@@@@@@@@@@@@@@@@
 
@@ -158,6 +176,16 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_buyer_coupon_use/
 msck repair table dwb.dwb_vova_buyer_coupon_use;
 select * from dwb.dwb_vova_buyer_coupon_use limit 20;
 
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_buyer_coupon_use/pt=2021-0*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_buyer_coupon_use/pt=2021-01-21  s3://bigdata-offline/warehouse/dwb/dwb_vova_buyer_coupon_use/pt=2021-01-21
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_buyer_coupon_use/pt=2021-01-22  s3://bigdata-offline/warehouse/dwb/dwb_vova_buyer_coupon_use/pt=2021-01-22
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_buyer_coupon_use/pt=2021-01-23  s3://bigdata-offline/warehouse/dwb/dwb_vova_buyer_coupon_use/pt=2021-01-23
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_buyer_coupon_use/pt=2021-01-24  s3://bigdata-offline/warehouse/dwb/dwb_vova_buyer_coupon_use/pt=2021-01-24
+
+
+
 @@@@@@@@@@@@@@@@@@@@@@@
 
 dwb.dwb_vova_coupon_use
@@ -178,3 +206,12 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_coupon_use/
 
 msck repair table dwb.dwb_vova_coupon_use;
 select * from dwb.dwb_vova_coupon_use limit 20;
+
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_coupon_use/pt=2021-0*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_coupon_use/pt=2021-01-21  s3://bigdata-offline/warehouse/dwb/dwb_vova_coupon_use/pt=2021-01-21
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_coupon_use/pt=2021-01-22  s3://bigdata-offline/warehouse/dwb/dwb_vova_coupon_use/pt=2021-01-22
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_coupon_use/pt=2021-01-23  s3://bigdata-offline/warehouse/dwb/dwb_vova_coupon_use/pt=2021-01-23
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_coupon_use/pt=2021-01-24  s3://bigdata-offline/warehouse/dwb/dwb_vova_coupon_use/pt=2021-01-24
+

@@ -1,0 +1,97 @@
+
+
+
+
+create table tmp.req8079_t1_2_2 as
+select
+sv.pt,
+nvl(if(sv.country in ('EN','FR','DE','IT','ES'),sv.country,'other'),'all') country,
+nvl(t1.group,'all') group,
+nvl(t1.channel,'all') channel,
+nvl(t1.act_time_h,'all') act_time_h,
+nvl(count(distinct sv.device_id),0) as dau,
+nvl(cast(sum(if(sv.page_code='homepage',(sv.leave_ts-sv.enter_ts)/1000,null))/count(distinct if(sv.page_code='homepage' ,sv.device_id,null)) as decimal(10,2) ),0) home_page_stay_time,
+nvl(cast(sum(if(sv.page_code in ('product_list','search_result') ,(sv.leave_ts-sv.enter_ts)/1000,null))/count(distinct(sv.page_code in ('product_list','search_result') ,sv.device_id,null)) as decimal(5,2)),0) pl_stay_time,
+nvl(cast(sum(if(sv.page_code = 'product_detail',(sv.leave_ts-sv.enter_ts)/1000,null))/count(distinct(sv.page_code = 'product_detail',sv.device_id,null)) as decimal(5,2)),0) pd_stay_time,
+nvl(cast(sum(if(sv.page_code = 'cart' ,(sv.leave_ts-sv.enter_ts)/1000,null))/count(distinct(sv.page_code = 'cart' ,sv.device_id,null)) as decimal(5,2)),0) ct_stay_time,
+nvl(cast(sum(if(sv.page_code = 'checkout_new' ,(sv.leave_ts-sv.enter_ts)/1000,null))/count(distinct(sv.page_code = 'checkout_new' ,sv.device_id,null)) as decimal(5,2)),0) cn_stay_time,
+nvl(cast(sum(if(sv.page_code = 'checkout_address_list' ,(sv.leave_ts-sv.enter_ts)/1000,null))/count(distinct(sv.page_code = 'checkout_address_list' ,sv.device_id,null)) as decimal(5,2)),0) ca_stay_time,
+nvl(cast(sum(if(sv.page_code not in ('product_list','search_result','homepage','product_detail','cart','checkout_new','checkout_address_list') ,(sv.leave_ts-sv.enter_ts)/1000,null))/count(distinct(sv.page_code not in ('product_list','search_result','homepage','product_detail','cart','checkout_new','checkout_address_list') ,sv.device_id,null)) as decimal(10,2)),0) other_stay_time,
+nvl(cast(sum((sv.leave_ts-sv.enter_ts)/1000)/count(distinct sv.device_id) as decimal(10,2)),0) as  all_stay_time
+from  dwd.dwd_vova_log_page_view_arc  sv
+inner join tmp.req8079_device_c t1 on sv.device_id = t1.device_id
+where pt>='2020-12-01' and pt<='2021-01-27'
+and view_type='hide'
+and sv.platform = 'mob'
+and os_type is not null
+and sv.leave_ts is not null
+and sv.leave_ts>=sv.enter_ts
+and date( cast(enter_ts/1000 as timestamp))>'1970-01-01'
+and date( cast(enter_ts/1000 as timestamp)) = date( cast(leave_ts/1000 as timestamp))
+and t1.group is not null
+and t1.channel is not null
+and t1.act_time_h is not null
+group by sv.pt,if(sv.country in ('EN','FR','DE','IT','ES'),sv.country,'other'),t1.group,t1.channel,t1.act_time_h with cube
+
+
+
+create table tmp.req8079_t2_2_1 as
+select
+/*+ broadcast(t1) */
+sv.pt,
+nvl(if(sv.country in ('EN','FR','DE','IT','ES'),sv.country,'other'),'all') country,
+t1.group,
+count(distinct if(type='sv',sv.device_id,null)) dau,
+count(distinct if(page_code = 'homepage' and type='sv',sv.device_id,null)) hp_dau,
+count(distinct if(page_code ='product_detail' and type='common_clk' ,sv.device_id,null)) pd_clk_uv,
+count(distinct if( type='exp' and element_name='searchtab',sv.device_id,null)) search_exp_uv,
+count(distinct if( type='common_clk' and element_name='searchtab',sv.device_id,null)) search_clk_uv,
+count(distinct if(page_code='search_begin' and type='sv' ,sv.device_id,null)) search_begin_uv,
+count(distinct if(page_code='search_result' and type='sv',sv.device_id,null)) search_result_uv,
+count(distinct if(page_code='category' and type='sv',sv.device_id,null)) category_uv,
+count(distinct if(page_code='category' and type='common_clk',sv.device_id,null)) c_clk_category_uv,
+count(distinct if(page_code='theme_activity' and type='sv',sv.device_id,null)) theme_activity_uv,
+count(distinct if((page_code in ('homepage','product_list') and type='goods_exp') or (page_code='search_result' and list_type in ('/search_result_recommend','/search_result_sold','/search_result_price_asc','/search_result_price_desc') and type='goods_exp'),sv.device_id,null)) main_uv,
+count(distinct if((page_code in ('homepage','product_list') and type='goods_clk') or (page_code='search_result' and list_type in ('/search_result_recommend','/search_result_sold','/search_result_price_asc','/search_result_price_desc') and type='goods_clk'),sv.device_id,null)) main_clk_uv,
+count(distinct if(page_code in ('homepage','product_list','search_result') and element_name='addWishlist' and type='common_clk' ,sv.device_id,null)) main_clk_add_cart_uv,
+count(distinct if(page_code='product_detail' and list_type='/detail_also_like' and type='goods_exp' ,sv.device_id,null)) pd_ml_uv,
+count(distinct if(page_code='product_detail' and list_type='/detail_also_like' and type='goods_clk' ,sv.device_id,null)) pd_ml_clk_uv,
+count(distinct if(page_code='product_detail' and element_name='pdAddToWishlistSuccess' and type='common_clk' ,sv.device_id,null)) collect_uv,
+count(distinct if(page_code='product_detail' and element_name in ('pdAddToCartClick','add_to_cart_at_prodcut_options_dialog') and type='common_clk' ,sv.device_id,null)) add_cart_uv,
+count(distinct if(page_code='product_detail' and element_name ='confirm_add_to_cart' and type='common_clk' ,sv.device_id,null)) conf_add_cart_uv,
+count(distinct if(page_code='product_detail' and element_name in ('buy_now_at_product_detail','buy_now_at_product_options_dialog') and type='common_clk' ,sv.device_id,null)) buy_now_uv,
+count(distinct if(page_code='product_detail' and element_name = 'buy_now_at_product_options_dialog' and type='common_clk' ,sv.device_id,null)) c_buy_now_uv,
+count(distinct if(page_code='theme_activity' and element_name = 'add_to_bag_button_ceiling_tab_ba' and type='common_clk' ,sv.device_id,null)) meet_uv,
+count(distinct if(page_code='theme_activity' and element_name = 'confirm_add_to_cart' and type='common_clk' ,sv.device_id,null)) meet_conf_uv,
+count(distinct if(page_code='cart' and type='sv' ,sv.device_id,null)) cart_uv,
+count(distinct if(page_code='cart' and element_name='button_cart_checkout' and type='ord' ,sv.device_id,null)) ck_cart_uv,
+count(distinct if(page_code='checkout_new' and type='sv' ,sv.device_id,null)) ckn_uv,
+count(distinct if(page_code in ('checkout_address_edit','my_address_edit','my_address_edit') and type='common_clk' and element_name in ('address_save_success','my_address_edit_successå','checkout_address_edit_success') ,sv.device_id,null)) ads_uv,
+count(distinct if(page_code='checkout_new' and type='common_clk' and element_name='checkout_place_order' ,sv.device_id,null)) ord_conf_uv,
+count(distinct if( type='pay' ,sv.device_id,null)) pay_uv
+from  (
+select pt,device_id,page_code,null as list_type,null as element_name,'sv' as type,country from dwd.dwd_vova_log_screen_view where pt>='2020-12-01' and pt<='2021-01-27'  and platform ='mob' and datasource='vova'
+union all
+select pt,device_id,page_code,null as list_type,element_name,'common_clk' as type,country from dwd.dwd_vova_log_common_click where pt>='2020-12-01' and pt<='2021-01-27' and platform ='mob' and datasource='vova'
+union all
+select pt,device_id,page_code,list_type,null as element_name,'goods_clk' as type,country from dwd.dwd_vova_log_goods_click where pt>='2020-12-01' and pt<='2021-01-27' and platform ='mob' and datasource='vova'
+union all
+select pt,device_id,page_code,list_type,element_name,'exp' as type,country from dwd.dwd_vova_log_impressions where pt>='2020-12-01' and pt<='2021-01-27' and platform ='mob' and datasource='vova'
+union all
+select pt,device_id,page_code,list_type,null as element_name,'goods_exp' as type,country from dwd.dwd_vova_log_goods_impression where pt>='2020-12-01' and pt<='2021-01-27' and platform ='mob' and datasource='vova'
+union all
+select pt,device_id,page_code,null as  list_type,element_name,'ord' as type,country from dwd.dwd_vova_log_order_process where pt>='2020-12-01' and pt<='2021-01-27' and platform ='mob' and datasource='vova'
+union all
+select date(pay_time) pt,bb.current_device_id as device_id, null as page_code , null as list_type ,null as element_name,'pay' as type, fp.region_code as country  from dwd.dwd_vova_fact_pay fp inner join dim.dim_vova_buyers bb on fp.buyer_id = bb.buyer_id  where date(pay_time) >='2020-12-01' and  date(pay_time)<='2021-01-27' and fp.datasource='vova'
+
+)  sv
+inner join tmp.req8079_device_c t1 on sv.device_id = t1.device_id
+group by sv.pt,if(sv.country in ('EN','FR','DE','IT','ES'),sv.country,'other'),t1.group,t1.channel,t1.act_time_h
+grouping sets(
+(sv.pt,if(sv.country in ('EN','FR','DE','IT','ES'),sv.country,'other'),t1.group),
+(sv.pt,t1.group)
+)
+
+
+
+

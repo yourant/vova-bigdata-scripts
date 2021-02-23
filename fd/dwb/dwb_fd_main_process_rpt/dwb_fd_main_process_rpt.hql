@@ -49,7 +49,7 @@ from (
                        , if(fms.event_name in ('page_view', 'screen_view') and fms.view_event_sum = 1 and fms.all_event_sum = fms.view_event_sum,fms.session_id,null) as pv_session_id
                   from (
                         select lower(project) as project
-                            , country
+                            , upper(country) as country
                             , platform_type
                             , case
                                 when platform = 'web' and session_idx = 1 then 'new'
@@ -70,13 +70,14 @@ from (
                         where pt = '${pt}'
                             and project is not null
                             and length(project) > 2
+                            and length(country) = 2
                             and event_name not in ('common_impression', 'goods_impression')
 
                         union all
 
                         select
                             'website_cluster' as project
-                            , country
+                            , upper(country) as country
                             , platform_type
                             , case
                                 when platform = 'web' and session_idx = 1 then 'new'
@@ -97,6 +98,7 @@ from (
                         where pt = '${pt}'
                           and project is not null
                           and length(project) > 2
+                          and length(country) = 2
                           and event_name not in ('common_impression', 'goods_impression')
                           and lower(project) in ('beautlly','merecloth','cosydress', 'baltershop', 'chichut', 'joycedays', 'blessrose', 'shinynight', 'vividpretty', 'jollyweek', 'eoschoice', 'cherbow', 'cherlady')
 
