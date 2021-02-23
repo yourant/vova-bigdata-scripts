@@ -296,10 +296,10 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: judge_ads_vova_mct_rank
+  - name: judge_ads_vova_traff_control
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_mct_rank
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_traff_control
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -431,7 +431,7 @@ nodes:
       - judge_dwd_vova_fact_pay
       - judge_vova_brand
       - judge_dim_vova_merchant
-      - judge_ads_vova_mct_rank
+      - judge_ads_vova_traff_control
       - judge_ads_vova_min_price_goods_h
 
 # 高退款率屏蔽商品监控
@@ -501,7 +501,7 @@ nodes:
     dependsOn:
       - judge_dim_vova_goods
       - judge_dim_vova_merchant
-      - judge_ads_vova_mct_rank
+      - judge_ads_vova_traff_control
 
 # 消息中心-推送报表v2
   - name: dwb_vova_push_click_behavior
