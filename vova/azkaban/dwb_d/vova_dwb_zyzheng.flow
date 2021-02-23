@@ -24,6 +24,8 @@ nodes:
       - dwb_vova_payment
       - dwb_ac_web_cohort
       - dwb_ac_web_ltv
+      - dwb_vova_flash_sale
+      - dwb_vova_min_price_goods
 
   - name: start_flag
     type: command
@@ -207,6 +209,34 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_web_start_up
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_flash_sale_goods_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_flash_sale_goods_d
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_order_cause_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_order_cause_v2
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_min_price_goods_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_min_price_goods_h
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_traff_control
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_traff_control
     dependsOn:
       - start_flag
 
@@ -394,6 +424,35 @@ nodes:
        - judge_dwd_vova_log_page_view
        - judge_dim_vova_buyers
        - judge_dwd_vova_fact_pay
+
+  -  name: dwb_vova_flash_sale
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/flash_sale/update_daily.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - judge_dwd_vova_fact_pay
+       - judge_dwd_vova_fact_start_up
+       - judge_dwd_vova_fact_order_cause_v2
+       - judge_dwd_vova_log_screen_view
+       - judge_dwd_vova_log_common_click
+       - judge_dwd_vova_log_goods_click
+       - judge_dwd_vova_log_goods_impression
+       - judge_ads_vova_flash_sale_goods_d
+
+  -  name: dwb_vova_min_price_goods
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/min_price_goods/update.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - judge_dwd_vova_log_goods_impression
+       - judge_dwd_vova_fact_pay
+       - judge_dim_vova_goods
+       - judge_ads_vova_min_price_goods_h
+       - judge_ads_vova_traff_control
 
 #  -  name: dwb_vova_market
 #     type: command
