@@ -18,30 +18,122 @@ nodes:
       command: echo "start job"
 
 
-  - name: judge_ads_vova_goods_portrait_v2
+  - name: judge_ads_vova_goods_gsn_top1000
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_portrait_v2
-      retries: 10
-      retry.backoff: 300000
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_gsn_top1000
+      retries: 20
+      retry.backoff: 120000
     dependsOn:
-      - start_flag
+      - bi_start
 
-  - name: judge_vova_goods
+
+  - name: goods_gsn_top1000_export
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_goods
-      retries: 10
-      retry.backoff: 300000
-    dependsOn:
-      - start_flag
-
-  - name: ads_vova_goods_knowledge_graph
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_knowledge_graph/update.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_gsn_top1000/update_export.sh
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - judge_ads_vova_goods_portrait_v2
-      - judge_vova_goods
+      - judge_ads_vova_goods_gsn_top1000
+
+
+  - name: ads_buyer_portrait_brand_likes_sqoop_export
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ads/buyer_portrait_v2/brand_likes/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_buyer_portrait_brand_likes
+
+  - name: ads_buyer_portrait_category_likes_sqoop_export
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ads/buyer_portrait_v2/category_likes/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_buyer_portrait_category_likes
+
+  - name: ads_buyer_portrait_second_category_likes_sqoop_export
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ads/buyer_portrait_v2/second_category_likes/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_buyer_portrait_second_category_likes
+
+
+  - name: ads_goods_portrait_brand_price_range_likes_top20_export
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ads/goods_portrait_v2/goods_brand_price_range_gmv_top20/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_goods_portrait_brand_price_range_likes_top20
+
+
+  - name: user_brand_cat_likes_weight_export
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ads/user_brand_cat_likes_weight/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_user_brand_cat_likes_weight
+
+
+  - name: ads_goods_portrait_export
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ads/goods_portrait_v2/goods_portrait/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_goods_portrait
+
+
+  - name: ads_buyer_stat_feature_export
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ads/buyer_stat_feature/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_buyer_stat_feature
+
+
+
+  - name: ads_second_cat_goods_ranking_list_export
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ads/second_cat_goods_ranking_list/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_second_cat_goods_ranking_list
+
+
+
+  - name: ads_goods_behave_group_site_export
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ads/goods_group_site/export_update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_goods_behave_group_site
+
+
+
+  - name: ads_category_recommend_default_export
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ads/category_recommend_default/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_category_recommend_default

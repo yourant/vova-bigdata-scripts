@@ -95,6 +95,51 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_vova_market_web_dau
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
 
+DROP TABLE dwb.dwb_vova_market_cb_region_filter;
+CREATE EXTERNAL TABLE IF NOT EXISTS dwb.dwb_vova_market_cb_region_filter
+(
+    datasource  string COMMENT '数据平台',
+    event_date  date COMMENT '事件发生日期',
+    region_code string COMMENT '国家',
+    cr          DECIMAL(10, 4) COMMENT 'cr'
+) COMMENT 'dwb_vova_market_cb_region_filter'
+    ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
+
+DROP TABLE dwb.dwb_vova_market_cb;
+CREATE EXTERNAL TABLE IF NOT EXISTS dwb.dwb_vova_market_cb
+(
+    event_date          date COMMENT '事件发生日期',
+    datasource         string COMMENT 'datasource',
+    region_code         string COMMENT '国家',
+    tot_gmv             bigint COMMENT '当天gmv',
+    tot_dau             bigint COMMENT '当天dau',
+    tot_install         bigint COMMENT '当天安装设备数',
+    android_paid_device bigint comment '当天支付设备数',
+    android_gmv         bigint COMMENT '当天gmv',
+    android_dau         bigint COMMENT '当天dau',
+    android_install     bigint COMMENT '当天安装设备数',
+    ios_paid_device     bigint comment '当天支付设备数',
+    ios_gmv             bigint COMMENT '当天gmv',
+    ios_dau             bigint COMMENT '当天dau',
+    ios_install         bigint COMMENT '当天安装设备数',
+    tot_android_1b_ret  bigint comment '全体用户当天启动设备1天前也启动的数量',
+    tot_android_7b_ret  bigint comment '全体用户当天启动设备7天前也启动的数量',
+    tot_android_28b_ret bigint comment '全体用户当天启动设备28天前也启动的数量',
+    tot_ios_1b_ret      bigint comment '全体用户当天启动设备1天前也启动的数量',
+    tot_ios_7b_ret      bigint comment '全体用户当天启动设备7天前也启动的数量',
+    tot_ios_28b_ret     bigint comment '全体用户当天启动设备28天前也启动的数量',
+    new_android_1b_ret  bigint comment '新激活用户当天启动设备1天前也启动的数量',
+    new_android_7b_ret  bigint comment '新激活用户当天启动设备7天前也启动的数量',
+    new_android_28b_ret bigint comment '新激活用户当天启动设备28天前也启动的数量',
+    new_ios_1b_ret      bigint comment '新激活用户当天启动设备1天前也启动的数量',
+    new_ios_7b_ret      bigint comment '新激活用户当天启动设备7天前也启动的数量',
+    new_ios_28b_ret     bigint comment '新激活用户当天启动设备28天前也启动的数量',
+    tot_activate        bigint comment '当天新激活数',
+    android_activate    bigint comment '当天新激活数',
+    ios_activate        bigint comment '当天新激活数'
+) COMMENT 'dwb_vova_market_cb' PARTITIONED BY (pt STRING)
+    ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
+
 -- mysql TABLE
 -- CREATE TABLE IF NOT EXISTS rpt_market_web_dau
 -- (
