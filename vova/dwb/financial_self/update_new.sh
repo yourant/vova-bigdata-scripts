@@ -36,8 +36,9 @@ SELECT dog.order_time,
        tpogpp.purchase_order_shipping_status AS purchase_shipping_status,
        tpogpp.in_inventory_status AS shipping_order_status,
        tpogpp.purchase_amount as purchase_total_amount
-FROM ods_gyl_gpg.ods_gyl_order_goods tpog
-         INNER JOIN ods_gyl_gpg.ods_gyl_order_info tpoi ON tpoi.order_id = tpog.order_id
+FROM dim.dim_vova_order_goods dog
+         left JOIN ods_gyl_gpg.ods_gyl_order_goods tpog ON dog.order_goods_sn = tpog.channel_order_goods_sn
+         left JOIN ods_gyl_gpg.ods_gyl_order_info tpoi ON tpoi.order_id = tpog.order_id
          LEFT JOIN
          (
          select
@@ -66,7 +67,6 @@ FROM ods_gyl_gpg.ods_gyl_order_goods tpog
          ) t1
          where t1.rank = 1
          ) tpogpp ON tpogpp.order_goods_id = tpog.order_goods_id
-         INNER JOIN dim.dim_vova_order_goods dog ON dog.order_goods_sn = tpog.channel_order_goods_sn
          INNER JOIN dim.dim_vova_merchant dm ON dm.mct_id = dog.mct_id
  WHERE date(dog.order_time) <= '${cur_date}'
    AND date(dog.order_time) >= date_sub('${cur_date}', 120)
