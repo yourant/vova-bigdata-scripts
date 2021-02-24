@@ -115,7 +115,6 @@ from
   on tmp1.buyer_id = abgs.buyer_id
 )
 group by cube(region_code, os_type, main_channel, is_new, gmv_stage)
-  having region_code in ('FR','DE','IT','ES','GB','US','NA','PL','CH','BE','TW','RU','RO','NL','IN', 'all')
 ;
 
 -- 表二：优惠券发放与核销
@@ -204,7 +203,6 @@ from
       and tmp1.order_id is not null
   )
   group by cube(region_code, platform, gmv_stage, cpn_cfg_type_id)
-  having region_code in ('FR','DE','IT','ES','GB','US','NA','PL','CH','BE','TW','RU','RO','NL','IN', 'all')
 ) tmp1
 left join
 (
@@ -289,7 +287,6 @@ from
     and db.email NOT REGEXP '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
 )
 group by cube(region_code, platform, main_channel, is_new, gmv_stage)
-having region_code in ('FR','DE','IT','ES','GB','US','NA','PL','CH','BE','TW','RU','RO','NL','IN', 'all')
 ;
 
 create table if not exists tmp.tmp_bonus_card_gmv_${table_suffix} as
@@ -378,7 +375,6 @@ from
   on dog.datasource = dc.datasource and dog.coupon_code = dc.cpn_code
 )
 group by cube(region_code, platform, main_channel, is_new, gmv_stage)
-having region_code in ('FR','DE','IT','ES','GB','US','NA','PL','CH','BE','TW','RU','RO','NL','IN', 'all')
 ;
 
 create table if not exists tmp.tmp_bonus_card_screen_view_${table_suffix} as
@@ -674,7 +670,7 @@ from
       and vbc.end_time>=flsv.pt)
 ) tmp
 group by cube(pt, region_code, os_type, main_channel, is_new, gmv_stage)
-having pt !='all' and region_code in ('FR','DE','IT','ES','GB','US','NA','PL','CH','BE','TW','RU','RO','NL','IN', 'all')
+having pt !='all'
 ;
 
 
@@ -795,7 +791,7 @@ from
     and flgi.email NOT REGEXP '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
 ) tmp
 group by cube(pt, region_code, os_type, main_channel, is_new, gmv_stage)
-having pt !='all' and region_code in ('FR','DE','IT','ES','GB','US','NA','PL','CH','BE','TW','RU','RO','NL','IN', 'all')
+having pt !='all'
 ;
 
 -- 已购卡商品列表点击数pv
@@ -836,7 +832,7 @@ from
     and flgc.email NOT REGEXP '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
 ) tmp
 group by cube(pt, region_code, os_type, main_channel, is_new, gmv_stage)
-having pt !='all' and region_code in ('FR','DE','IT','ES','GB','US','NA','PL','CH','BE','TW','RU','RO','NL','IN', 'all')
+having pt !='all'
 ;
 
 -- 续费按钮点击UV
@@ -877,7 +873,7 @@ from
     and flcc.email NOT REGEXP '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
 )
 group by cube(pt, region_code, os_type, main_channel, is_new, gmv_stage)
-having pt !='all' and region_code in ('FR','DE','IT','ES','GB','US','NA','PL','CH','BE','TW','RU','RO','NL','IN', 'all')
+having pt !='all'
 ;
 
 
@@ -921,7 +917,7 @@ from
     and dog.email NOT REGEXP '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
 )
 group by cube(pt, region_code, os_type, main_channel, is_new, gmv_stage)
-having pt !='all' and region_code in ('FR','DE','IT','ES','GB','US','NA','PL','CH','BE','TW','RU','RO','NL','IN', 'all')
+having pt !='all'
 ;
 
 set hive.exec.dynamici.partition=true;
