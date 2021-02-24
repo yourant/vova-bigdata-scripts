@@ -35,7 +35,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS ads.ads_vova_goods_performance
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
 DROP TABLE ads.ads_vova_site_goods_from_vova;
-CREATE TABLE IF NOT EXISTS ads.ads_vova_site_goods_from_vova
+CREATE EXTERNAL TABLE IF NOT EXISTS ads.ads_vova_site_goods_from_vova
 (
     event_date      DATE COMMENT 'd_date',
     datasource      string COMMENT 'datasource',
@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS ads.ads_vova_site_goods_from_vova
 ) COMMENT 'vova商品自动上架fd' PARTITIONED BY (pt STRING)
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
+#mysql
 CREATE TABLE IF NOT EXISTS themis.ads_site_goods_from_vova
 (
     id                int(11)          NOT NULL AUTO_INCREMENT,
@@ -63,46 +64,16 @@ CREATE TABLE IF NOT EXISTS themis.ads_site_goods_from_vova
   DEFAULT CHARSET = utf8 COMMENT ='#vova商品自动上架站群';
 
 
+#history
+hadoop distcp -Dmapreduce.map.memory.mb=8096 -m 40 -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/ads.db/ads_site_goods_from_vova  s3://bigdata-offline/warehouse/ads/ads_vova_site_goods_from_vova
 
+MSCK REPAIR TABLE ads.ads_vova_site_goods_from_vova;
 
-select count(*),pt from ads.ads_vova_fn_goods_from_vova group by pt order by pt;
-
-set hive.exec.dynamici.partition=true;
-set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT OVERWRITE TABLE ads.ads_vova_site_goods_from_vova PARTITION (pt)
-select
-event_date,
-'florynight' as datasource,
-goods_id,
-virtual_goods_id,
-impressions,
-gcr,
-goods_type,
-pt
-from
-ads.ads_vova_fn_goods_from_vova
+select event_date,datasource,count(*)
+from ads.ads_vova_site_goods_from_vova
+where pt >= '2021-02-20'
+group by event_date,datasource
 ;
-
-select
-pt,
-datasource,
-count(*)
-from
-ads.ads_vova_site_goods_from_vova
-group by pt,datasource
-order by pt
-;
-
-select
-pt,
-count(*)
-from
-ads.ads_vova_fn_goods_from_vova
-group by pt
-order by pt
-;
-
-
 
 select event_date,datasource,count(*)
 from themis.ads_site_goods_from_vova
