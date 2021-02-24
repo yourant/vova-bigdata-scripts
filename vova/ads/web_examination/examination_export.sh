@@ -47,7 +47,6 @@ mysql -h rec-backend.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaste
 
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
--Dmapreduce.job.queuename=important \
 -Dsqoop.export.records.per.statement=1000 \
 --connect jdbc:mysql://rec-backend.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com/backend?rewriteBatchedStatements=true \
 --username bimaster --password kkooxGjFy7Vgu21x \

@@ -140,6 +140,16 @@ CREATE EXTERNAL TABLE IF NOT EXISTS dwb.dwb_vova_market_cb
 ) COMMENT 'dwb_vova_market_cb' PARTITIONED BY (pt STRING)
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
+CREATE EXTERNAL TABLE IF NOT EXISTS dwb.dwb_vova_market_web_dau
+(
+    event_date  date,
+    datasource  string,
+    region_code string,
+    dau         bigint
+) COMMENT 'web_dau' PARTITIONED BY (pt STRING)
+    ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE
+;
+
 #mysql
 
 CREATE TABLE themis_logistics_report.dwb_vova_market_web_dau
@@ -152,6 +162,12 @@ CREATE TABLE themis_logistics_report.dwb_vova_market_web_dau
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='dwb_vova_market_web_dau'
 ;
+insert into
+themis_logistics_report.dwb_vova_market_web_dau
+SELECT
+*
+from
+themis_logistics_report.rpt_market_web_dau
 
 CREATE TABLE themis_logistics_report.dwb_vova_market_process
 (

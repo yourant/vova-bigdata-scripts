@@ -38,7 +38,7 @@ SELECT rm.event_date,
        ifnull(concat(round(rm.new_ios_1b_ret / tmp1.ios_activate * 100, 2), '%'),'0.00%')           AS new_ios_1d_cohort,
        ifnull(concat(round(rm.new_ios_7b_ret / tmp7.ios_activate * 100, 2), '%'),'0.00%')           AS new_ios_7d_cohort,
        ifnull(concat(round(rm.new_ios_28b_ret / tmp28.ios_activate * 100, 2), '%'),'0.00%')         AS new_ios_28d_cohort
-FROM rpt_market_final rm
+FROM dwb_vova_market_process rm
          LEFT JOIN (SELECT date_add(rm1.event_date, INTERVAL 1 DAY) AS interval_1,
                             rm1.android_dau,
                             rm1.ios_dau,
@@ -48,7 +48,7 @@ FROM rpt_market_final rm
                             rm1.ios_activate,
                             rm1.datasource,
                             rm1.region_code
-                     FROM rpt_market_final rm1) AS tmp1 ON tmp1.interval_1 = rm.event_date
+                     FROM dwb_vova_market_process rm1) AS tmp1 ON tmp1.interval_1 = rm.event_date
     AND tmp1.datasource = rm.datasource
     AND tmp1.region_code = rm.region_code
          LEFT JOIN (SELECT date_add(rm1.event_date, INTERVAL 7 DAY) AS interval_7,
@@ -60,7 +60,7 @@ FROM rpt_market_final rm
                             rm1.ios_activate,
                             rm1.datasource,
                             rm1.region_code
-                     FROM rpt_market_final rm1) AS tmp7 ON tmp7.interval_7 = rm.event_date
+                     FROM dwb_vova_market_process rm1) AS tmp7 ON tmp7.interval_7 = rm.event_date
     AND tmp7.datasource = rm.datasource
     AND tmp7.region_code = rm.region_code
          LEFT JOIN (SELECT date_add(rm1.event_date, INTERVAL 28 DAY) AS interval_28,
@@ -72,11 +72,11 @@ FROM rpt_market_final rm
                             rm1.ios_activate,
                             rm1.datasource,
                             rm1.region_code
-                     FROM rpt_market_final rm1) AS tmp28
+                     FROM dwb_vova_market_process rm1) AS tmp28
                     ON tmp28.interval_28 = rm.event_date
                         AND tmp28.datasource = rm.datasource
                         AND tmp28.region_code = rm.region_code
-         INNER JOIN rpt_market_web_dau rmwd ON rmwd.event_date = rm.event_date
+         INNER JOIN dwb_vova_market_web_dau rmwd ON rmwd.event_date = rm.event_date
            AND rmwd.datasource = 'airyclub' AND rmwd.region_code = 'all'
 WHERE rm.event_date < date(now())
   AND rm.event_date > date_sub(now(), INTERVAL 31 DAY)
