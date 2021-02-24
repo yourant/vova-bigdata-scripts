@@ -1,6 +1,6 @@
 ---
 config:
-  retries: 5
+  retries: 10
   retry.backoff: 600000
   failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk,zyzheng@i9i8.com
 
@@ -12,6 +12,13 @@ nodes:
     dependsOn:
       - ads_vova_flash_sale_coupon_goods_export
       - ads_vova_web_examination
+      - ads_vova_goods_display_sort_export
+      - ads_vova_goods_performance
+      - ads_vova_goods_performance_1m
+      - ads_vova_goods_performance_2m
+      - ads_vova_goods_performance_page
+      - ads_vova_goods_sn_performance
+      - ads_zq_fn_vova_goods_export
 
   - name: start_flag
     type: command
@@ -183,4 +190,105 @@ nodes:
        - judge_dwd_vova_fact_pay
        - judge_dim_vova_goods
 
+  - name: ads_vova_goods_display_sort
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/display_sort_d/goods_display_sort/update_goods_sort.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_dim_vova_order_goods
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_fact_pay
+
+  - name: ads_vova_goods_display_sort_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/display_sort_d/goods_display_sort/update_goods_sort_export.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - ads_vova_goods_display_sort
+
+  - name: ads_vova_goods_performance
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/display_sort_d/goods_performance_1w/update_goods_performance.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_fact_pay
+
+  - name: ads_vova_goods_performance_1m
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/display_sort_d/goods_performance_1m/update_goods_performance_1m.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_fact_pay
+
+  - name: ads_vova_goods_performance_2m
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/display_sort_d/goods_performance_2m/update_goods_performance_2m.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_fact_pay
+
+  - name: ads_vova_goods_performance_page
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/display_sort_d/goods_performance_page_1w/update_goods_performance_page.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_fact_pay
+      - judge_fact_order_cause_v2
+
+  - name: ads_vova_goods_sn_performance
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/display_sort_d/goods_sn_performance_1w/update_goods_sn_performance.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_fact_pay
+
+  - name: ads_zq_fn_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/display_sort_d/goods_performance_1w/fn_vova_goods.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - ads_vova_goods_performance
+
+  - name: ads_zq_fn_vova_goods_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/display_sort_d/goods_performance_1w/fn_vova_goods_export.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - ads_zq_fn_vova_goods
+      
 
