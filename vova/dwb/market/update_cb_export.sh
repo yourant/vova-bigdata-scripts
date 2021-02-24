@@ -8,15 +8,16 @@ fi
 ###逻辑sql
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
--Dmapreduce.job.queuename=default \
---connect jdbc:mysql://db-logistics-w.gitvv.com:3306/themis_logistics_report \
+--connect jdbc:mariadb:aurora://db-logistics-w.gitvv.com:3306/themis_logistics_report \
 --username vvreport4vv --password nTTPdJhVp!DGv5VX4z33Fw@tHLmIG8oS \
+--connection-manager org.apache.sqoop.manager.MySQLManager \
 --table dwb_vova_market_cb \
 --update-key event_date,datasource,region_code \
 --update-mode allowinsert \
+--m 1 \
 --hcatalog-database dwb \
 --hcatalog-table dwb_vova_market_cb \
---hcatalog-partition-keys dwb \
+--hcatalog-partition-keys pt \
 --hcatalog-partition-values ${cur_date} \
 --fields-terminated-by '\001'
 

@@ -9,9 +9,9 @@ fi
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dsqoop.export.records.per.statement=500 \
--Dmapreduce.job.queuename=important \
---connect jdbc:mysql://db-logistics-w.gitvv.com:3306/themis_logistics_report?rewriteBatchedStatements=true \
---username vvreport4vv --password 'nTTPdJhVp!DGv5VX4z33Fw@tHLmIG8oS' \
+--connect jdbc:mariadb:aurora://db-logistics-w.gitvv.com:3306/themis_logistics_report \
+--username vvreport4vv --password nTTPdJhVp!DGv5VX4z33Fw@tHLmIG8oS \
+--connection-manager org.apache.sqoop.manager.MySQLManager \
 --table dwb_vova_market_web_dau \
 --update-key event_date,datasource,region_code \
 --update-mode allowinsert \
