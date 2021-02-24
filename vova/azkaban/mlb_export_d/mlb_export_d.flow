@@ -26,6 +26,13 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_mlb_vova_buyer_activate_time
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_buyer_activate_time
+    dependsOn:
+      - start_flag
+
 ########################
   - name: sqoop_mlb_vova_rec_m_nbi_nb_d
     type: command
@@ -35,6 +42,15 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_mlb_vova_rec_m_nbi_nb_d
+
+  - name: sqoop_mlb_vova_buyer_activate_time
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/buyer_activate_time/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_buyer_activate_time
 
 
 
