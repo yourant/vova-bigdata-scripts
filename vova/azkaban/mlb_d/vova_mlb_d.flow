@@ -23,7 +23,7 @@ nodes:
   - name: judge_dws_vova_buyer_goods_behave
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dws_buyer_goods_behave
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dws_vova_buyer_goods_behave
     dependsOn:
       - start_flag
 

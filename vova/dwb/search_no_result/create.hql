@@ -47,7 +47,7 @@ hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result
 
 hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_search_no_result_frequent_word/*
 
-hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_search_no_result_frequent_word/  s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result_frequent_word
+hadoop distcp -overwrite -m 20 hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_search_no_result_frequent_word/  s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result_frequent_word
 
 hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result_frequent_word/*
 
@@ -75,7 +75,7 @@ hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result
 
 hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_search_no_result/*
 
-hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_search_no_result/  s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result
+hadoop distcp -overwrite -m 20 hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_search_no_result/  s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result
 
 hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result/*
 
