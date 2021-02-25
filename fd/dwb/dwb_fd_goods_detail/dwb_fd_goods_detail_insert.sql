@@ -14,8 +14,8 @@ t1.cy_po_impression,
 t1.cy_po_click,
 t1.detail_add,
 t1.detail_view,
-t2.order_paid_number,
-t2.goods_amount
+nvl(t2.order_paid_number,0),
+nvl(t2.goods_amount,0)
 from
 -- 商品打点事件相关信息，
 (
@@ -52,7 +52,9 @@ where pt= '${pt}'
 group by virtual_goods_id,project_name,country_code,source_type
  )
  t1
-left join
+
+  left join
+
 --商品订单的相关信息,销量，价格
 (select
     project_name,
@@ -89,5 +91,5 @@ on t1.virtual_goods_id=t2.virtual_goods_id and t1.project_name=t2.project_name
 left join
     dim.dim_fd_goods t3
 on t1.virtual_goods_id= t3.virtual_goods_id
-
+where t1.virtual_goods_id !=0 and t1.virtual_goods_id !=-1
 ;
