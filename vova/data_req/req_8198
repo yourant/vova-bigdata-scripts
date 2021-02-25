@@ -13,7 +13,7 @@ where t2.datasource='vova'
 
 
 
-insert overwrite  table tmp.req_8198_log
+create  table tmp.req_8198_log_new as
 select
 /*+ repartition(100) */
 t1.pt,
@@ -24,7 +24,8 @@ list_type,
 element_name,
 element_type,
 element_position,
-type
+type,
+element_id
 from
 (
 select pt,collector_ts,device_id,page_code,null as list_type,null as element_name,null as element_type,null as element_id, null as element_position,'screen_view' as type  from dwd.dwd_vova_log_screen_view where pt>='2020-07-18' and pt<='2020-08-03'

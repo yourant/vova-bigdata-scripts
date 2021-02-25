@@ -6,26 +6,19 @@ if [ ! -n "$1" ]; then
   cur_date=`date -d "+1 day" +%Y-%m-%d`
 fi
 
-last_7_week=`date -d $cur_date"-7 week" +%Y-%m-%d`
-src_weekday=`date -d $last_7_week +%w`
+last_8_week=`date -d $cur_date"-8 week" +%Y-%m-%d`
+src_weekday=`date -d $last_8_week +%w`
 if [ $src_weekday == 0 ]
 then
-src_weekday=7
+src_weekday=7req_8198_log
 fi
-src_day=`date -d "$last_7_week - $((src_weekday - 1)) days" +%F`
+src_day=`date -d "$last_8_week - $((src_weekday - 1)) days" +%F`
 end_day=`date -d $src_day"+6 day" +%Y-%m-%d`
 echo "start time:$src_day,end time:$end_day"
 
 sql="
-INSERT OVERWRITE TABLE ads.ads_vova_order_email PARTITION(pt='${cur_date}')
-SELECT
-    db.email,
-    vr.region_name_cn,
-    db.language_code
-FROM
-    dim.dim_vova_buyers db
-    INNER JOIN (
-SELECT
+with tmp_buyer as
+(SELECT
     fp.buyer_id,
     fp.region_id,
     row_number ( ) over ( PARTITION BY fp.buyer_id ORDER BY fp.pay_time DESC ) rk
@@ -33,11 +26,20 @@ FROM
     dwd.dwd_vova_fact_pay fp
     LEFT JOIN dim.dim_vova_order_goods og ON fp.order_goods_id = og.order_goods_id
 WHERE
-    date( fp.pay_time ) >= '${src_day}'
-    AND date( fp.pay_time ) <= '${end_day}'
+    date( og.shipping_time ) >= '${src_day}'
+    AND date( og.shipping_time ) <= '${end_day}'
     AND og.sku_shipping_status > 0
-    AND fp.datasource='vova'
-    ) tmp_buyer ON tmp_buyer.buyer_id = db.buyer_id
+    AND fp.datasource='vova')
+INSERT OVERWRITE TABLE ads.ads_vova_order_email PARTITION(pt='${cur_date}')
+SELECT
+    db.email,
+    vr.region_name_cn,
+    db.language_code,
+    tmp_ord.order_cnt
+FROM
+    dim.dim_vova_buyers db
+    INNER JOIN  tmp_buyer ON tmp_buyer.buyer_id = db.buyer_id
+    INNER JOIN (select buyer_id,count(*) as order_cnt from tmp_buyer group by buyer_id) tmp_ord on  db.buyer_id = tmp_ord.buyer_id
     LEFT JOIN ods_vova_vts.ods_vova_region vr
     ON tmp_buyer.region_id = vr.region_id
 WHERE
@@ -80,12 +82,12 @@ spark-submit \
 --conf spark.executor.memoryOverhead=2048 \
 --class com.vova.utils.EmailUtil s3://vomkt-emr-rec/jar/vova-bd/dataprocess/new/vova-db-dataprocess-1.0-SNAPSHOT.jar \
 --env prod \
--sql "select email,region_name_cn,language_code from ads.ads_vova_order_email where pt='${cur_date}'"  \
--head "邮箱,国家,语言"  \
--receiver "jing.zhang@vova.com.hk,ted.wan@vova.com.hk" \
--title "vovav客服支付邮箱(${src_day}-${end_day})" \
+-sql "select email,region_name_cn,language_code,order_cnt from ads.ads_vova_order_email where pt='${cur_date}'"  \
+-head "邮箱,国家,语言,该时间段发货数量（子订单数量）"  \
+-receiver "suzi@vova.com.hk,sanlian@vova.com.hk,jianxiangyun@vova.com.hk,ted.wan@vova.com.hk" \
+-title "vova客服支付邮箱(${src_day}-${end_day})" \
 --type attachment \
---fileName "vovav客服支付邮箱(${src_day}-${end_day})"
+--fileName "vova客服支付邮箱(${src_day}-${end_day})"
 
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
