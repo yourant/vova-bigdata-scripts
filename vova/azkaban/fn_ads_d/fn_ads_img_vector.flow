@@ -1,0 +1,92 @@
+---
+config:
+  failure.emails: ethan.zheng@i9i8.com
+  retries: 100
+  retry.backoff: 120000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_zq_fn_img_vector_group_export
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: judge_dim_zq_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_zq_goods
+    dependsOn:
+      - start_flag
+
+  - name: ads_zq_fn_img_original
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/fn/fn_goods_pic_similar/get_img_update.sh
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - judge_dim_zq_goods
+
+  - name: judge_zq_fn_vector
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=FN_image_vector --from=arithmetic --to=data
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - ads_zq_fn_img_original
+
+  - name: ads_zq_fn_img_vector_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/fn/fn_goods_pic_similar/vector_export.sh
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - judge_zq_fn_vector
+
+  - name: judge_zq_fn_vector_group
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=fn_images_vector_group_20201113 --from=mlb --to=data
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - ads_zq_fn_img_vector_export
+
+  - name: als_images_fn_rec_gid_pic_similar
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vbai --table_name=fn_rec_gid_pic_similar --etl_type=ALL  --mapers=2 --period_type=day --partition_num=3
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - judge_zq_fn_vector_group
+
+  - name: ads_zq_fn_img_vector_group
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/fn/fn_goods_pic_similar/vector_group_update.sh
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - als_images_fn_rec_gid_pic_similar
+
+
+  - name: ads_zq_fn_img_vector_group_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/fn/fn_goods_pic_similar/vector_group_export.sh
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - ads_zq_fn_img_vector_group
+
+
+
