@@ -1,0 +1,42 @@
+---
+config:
+  failure.emails: andy.zhang@vova.com.hk,kaicheng@vova.com.hk
+  retries: 10
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - export_es_ads_vova_mct_manage_module
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+##judge#############
+
+  - name: judge_ads_vova_mct_manage_module
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_mct_manage_module
+    dependsOn:
+      - start_flag
+
+####################################################
+
+  - name: export_es_ads_vova_mct_manage_module
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/es_export/ads_vova_mct_manage_module/update.sh
+      retries: 5
+    dependsOn:
+      - judge_ads_vova_mct_manage_module
+
+
+
