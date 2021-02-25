@@ -44,7 +44,7 @@ nodes:
   - name: judge_dim_vova_devices
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_dim_vova_devices
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_devices
     dependsOn:
       - start_flag
 
