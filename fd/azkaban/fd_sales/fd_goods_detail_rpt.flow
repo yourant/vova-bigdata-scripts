@@ -1,0 +1,31 @@
+---
+config:
+  failure.emails: shihu@i9i8.com
+  retries: 6
+  retry.backoff: 300000
+
+nodes:
+  - name: dwb_fd_sales_start
+    type: noop
+
+
+  - name: judge_dwd_fd_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_goods
+    dependsOn:
+      - dwb_fd_sales_start
+        
+
+        
+  - name: dwb_fd_sales
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_sales/run.sh "${pt}"
+    dependsOn:
+      - judge_dwd_fd_order_goods
+
+  - name: dwb_fd_sales_end
+    type: noop
+    dependsOn:
+      - dwb_fd_sales
