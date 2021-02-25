@@ -33,13 +33,6 @@ where pay_status=2
 -- and date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${pt}' --UTC时间
 -- 北京时间如下
 and date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '${pt}'
- and goods_id is not null
-  and email not like '%@tetx.com%'
-  and email not like '%@i9i8.com%'
-  and email not like '%@qq.com%'
-  and email not like '%@163.com%'
-  and email not like '%@jjshouse.com%'
-  and email not like '%@jenjenhouse.com%'
  ) t
 group by
 project_name,
