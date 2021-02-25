@@ -60,7 +60,7 @@ sqoop export \
 --m 1 \
 --table ads_activity_home_garden_new \
 --hcatalog-database ads \
---hcatalog-table ads_activity_home_garden \
+--hcatalog-table ads_vova_activity_home_garden \
 --hcatalog-partition-keys pt \
 --hcatalog-partition-values ${pre_date} \
 --columns goods_id,region_id,first_cat_id,second_cat_id,biz_type,rp_type,rank \
