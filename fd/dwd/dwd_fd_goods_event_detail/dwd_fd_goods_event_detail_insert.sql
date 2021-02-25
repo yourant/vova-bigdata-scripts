@@ -18,9 +18,9 @@ t1.page_code ,
 t1.mkt_source,
 t1.goods_event_struct.list_type,
 case
-   when t1.dvce_type ='Computer' or t1.dvce_type ='Tablet'  then 'PC'
-   when t1.dvce_type ='Mobile' and (t1.platform_type='android_app'  or t1.platform_type='ios_app' )  then 'APP'
-   when t1.dvce_type ='Mobile' and t1.platform_type='mobile_web'  then 'H5'
+   when t1.platform_type in('tablet_web','pc_web')  then 'PC'
+   when t1.platform_type in('android_app','ios_app')  then 'APP'
+   when t1.platform_type='mobile_web'  then 'H5'
    else 'others'
 end as source_type
 from
@@ -48,9 +48,9 @@ t1.page_code ,
 t1.mkt_source ,
 '' as list_type,
 case
-   when t1.dvce_type ='Computer' or t1.dvce_type ='Tablet'  then 'PC'
-   when t1.dvce_type ='Mobile' and (t1.platform_type='android_app'  or t1.platform_type='ios_app' )  then 'APP'
-   when  t1.dvce_type ='Mobile' and t1.platform_type='mobile_web'  then 'H5'
+   when t1.platform_type in('tablet_web','pc_web')  then 'PC'
+   when t1.platform_type in('android_app','ios_app')  then 'APP'
+   when t1.platform_type='mobile_web'  then 'H5'
    else 'others'
 end as source_type
 from  ods_fd_snowplow.ods_fd_snowplow_ecommerce_event t1
@@ -81,9 +81,9 @@ on t1.ecommerce_product.id=cast(t3.virtual_goods_id as string)
  t1.mkt_source,
  '' as list_type,
  case
-   when t1.dvce_type ='Computer' or t1.dvce_type ='Tablet'  then 'PC'
-   when t1.dvce_type ='Mobile' and (t1.platform_type='android_app'  or t1.platform_type='ios_app' )  then 'APP'
-   when  t1.dvce_type ='Mobile' and t1.platform_type='mobile_web'  then 'H5'
+   when t1.platform_type in('tablet_web','pc_web')  then 'PC'
+   when t1.platform_type in('android_app','ios_app')  then 'APP'
+   when t1.platform_type='mobile_web'  then 'H5'
    else 'others'
 end as source_type
  from
