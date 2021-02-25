@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS \`themis\`.\`ads_buyer_stat_feature\` (
   KEY \`buyer_id_key\` (\`buyer_id\`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 "
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -psYG2Ri3yIDu2NPki -e "${sql}"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
 
 if [ $? -ne 0 ];then
   exit 1
@@ -70,14 +70,13 @@ fi
 
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
--Dmapreduce.job.queuename=important \
 -Dsqoop.export.records.per.statement=1000 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
---username bimaster --password sYG2Ri3yIDu2NPki \
+--username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
 --m 1 \
 --table ads_buyer_stat_feature_new \
 --hcatalog-database ads \
---hcatalog-table ads_buyer_stat_feature \
+--hcatalog-table ads_vova_buyer_stat_feature \
 --columns buyer_id,reg_gender,reg_age_group,reg_ctry,reg_time,reg_channel,os_type,first_cat_likes,second_cat_likes,first_order_time,last_order_time,order_cnt,avg_price,price_range,buyer_act,trade_act,last_logint_type,last_buyer_type,buy_times_type,email_act \
 --fields-terminated-by '\001'
 
@@ -86,7 +85,7 @@ if [ $? -ne 0 ];then
 fi
 
 echo "----------开始rename-------"
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -psYG2Ri3yIDu2NPki <<EOF
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
 rename table themis.ads_buyer_stat_feature to themis.ads_buyer_stat_feature_pre,themis.ads_buyer_stat_feature_new to themis.ads_buyer_stat_feature;
 EOF
 echo "-------rename结束--------"
