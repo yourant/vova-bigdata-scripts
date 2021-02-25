@@ -22,18 +22,22 @@ u-采取区分新老用户策略，对于新用户，出优质优先（第二版
 取近180天有活跃的用户的激活时间
 DROP TABLE  mlb.mlb_vova_buyer_activate_time_day180;
 create table mlb.mlb_vova_buyer_activate_time_day180 (
-buyer_id       bigint     COMMENT '用户id',
-activate_time  timestamp  COMMENT '激活时间'
+buyer_id       bigint     COMMENT '用户id'
 ) COMMENT '近180天有pv的用户及激活时间' PARTITIONED BY (pt STRING)
-ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
+STORED AS PARQUETFILE;
+;
 
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/mlb/mlb_vova_buyer_activate_time_day180/
+
+-- activate_time  string     COMMENT '激活时间'
+
+drop table  rec_recall.mlb_vova_buyer_activate_time;
 create table rec_recall.mlb_vova_buyer_activate_time(
-\`id\`             int(11)   NOT NULL AUTO_INCREMENT COMMENT '自增主键',
-\`buyer_id\`       bigint    NOT NULL COMMENT '用户id',
-\`activate_time\`  timestamp NOT NULL COMMENT '用户当前设备激活时间',
+\`id\`             int(11)     NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+\`buyer_id\`       bigint      NOT NULL COMMENT '用户id',
 PRIMARY KEY (\`id\`) USING BTREE,
 UNIQUE KEY buyer_id (buyer_id) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='近180天有pv的用户及激活时间';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='近180天有pv的用户';
 
 
 select * from mlb.mlb_vova_buyer_activate_time_day180 where buyer_id = 110498268;
