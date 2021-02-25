@@ -13,7 +13,7 @@ SELECT /*+ REPARTITION(1) */
        datasource,
        'all'                         AS region_code,
        count(DISTINCT domain_userid) AS dau
-FROM dwd.fact_log_page_view
+FROM dwd.dwd_vova_log_page_view
 WHERE pt = '${cur_date}'
   AND datasource = 'airyclub'
   AND platform IN ('web', 'pc')

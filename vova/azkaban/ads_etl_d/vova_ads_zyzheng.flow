@@ -155,6 +155,15 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_dwd_vova_fact_order_cause_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_order_cause_v2
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
   -  name: ads_vova_flash_sale_coupon_goods
      type: command
      config:
@@ -247,6 +256,7 @@ nodes:
       - judge_dwd_vova_log_goods_click
       - judge_dwd_vova_log_goods_impression
       - judge_dwd_vova_fact_pay
+      - ads_vova_goods_performance_1m
 
   - name: ads_vova_goods_performance_page
     type: command
@@ -259,7 +269,7 @@ nodes:
       - judge_dwd_vova_log_goods_click
       - judge_dwd_vova_log_goods_impression
       - judge_dwd_vova_fact_pay
-      - judge_fact_order_cause_v2
+      - judge_dwd_vova_fact_order_cause_v2
 
   - name: ads_vova_goods_sn_performance
     type: command
@@ -272,6 +282,7 @@ nodes:
       - judge_dwd_vova_log_goods_click
       - judge_dwd_vova_log_goods_impression
       - judge_dwd_vova_fact_pay
+      - ads_vova_goods_performance_page
 
   - name: ads_zq_fn_vova_goods
     type: command
