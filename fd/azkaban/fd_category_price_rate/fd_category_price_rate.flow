@@ -1,0 +1,44 @@
+---
+config:
+  failure.emails: htgao@i9i8.com
+  retries: 30
+  retry.backoff: 600000
+
+nodes:
+  - name: fd_category_price_rate_start
+    type: noop
+
+  - name: judge_dwd_fd_goods_purchase_shop_price
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_goods_purchase_shop_price
+    dependsOn:
+      - fd_category_price_rate_start
+
+  - name: judge_fd_dim_category
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fd_dim_category
+    dependsOn:
+      - fd_category_price_rate_start
+
+  - name: judge_dwd_fd_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_goods
+    dependsOn:
+      - fd_category_price_rate_start
+
+  - name: dwb_fd_category_price_rate
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_category_price_rate/run.sh ${pt}
+    dependsOn:
+      - judge_dwd_fd_goods_purchase_shop_price
+      - judge_fd_dim_category
+      - judge_dwd_fd_order_goods
+
+  - name: fd_category_price_rate_end
+    type: noop
+    dependsOn:
+      - dwb_fd_category_price_rate
