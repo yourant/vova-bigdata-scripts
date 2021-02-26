@@ -13,9 +13,75 @@ echo "cur_date: ${cur_date}"
 table_suffix=`date -d "${cur_date}" +%Y%m%d`
 echo "table_suffix: ${table_suffix}"
 
-job_name="ads_vova_mct_manage_module_req7747_chenkai"
+job_name="ads_vova_mct_manage_module_req7747_chenkai_${cur_date}"
 
 ###逻辑sql
+sql="
+create table if not exists tmp.tmp_no_brand_avg_cr_last7d_${table_suffix} as
+select /*+ REPARTITION(1) */
+  tmp1.mct_id mct_id,
+  tmp1.first_cat_id first_cat_id,
+  sum(nvl(no_brand_pay_uv / no_brand_impression_uv, 0)) / 7 no_brand_avg_cr_last7d
+from
+(
+  select
+    flgi.pt pt,
+    dg.mct_id mct_id,
+    dg.first_cat_id first_cat_id,
+    count(distinct device_id) no_brand_impression_uv
+  from
+    dwd.dwd_vova_log_goods_impression flgi
+  left join
+    dim.dim_vova_goods dg
+  on flgi.datasource = dg.datasource and flgi.virtual_goods_id = dg.virtual_goods_id
+  where flgi.datasource = 'vova'
+    and flgi.pt <= '${cur_date}' and flgi.pt > date_sub('${cur_date}', 7)
+    and dg.brand_id = 0
+  group by flgi.pt, dg.mct_id, dg.first_cat_id
+) tmp1
+left join
+(
+  select
+    to_date(fp.pay_time) pt,
+    dg.mct_id mct_id,
+    dg.first_cat_id first_cat_id,
+    count(distinct fp.device_id) no_brand_pay_uv
+  from
+    dwd.dwd_vova_fact_pay fp
+  left join
+    dim.dim_vova_goods dg
+  on fp.datasource = dg.datasource and fp.goods_id = dg.goods_id
+  where fp.datasource = 'vova'
+    and to_date(fp.pay_time) <= '${cur_date}' and to_date(fp.pay_time) > date_sub('${cur_date}', 7)
+    and dg.brand_id = 0
+  group by to_date(fp.pay_time), dg.mct_id, dg.first_cat_id
+) tmp2
+on tmp1.pt = tmp2.pt and tmp1.mct_id = tmp2.mct_id and tmp1.first_cat_id = tmp2.first_cat_id
+group by tmp1.mct_id, tmp1.first_cat_id
+;
+"
+#如果使用spark-sql运行，则执行spark-sql -e
+spark-sql \
+--executor-memory 10G --executor-cores 1 \
+--conf "spark.sql.parquet.writeLegacyFormat=true"  \
+--conf "spark.dynamicAllocation.minExecutors=10" \
+--conf "spark.dynamicAllocation.initialExecutors=20" \
+--conf "spark.app.name=${job_name}" \
+--conf "spark.sql.crossJoin.enabled=true" \
+--conf "spark.default.parallelism=300" \
+--conf "spark.sql.shuffle.partitions=300" \
+--conf "spark.dynamicAllocation.maxExecutors=100" \
+--conf "spark.sql.adaptive.enabled=true" \
+--conf "spark.sql.adaptive.join.enabled=true" \
+--conf "spark.shuffle.sort.bypassMergeThreshold=10000" \
+--conf "spark.sql.autoBroadcastJoinThreshold=-1" \
+-e "$sql"
+#如果脚本失败，则报错
+if [ $? -ne 0 ];then
+  exit 1
+fi
+echo "${job_name} end_time:"  `date +"%Y-%m-%d %H:%M:%S" -d "8 hour"`
+
 sql="
 insert overwrite table ads.ads_vova_mct_manage_module PARTITION (pt = '${cur_date}')
 select
@@ -46,7 +112,8 @@ select
   nvl(round(t2.lrf_rate_9_12w, 4), 0) lrf_rate_9_12w,
   nvl(round(t3.nlrf_rate_5_8w, 4), 0) nlrf_rate_5_8w,
   nvl(no_brand_gmv_last7d, 0) no_brand_gmv_last7d,
-  nvl(no_brand_gmv_last1d, 0) no_brand_gmv_last1d
+  nvl(no_brand_gmv_last1d, 0) no_brand_gmv_last1d,
+  round(nvl(tmp.no_brand_avg_cr_last7d, 0), 4) no_brand_avg_cr_last7d
 from
 (
   select
@@ -91,6 +158,9 @@ from
   )
   group by mct_id, first_cat_id
 ) t1
+left join
+  tmp.tmp_no_brand_avg_cr_last7d_${table_suffix} tmp
+on t1.mct_id = tmp.mct_id and t1.first_cat_id = tmp.first_cat_id
 left join
   dim.dim_vova_merchant dm
 on t1.mct_id = dm.mct_id
@@ -175,12 +245,14 @@ left join
 on t1.mct_id = t3.mct_id and t1.first_cat_id = t3.first_cat_id
 where dm.mct_status in (2,3,4)
 ;
+
+drop table if exists tmp.tmp_no_brand_avg_cr_last7d_${table_suffix};
 "
 #如果使用spark-sql运行，则执行spark-sql -e
 spark-sql \
 --executor-memory 10G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
---conf "spark.dynamicAllocation.minExecutors=5" \
+--conf "spark.dynamicAllocation.minExecutors=10" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
 --conf "spark.app.name=${job_name}" \
 --conf "spark.sql.crossJoin.enabled=true" \
