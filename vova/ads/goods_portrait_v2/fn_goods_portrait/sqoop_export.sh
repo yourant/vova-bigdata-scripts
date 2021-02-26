@@ -62,10 +62,10 @@ sqoop export \
 -Dsqoop.export.records.per.statement=3000 \
 --connect jdbc:mysql://fn-rec.cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/search \
 --username datagroup20200925 --password 8SxDdHGDZyrsesCgfdEZvJmr \
---m 2 \
+--m 1 \
 --table fn_ads_goods_portrait_new \
 --hcatalog-database ads \
---hcatalog-table fn_ads_goods_portrait \
+--hcatalog-table ads_fn_goods_portrait \
 --hcatalog-partition-keys pt \
 --columns goods_id,datasource,cat_id,first_cat_id,price,expre_cnt_1w,clk_cnt_1w,add_cart_cnt_1w,collect_cnt_1w,sales_vol_1w,ord_cnt_1w,gmv_1w \
 --hcatalog-partition-values ${pre_date} \

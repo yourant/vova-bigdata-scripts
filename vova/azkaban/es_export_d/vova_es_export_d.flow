@@ -1,6 +1,6 @@
 ---
 config:
-  failure.emails: andy.zhang@vova.com.hk,kaicheng@vova.com.hk
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
   retries: 10
   retry.backoff: 600000
 
@@ -13,6 +13,12 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - export_es_ads_vova_mct_manage_module
+      - export_es_ads_goods_sn_performance
+      - export_es_ads_gsn_top1000
+      - export_es_ads_vova_goods_performance_page
+      - export_es_ads_vova_goods_performance_2m
+      - export_es_ads_vova_goods_performance_1m
+      - export_es_ads_vova_goods_performance
 
   - name: start_flag
     type: command
@@ -28,6 +34,52 @@ nodes:
     dependsOn:
       - start_flag
 
+
+  - name: judge_ads_vova_goods_sn_performance
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_sn_performance
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_goods_gsn_top1000
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_gsn_top1000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_ads_vova_goods_performance_page
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_performance_page
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_ads_vova_goods_performance_2m
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_performance_2m
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_goods_performance_1m
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_performance_1m
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_ads_vova_goods_performance
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_performance
+    dependsOn:
+      - start_flag
+
 ####################################################
 
   - name: export_es_ads_vova_mct_manage_module
@@ -37,6 +89,63 @@ nodes:
       retries: 5
     dependsOn:
       - judge_ads_vova_mct_manage_module
+
+  - name: export_es_ads_goods_sn_performance
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/es_export/ads_vova_goods_sn_performance
+      retries: 5
+    dependsOn:
+      - start_flag
+      - judge_ads_vova_goods_sn_performance
+
+  - name: export_es_ads_gsn_top1000
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/es_export/ads_vova_gsn_top1000/update.sh
+      retries: 5
+    dependsOn:
+      - start_flag
+      - judge_ads_vova_goods_gsn_top1000
+
+
+  - name: export_es_ads_vova_goods_performance_page
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/es_export/ads_vova_goods_performance_page/update.sh
+      retries: 5
+    dependsOn:
+      - start_flag
+      - judge_ads_vova_goods_performance_page
+
+  - name: export_es_ads_vova_goods_performance_2m
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/es_export/ads_vova_goods_performance_2m/update.sh
+      retries: 5
+    dependsOn:
+      - start_flag
+      - judge_ads_vova_goods_performance_2m
+
+
+  - name: export_es_ads_vova_goods_performance_1m
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/es_export/ads_vova_goods_performance_1m/update.sh
+      retries: 5
+    dependsOn:
+      - start_flag
+      - judge_ads_vova_goods_performance_1m
+
+
+  - name: export_es_ads_vova_goods_performance
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/es_export/ads_vova_goods_performance_1m/update.sh
+      retries: 5
+    dependsOn:
+      - start_flag
+      - judge_ads_vova_goods_performance
 
 
 

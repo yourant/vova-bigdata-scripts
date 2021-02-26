@@ -30,7 +30,7 @@ PRIMARY KEY (\`id\`) USING BTREE,
 INDEX \`tag_id\` (\`brand_id\`,\`price_range\`) USING BTREE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='商品画像品牌加价格区间gmv top20统计表';
 "
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -psYG2Ri3yIDu2NPki -e "${sql}"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
 
 if [ $? -ne 0 ];then
   exit 1
@@ -38,14 +38,13 @@ fi
 
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
--Dmapreduce.job.queuename=important \
 -Dsqoop.export.records.per.statement=3000 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
---username bimaster --password sYG2Ri3yIDu2NPki \
---m 2 \
+--username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
+--m 1 \
 --table ads_goods_portrait_brand_price_range_likes_top20_now \
 --hcatalog-database ads \
---hcatalog-table ads_goods_portrait_brand_price_range_likes_top20 \
+--hcatalog-table ads_vova_goods_portrait_brand_price_range_likes_top20 \
 --columns goods_id,brand_id,price_range,rk \
 --fields-terminated-by '\001'
 
@@ -54,7 +53,7 @@ if [ $? -ne 0 ];then
 fi
 
 echo "----------开始rename-------"
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -psYG2Ri3yIDu2NPki <<EOF
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
 rename table themis.ads_goods_portrait_brand_price_range_likes_top20 to themis.ads_goods_portrait_brand_price_range_likes_top20_pre,themis.ads_goods_portrait_brand_price_range_likes_top20_now to themis.ads_goods_portrait_brand_price_range_likes_top20;
 EOF
 echo "-------rename结束--------"
