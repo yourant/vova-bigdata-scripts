@@ -81,23 +81,23 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: judge_dim_vova_buyers
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_buyers
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - start_flag
+#  - name: judge_dim_vova_buyers
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_buyers
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - start_flag
 
-  - name: judge_dws_vova_buyer_goods_behave
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dws_vova_buyer_goods_behave
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - start_flag
+#  - name: judge_dws_vova_buyer_goods_behave
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dws_vova_buyer_goods_behave
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - start_flag
 
 
 ## job #############################################################
@@ -118,25 +118,25 @@ nodes:
       - judge_dwd_vova_fact_logistics
       - judge_ads_vova_traff_control
 
-# 活动会场 家居
-  - name: ads_vova_activity_home_garden
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity_home_garden/update.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - judge_dws_vova_buyer_goods_behave
-      - judge_dim_vova_buyers
-      - judge_dim_vova_goods
+# 活动会场 家居  # 统一迁移
+#  - name: ads_vova_activity_home_garden
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity_home_garden/update.sh
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - judge_dws_vova_buyer_goods_behave
+#      - judge_dim_vova_buyers
+#      - judge_dim_vova_goods
 
 ## export #############################################################
 
-  - name: ads_vova_activity_home_garden_export
-    type: command
-    config:
-      command: sh /mnt/vova-bd-scripts/ads/activity_home_garden/sqoop_export.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - judge_ads_activity_home_garden
+#  - name: ads_vova_activity_home_garden_export
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bd-scripts/ads/activity_home_garden/sqoop_export.sh
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - judge_ads_activity_home_garden

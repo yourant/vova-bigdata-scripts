@@ -70,17 +70,17 @@ from
       dg.mct_id,
       dg.first_cat_id,
       dg.goods_id,
-      if(fp.pay_time <= '${cur_date}' and fp.pay_time > date_sub('${cur_date}', 7), fp.shop_price * fp.goods_number + fp.shipping_fee, 0) gmv_day7, -- 近7日gmv
-      if(fp.pay_time <= '${cur_date}' and fp.pay_time > date_sub('${cur_date}', 7) and dg.brand_id = 0, fp.shop_price * fp.goods_number + fp.shipping_fee, 0) no_brand_gmv_last7d, -- 近7日非brand gmv
+      if(to_date(fp.pay_time) <= '${cur_date}' and to_date(fp.pay_time) > date_sub('${cur_date}', 7), fp.shop_price * fp.goods_number + fp.shipping_fee, 0) gmv_day7, -- 近7日gmv
+      if(to_date(fp.pay_time) <= '${cur_date}' and to_date(fp.pay_time) > date_sub('${cur_date}', 7) and dg.brand_id = 0, fp.shop_price * fp.goods_number + fp.shipping_fee, 0) no_brand_gmv_last7d, -- 近7日非brand gmv
       if(to_date(fp.pay_time) = '${cur_date}' and dg.brand_id = 0, fp.shop_price * fp.goods_number + fp.shipping_fee, 0) no_brand_gmv_last1d, -- 近1日非brand gmv
       if(dg.goods_sn like 'SN%' and dg.is_on_sale = 1, dg.goods_id, null) sn_goods_id, -- 在架sn商品数
-      if(dg.goods_sn like 'SN%' and dg.is_on_sale = 1 and dg.add_time <= '${cur_date}' and dg.add_time >= date_sub('${cur_date}', 30) , dg.goods_id, null) sn_new_goods_id, -- 近一月在架上新sn商品数
+      if(dg.goods_sn like 'SN%' and dg.is_on_sale = 1 and to_date(dg.add_time) <= '${cur_date}' and to_date(dg.add_time) >= date_sub('${cur_date}', 30) , dg.goods_id, null) sn_new_goods_id, -- 近一月在架上新sn商品数
       if(dg.goods_sn like 'GSN%' and dg.is_on_sale = 1, dg.goods_id, null) gsn_goods_id, -- 在架克隆gsn商品数量
-      if(dg.goods_sn like 'GSN%' and dg.is_on_sale = 1 and dg.add_time <= '${cur_date}' and dg.add_time >= date_sub('${cur_date}', 30) , dg.goods_id, null) new_gsn_goods_id, -- 近一月在架上新克隆gsn商品数
+      if(dg.goods_sn like 'GSN%' and dg.is_on_sale = 1 and to_date(dg.add_time) <= '${cur_date}' and to_date(dg.add_time) >= date_sub('${cur_date}', 30) , dg.goods_id, null) new_gsn_goods_id, -- 近一月在架上新克隆gsn商品数
       if(to_date(fp.pay_time)='${cur_date}' and fp.order_goods_id is not null, fp.goods_id, null) sold_goods_id, -- 出单商品数
       if(dg.is_on_sale = 1, dg.goods_id, null) on_sale_goods_id, -- 总在架商品数
-      if(dg.add_time <= '${cur_date}' and dg.add_time >= date_sub('${cur_date}', 30) and to_date(fp.pay_time)='${cur_date}' and fp.order_goods_id is not null, fp.goods_id, null) sold_new_goods_id, -- 近一月上新商品中出单商品数
-      if(dg.is_on_sale = 1 and dg.add_time <= '${cur_date}' and dg.add_time >= date_sub('${cur_date}', 30), dg.goods_id, null) on_sale_new_goods_id, -- 近1月在架上新商品数
+      if(to_date(dg.add_time) <= '${cur_date}' and to_date(dg.add_time) >= date_sub('${cur_date}', 30) and to_date(fp.pay_time)='${cur_date}' and fp.order_goods_id is not null, fp.goods_id, null) sold_new_goods_id, -- 近一月上新商品中出单商品数
+      if(dg.is_on_sale = 1 and to_date(dg.add_time) <= '${cur_date}' and to_date(dg.add_time) >= date_sub('${cur_date}', 30), dg.goods_id, null) on_sale_new_goods_id, -- 近1月在架上新商品数
       if(dg.is_on_sale = 1 and dg.brand_id > 0, dg.goods_id, null) on_sale_brand_goods_id -- 在架brand商品数
     from
       dim.dim_vova_goods dg
