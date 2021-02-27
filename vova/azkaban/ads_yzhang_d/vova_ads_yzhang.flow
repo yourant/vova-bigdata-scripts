@@ -11,7 +11,7 @@ nodes:
       command: echo "stop job"
     dependsOn:
       - ads_vova_traff_control
-      #- ads_vova_shield_goods
+      - ads_vova_shield_goods
       - ads_vova_mct_cat_relation
       - ads_vova_search_words_pool_d
       - ads_vova_search_words_pool_his_d
@@ -25,6 +25,7 @@ nodes:
       - ads_vova_gsn_reduce_valid_goods
       - ads_vova_flash_sale_goods_d
       - ads_vova_goods_changed_record_d
+      - ads_vova_buyer_goods_rating_redis_d
 
   - name: start_flag
     type: command
@@ -161,7 +162,7 @@ nodes:
   - name: judge_vova_gsn_reduce_valid_goods
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_gsn_reduce_valid_goods
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_gsn_reduce_valid_goods
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -194,14 +195,14 @@ nodes:
       - judge_dwd_vova_fact_logistics
       - judge_dwd_vova_fact_refund
 
-  #- name: ads_vova_shield_goods
-  #  type: command
-  #  config:
-  #    command: sh /mnt/vova-bigdata-scripts/vova/ads/shield_goods/update.sh
-  #    retries: 5
-  #    retry.backoff: 600000
-  #  dependsOn:
-  #    - start_flag
+  - name: ads_vova_shield_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/shield_goods/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
 
   - name: ads_vova_goods_restrict_d
     type: command
@@ -339,7 +340,7 @@ nodes:
   - name: judge_vova_flash_sale_apply
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ods/judge_check.sh vova_flash_sale_apply
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_flash_sale_apply
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -348,7 +349,7 @@ nodes:
   - name: judge_vova_region
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ods/judge_check.sh vova_region
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_region
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -375,3 +376,23 @@ nodes:
   #    retry.backoff: 600000
   #  dependsOn:
   #    - ads_vova_flash_sale_goods_d
+
+
+  - name: ads_vova_buyer_goods_rating_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_goods_rating/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_dim_vova_order_goods
+
+  - name: ads_vova_buyer_goods_rating_redis_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_goods_rating/update_redis.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - ads_vova_buyer_goods_rating_d

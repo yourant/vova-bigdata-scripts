@@ -1,0 +1,58 @@
+---
+config:
+  failure.emails: yzhang13@vova.com.hk
+  retries: 3
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      #- ads_vova_test_goods_h
+#      - ads_recall_goods_h
+      - ads_vova_hot_search_words_h
+      - ads_vova_back_stage_gsn_avg_price_h
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  #- name: ads_vova_test_goods_h
+  #  type: command
+  #  config:
+  #    command: sh /mnt/vova-bigdata-scripts/vova/ads/test_goods/ads_test_goods_h.sh
+  #  dependsOn:
+  #    - start_flag
+
+#  - name: ads_recall_goods_h
+#    type: command
+#    config:
+#      command:  sh /mnt/vova-bigdata-scripts/vova/ads/recall_goods/recall_goods_h.sh
+#    dependsOn:
+#      - judge_fact_log_v2_h
+
+  - name: judge_vova_fact_log_v2_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_v2_h
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_hot_search_words_h
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/hot_search_words_h/update.sh
+    dependsOn:
+      - judge_vova_fact_log_v2_h
+
+  - name: ads_vova_back_stage_gsn_avg_price_h
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/back_stage/cut_price/goods_sn_h.sh
+    dependsOn:
+      - start_flag

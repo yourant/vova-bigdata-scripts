@@ -11,7 +11,7 @@ echo "$pre_date"
 spark-submit --master yarn --deploy-mode cluster \
 --conf spark.dynamicAllocation.maxExecutors=100 \
 --conf spark.app.name=dwb_vova_test_goods_result_zhangyin \
---class com.vova.bigdata.sparkbatch.dataprocess.dwb.TestGoodsRptMain s3://vomkt-emr-rec/jar/test-goods-rpt-1.0.0.jar \
+--class com.vova.bigdata.sparkbatch.dataprocess.dwb.TestGoodsRptMain s3://vomkt-emr-rec/jar/vova-bigdata/vova-bigdata-sparkbatch/vova-bigdata-sparkbatch-1.0-SNAPSHOT.jar \
 ${pre_date}
 
 #如果脚本失败，则报错
@@ -23,7 +23,7 @@ spark-submit --master yarn \
 --conf spark.dynamicAllocation.maxExecutors=100 \
 --conf spark.app.name=dwb_vova_test_goods_month_performance_zhangyin \
 --class com.vova.bigdata.sparkbatch.dataprocess.dwb.TestGoodsMonthPerformanceMain \
-s3://vomkt-emr-rec/jar/test-goods-rpt-m-1.0.0.jar \
+s3://vomkt-emr-rec/jar/vova-bigdata/vova-bigdata-sparkbatch/vova-bigdata-sparkbatch-1.0-SNAPSHOT.jar \
 ${pre_date}
 
 #如果脚本失败，则报错

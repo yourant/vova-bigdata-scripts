@@ -65,7 +65,7 @@ hot_words,
 rank
 from ads_country_hot_search_words
 where region_code !='FR' and rank<=1000
-) t
+) t;
 "
 spark-sql --conf "spark.app.name=ads_vova_country_hot_search_words_zhangyin"  --conf "spark.dynamicAllocation.maxExecutors=100" -e "$sql"
 #如果脚本失败，则报错

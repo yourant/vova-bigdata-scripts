@@ -10,7 +10,7 @@ nodes:
     config:
       command: echo "stop job"
     dependsOn:
-      - dwb_vova_web_examination_h
+      - dwb_vova_web_examination_export_h
 
   - name: start_flag
     type: command
@@ -54,3 +54,12 @@ nodes:
       - judge_vova_fact_log_v2_h
       - judge_vova_order_info_h
       - judge_vova_order_goods_h
+
+  - name: dwb_vova_web_examination_export_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/web_examination/examination_export.sh
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - dwb_vova_web_examination_h
