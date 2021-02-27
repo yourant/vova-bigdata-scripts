@@ -1,0 +1,76 @@
+---
+config:
+  failure.emails: ted.wan@vova.com.hk
+  retries: 0
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_default_brand_cat_likes_weight
+      - ads_vova_default_brand_cat_likes_weight_export
+      - ads_vova_buyer_gmv_stage_3m
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: judge_dws_vova_buyer_goods_behave
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dws_vova_buyer_goods_behave
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_pay
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+  - name: ads_vova_default_brand_cat_likes_weight
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/user_brand_cat_likes_weight/default_update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_goods_behave
+
+  - name: ads_vova_default_brand_cat_likes_weight_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/user_brand_cat_likes_weight/default_sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - ads_vova_default_brand_cat_likes_weight
+
+  - name: ads_vova_buyer_gmv_stage_3m
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_portrait_v2/buyer_feature/update_gmv_stage_m.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_pay
+      - judge_dim_vova_goods

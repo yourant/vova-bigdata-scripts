@@ -15,7 +15,7 @@ job4_name="ads_buyer_portrait_second_category_likes_price_range_exp"
 
 ###逻辑sql
 sql="
-insert overwrite table ads.ads_buyer_portrait_second_category_price_range_likes partition(pt='${cur_date}')
+insert overwrite table ads.ads_vova_buyer_portrait_second_category_price_range_likes partition(pt='${cur_date}')
 SELECT
   /*+ REPARTITION(25) */
   buyer_id,
@@ -60,7 +60,7 @@ FROM
     sum(ord_cnt) AS ord_cnt,
     sum(gmv) AS gmv
   FROM
-    dws.dws_buyer_goods_behave
+    dws.dws_vova_buyer_goods_behave
   WHERE
     pt > date_sub('${cur_date}', 30) AND pt <= '${cur_date}' and second_cat_id is not null
   GROUP BY
@@ -75,7 +75,35 @@ GROUP BY
   price_range
 ;
 
-insert overwrite table ads.ads_buyer_portrait_second_category_likes_price_range_medium_term partition(pt='${cur_date}')
+INSERT OVERWRITE TABLE ads.ads_vova_buyer_portrait_second_category_likes_with_click_15d
+SELECT
+/*+ REPARTITION(10) */
+buyer_id,
+second_cat_id,
+price_range,
+expre_cnt_1w,
+expre_cnt_15d,
+expre_cnt_1m,
+clk_cnt_1w,
+clk_cnt_15d,
+clk_cnt_1m,
+clk_valid_cnt_1w,
+clk_valid_cnt_15d,
+clk_valid_cnt_1m,
+collect_cnt_1w,
+collect_cnt_15d,
+collect_cnt_1m,
+add_cat_cnt_1w,
+add_cat_cnt_15d,
+add_cat_cnt_1m,
+ord_cnt_1w,
+ord_cnt_15d,
+ord_cnt_1m
+FROM
+ads.ads_vova_buyer_portrait_second_category_price_range_likes
+where pt='${cur_date}' and clk_cnt_15d >0;
+
+insert overwrite table ads.ads_vova_buyer_portrait_second_category_likes_price_range_medium_term partition(pt='${cur_date}')
 SELECT
   /*+ REPARTITION(30) */
   buyer_id,
@@ -105,7 +133,7 @@ FROM
     sum(ord_cnt) AS ord_cnt,
     sum(gmv) AS gmv
   FROM
-    dws.dws_buyer_goods_behave
+    dws.dws_vova_buyer_goods_behave
   WHERE
     pt >= date_sub('${cur_date}', 60) AND pt < date_sub('${cur_date}', 15) and second_cat_id is not null and clk_cnt > 0
   GROUP BY
@@ -120,7 +148,7 @@ GROUP BY
   price_range
 ;
 
-insert overwrite table ads.ads_buyer_portrait_second_category_likes_price_range_long_term partition(pt='${cur_date}')
+insert overwrite table ads.ads_vova_buyer_portrait_second_category_likes_price_range_long_term partition(pt='${cur_date}')
 SELECT
   /*+ REPARTITION(1) */
   buyer_id,
@@ -129,7 +157,7 @@ SELECT
   sum(ord_cnt) AS ord_cnt,
   sum(gmv) AS gmv
 FROM
-  dws.dws_buyer_goods_behave
+  dws.dws_vova_buyer_goods_behave
 WHERE
   pt < date_sub('${cur_date}', 60) and second_cat_id is not null and ord_cnt > 0
 GROUP BY
@@ -138,7 +166,7 @@ GROUP BY
   price_range
 ;
 
-insert overwrite table ads.ads_buyer_portrait_second_category_likes_price_range_exp partition(pt='${cur_date}')
+insert overwrite table ads.ads_vova_buyer_portrait_second_category_likes_price_range_exp partition(pt='${cur_date}')
 select
 /*+ REPARTITION(20) */
   buyer_id,
@@ -197,14 +225,14 @@ from
         sum(collect_cnt_15d) collect_cnt_15d_all,
         sum(add_cat_cnt_15d) add_cat_cnt_15d_all,
         sum(gmv_15d) gmv_15d_all
-      from ads.ads_buyer_portrait_second_category_price_range_likes
+      from ads.ads_vova_buyer_portrait_second_category_price_range_likes
       where pt='${cur_date}' and min_clk_day_gap is not null
       GROUP by buyer_id
     ) r
     left join
     (
       select *
-      from ads.ads_buyer_portrait_second_category_price_range_likes
+      from ads.ads_vova_buyer_portrait_second_category_price_range_likes
       where pt='${cur_date}' and buyer_id>0 and min_clk_day_gap is not null
     ) l
     on l.buyer_id = r.buyer_id
@@ -231,14 +259,14 @@ from
         sum(clk_cnt) clk_cnt_medium_term_all,
         sum(collect_cnt) collect_cnt_medium_term_all,
         sum(add_cat_cnt) add_cat_cnt_medium_term_all
-      from ads.ads_buyer_portrait_second_category_likes_price_range_medium_term
+      from ads.ads_vova_buyer_portrait_second_category_likes_price_range_medium_term
       where pt='${cur_date}' and min_clk_day_gap is not null
       GROUP by buyer_id
     ) r
     left join
     (
       select *
-      from ads.ads_buyer_portrait_second_category_likes_price_range_medium_term
+      from ads.ads_vova_buyer_portrait_second_category_likes_price_range_medium_term
       where pt='${cur_date}' and buyer_id>0 and min_clk_day_gap is not null
     ) l
     on l.buyer_id = r.buyer_id
@@ -261,14 +289,14 @@ from
         buyer_id,
         sum(ord_cnt) ord_cnt_long_term_all,
         sum(gmv) gmv_long_term_all
-      from ads.ads_buyer_portrait_second_category_likes_price_range_long_term
+      from ads.ads_vova_buyer_portrait_second_category_likes_price_range_long_term
       where pt='${cur_date}' and gmv > 0
       GROUP by buyer_id
     ) r
     left join
     (
       select *
-      from ads.ads_buyer_portrait_second_category_likes_price_range_long_term
+      from ads.ads_vova_buyer_portrait_second_category_likes_price_range_long_term
       where pt='${cur_date}' and buyer_id > 0 and gmv > 0
     ) l
     on l.buyer_id = r.buyer_id

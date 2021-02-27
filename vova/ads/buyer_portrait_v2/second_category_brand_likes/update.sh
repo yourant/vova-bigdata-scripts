@@ -7,8 +7,8 @@ if [ ! -n "$1" ]; then
 fi
 
 sql="
-ALTER TABLE ads.ads_buyer_portrait_second_category_brand_likes DROP if exists partition(pt = '$(date -d "${pre_date:0:10} -180day" +%Y-%m-%d)');
-insert overwrite table ads.ads_buyer_portrait_second_category_brand_likes partition(pt='$pre_date')
+ALTER TABLE ads.ads_vova_buyer_portrait_second_category_brand_likes DROP if exists partition(pt = '$(date -d "${pre_date:0:10} -180day" +%Y-%m-%d)');
+insert overwrite table ads.ads_vova_buyer_portrait_second_category_brand_likes partition(pt='$pre_date')
 SELECT
   /*+ REPARTITION(30) */
   buyer_id,
@@ -51,7 +51,7 @@ SELECT
   sum( ord_cnt ) AS ord_cnt,
   sum( gmv ) AS gmv
 FROM
-  dws.dws_buyer_goods_behave
+  dws.dws_vova_buyer_goods_behave
 WHERE
   pt > date_sub( '${pre_date}', 30 )
   AND pt <= '${pre_date}'
@@ -70,12 +70,12 @@ GROUP BY
 
 #如果使用spark-sql运行，则执行spark-sql -e
 spark-sql \
---executor-memory 8G --executor-cores 1 \
+--executor-memory 4G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=5" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
---conf "spark.dynamicAllocation.maxExecutors=100" \
---conf "spark.app.name=ads_buyer_portrait_second_category_brand_likes" \
+--conf "spark.dynamicAllocation.maxExecutors=200" \
+--conf "spark.app.name=ads_vova_buyer_portrait_second_category_brand_likes" \
 --conf "spark.default.parallelism = 380" \
 --conf "spark.sql.shuffle.partitions=380" \
 --conf "spark.sql.adaptive.enabled=true" \

@@ -45,7 +45,7 @@ hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_second_cat_manif
 
 hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_second_cat_manifest/*
 
-hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_second_cat_manifest/  s3://bigdata-offline/warehouse/dwb/dwb_vova_second_cat_manifest
+hadoop distcp -overwrite -m 30 hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_second_cat_manifest/  s3://bigdata-offline/warehouse/dwb/dwb_vova_second_cat_manifest
 
 hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_second_cat_manifest/*
 
@@ -53,3 +53,15 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_second_cat_manifest/
 
 msck repair table dwb.dwb_vova_second_cat_manifest;
 select * from dwb.dwb_vova_second_cat_manifest limit 20;
+
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_second_cat_manifest/pt=2021-*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_second_cat_manifest/pt=2021-01-23  s3://bigdata-offline/warehouse/dwb/dwb_vova_second_cat_manifest/pt=2021-01-23
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_second_cat_manifest/pt=2021-01-24  s3://bigdata-offline/warehouse/dwb/dwb_vova_second_cat_manifest/pt=2021-01-24
+
+
+
+
+
+

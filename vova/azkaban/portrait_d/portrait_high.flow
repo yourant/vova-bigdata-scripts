@@ -1,0 +1,359 @@
+---
+config:
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk
+  retries: 10
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_goods_portrait_v2
+      - ads_vova_buyer_portrait_brand_likes
+      - ads_vova_buyer_portrait_feature
+      - ads_vova_buyer_portrait_category_likes
+      - ads_vova_buyer_portrait_goods_likes
+      - ads_vova_buyer_portrait_second_category_likes
+      - ads_vova_brand_portrait
+      - ads_vova_buyer_portrait_first_category_likes
+      - ads_fn_goods_portrait
+
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: judge_dim_vova_buyers
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_buyers
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_devices
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_devices
+      retries: 15
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_goods_click
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_click
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_common_click
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_common_click
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_pay
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_start_up
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_start_up
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_order_goods
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_vova_email_send_log_a
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_email_send_log_a
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_email_send_log_b
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_email_send_log_b
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_vova_email_send_log_c
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_email_send_log_c
+    dependsOn:
+      - start_flag
+
+  - name: judge_dws_vova_buyer_goods_behave
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dws_vova_buyer_goods_behave
+      retries: 15
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_goods_impression
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_impression
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_goods
+      retries: 15
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_comment
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_comment
+      retries: 15
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_screen_view
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_screen_view
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_brand
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_brand
+      retries: 15
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_category
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_category
+      retries: 15
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_search_word
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_search_word
+      retries: 15
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_languages
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_languages
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_category
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_category
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_goods_click_cause
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_goods_click_cause
+      retries: 15
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_data
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_data
+      retries: 15
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_fn_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fn_order_goods
+      retries: 15
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_fn_order_info
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fn_order_info
+      retries: 15
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+  - name: ads_vova_goods_portrait_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_portrait_v2/goods_portrait/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_goods_behave
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_goods_click
+      - judge_dim_vova_goods
+      - judge_vova_goods
+      - judge_dwd_vova_fact_pay
+      - judge_dwd_vova_log_common_click
+      - judge_dwd_vova_fact_comment
+
+  - name: ads_vova_buyer_portrait_brand_likes
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_portrait_v2/brand_likes/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_goods_behave
+
+  - name: ads_vova_buyer_portrait_feature
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_portrait_v2/buyer_feature/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_buyers
+      - judge_dim_vova_devices
+      - judge_dwd_vova_log_goods_click
+      - judge_dim_vova_goods
+      - judge_dwd_vova_log_common_click
+      - judge_dwd_vova_fact_pay
+      - judge_dwd_vova_fact_start_up
+      - judge_dim_vova_order_goods
+      - judge_vova_email_send_log_a
+      - judge_vova_email_send_log_b
+      - judge_vova_email_send_log_c
+
+
+  - name: ads_vova_buyer_portrait_category_likes
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_portrait_v2/category_likes/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_goods_behave
+
+
+  - name: ads_vova_buyer_portrait_goods_likes
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_portrait_v2/goods_likes/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_goods_behave
+      - judge_dwd_vova_fact_pay
+
+
+  - name: ads_vova_brand_portrait
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_portrait_v2/brand_portrait/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_goods_behave
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_goods_click
+
+
+  - name: ads_vova_buyer_portrait_first_category_likes
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_portrait_v2/first_category_likes/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_goods_behave
+
+
+  - name: ads_vova_buyer_portrait_second_category_likes
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_portrait_v2/second_category_likes/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_goods_behave
+
+  - name: ads_fn_goods_portrait
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_portrait_v2/fn_goods_portrait/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_data
+      - judge_fn_order_goods
+      - judge_fn_order_info

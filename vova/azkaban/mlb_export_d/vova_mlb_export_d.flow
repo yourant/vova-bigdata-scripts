@@ -1,0 +1,62 @@
+---
+config:
+  failure.emails: yzhang13@vova.com.hk,dyshu@vova.com.hk,kaicheng@vova.com.hk
+  retries: 5
+  retry.backoff: 600000
+
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - sqoop_mlb_vova_rec_m_nbi_nb_d
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+##judge#############
+  - name: judge_mlb_vova_rec_m_nbi_nb_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_rec_m_nbi_nb_d
+    dependsOn:
+      - start_flag
+
+  - name: judge_mlb_vova_buyer_activate_time
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_buyer_activate_time
+    dependsOn:
+      - start_flag
+
+########################
+  - name: sqoop_mlb_vova_rec_m_nbi_nb_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_m_nbi_nb_d/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_rec_m_nbi_nb_d
+
+  - name: sqoop_mlb_vova_buyer_activate_time
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/buyer_activate_time/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_buyer_activate_time
+
+
+
+
+
+
+
+
+

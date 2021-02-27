@@ -59,6 +59,12 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_group_goods_day7_top50/
 msck repair table dwb.dwb_vova_group_goods_day7_top50;
 select * from dwb.dwb_vova_group_goods_day7_top50 limit 20;
 
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_group_goods_day7_top50/pt=2021-*
 
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_group_goods_day7_top50/pt=2021-01-23  s3://bigdata-offline/warehouse/dwb/dwb_vova_group_goods_day7_top50/pt=2021-01-23
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_group_goods_day7_top50/pt=2021-01-24  s3://bigdata-offline/warehouse/dwb/dwb_vova_group_goods_day7_top50/pt=2021-01-24
 
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_group_goods_day7_top50/pt=2021-02-10  s3://bigdata-offline/warehouse/dwb/dwb_vova_group_goods_day7_top50/pt=2021-02-10
 
+hadoop distcp -overwrite -m 3 hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_group_goods_day7_top50/pt=2021-02-21  s3://bigdata-offline/warehouse/dwb/dwb_vova_group_goods_day7_top50/pt=2021-02-21

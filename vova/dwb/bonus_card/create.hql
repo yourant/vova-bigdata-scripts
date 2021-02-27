@@ -150,7 +150,7 @@ hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_bonus_card_conve
 
 hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_bonus_card_conversion/*
 
-hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_bonus_card_conversion/  s3://bigdata-offline/warehouse/dwb/dwb_vova_bonus_card_conversion
+hadoop distcp -overwrite -m 30 hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_bonus_card_conversion/  s3://bigdata-offline/warehouse/dwb/dwb_vova_bonus_card_conversion
 
 hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_bonus_card_conversion/*
 
@@ -159,8 +159,15 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_bonus_card_conversion/
 msck repair table dwb.dwb_vova_bonus_card_conversion;
 select * from dwb.dwb_vova_bonus_card_conversion limit 20;
 
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_bonus_card_conversion/pt=2021-*
 
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_bonus_card_conversion/pt=2021-01-23  s3://bigdata-offline/warehouse/dwb/dwb_vova_bonus_card_conversion/pt=2021-01-23
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_bonus_card_conversion/pt=2021-01-24  s3://bigdata-offline/warehouse/dwb/dwb_vova_bonus_card_conversion/pt=2021-01-24
 
+hadoop distcp -overwrite -m 3 hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_bonus_card_conversion/pt=2021-02-21 s3://bigdata-offline/warehouse/dwb/dwb_vova_bonus_card_conversion/pt=2021-02-21
+
+#######################################################################
 2021-01-23 历史数据迁移
 dwb.dwb_vova_bonus_card_coupon
 
@@ -172,7 +179,7 @@ hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_bonus_card_coupo
 
 hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_bonus_card_coupon/*
 
-hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_bonus_card_coupon/  s3://bigdata-offline/warehouse/dwb/dwb_vova_bonus_card_coupon
+hadoop distcp -overwrite -m 30 hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_bonus_card_coupon/  s3://bigdata-offline/warehouse/dwb/dwb_vova_bonus_card_coupon
 
 hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_bonus_card_coupon/*
 
@@ -181,6 +188,10 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_bonus_card_coupon/
 msck repair table dwb.dwb_vova_bonus_card_coupon;
 select * from dwb.dwb_vova_bonus_card_coupon limit 20;
 
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_bonus_card_coupon/pt=2021-*
+
+#######################################################################
 2021-01-23 历史数据迁移
 dwb.dwb_vova_bonus_card_pay
 
@@ -192,7 +203,7 @@ hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_bonus_card_pay/*
 
 hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_bonus_card_pay/*
 
-hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_bonus_card_pay/  s3://bigdata-offline/warehouse/dwb/dwb_vova_bonus_card_pay
+hadoop distcp -overwrite -m 30 hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_bonus_card_pay/  s3://bigdata-offline/warehouse/dwb/dwb_vova_bonus_card_pay
 
 hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_bonus_card_pay/*
 
@@ -201,6 +212,11 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_bonus_card_pay/
 msck repair table dwb.dwb_vova_bonus_card_pay;
 select * from dwb.dwb_vova_bonus_card_pay limit 20;
 
+#
+hadoop distcp -overwrite -m 30 hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_bonus_card_pay/pt=2021-02-18  s3://bigdata-offline/warehouse/dwb/dwb_vova_bonus_card_pay/pt=2021-02-18
+
+
+#######################################################################
 2021-01-23 历史数据迁移
 dwb.dwb_vova_vouchercard_hp_paid_retention
 

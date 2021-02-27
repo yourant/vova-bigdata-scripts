@@ -47,7 +47,7 @@ hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result
 
 hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_search_no_result_frequent_word/*
 
-hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_search_no_result_frequent_word/  s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result_frequent_word
+hadoop distcp -overwrite -m 20 hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_search_no_result_frequent_word/  s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result_frequent_word
 
 hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result_frequent_word/*
 
@@ -55,6 +55,13 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result_frequent
 
 msck repair table dwb.dwb_vova_search_no_result_frequent_word;
 select * from dwb.dwb_vova_search_no_result_frequent_word limit 20;
+
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result_frequent_word/pt=2021-0*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_search_no_result_frequent_word/pt=2021-01-22  s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result_frequent_word/pt=2021-01-22
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_search_no_result_frequent_word/pt=2021-01-23  s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result_frequent_word/pt=2021-01-23
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_search_no_result_frequent_word/pt=2021-01-24  s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result_frequent_word/pt=2021-01-24
 
 @@@@@@@@@@@@@@@@@@@@@@@
 
@@ -68,7 +75,7 @@ hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result
 
 hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_search_no_result/*
 
-hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_search_no_result/  s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result
+hadoop distcp -overwrite -m 20 hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_search_no_result/  s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result
 
 hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result/*
 
@@ -76,3 +83,13 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result/
 
 msck repair table dwb.dwb_vova_search_no_result;
 select * from dwb.dwb_vova_search_no_result limit 20;
+
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result/pt=2021-0*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_search_no_result/pt=2021-01-22  s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result/pt=2021-01-22
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_search_no_result/pt=2021-01-23  s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result/pt=2021-01-23
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_search_no_result/pt=2021-01-24  s3://bigdata-offline/warehouse/dwb/dwb_vova_search_no_result/pt=2021-01-24
+
+
+

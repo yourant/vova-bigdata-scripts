@@ -1,0 +1,142 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_mct_manage_module
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+## judge ############################################
+  - name: judge_dim_vova_merchant
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_merchant
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_pay
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_order_goods
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_refund
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_refund
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_logistics
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_logistics
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_traff_control
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_traff_control
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+#  - name: judge_dim_vova_buyers
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_buyers
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - start_flag
+
+#  - name: judge_dws_vova_buyer_goods_behave
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dws_vova_buyer_goods_behave
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - start_flag
+
+
+## job #############################################################
+
+# 店铺管理，结果输出 ES
+  - name: ads_vova_mct_manage_module
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/es_export/ads_vova_mct_manage_module/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_merchant
+      - judge_dim_vova_goods
+      - judge_dwd_vova_fact_pay
+      - judge_dim_vova_order_goods
+      - judge_dwd_vova_fact_refund
+      - judge_dwd_vova_fact_logistics
+      - judge_ads_vova_traff_control
+
+# 活动会场 家居  # 统一迁移
+#  - name: ads_vova_activity_home_garden
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity_home_garden/update.sh
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - judge_dws_vova_buyer_goods_behave
+#      - judge_dim_vova_buyers
+#      - judge_dim_vova_goods
+
+## export #############################################################
+
+#  - name: ads_vova_activity_home_garden_export
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bd-scripts/ads/activity_home_garden/sqoop_export.sh
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - judge_ads_activity_home_garden

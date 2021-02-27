@@ -57,3 +57,7 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_finance_self_mct_summary/
 msck repair table dwb.dwb_vova_finance_self_mct_summary;
 select * from dwb.dwb_vova_finance_self_mct_summary limit 20;
 
+
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_finance_self_mct_summary/pt=2021-*
+

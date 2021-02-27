@@ -95,6 +95,15 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_daily/
 msck repair table dwb.dwb_vova_markdown_goods_daily;
 select * from dwb.dwb_vova_markdown_goods_daily limit 20;
 
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_daily/pt=2021-0*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_markdown_goods_daily/pt=2021-01-22  s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_daily/pt=2021-01-22
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_markdown_goods_daily/pt=2021-01-23  s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_daily/pt=2021-01-23
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_markdown_goods_daily/pt=2021-01-24  s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_daily/pt=2021-01-24
+
+
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 dwb.dwb_vova_markdown_order_daily
 
@@ -115,6 +124,12 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_order_daily/
 msck repair table dwb.dwb_vova_markdown_order_daily;
 select * from dwb.dwb_vova_markdown_order_daily limit 20;
 
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_order_daily/pt=2021-0*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_markdown_order_daily/pt=2021-01-22  s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_order_daily/pt=2021-01-22
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_markdown_order_daily/pt=2021-01-23  s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_order_daily/pt=2021-01-23
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 dwb.dwb_vova_markdown_goods_sales
 
@@ -134,3 +149,11 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_sales/
 
 msck repair table dwb.dwb_vova_markdown_goods_sales;
 select * from dwb.dwb_vova_markdown_goods_sales limit 20;
+
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_sales/pt=2021-0*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_markdown_goods_sales/pt=2021-01-22  s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_sales/pt=2021-01-22
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_markdown_goods_sales/pt=2021-01-23  s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_sales/pt=2021-01-23
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_markdown_goods_sales/pt=2021-01-24  s3://bigdata-offline/warehouse/dwb/dwb_vova_markdown_goods_sales/pt=2021-01-24
+

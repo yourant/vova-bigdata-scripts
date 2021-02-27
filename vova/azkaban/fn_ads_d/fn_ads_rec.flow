@@ -1,0 +1,56 @@
+---
+config:
+  failure.emails: ethan.zheng@i9i8.com
+  retries: 100
+  retry.backoff: 120000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_zq_fn_rec_mlb_goods
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: ads_zq_fn_rec_mlb_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ads/fn/fn_rec_goods/mlb_rec_update.sh
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - ads_zq_fn_rec_goods
+
+  - name: ads_zq_fn_rec_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ads/fn/fn_rec_goods/update.sh
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - judge_fact_log_goods_click
+      - judge_fn_dim_goods
+
+  - name: judge_fact_log_goods_click
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh fact_log_goods_click
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_fn_dim_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh fn_dim_goods
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+

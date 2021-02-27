@@ -6,8 +6,8 @@ if [ ! -n "$1" ]; then
   pre_date=$(date -d "-1 day" +%Y-%m-%d)
 fi
 sql="
-ALTER TABLE ads.ads_buyer_portrait_goods_likes DROP if exists partition(pt = '$(date -d "${pre_date:0:10} -60day" +%Y-%m-%d)');
-INSERT overwrite TABLE ads.ads_buyer_portrait_goods_likes partition(pt='$pre_date')
+ALTER TABLE ads.ads_vova_buyer_portrait_goods_likes DROP if exists partition(pt = '$(date -d "${pre_date:0:10} -60day" +%Y-%m-%d)');
+INSERT overwrite TABLE ads.ads_vova_buyer_portrait_goods_likes partition(pt='$pre_date')
 SELECT
 /*+ REPARTITION(30) */
 /*+ BROADCAST(tmp_ord) */
@@ -42,7 +42,7 @@ SELECT
 	sum( add_cat_cnt ) AS add_cat_cnt,
 	sum( ord_cnt ) AS ord_cnt
 FROM
-	dws.dws_buyer_goods_behave
+	dws.dws_vova_buyer_goods_behave
 WHERE
 	pt > date_sub( '${pre_date}', 60 )
 	AND pt <= '${pre_date}'
@@ -61,7 +61,7 @@ SELECT
 	goods_id gs_id,
 	count( * ) AS ord_cnt
 FROM
-	dwd.fact_pay fp
+	dwd.dwd_vova_fact_pay fp
 WHERE
 	to_date ( order_time ) > date_sub( '${pre_date}', 180 )
 	AND to_date ( order_time ) <= '${pre_date}'
@@ -75,12 +75,13 @@ GROUP BY
 
 #如果使用spark-sql运行，则执行spark-sql -e
 spark-sql \
---executor-memory 8G --executor-cores 1 \
+--driver-memory 8G \
+--executor-memory 6G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=5" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
---conf "spark.dynamicAllocation.maxExecutors=100" \
---conf "spark.app.name=ads_buyer_portrait_goods_likes" \
+--conf "spark.dynamicAllocation.maxExecutors=200" \
+--conf "spark.app.name=ads_vova_buyer_portrait_goods_likes" \
 --conf "spark.default.parallelism = 380" \
 --conf "spark.sql.shuffle.partitions=380" \
 --conf "spark.sql.adaptive.enabled=true" \

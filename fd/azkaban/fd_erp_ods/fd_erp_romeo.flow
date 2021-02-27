@@ -18,7 +18,7 @@ nodes:
   - name: ods_order_inv_reserved_detail
     type: command
     config:
-        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=INCTIME --inc_column=reserved_time --table_name=order_inv_reserved_detail  --partition_num=1 --period_type=day
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=order_inv_reserved_detail  --mapers=300 --partition_num=50 --period_type=day
     dependsOn:
         - fd_romeo_flow_start
 
@@ -32,7 +32,7 @@ nodes:
   - name: ods_order_inv_reserverd_inventory_mapping
     type: command
     config:
-        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=INCID --inc_column=id --table_name=order_inv_reserverd_inventory_mapping  --partition_num=1 --period_type=day
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=order_inv_reserverd_inventory_mapping  --mapers=100 --partition_num=40 --period_type=day
     dependsOn:
         - fd_romeo_flow_start
   

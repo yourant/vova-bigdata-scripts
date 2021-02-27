@@ -44,7 +44,7 @@ hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_high_refund_good
 
 hadoop fs -du -s -h /user/hive/warehouse/rpt.db/rpt_high_refund_goods_restrict_monitor/*
 
-hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_high_refund_goods_restrict_monitor/  s3://bigdata-offline/warehouse/dwb/dwb_vova_high_refund_goods_restrict_monitor
+hadoop distcp -overwrite -m 30 hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_high_refund_goods_restrict_monitor/  s3://bigdata-offline/warehouse/dwb/dwb_vova_high_refund_goods_restrict_monitor
 
 hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_high_refund_goods_restrict_monitor/*
 
@@ -52,3 +52,5 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_high_refund_goods_restric
 
 msck repair table dwb.dwb_vova_high_refund_goods_restrict_monitor;
 select * from dwb.dwb_vova_high_refund_goods_restrict_monitor limit 20;
+
+#

@@ -10,25 +10,25 @@ cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 echo "cur_date: ${cur_date}"
 
-job_name="ads_activity_home_garden_req7369_chenkai"
+job_name="ads_vova_activity_home_garden_req7369_chenkai"
 
 ###逻辑sql
 sql="
 with tmp_home_garden as (
  select
-   t1.goods_id,
-   t1.region_id,
-   t1.expre_cnt,
-   t1.clk_cnt,
-   t1.ord_cnt,
-   t1.gmv,
-   t1.sales_vol,
-   t1.users,
-   t1.click_uv,
-   dg.first_cat_name,
-   dg.first_cat_id,
-   dg.second_cat_id,
-   dg.second_cat_name,
+   t1.goods_id goods_id,
+   t1.region_id region_id,
+   t1.expre_cnt expre_cnt,
+   t1.clk_cnt clk_cnt,
+   t1.ord_cnt ord_cnt,
+   t1.gmv gmv,
+   t1.sales_vol sales_vol,
+   t1.users users,
+   t1.click_uv click_uv,
+   dg.first_cat_name first_cat_name,
+   dg.first_cat_id first_cat_id,
+   dg.second_cat_id second_cat_id,
+   dg.second_cat_name second_cat_name,
    round(nvl(t1.clk_cnt / t1.expre_cnt, 0), 4) ctr,
    round(nvl(t1.gmv / t1.click_uv * t1.clk_cnt / t1.expre_cnt * 10000, 0), 4) gcr,
    round(nvl(t1.ord_cnt / t1.click_uv, 0), 4) rate
@@ -45,12 +45,12 @@ with tmp_home_garden as (
      count(distinct IF ( gb.expre_cnt > 0, gb.buyer_id, NULL )) as users,
      count( DISTINCT IF ( gb.clk_cnt > 0, gb.buyer_id, NULL ) ) AS click_uv
    FROM
-       dws.dws_buyer_goods_behave gb
+       dws.dws_vova_buyer_goods_behave gb
    LEFT JOIN
-     dwd.dim_buyers db
+     dim.dim_vova_buyers db
    ON db.buyer_id = gb.buyer_id
    left join
-     dwd.dim_goods dg
+     dim.dim_vova_goods dg
    on dg.goods_id = gb.gs_id
    WHERE gb.pt <= '${cur_date}'
        AND gb.pt > date_sub( '${cur_date}', 7 )
@@ -59,15 +59,15 @@ with tmp_home_garden as (
        AND db.region_id != 0
        and dg.brand_id <=0
    GROUP BY cube(gb.gs_id, db.region_id)
-   having goods_id != 'all'
-     and region_id in (0,4003,4056,4017,4143,3858)
  ) t1
  left join
-   dwd.dim_goods dg
+   dim.dim_vova_goods dg
  on t1.goods_id = dg.goods_id
+ where t1.goods_id != 'all'
+     and t1.region_id in (0,4003,4056,4017,4143,3858)
 )
 
-INSERT overwrite TABLE ads.ads_activity_home_garden PARTITION ( pt = '${cur_date}' )
+INSERT overwrite TABLE ads.ads_vova_activity_home_garden PARTITION ( pt = '${cur_date}' )
 select
 /*+ REPARTITION(1) */
   goods_id,
@@ -154,7 +154,7 @@ spark-sql \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
 --conf "spark.app.name=${job_name}" \
 --conf "spark.sql.crossJoin.enabled=true" \
---conf "spark.default.parallelism = 300" \
+--conf "spark.default.parallelism=300" \
 --conf "spark.sql.shuffle.partitions=300" \
 --conf "spark.dynamicAllocation.maxExecutors=120" \
 --conf "spark.sql.adaptive.enabled=true" \

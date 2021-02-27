@@ -120,7 +120,6 @@ from
         from
         tmp.tmp_search_${table_suffix}
         group by cube(datasource, region_code, search_word)
-        having region_code in ('all','FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW')
       ) tmp where search_no_result_pv >= 5
     ) result
     left join
@@ -192,7 +191,6 @@ from
   on result.search_word like concat('%',word.brand_name,'%') or word.brand_name like concat('%',result.search_word,'%')
 ) tmp1 where row = 1 and datasource is not null and region_code is not null and platform is not null and is_brand_word is not null
 group by cube(datasource, region_code, platform, is_brand_word)
-having region_code in ('all','FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW') and datasource in ('vova', 'airyclub', 'all')
 ;
 
 drop table if exists tmp.tmp_search_${table_suffix};

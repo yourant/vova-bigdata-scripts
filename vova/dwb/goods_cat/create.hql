@@ -57,3 +57,11 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_goods_gcr_gmv_report/
 msck repair table dwb.dwb_vova_goods_gcr_gmv_report;
 select * from dwb.dwb_vova_goods_gcr_gmv_report limit 20;
 
+#
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_goods_gcr_gmv_report/pt=2021-*
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/goods_gcr_gmv_report/pt=2021-01-22  s3://bigdata-offline/warehouse/dwb/dwb_vova_goods_gcr_gmv_report/pt=2021-01-22
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/goods_gcr_gmv_report/pt=2021-01-23  s3://bigdata-offline/warehouse/dwb/dwb_vova_goods_gcr_gmv_report/pt=2021-01-23
+
+hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/goods_gcr_gmv_report/pt=2021-01-24  s3://bigdata-offline/warehouse/dwb/dwb_vova_goods_gcr_gmv_report/pt=2021-01-24
