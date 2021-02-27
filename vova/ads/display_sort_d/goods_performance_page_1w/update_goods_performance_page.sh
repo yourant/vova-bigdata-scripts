@@ -158,7 +158,6 @@ inner join dim.dim_vova_goods dg on dg.virtual_goods_id = log.virtual_goods_id
 WHERE log.pt >= date_sub('${cur_date}', 6)
   AND log.pt <= '${cur_date}'
   AND log.platform = 'mob'
-  AND log.datasource in ('vova', 'airyclub')
      ) temp
 group by cube (datasource, rec_page_code, goods_id, nvl(geo_country, 'NA'))
 
@@ -204,7 +203,6 @@ inner join dim.dim_vova_goods dg on dg.virtual_goods_id = log.virtual_goods_id
 WHERE log.pt >= date_sub('${cur_date}', 6)
   AND log.pt <= '${cur_date}'
   AND log.platform = 'mob'
-  AND log.datasource in ('vova', 'airyclub')
      ) temp
 group by cube (datasource, rec_page_code, goods_id, nvl(geo_country, 'NA'))
 
@@ -282,7 +280,6 @@ inner join dim.dim_vova_goods dg on dg.virtual_goods_id = log.virtual_goods_id
 WHERE log.pt >= date_sub('${cur_date}', 6)
   AND log.pt <= '${cur_date}'
   AND log.platform = 'mob'
-  AND log.datasource in ('vova', 'airyclub')
      ) temp
 WHERE rec_page_code != 'others'
 group by cube (datasource, goods_id, nvl(temp.region_code, 'NALL'))
@@ -320,7 +317,6 @@ inner join dim.dim_vova_goods dg on dg.virtual_goods_id = log.virtual_goods_id
 WHERE log.pt >= date_sub('${cur_date}', 6)
   AND log.pt <= '${cur_date}'
   AND log.platform = 'mob'
-  AND log.datasource in ('vova', 'airyclub')
      ) temp
 WHERE rec_page_code != 'others'
 group by cube (datasource, goods_id, nvl(temp.region_code, 'NALL'))
@@ -331,8 +327,10 @@ inner join dim.dim_vova_goods dg on dg.goods_id = t1.goods_id
 INNER JOIN dim.dim_vova_merchant dm ON dm.mct_id = dg.mct_id
 LEFT JOIN ods_vova_vts.ods_vova_brand b ON b.brand_id = dg.brand_id
 left join dim.dim_vova_category c on dg.cat_id = c.cat_id
+left join dim.dim_zq_site dzs on dzs.datasource = final.datasource
 WHERE (t1.clicks > 0 OR t1.sales_order > 0)
 AND t1.goods_id != 'all' AND t1.region_code IN ('all', 'FR', 'DE', 'IT', 'ES', 'GB', 'TW')
+AND dzs.datasource is null
 "
 
 spark-sql \

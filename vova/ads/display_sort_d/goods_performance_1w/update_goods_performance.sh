@@ -84,7 +84,6 @@ FROM (
                                     INNER JOIN dim.dim_vova_goods dg ON log.virtual_goods_id = dg.virtual_goods_id
                            WHERE log.pt >= date_sub('${cur_date}', 6)
                              AND log.pt <= '${cur_date}'
-                             AND log.datasource in ('vova', 'airyclub')
                        ) temp
                   GROUP BY CUBE (temp.goods_id, temp.datasource, temp.platform, temp.region_code)
                   UNION ALL
@@ -112,7 +111,6 @@ FROM (
                                     INNER JOIN dim.dim_vova_goods dg ON log.virtual_goods_id = dg.virtual_goods_id
                            WHERE log.pt >= date_sub('${cur_date}', 6)
                              AND log.pt <= '${cur_date}'
-                             AND log.datasource in ('vova', 'airyclub')
                        ) temp
                   GROUP BY CUBE (temp.goods_id, temp.datasource, temp.platform, temp.region_code)
                   UNION ALL
@@ -141,7 +139,6 @@ FROM (
                            WHERE log.pt >= date_sub('${cur_date}', 6)
                              AND log.pt <= '${cur_date}'
                              AND log.element_name ='pdAddToCartSuccess'
-                             AND log.datasource in ('vova', 'airyclub')
                        ) temp
                   GROUP BY CUBE (temp.goods_id, temp.datasource, temp.platform, temp.region_code)
                   UNION ALL
@@ -174,8 +171,10 @@ FROM (
         INNER JOIN dim.dim_vova_merchant dm ON dm.mct_id = dg.mct_id
         LEFT JOIN ods_vova_vts.ods_vova_brand b ON b.brand_id = dg.brand_id
         left join dim.dim_vova_category c on dg.cat_id = c.cat_id
+        left join dim.dim_zq_site dzs on dzs.datasource = final.datasource
 WHERE (final.clicks > 0 OR final.sales_order > 0)
 AND final.region_code in ('all', 'FR', 'DE', 'IT', 'ES', 'GB', 'TW')
+AND dzs.datasource is null
 ;
 
 "
