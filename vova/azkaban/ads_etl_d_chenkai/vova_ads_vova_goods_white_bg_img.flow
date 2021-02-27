@@ -1,0 +1,162 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_goods_white_bg_img_a_arc
+      - ads_vova_goods_white_bg_img_a_inc_message_put
+      - ads_vova_goods_white_bg_img_res_b_inc_message_put
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+## judge ############################################
+
+  - name: judge_dim_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_pay
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_ads_vova_goods_portrait
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_portrait_v2
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ods_vova_goods_gallery
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_goods_gallery
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ods_vova_shopping_cart_log
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_shopping_cart
+      retries: 30
+      retry.backoff: 1200000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ods_vova_goods_sku
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_goods_sku
+      retries: 30
+      retry.backoff: 1200000
+    dependsOn:
+      - start_flag
+
+# 获取 a 组 算法消息
+  - name: judge_message_get_ads_vova_goods_white_bg_img_res_a_cv
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get_last.sh --jname=ads_vova_goods_white_bg_img_res_a_cv --from=cv --to=data
+      retries: 30
+      retry.backoff: 1200000
+    dependsOn:
+      - start_flag
+
+# 获取 b 组 算法消息
+  - name: judge_message_get_ads_vova_goods_white_bg_img_res_b_cv
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get_last.sh --jname=ads_vova_goods_white_bg_img_res_b_cv --from=cv --to=data
+      retries: 30
+      retry.backoff: 1200000
+    dependsOn:
+      - start_flag
+
+## job #############################################################
+
+# [8367]商品列表主图展示 a 组 全量任务  任务复杂 单独处理
+  - name: ads_vova_goods_white_bg_img_a_arc
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_white_bg_img/update_a_arc.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_goods_portrait
+      - judge_dim_vova_goods
+      - judge_dwd_vova_fact_pay
+      - judge_ods_vova_shopping_cart_log
+      - judge_ods_vova_goods_sku
+
+# a 组 增量任务
+  - name: ads_vova_goods_white_bg_img_a_inc
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_white_bg_img/update_a_inc.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - ads_vova_goods_white_bg_img_a_arc
+      - judge_message_get_ads_vova_goods_white_bg_img_res_a_cv
+
+  - name: ads_vova_goods_white_bg_img_a_inc_message_put
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/job_message_put.sh --jname=ads_vova_goods_white_bg_img_res_a --from=data --to=java_server --jtype=1D --retry=0
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - ads_vova_goods_white_bg_img_a_inc
+
+
+# [8367]商品列表主图展示 b 组
+  - name: ads_vova_goods_white_bg_img_res_b
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_white_bg_img/update_b.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_goods_portrait
+      - judge_dim_vova_goods
+      - judge_ods_vova_goods_gallery
+      - judge_message_get_ads_vova_goods_white_bg_img_res_b_cv
+
+
+  - name: ads_vova_goods_white_bg_img_res_b_inc_message_put
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/job_message_put.sh --jname=ads_vova_goods_white_bg_img_res_b --from=data --to=java_server --jtype=1D --retry=0
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - ads_vova_goods_white_bg_img_res_b
+
+
+
+
+
