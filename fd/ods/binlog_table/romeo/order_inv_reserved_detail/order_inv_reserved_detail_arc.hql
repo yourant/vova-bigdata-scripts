@@ -1,59 +1,18 @@
-CREATE TABLE IF NOT EXISTS ods_fd_romeo.ods_fd_romeo_order_inv_reserved_detail_arc (
-    order_inv_reserved_detail_id string,
-    status                       string,
-    order_id                     bigint,
-    order_item_id                bigint,
-    goods_number                 bigint,
-    product_id                   bigint,
-    order_inv_reserved_id        string,
-    reserved_quantity            bigint,
-    reserved_time                bigint,
-    status_id                    string,
-    facility_id                  bigint,
-    version                      bigint,
-    created_stamp                bigint,
-    last_updated_stamp           bigint
-) COMMENT '来自kafka erp订单每日增量数据'
-PARTITIONED BY (dt STRING,hour STRING)
-ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS PARQUETFILE
-;
+alter table ods_fd_romeo.ods_fd_order_inv_reserved_detail_arc drop if exists partition (pt='$pt');
 
-
-set hive.exec.dynamic.partition.mode=nonstrict;
-INSERT overwrite table ods_fd_romeo.ods_fd_romeo_order_inv_reserved_detail_arc PARTITION (dt = '${hiveconf:dt}')
-select 
-     order_inv_reserved_detail_id, status, order_id, order_item_id, goods_number, product_id, order_inv_reserved_id, reserved_quantity, reserved_time, status_id, facility_id, version, created_stamp, last_updated_stamp
-from (
-
-    select 
-        dt,order_inv_reserved_detail_id, status, order_id, order_item_id, goods_number, product_id, order_inv_reserved_id, reserved_quantity, reserved_time, status_id, facility_id, version, created_stamp, last_updated_stamp,
-        row_number () OVER (PARTITION BY order_inv_reserved_detail_id ORDER BY dt DESC) AS rank
+INSERT into table ods_fd_romeo.ods_fd_order_inv_reserved_detail_arc PARTITION (pt = '${pt}')
+select /*+ REPARTITION(1) */arc.order_inv_reserved_detail_id, status, order_id, order_item_id, goods_number, product_id, order_inv_reserved_id, reserved_quantity, reserved_time, status_id, facility_id, version, created_stamp, last_updated_stamp
+from(
+    select
+         order_inv_reserved_detail_id, status, order_id, order_item_id, goods_number, product_id, order_inv_reserved_id, reserved_quantity, reserved_time, status_id, facility_id, version, created_stamp, last_updated_stamp
     from (
 
-        select  '2020-01-01' as dt
-                order_inv_reserved_detail_id,
-                status,
-                order_id,
-                order_item_id,
-                goods_number,
-                product_id,
-                order_inv_reserved_id,
-                reserved_quantity,
-                reserved_time,
-                status_id,
-                facility_id,
-                version,
-                created_stamp,
-                last_updated_stamp
-        from ods_fd_romeo.ods_fd_romeo_order_inv_reserved_detail_arc where dt='${hiveconf:dt_last}'
-
-        UNION
-
-        select dt,order_inv_reserved_detail_id, status, order_id, order_item_id, goods_number, product_id, order_inv_reserved_id, reserved_quantity, reserved_time, status_id, facility_id, version, created_stamp, last_updated_stamp
+        select
+            pt,order_inv_reserved_detail_id, status, order_id, order_item_id, goods_number, product_id, order_inv_reserved_id, reserved_quantity, reserved_time, status_id, facility_id, version, created_stamp, last_updated_stamp,
+            row_number () OVER (PARTITION BY order_inv_reserved_detail_id ORDER BY pt DESC) AS rank
         from (
 
-            select  '2020-09-24' as dt,
+            select  pt,
                     order_inv_reserved_detail_id,
                     status,
                     order_id,
@@ -67,11 +26,39 @@ from (
                     facility_id,
                     version,
                     created_stamp,
-                    last_updated_stamp,
-                    row_number () OVER (PARTITION BY order_inv_reserved_detail_id ORDER BY event_id DESC) AS rank
-            from ods_fd_romeo.ods_fd_romeo_order_inv_reserved_detail_inc where dt='${hiveconf:dt}'
+                    last_updated_stamp
+            from ods_fd_romeo.ods_fd_order_inv_reserved_detail_arc where pt='${pt_last}'
 
-        ) inc where inc.rank = 1
-    ) arc 
-) tab where tab.rank = 1;
+            UNION
+
+            select  pt,
+                    order_inv_reserved_detail_id,
+                    status,
+                    order_id,
+                    order_item_id,
+                    goods_number,
+                    product_id,
+                    order_inv_reserved_id,
+                    reserved_quantity,
+                    reserved_time,
+                    status_id,
+                    facility_id,
+                    version,
+                    created_stamp,
+                    last_updated_stamp
+            from ods_fd_romeo.ods_fd_order_inv_reserved_detail_binlog_inc where pt='${pt}'
+
+        ) arc
+    ) tab where tab.rank = 1
+)arc
+left join (
+
+    select order_inv_reserved_detail_id
+    from ods_fd_romeo.ods_fd_order_inv_reserved_detail_binlog_inc
+    where pt='${pt}'
+    and event_type = 'delete'
+    group by order_inv_reserved_detail_id
+
+)inc on arc.order_inv_reserved_detail_id = inc.order_inv_reserved_detail_id
+where inc.order_inv_reserved_detail_id is null;
 

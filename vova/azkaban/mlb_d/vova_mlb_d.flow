@@ -23,7 +23,7 @@ nodes:
   - name: judge_dws_vova_buyer_goods_behave
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dws_buyer_goods_behave
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dws_vova_buyer_goods_behave
     dependsOn:
       - start_flag
 
@@ -31,6 +31,20 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_buyers
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_buyers
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_devices
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_devices
     dependsOn:
       - start_flag
 
@@ -46,7 +60,16 @@ nodes:
       - judge_dws_vova_buyer_goods_behave
       - judge_dim_vova_goods
 
-
+# [8466]新用户冷启动用户属性召回下发策略优化 : 近180天有pv用户及激活时间
+  - name: mlb_vova_buyer_activate_time
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/buyer_activate_time/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_devices
+      - judge_dim_vova_buyers
 
 
 

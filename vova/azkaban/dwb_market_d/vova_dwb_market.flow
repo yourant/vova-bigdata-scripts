@@ -1,0 +1,145 @@
+---
+config:
+  failure.emails: andy.zhang@vova.com.hk,zyzheng@i9i8.com
+  retries: 100
+  retry.backoff: 120000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - send_vova_market
+      - send_ac_market
+      - dwb_vova_market
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: dwb_vova_market_process
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/market/update_process.sh
+      retries: 20
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_pay
+      - judge_dwd_vova_fact_start_up
+      - judge_dim_vova_devices
+      - judge_dwd_vova_fact_activity_order_goods
+
+  - name: dwb_vova_market
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/market/update.sh
+      retries: 20
+      retry.backoff: 600000
+    dependsOn:
+      - dwb_vova_market_process
+
+  - name: dwb_vova_market_cb
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/market/update_cb.sh
+      retries: 20
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_pay
+      - judge_dwd_vova_fact_start_up
+      - judge_dim_vova_devices
+      - judge_dwd_vova_fact_activity_order_goods
+
+  - name: dwb_vova_market_web_dau
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/market/update_web_dau.sh
+      retries: 20
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_page_view
+
+  - name: dwb_vova_market_process_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/market/update_process_export.sh
+      retries: 20
+      retry.backoff: 600000
+    dependsOn:
+      - dwb_vova_market_process
+
+  - name: dwb_vova_market_cb_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/market/update_cb_export.sh
+      retries: 20
+      retry.backoff: 600000
+    dependsOn:
+      - dwb_vova_market_cb
+
+  - name: dwb_vova_market_web_dau_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/market/update_web_dau_export.sh
+      retries: 20
+      retry.backoff: 600000
+    dependsOn:
+      - dwb_vova_market_web_dau
+
+  - name: send_vova_market
+    type: command
+    config:
+      command: python /mnt/vova-bigdata-scripts/vova/dwb/market/send_email/market.py
+    dependsOn:
+      - dwb_vova_market_process_export
+      - dwb_vova_market_cb_export
+
+  - name: send_ac_market
+    type: command
+    config:
+      command: python /mnt/vova-bigdata-scripts/vova/dwb/market/send_email/market_ac.py
+    dependsOn:
+      - dwb_vova_market_process_export
+      - dwb_vova_market_web_dau_export
+
+  - name: judge_dwd_vova_fact_pay
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_start_up
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_start_up
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_devices
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_devices
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_activity_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_activity_order_goods
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_page_view
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_page_view
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+

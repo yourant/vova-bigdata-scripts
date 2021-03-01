@@ -44,11 +44,11 @@ fi
 
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
--Dmapreduce.job.queuename=important \
 -Dsqoop.export.records.per.statement=3000 \
+-Dmapreduce.map.memory.mb=8096 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
 --username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
---m 2 \
+--m 1 \
 --table ads_buyer_portrait_category_likes_new \
 --hcatalog-database ads \
 --hcatalog-table ads_vova_buyer_portrait_category_likes_with_click_15d \

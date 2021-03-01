@@ -435,7 +435,43 @@ left join rpt_core_monitor_yoy y on b.hour =y.hour and b.datasource= y.datasourc
 left join rpt_core_monitor_1w w on b.hour =w.hour and b.datasource= w.datasource and b.os_type = w.os_type and b.region_group=w.region_group and b.app_version=w.app_version
 where b.pt='$pt';
 "
-spark-sql  --conf "spark.app.name=dwb_vova_core_monitor_zhangyin" -e "$sql"
+spark-sql  --conf "spark.app.name=dwb_vova_core_monitor_zhangyin"  --conf "spark.dynamicAllocation.maxExecutors=150" -e "$sql"
+if [ $? -ne 0 ];then
+  exit 1
+fi
+
+sqoop export \
+-Dorg.apache.sqoop.export.text.dump_data_on_error=true \
+-Dmapreduce.job.queuename=default \
+--connect jdbc:mariadb:aurora://db-logistics-w.gitvv.com:3306/themis_logistics_report \
+--username vvreport4vv --password 'nTTPdJhVp!DGv5VX4z33Fw@tHLmIG8oS' \
+--connection-manager org.apache.sqoop.manager.MySQLManager \
+--table rpt_core_monitor_v2 \
+--update-key "event_date,datasource,hour,os_type,region_group,app_version" \
+--update-mode allowinsert \
+--hcatalog-database dwb \
+--hcatalog-table dwb_vova_core_monitor \
+--hcatalog-partition-keys pt \
+--hcatalog-partition-values ${pt} \
+--fields-terminated-by '\001'
+
+#如果脚本失败，则报错
+if [ $? -ne 0 ];then
+  exit 1
+fi
+
+spark-submit --master yarn \
+--conf spark.executor.memory=10g \
+--queue important \
+--conf spark.dynamicAllocation.maxExecutors=20 \
+--conf spark.app.name=alarm_system \
+--conf spark.executor.memoryOverhead=2048 \
+--jars  s3://vomkt-emr-rec/jar/vova-bd-monitor/javamail.jar  \
+--class com.vova.bigdata.sparkbatch.monitor.MonitorMain s3://vomkt-emr-rec/jar/vova-bd-monitor/vova-bigdata-monitor-main.jar  \
+--env product --db dwb --tlb dwb_vova_core_monitor --op check_index,send_message \
+--date ${pt} --hour ${hour}
+
+#如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
 fi

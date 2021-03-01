@@ -13,7 +13,7 @@ SELECT
 g.goods_id,
 vg.virtual_goods_id,
 vg.project_name AS datasource,
-nvl(tv.origin_platform, 'NA') AS original_source,
+nvl(tp.platform, 'NA') AS original_source,
 tp.item_id AS source_id,
 g.cat_id,
 c.cat_name,
@@ -24,7 +24,7 @@ c.second_cat_id,
 nvl(c.second_cat_name, 'NA') AS second_cat_name,
 gp.shop_price,
 if(gg.img_original like '/spider%', concat('https://supply-img.vova.com.hk', gg.img_original), gg.img_original) as img_original,
-nvl(tv.commodity_id, 'NA') AS commodity_id,
+nvl(gp.api_goods_id, 'NA') AS commodity_id,
 s.domain_group
 from
 ods_zq_zsp.ods_zq_goods g
@@ -43,8 +43,7 @@ left join ods_zq_zsp.ods_zq_virtual_goods vg on g.goods_id = vg.goods_id
               ) t1
          WHERE t1.rank = 1
      ) gg ON gg.goods_id = g.goods_id
-left join ods_gyl_gvg.ods_gyl_goods_info_relation tv on g.goods_id = tv.sale_platform_commodity_id
-left join ods_gyl_gpt.ods_gyl_product_map tp on tp.commodity_id = tv.commodity_id
+left join ods_gyl_gpt.ods_gyl_product_map tp on tp.commodity_id = gp.api_goods_id
 left join dim.dim_zq_category c on c.cat_id = g.cat_id
 left join dim.dim_zq_site s on s.datasource = vg.project_name
 "

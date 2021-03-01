@@ -101,7 +101,7 @@ ord_cnt_15d,
 ord_cnt_1m
 FROM
 ads.ads_vova_buyer_portrait_second_category_price_range_likes
-where pt='${pre_date}' and clk_cnt_15d >0;
+where pt='${cur_date}' and clk_cnt_15d >0;
 
 insert overwrite table ads.ads_vova_buyer_portrait_second_category_likes_price_range_medium_term partition(pt='${cur_date}')
 SELECT

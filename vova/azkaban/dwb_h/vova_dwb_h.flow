@@ -13,6 +13,7 @@ nodes:
       - dwb_vova_recall_pool_h
       - dwb_vova_order_data_analysis_h
       - dwb_vova_ab_test_h
+      - dwb_vova_core_monitor_h
 
   - name: start_flag
     type: command
@@ -23,6 +24,24 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_v2_h
+      retries: 40
+      retry.backoff: 60000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_order_info_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_order_info_h
+      retries: 40
+      retry.backoff: 60000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_order_relation_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_order_relation_h
       retries: 40
       retry.backoff: 60000
     dependsOn:
@@ -58,3 +77,15 @@ nodes:
       retry.backoff: 300000
     dependsOn:
       - judge_vova_fact_log_v2_h
+
+
+  - name: dwb_vova_core_monitor_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/core_monitor/update.sh
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - judge_vova_fact_log_v2_h
+      - judge_vova_order_info_h
+      - judge_vova_order_relation_h

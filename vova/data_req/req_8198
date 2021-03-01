@@ -13,7 +13,7 @@ where t2.datasource='vova'
 
 
 
-create table tmp.req_8198_log as
+create  table tmp.req_8198_log_new as
 select
 /*+ repartition(100) */
 t1.pt,
@@ -24,7 +24,8 @@ list_type,
 element_name,
 element_type,
 element_position,
-type
+type,
+element_id
 from
 (
 select pt,collector_ts,device_id,page_code,null as list_type,null as element_name,null as element_type,null as element_id, null as element_position,'screen_view' as type  from dwd.dwd_vova_log_screen_view where pt>='2020-07-18' and pt<='2020-08-03'
@@ -33,7 +34,7 @@ select pt,collector_ts,device_id,page_code,list_type,element_name,element_type,e
 union all
 select pt,collector_ts,device_id,page_code,null as list_type,element_name,element_type,element_id,element_position,'common_click' as type  from dwd.dwd_vova_log_common_click where pt>='2020-07-18' and pt<='2020-08-03'
 union all
-select pt,collector_ts,device_id,page_code,null as list_type,element_name,element_type,element_id,element_position,'goods_impression' as type  from dwd.dwd_vova_log_common_click where pt>='2020-07-18' and pt<='2020-08-03'
+select pt,collector_ts,device_id,page_code,list_type, null as element_name,element_type, virtual_goods_id as element_id,null element_position,'goods_impression' as type  from dwd.dwd_vova_log_goods_impression where pt>='2020-07-18' and pt<='2020-08-03'
 union all
 select pt,collector_ts,device_id,page_code,list_type,null as element_name,element_type,null as element_id,null as element_position,'goods_click' as type  from dwd.dwd_vova_log_goods_click where pt>='2020-07-18' and pt<='2020-08-03'
 union all
