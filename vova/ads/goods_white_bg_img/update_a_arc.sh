@@ -27,7 +27,7 @@ from
     t1.goods_id goods_id,
     vgs.sku_id sku_id,
     vgs.img_id img_id,
-    vgs.img_url img_url,
+    vgg.img_url img_url,
     fp.goods_number goods_number,
     t3.add_cart_uv add_cart_uv,
     row_number() over(partition by t1.goods_id order by fp.goods_number desc, t3.add_cart_uv desc, vgs.sku_id desc) rank
@@ -49,13 +49,16 @@ from
     select distinct
       goods_id goods_id,
       sku_id   sku_id,
-      img_id  img_id,
-      img_url img_url
+      img_id  img_id
+      -- img_url img_url
     from
       ods_vova_vts.ods_vova_goods_sku
     where is_delete = 0
   ) vgs
   on t1.goods_id = vgs.goods_id
+  left join
+    ods_vova_vts.ods_vova_goods_gallery vgg
+  on vgs.img_id = vgg.img_id
   left join
   (
     select
@@ -80,7 +83,7 @@ from
     group by goods_id, sku_id
   ) t3
   on vgs.goods_id = t3.goods_id and vgs.sku_id = t3.sku_id
-  where vgs.goods_id is not null and vgs.img_url != ''
+  where vgs.goods_id is not null and vgg.img_url != ''
 ) where rank = 1
 ;
 
