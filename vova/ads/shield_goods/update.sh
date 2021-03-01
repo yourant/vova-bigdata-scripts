@@ -11,10 +11,9 @@ spark-submit --master yarn \
 --deploy-mode client  \
 --driver-memory 9G \
 --conf spark.dynamicAllocation.maxExecutors=50 \
---queue important \
---name ${name}  \
---class com.vova.data.ShieldGoodsFromInfluxDB \
-s3://vomkt-emr-rec/jar/shield-goods-1.0.0.jar \
+--name ads_vova_shield_goods_zhangyin  \
+--class com.vova.bigdata.sparkbatch.dataprocess.ads.ShieldGoodsFromInfluxDB \
+s3://vomkt-emr-rec/jar/vova-bigdata/vova-bigdata-sparkbatch/vova-bigdata-sparkbatch-1.0-SNAPSHOT.jar \
 --env product --pt $pt --db vova_rec
 
 if [ $? -ne 0 ];then

@@ -1,6 +1,6 @@
 --商品维度汇总表
-drop table ads.ads_shield_goods_detail;
-CREATE TABLE IF NOT EXISTS ads.ads_shield_goods_detail
+drop table ads.ads_vova_shield_goods_detail;
+CREATE external  TABLE IF NOT EXISTS ads.ads_vova_shield_goods_detail
 (
     buyer_id           BIGINT COMMENT '用户id',
     device_id          String COMMENT '设备号',

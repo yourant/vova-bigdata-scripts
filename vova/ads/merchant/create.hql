@@ -1,5 +1,5 @@
-drop table ads.ads_mct_d;
-CREATE  TABLE IF NOT EXISTS ads.ads_mct_d
+drop table ads.ads_vova_mct_d;
+CREATE external  TABLE IF NOT EXISTS ads.ads_vova_mct_d
 (
     merchant_id    BIGINT COMMENT '商家id',
     act_mct_2m     BIGINT COMMENT '最近两月激活的商家，1是，0否'

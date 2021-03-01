@@ -94,6 +94,6 @@ left join (
     and event_type = 'delete'
     group by rec_id
 
-)inc on arc.order_inv_reserved_id = inc.order_inv_reserved_id
+)inc on arc.rec_id = inc.rec_id
 where inc.rec_id is null;
 
