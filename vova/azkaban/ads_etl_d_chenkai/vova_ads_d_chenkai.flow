@@ -82,61 +82,32 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: judge_ads_vova_goods_portrait
+  - name: judge_dim_vova_buyers
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_portrait_v2
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_buyers
       retries: 5
       retry.backoff: 600000
     dependsOn:
       - start_flag
 
-  - name: judge_ods_vova_goods_gallery
+  - name: judge_dim_vova_devices
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_goods_gallery
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_devices
       retries: 5
       retry.backoff: 600000
     dependsOn:
       - start_flag
 
-  - name: judge_message_get_ads_vova_goods_white_bg_img_res_b_cv
+  - name: judge_dim_vova_region
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/job_message_get_last.sh --jname=ads_vova_goods_white_bg_img_res_b_cv --from=cv --to=data
-      retries: 30
-      retry.backoff: 1200000
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_region
+      retries: 5
+      retry.backoff: 600000
     dependsOn:
       - start_flag
-
-  - name: judge_ods_vova_shopping_cart_log
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_shopping_cart
-      retries: 30
-      retry.backoff: 1200000
-    dependsOn:
-      - start_flag
-
-  - name: judge_ods_vova_goods_sku
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_goods_sku
-      retries: 30
-      retry.backoff: 1200000
-    dependsOn:
-      - start_flag
-
-
-
-#  - name: judge_dim_vova_buyers
-#    type: command
-#    config:
-#      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_buyers
-#      retries: 5
-#      retry.backoff: 600000
-#    dependsOn:
-#      - start_flag
 
 #  - name: judge_dws_vova_buyer_goods_behave
 #    type: command
@@ -154,7 +125,7 @@ nodes:
   - name: ads_vova_mct_manage_module
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/es_export/ads_vova_mct_manage_module/update.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/mct_manage_module/update.sh
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -166,50 +137,52 @@ nodes:
       - judge_dwd_vova_fact_logistics
       - judge_ads_vova_traff_control
 
-
-# [8367]商品列表主图展示 a 组 全量任务
-  - name: ads_vova_goods_white_bg_img_a_arc
+# [8523]Tik Tok渠道用户推荐优化：
+### a.统计Tik Tok渠道top5国家，每个国家/全站各取销量最高top200商品，根据用户的国家获取相应的商品
+  - name: ads_vova_channel_region_top
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_white_bg_img/update_a_arc.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_channel_optimize/update_channel_region_top.sh
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - judge_ads_vova_goods_portrait
-      - judge_dim_vova_goods
       - judge_dwd_vova_fact_pay
-      - judge_ods_vova_shopping_cart_log
-      - judge_ods_vova_goods_sku
-
-
-# [8367]商品列表主图展示 b 组
-  - name: ads_vova_goods_white_bg_img_res_b
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_white_bg_img/update_b.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - judge_ads_vova_goods_portrait
       - judge_dim_vova_goods
-      - judge_ods_vova_goods_gallery
-      - judge_message_get_ads_vova_goods_white_bg_img_res_b_cv
+      - judge_dim_vova_buyers
+      - judge_dim_vova_devices
+      - judge_dim_vova_region
 
-
-  - name: ads_vova_goods_white_bg_img_res_b_inc_message_put
+### b.统计0~18和18~35年龄段用户，各取两个段内销量最高的top100商品
+  - name: ads_vova_age_range_top
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/job_message_put.sh --jname=ads_vova_goods_white_bg_img_res_b --from=data --to=java_server --jtype=1D --retry=0
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_channel_optimize/update_age_range_top.sh
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - ads_vova_goods_white_bg_img_res_b
+      - judge_dwd_vova_fact_pay
+      - judge_dim_vova_goods
+      - judge_dim_vova_buyers
 
 
+## export #############################################################
+  - name: sqoop_ads_vova_channel_region_top
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity_home_garden/sqoop_export_channel_region_top.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - ads_vova_channel_region_top
 
-
-
-
+  - name: sqoop_ads_vova_age_range_top
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity_home_garden/sqoop_export_age_range_top.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - ads_vova_age_range_top
 
 # 活动会场 家居  # 统一迁移
 #  - name: ads_vova_activity_home_garden
@@ -223,12 +196,10 @@ nodes:
 #      - judge_dim_vova_buyers
 #      - judge_dim_vova_goods
 
-## export #############################################################
-
 #  - name: ads_vova_activity_home_garden_export
 #    type: command
 #    config:
-#      command: sh /mnt/vova-bd-scripts/ads/activity_home_garden/sqoop_export.sh
+#      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity_home_garden/sqoop_export.sh
 #      retries: 5
 #      retry.backoff: 600000
 #    dependsOn:
