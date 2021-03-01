@@ -37,7 +37,6 @@ FROM (
     FROM (
 
         SELECT
-            /*+ REPARTITION(1) */
             rgp.project_name,
             rgp.goods_id,
             rgp.virtual_goods_id,
@@ -54,7 +53,7 @@ FROM (
         FROM (
 
             --计算商品的基本信息
-            select /*+ REPARTITION(1) */
+            select
                gp.project_name as project_name,
                gp.goods_id as goods_id,
                g.virtual_goods_id as virtual_goods_id,
