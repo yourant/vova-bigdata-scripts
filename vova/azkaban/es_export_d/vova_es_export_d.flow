@@ -93,7 +93,7 @@ nodes:
   - name: export_es_ads_goods_sn_performance
     type: command
     config:
-      command:  sh /mnt/vova-bigdata-scripts/vova/es_export/ads_vova_goods_sn_performance
+      command:  sh /mnt/vova-bigdata-scripts/vova/es_export/ads_vova_goods_sn_performance/update.sh
       retries: 5
     dependsOn:
       - start_flag
