@@ -1,0 +1,51 @@
+---
+config:
+  failure.emails: yzhang13@vova.com.hk,dyshu@vova.com.hk,kaicheng@vova.com.hk
+  retries: 5
+  retry.backoff: 600000
+
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - sqoop_mlb_vova_rec_m_lightgcn_u2i_nb_d
+      - sqoop_mlb_vova_rec_m_lightgcn_i2i_nb_d
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+## judge #############
+  - name: judge_message_get_mlb_lightgcn_i2i_u2i_rec
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=mlb_lightgcn_i2i_u2i_rec --from=mlb --to=data --valid_hour=3
+      retries: 35
+      retry.backoff: 1200000
+    dependsOn:
+      - start_flag
+
+## sqoop #############
+  - name: sqoop_mlb_vova_rec_m_lightgcn_u2i_nb_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_m_lightgcn/sqoop_export_u2i.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_message_get_mlb_lightgcn_i2i_u2i_rec
+
+  - name: sqoop_mlb_vova_rec_m_lightgcn_i2i_nb_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_m_lightgcn/sqoop_export_i2i.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_message_get_mlb_lightgcn_i2i_u2i_rec
+
+
