@@ -35,6 +35,7 @@ from
     and trim(dd.device_id) != ''
     and dd.main_channel is not null and dd.child_channel is not null
     and dd.main_channel != '' and dd.child_channel !=''
+    and dd.main_channel = 'bytedanceglobal_int'
 ) where row = 1
 ;
 "

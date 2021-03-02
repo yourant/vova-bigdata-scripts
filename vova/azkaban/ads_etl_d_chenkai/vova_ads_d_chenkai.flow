@@ -169,7 +169,7 @@ nodes:
   - name: sqoop_ads_vova_channel_region_top
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity_home_garden/sqoop_export_channel_region_top.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_channel_optimize/sqoop_export_channel_region_top.sh
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -178,7 +178,7 @@ nodes:
   - name: sqoop_ads_vova_age_range_top
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity_home_garden/sqoop_export_age_range_top.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_channel_optimize/sqoop_export_age_range_top.sh
       retries: 5
       retry.backoff: 600000
     dependsOn:
