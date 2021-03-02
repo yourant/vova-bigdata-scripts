@@ -27,12 +27,12 @@ FROM (
         count(distinct if(is_on_sale = 1 and goods_sales_number > 0, virtual_goods_id, null)) as dynamic_goods_num, --动销商品数
         count(distinct if(up_sale = 'yes', virtual_goods_id, null)) as up_sale_gooods,--上架商品数
         count(distinct if(down_sale = 'yes', virtual_goods_id, null)) as down_sale_gooods,--下架商品数
-        count(distinct if(goods_sales_number >= 100, virtual_goods_id, null)) as goods_sale_100, --日销100件
-        count(distinct if(goods_sales_number >= 50 and goods_sales_number < 100, virtual_goods_id, null)) as goods_sale_50, --日销50件
-        count(distinct if(goods_sales_number >= 10 and goods_sales_number < 50, virtual_goods_id, null)) as goods_sale_10, --日销10件
-        count(distinct if(goods_sales_number >= 50, virtual_goods_id, null)) as sale_good_goods, --畅销的商品
-        count(distinct if(goods_sales_number >= 2 and goods_sales_number < 10, virtual_goods_id, null)) as goods_sale_2, --日销2件
-        count(distinct if(goods_sales_number >= 0 and goods_sales_number < 2, virtual_goods_id, null)) as goods_sale_0 --日销0-2件
+        count(distinct if(is_on_sale = 1 and goods_sales_number >= 100, virtual_goods_id, null)) as goods_sale_100, --日销100件
+        count(distinct if(is_on_sale = 1 and goods_sales_number >= 50 and goods_sales_number < 100, virtual_goods_id, null)) as goods_sale_50, --日销50件
+        count(distinct if(is_on_sale = 1 and goods_sales_number >= 10 and goods_sales_number < 50, virtual_goods_id, null)) as goods_sale_10, --日销10件
+        count(distinct if(is_on_sale = 1 and goods_sales_number >= 50, virtual_goods_id, null)) as sale_good_goods, --畅销的商品
+        count(distinct if(is_on_sale = 1 and goods_sales_number >= 2 and goods_sales_number < 10, virtual_goods_id, null)) as goods_sale_2, --日销2件
+        count(distinct if(is_on_sale = 1 and goods_sales_number >= 0 and goods_sales_number < 2, virtual_goods_id, null)) as goods_sale_0 --日销0-2件
 
     FROM (
 
@@ -47,7 +47,7 @@ FROM (
             DATEDIFF('${pt}', to_date(rgp.on_sale_time_utc)) as diff_sale_day,
             gppa.department_type as provider_attribute_name,
             nvl(og.goods_sales_number,0) as goods_sales_number,
-            if(rgp.is_on_sale = 1 and DATEDIFF('${pt}', to_date(rgp.on_sale_time_utc)) <= 30,'new_style','old_style') as goods_style,
+            if(rgp.is_on_sale = 1 and DATEDIFF('${pt}', to_date(rgp.on_sale_time_utc)) <= 30,'新款','老款') as goods_style,
             if(rgp.is_on_sale = 1 and '${pt}' = to_date(rgp.on_sale_time_utc),'yes','no') as up_sale,
             if(rgp.is_on_sale = 0 and '${pt}' = to_date(rgp.on_sale_time_utc),'yes','no') as down_sale
         FROM (
