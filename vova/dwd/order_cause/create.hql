@@ -19,3 +19,6 @@ CREATE EXTERNAL TABLE IF NOT EXISTS dwd.dwd_vova_fact_order_cause_v2
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
 
+alter table dwd.dwd_vova_fact_order_cause_v2 ADD COLUMNS (
+pre_language STRING COMMENT '归因pre_language'
+) CASCADE;

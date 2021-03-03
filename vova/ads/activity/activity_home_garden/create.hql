@@ -35,8 +35,8 @@ CREATE TABLE IF NOT EXISTS `themis`.`ads_activity_home_garden` (
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT COMMENT='家居会场';
 
 
-drop table if exists ads.ads_activity_home_garden;
-create table if not exists ads.ads_activity_home_garden (
+drop table if exists ads.ads_vova_activity_home_garden;
+create table if not exists ads.ads_vova_activity_home_garden (
     `goods_id`                  int    COMMENT '商品id',
     `region_id`                 int    COMMENT '国家id',
     `first_cat_id`              int    COMMENT '一级品类id',
@@ -45,4 +45,11 @@ create table if not exists ads.ads_activity_home_garden (
     `rp_type`                   string COMMENT 'rp标记',
     `rank`                      int    COMMENT '排名'
 ) COMMENT '家居会场活动表' PARTITIONED BY (pt STRING)
-ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
+STORED AS PARQUETFILE;
+
+
+
+
+
+
+

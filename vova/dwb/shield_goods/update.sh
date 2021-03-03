@@ -99,7 +99,7 @@ group by gs.goods_sn
 ) t2 on g.goods_sn = t2.goods_sn
 left join rpt_shield_goods_gsn_is_flow sgf on g.goods_sn = sgf.goods_sn;
 "
-spark-sql --conf "spark.app.name=rpt_shield_goods" -e "$sql"
+spark-sql --conf "spark.app.name=dwb_vova_shield_goods_zhangyin" --conf "spark.dynamicAllocation.maxExecutors=100" -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1

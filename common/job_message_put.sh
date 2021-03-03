@@ -55,6 +55,8 @@ if [ -z "$jname" ] || [ -z "$from" ] || [ -z "$to" ] || [ -z "$jtype" ]; then
     exit 1
 fi
 
+cur_date=`date -d "-1 day" +%Y-%m-%d`
+
 dataRow='{
     "data":[
         {
@@ -63,7 +65,8 @@ dataRow='{
             "to":"'${to}'",
             "jstatus":"'${jstatus}'",
             "jtype":"'${jtype}'",
-            "retry":"'${retry}'"
+            "retry":"'${retry}'",
+            "freedoms":"pt='${cur_date}'"
         }
     ]
 }'

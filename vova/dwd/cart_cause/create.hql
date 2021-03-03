@@ -17,7 +17,12 @@ CREATE external TABLE IF NOT EXISTS dwd.dwd_vova_fact_cart_cause_v2
     pre_app_version     string,
     pre_test_info       string,
     pre_recall_pool     string,
-    pre_position     string
+    pre_position        string
 ) COMMENT '加车归因' PARTITIONED BY (pt STRING)
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
+
+
+alter table dwd.dwd_vova_fact_cart_cause_v2 ADD COLUMNS (
+pre_language STRING COMMENT '归因pre_language'
+) CASCADE;
 

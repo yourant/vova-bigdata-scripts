@@ -1,0 +1,220 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_mct_manage_module
+
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+## judge ############################################
+  - name: judge_dim_vova_merchant
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_merchant
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_pay
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_order_goods
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_refund
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_refund
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_logistics
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_logistics
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_traff_control
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_traff_control
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_buyers
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_buyers
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_devices
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_devices
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_region
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_region
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+#  - name: judge_dws_vova_buyer_goods_behave
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dws_vova_buyer_goods_behave
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - start_flag
+
+
+## job #############################################################
+
+# 店铺管理，结果输出 ES
+  - name: ads_vova_mct_manage_module
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/mct_manage_module/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_merchant
+      - judge_dim_vova_goods
+      - judge_dwd_vova_fact_pay
+      - judge_dim_vova_order_goods
+      - judge_dwd_vova_fact_refund
+      - judge_dwd_vova_fact_logistics
+      - judge_ads_vova_traff_control
+
+# [8523]Tik Tok渠道用户推荐优化：
+### a.统计Tik Tok渠道top5国家，每个国家/全站各取销量最高top200商品，根据用户的国家获取相应的商品
+  - name: ads_vova_channel_region_top
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_channel_optimize/update_channel_region_top.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_pay
+      - judge_dim_vova_goods
+      - judge_dim_vova_buyers
+      - judge_dim_vova_devices
+      - judge_dim_vova_region
+
+### b.统计0~18和18~35年龄段用户，各取两个段内销量最高的top100商品
+  - name: ads_vova_age_range_top
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_channel_optimize/update_age_range_top.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_pay
+      - judge_dim_vova_goods
+      - judge_dim_vova_buyers
+
+
+## export #############################################################
+  - name: sqoop_ads_vova_channel_region_top
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_channel_optimize/sqoop_export_channel_region_top.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - ads_vova_channel_region_top
+
+  - name: sqoop_ads_vova_age_range_top
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_channel_optimize/sqoop_export_age_range_top.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - ads_vova_age_range_top
+
+# 活动会场 家居  # 统一迁移
+#  - name: ads_vova_activity_home_garden
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity_home_garden/update.sh
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - judge_dws_vova_buyer_goods_behave
+#      - judge_dim_vova_buyers
+#      - judge_dim_vova_goods
+
+#  - name: ads_vova_activity_home_garden_export
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity_home_garden/sqoop_export.sh
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - judge_ads_activity_home_garden
+
+
+
+
+
+
+
+
+
+
+
+
+
+

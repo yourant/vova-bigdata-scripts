@@ -60,14 +60,13 @@ fi
 
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
--Dmapreduce.job.queuename=important \
 -Dsqoop.export.records.per.statement=1000 \
 --connect jdbc:mysql://trigram-fn.cn899du7tges.us-east-1.rds.amazonaws.com:3306/trigram_data \
 --username trigram_data20201205 --password ohwuYuiD%ex=uko4aeve/Y2 \
 --m 1 \
 --table ads_goods_behave_group_site_new \
 --hcatalog-database ads \
---hcatalog-table ads_goods_behave_group_site \
+--hcatalog-table ads_vova_goods_behave_group_site \
 --hcatalog-partition-keys pt \
 --hcatalog-partition-values ${pre_date} \
 --columns vir_goods_id,commodity_id,project_name,goods_id,platform,expre_cnt,clk_cnt,order_cnt,sales_vol,expre_uv,clk_uv,add_cat_uv,order_uv,pay_uv \

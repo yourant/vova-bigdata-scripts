@@ -1,0 +1,26 @@
+---
+config:
+  failure.emails: yzhang13@vova.com.hk
+  retries: 3
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_min_price_goods_h
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: ads_vova_min_price_goods_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/min_price_goods/update.sh
+      retries: 0
+    dependsOn:
+      - start_flag

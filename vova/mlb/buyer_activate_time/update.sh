@@ -18,9 +18,8 @@ job_name="mlb_vova_buyer_activate_time_day180_req8466_chenkai_${cur_date}"
 ###逻辑sql
 sql="
 insert overwrite table mlb.mlb_vova_buyer_activate_time_day180 PARTITION (pt = '${cur_date}')
-select /*+ REPARTITION(2) */
-  buyer_id,
-  activate_time
+select /*+ REPARTITION(1) */
+  buyer_id
 from
 (
   select
@@ -34,9 +33,9 @@ from
   on db.current_device_id = dd.device_id
   where to_date(db.last_start_up_date) >= date_sub('${cur_date}', 180)
     and to_date(db.last_start_up_date) <= '${cur_date}'
-    and dd.activate_time is not null
+    and dd.activate_time is not null and db.buyer_id > 0 and db.buyer_id is not null
 )
-where rank = 1
+where rank = 1 and buyer_id >= 0
 ;
 "
 

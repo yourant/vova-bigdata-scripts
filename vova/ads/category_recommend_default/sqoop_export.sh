@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS \`themis\`.\`ads_category_recommend_default\` (
   KEY \`cat_id_key\` (\`cat_id\`,\`region_id\`,\`gender\`,\`type\`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 "
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -psYG2Ri3yIDu2NPki -e "${sql}"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
 
 if [ $? -ne 0 ];then
   exit 1
@@ -40,14 +40,13 @@ fi
 
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
--Dmapreduce.job.queuename=important \
 -Dsqoop.export.records.per.statement=1000 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
---username bimaster --password sYG2Ri3yIDu2NPki \
+--username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
 --m 1 \
 --table ads_category_recommend_default_new \
 --hcatalog-database ads \
---hcatalog-table ads_category_recommend_default \
+--hcatalog-table ads_vova_category_recommend_default \
 --columns cat_id,region_id,gender,type,rank \
 --fields-terminated-by '\001'
 
@@ -56,7 +55,7 @@ if [ $? -ne 0 ];then
 fi
 
 echo "----------开始rename-------"
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -psYG2Ri3yIDu2NPki <<EOF
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
 rename table themis.ads_category_recommend_default to themis.ads_category_recommend_default_pre,themis.ads_category_recommend_default_new to themis.ads_category_recommend_default;
 EOF
 echo "-------rename结束--------"
