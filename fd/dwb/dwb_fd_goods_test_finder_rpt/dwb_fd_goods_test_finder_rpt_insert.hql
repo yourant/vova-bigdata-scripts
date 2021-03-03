@@ -1,59 +1,49 @@
 insert overwrite table dwb.dwb_fd_goods_test_finder_rpt
 select
-    /*+ REPARTITION(1) */
-    gt_all.project_name,
-    if(gt_all.cat_name is null or trim(gt_all.cat_name)='','null',gt_all.cat_name) as cat_name,
-    test_type,
-    if(dfg.goods_selector is null or trim(dfg.goods_selector )='','null',dfg.goods_selector ) as finder ,
-    preorder_plan_name,
+	/*+ REPARTITION(1) */
+    gt_all.project_name as project, --组织
+    if(gt_all.cat_name is null or trim(gt_all.cat_name)='','null',gt_all.cat_name) as cat_name, --品类名
+    test_type,--测款类型
+    if(dfg.goods_selector is null or trim(dfg.goods_selector )='','null',dfg.goods_selector ) as finder ,--选款人
+    preorder_plan_name,--预售计划
     gt_all.virtual_goods_id,
-    test_finish_dt,
+    test_finish_dt,--测款结束时间
     result,
     nvl(last_7_days_goods_sales,0) as last_7_days_goods_sales,
     nvl(last_7_days_cat_sales,0) as last_7_days_cat_sales
 from
 (
+	--测款成功
     select
-            project_name,
-            cat_id,
-            cat_name,
+            gtg.project_name,
+            g.cat_id,
+            g.cat_name,
             '快速测款'  as test_type,
-            virtual_goods_id,
-            cast(min(to_date(finish_time))  as string) as test_finish_dt,
+            g.virtual_goods_id,
+            to_date(to_utc_timestamp(gtg.end_time, 'America/Los_Angeles')) as test_finish_dt,--utc时间
             1 as result,
             '' as preorder_plan_name,
-            goods_id
-    from  dwd.dwd_fd_goods_test_thread_single
-    where result=1
-    group by project_name,cat_id,cat_name,virtual_goods_id,goods_id
+            gtg.goods_id
+    from  ods_fd_vb.ods_fd_goods_test_goods_report gtg
+    left join dim.dim_fd_goods g on g.goods_id = gtg.goods_id and lower(g.project_name) = lower(gtg.project_name)
+    where gtg.result=1
 
     union all
 
+    --测款失败
     select
-        project_name,
-        cat_id,
-        cat_name,
-        '快速测款'  as test_type,
-        virtual_goods_id,
-        test_finish_dt,
-        0     as result,
-        '' as preorder_plan_name,
-        goods_id
-from
-(
-        select project_name,
-            cat_id,
-            cat_name,
-            virtual_goods_id,
-            cast(max(to_date(finish_time)) as string)  as test_finish_dt,
-            concat_ws(',',collect_set(cast(result as string))) as all_result,
+            gtg.project_name,
+            g.cat_id,
+            g.cat_name,
             '快速测款'  as test_type,
-            goods_id
-    from  dwd.dwd_fd_goods_test_thread_single
-    where result != 1
-    group by project_name,cat_id,cat_name,virtual_goods_id,goods_id
-)gt_finish
-where all_result not regexp '0|8'
+            g.virtual_goods_id,
+            to_date(to_utc_timestamp(gtg.end_time, 'America/Los_Angeles')) as test_finish_dt,--utc时间
+            0 as result,
+            '' as preorder_plan_name,
+            gtg.goods_id
+    from  ods_fd_vb.ods_fd_goods_test_goods_report gtg
+    left join dim.dim_fd_goods g on g.goods_id = gtg.goods_id and lower(g.project_name) = lower(gtg.project_name)
+    where gtg.result=2
 
     union all
 
@@ -63,16 +53,15 @@ where all_result not regexp '0|8'
             cat_name,
            '预售测款' as test_type,
             virtual_goods_id,
-            finish_time as test_finish_dt,
+            to_date(finish_time) as test_finish_dt, --utc时间
             result,
             preorder_plan_name,
             goods_id
     from dwd.dwd_fd_finished_preorder
+
 ) gt_all
 
-left join
-         dim.dim_fd_goods dfg
-on dfg.goods_id = gt_all.goods_id and dfg.project_name = gt_all.project_name
+left join dim.dim_fd_goods dfg on dfg.goods_id = gt_all.goods_id and dfg.project_name = gt_all.project_name
 
 left join
 (
