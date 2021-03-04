@@ -57,7 +57,7 @@ from
   ) vgs
   on t1.goods_id = vgs.goods_id
   left join
-    ods_vova_vts.ods_vova_goods_gallery vgg
+    ods_vova_vteos.ods_vova_goods_gallery vgg
   on vgs.img_id = vgg.img_id
   left join
   (

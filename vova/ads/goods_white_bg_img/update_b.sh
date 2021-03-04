@@ -36,7 +36,7 @@ from
     and dg.first_cat_id in (5768,194,5777,5714)
 ) t1
 left join
-  ods_vova_vts.ods_vova_goods_gallery vgg
+  ods_vova_vteos.ods_vova_goods_gallery vgg
 on t1.goods_id = vgg.goods_id
 where vgg.img_id is not null and vgg.img_url != '' and vgg.is_delete = 0
 ;
