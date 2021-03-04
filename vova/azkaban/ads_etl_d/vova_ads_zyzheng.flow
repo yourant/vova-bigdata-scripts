@@ -164,6 +164,24 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_dwd_vova_fact_refund
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_refund
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_logistics
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_logistics
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
   -  name: ads_vova_flash_sale_coupon_goods
      type: command
      config:
@@ -301,5 +319,18 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - ads_zq_fn_vova_goods
-      
+
+  - name: ads_vova_mct_fulfillment_order
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/merchant/mct_order_update.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_refund
+      - judge_dwd_vova_fact_logistics
+      - judge_dim_vova_order_goods
+      - judge_dim_vova_merchant
+
+
 
