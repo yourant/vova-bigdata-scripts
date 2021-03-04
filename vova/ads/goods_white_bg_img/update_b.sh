@@ -21,7 +21,7 @@ select /*+ REPARTITION(2) */
   vgg.img_id,
   vgg.img_url,
   vgg.is_default,
-  vgg.img_ctime
+  vgg.create_time img_ctime
 from
 (
   select /*+ REPARTITION(1) */
@@ -66,7 +66,7 @@ from
     goods_id goods_id
   from
     ads.ads_vova_goods_white_bg_img_b_arc
-  where pt ='${cur_date}' and to_date(img_ctime) <= '${cur_date}' and to_date(img_ctime) >= date_sub('${cur_date}', 1)
+  where pt ='${cur_date}' and to_date(img_ctime) = '${cur_date}'
 ) arc_new
 left join
 (
