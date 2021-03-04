@@ -1,0 +1,68 @@
+---
+config:
+  failure.emails: yzhang13@vova.com.hk,dyshu@vova.com.hk,kaicheng@vova.com.hk
+  retries: 5
+  retry.backoff: 600000
+
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - sqoop_mlb_vova_graph_embedding_no_brand_data
+      - sqoop_mlb_vova_rec_m_order_nb_d
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+## judge #############
+  - name: judge_message_get_mlb_graph_embedding_nobrand_job_message
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=mlb_graph_embedding_rec --from=mlb --to=data
+      retries: 72
+      retry.backoff: 600000
+    dependsOn:
+      - judge_message_put_mlb_graph_embedding_nobrand_job_message_put
+
+  - name: judge_message_put_mlb_graph_embedding_nobrand_job_message_put
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=data_graph_embedding_rec --from=data --to=mlb --jtype=1D --retry=0
+      retries: 6
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_message_get_mlb_vova_rec_m_order_nb_d_job_message
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=mlb_order_i2i_u2i_rec --from=mlb --to=data
+      retries: 72
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+## sqoop #############
+  - name: sqoop_mlb_vova_graph_embedding_no_brand_data
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/graph_embedding_no_brand_data/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_message_get_mlb_graph_embedding_nobrand_job_message
+
+  - name: sqoop_mlb_vova_rec_m_order_nb_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_m_order_nb_d/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_message_get_mlb_vova_rec_m_order_nb_d_job_message
+
+
