@@ -1,0 +1,9 @@
+ insert overwrite table tmp.tmp_0301_search_word
+ select
+ key_word,
+ count(*) cnt
+ from
+ dwd.dwd_vova_fact_search_word
+ where pt>='2021-01-01' and pt<='2021-02-28'
+ group by key_word
+ having cnt>=10
