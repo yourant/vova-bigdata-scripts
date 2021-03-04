@@ -5,6 +5,7 @@ start_date=$1
 if [ ! -n "$1" ];then
 start_date=`date -d "-90 day" +%Y-%m-%d`
 fi
+echo $start_date
 ###逻辑sql
 sql="
 set hive.exec.dynamic.partition.mode=nonstrict;
@@ -24,6 +25,9 @@ nvl(sum(if(complaint_15w=1 and is_delivered_out_time=1,1,0))/sum(complaint_15w),
 nvl(sum(is_cancal_15w)/count(*),0)*100 as cancal_rate,
 nvl(sum(platform_refund_15w)/count(*),0)*100 as platform_refund_15w_rate,
 nvl(sum(mct_refund_15w)/count(*),0)*100 as mct_refund_15w_rate,
+nvl(sum(is_start_refund_9w)/count(1),0)*100 as start_refund_9w_rate,
+nvl(sum(is_start_refund_lfr_9w)/count(1),0)*100 as start_refund_9w_lrf_rate,
+nvl(sum(is_start_refund_nlfr_9w)/count(1),0)*100 as start_refund_9w_nlrf_rate,
 substr(weekday,0,10) as pt
 from
 (select
@@ -40,7 +44,10 @@ if(fr.recheck_type =2 and fl.delivered_time is not null and datediff(fl.delivere
 if(fl.delivered_time is not null and fl.delivered_time > oge.latest_delivery_time,1,0 ) as is_delivered_out_time,
 if(og.sku_order_status=2 and fr.refund_type_id not in (2,12) and datediff(fr.create_time,fp.pay_time)<105 ,1,0 ) as is_cancal_15w,
 if(fr.refund_type_id in (3,4,8,9,10,13)  and ogs.sku_pay_status > 1 and ((fr.rr_audit_status = 'audit_passed' and datediff(fr.rr_audit_time,fp.confirm_time)<105) or (fr.rr_audit_status != 'audit_passed' and ogs.sku_pay_status = 4 and datediff(fr.exec_refund_time,fp.confirm_time)<105)),1,0) as platform_refund_15w,
-if(fr.refund_type_id in (5,6,11,14)  and ogs.sku_pay_status > 1 and ((fr.rr_audit_status = 'audit_passed' and datediff(fr.rr_audit_time,fp.confirm_time)<105) or (fr.rr_audit_status != 'audit_passed' and ogs.sku_pay_status = 4 and datediff(fr.exec_refund_time,fp.confirm_time)<105)),1,0) as mct_refund_15w
+if(fr.refund_type_id in (5,6,11,14)  and ogs.sku_pay_status > 1 and ((fr.rr_audit_status = 'audit_passed' and datediff(fr.rr_audit_time,fp.confirm_time)<105) or (fr.rr_audit_status != 'audit_passed' and ogs.sku_pay_status = 4 and datediff(fr.exec_refund_time,fp.confirm_time)<105)),1,0) as mct_refund_15w,
+if(fr.refund_type_id= 2 AND datediff(fr.create_time,fp.pay_time) <63,1,0) as is_start_refund_9w,
+if(fr.refund_type_id= 2 AND datediff(fr.create_time,fp.pay_time) <63 and fr.refund_reason_type_id not in (8,9),1,0) as is_start_refund_nlfr_9w,
+if(fr.refund_type_id= 2 AND datediff(fr.create_time,fp.pay_time) <63 and fr.refund_reason_type_id  in (8,9),1,0) as is_start_refund_lfr_9w
 from
 dwd.dwd_vova_fact_pay fp
 left join dwd.dwd_vova_fact_refund fr

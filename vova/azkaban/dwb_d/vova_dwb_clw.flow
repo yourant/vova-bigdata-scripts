@@ -37,6 +37,7 @@ nodes:
       - dwb_order_goods_life_cycle_type
       - dwb_goods_cat_web_guv
       - dwb_take_photo_for_buy
+      - dwb_vova_activity_biz_behave
 
   - name: start_flag
     type: command
@@ -379,6 +380,91 @@ nodes:
     dependsOn:
       - start_flag
 
+
+  - name: judge_ads_vova_activity_daily_selection
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_daily_selection
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_ads_vova_activity_outlets
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_outlets
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_activity_best_sale
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_best_sale
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_activity_clearance_sale
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_clearance_sale
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_activity_women_cloth
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_women_cloth
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_ads_vova_activity_home_garden
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_home_garden
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_ads_vova_activity_men_cloth_and_shoes
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_men_cloth_and_shoes
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_activity_new_user
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_new_user
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_ads_vova_activity_women_clothing_clearance_sale
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_women_clothing_clearance_sale
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
 
 
 
@@ -758,3 +844,30 @@ nodes:
       - judge_dwd_vova_log_screen_view
       - judge_dwd_vova_log_goods_impression
       - judge_dwd_vova_log_goods_click
+
+
+
+  - name: dwb_vova_activity_biz_behave
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/activity_biz_behave/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_impressions
+      - judge_dwd_vova_log_screen_view
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_fact_cart_cause_v2
+      - judge_dim_vova_buyers
+      - judge_dwd_vova_fact_order_cause_v2
+      - judge_dwd_vova_fact_pay
+      - judge_ads_vova_activity_daily_selection
+      - judge_ads_vova_activity_outlets
+      - judge_ads_vova_activity_best_sale
+      - judge_ads_vova_activity_clearance_sale
+      - judge_ads_vova_activity_women_cloth
+      - judge_ads_vova_activity_home_garden
+      - judge_ads_vova_activity_men_cloth_and_shoes
+      - judge_ads_vova_activity_new_user
+      - judge_ads_vova_activity_women_clothing_clearance_sale
