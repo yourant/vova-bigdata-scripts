@@ -24,7 +24,7 @@ from
     goods_id,
     age_range,
     goods_number,
-    row_number() over(partition by goods_id, age_range order by goods_number desc) row
+    row_number() over(partition by age_range order by goods_number desc) row
   from
   (
     select
