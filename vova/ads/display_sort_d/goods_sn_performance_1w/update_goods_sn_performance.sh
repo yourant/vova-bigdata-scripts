@@ -78,7 +78,6 @@ FROM (
                                     INNER JOIN dim.dim_vova_goods dg ON log.virtual_goods_id = dg.virtual_goods_id
                            WHERE log.pt >= date_sub('${cur_date}', 6)
                              AND log.pt <= '${cur_date}'
-                             AND log.datasource in ('vova', 'airyclub')
                        ) temp
                   GROUP BY CUBE (temp.goods_sn, temp.datasource, temp.platform, temp.region_code)
                   UNION ALL
@@ -105,7 +104,6 @@ FROM (
                                     INNER JOIN dim.dim_vova_goods dg ON log.virtual_goods_id = dg.virtual_goods_id
                            WHERE log.pt >= date_sub('${cur_date}', 6)
                              AND log.pt <= '${cur_date}'
-                             AND log.datasource in ('vova', 'airyclub')
                        ) temp
                   GROUP BY CUBE (temp.goods_sn, temp.datasource, temp.platform, temp.region_code)
                   UNION ALL
@@ -157,8 +155,10 @@ FROM (
         left join dim.dim_vova_category c on dg.cat_id = c.cat_id
      group by dg.goods_sn
      ) goods on goods.goods_sn = final.goods_sn
+     left join dim.dim_zq_site dzs on dzs.datasource = final.datasource
 WHERE (final.clicks > 0 OR final.sales_order > 0)
 AND final.region_code in ('all', 'FR', 'DE', 'IT', 'ES', 'GB', 'TW')
+AND dzs.datasource is null
 "
 
 spark-sql \

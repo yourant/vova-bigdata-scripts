@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS \`themis\`.\`ads_buyer_stat_feature_new\` (
   \`email_act\`                 int(1)               COMMENT 'd_EDM-邮件分组',
   \`update_time\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (\`id\`) USING BTREE,
-  KEY \`buyer_id_key\` (\`buyer_id\`)
+  UNIQUE KEY \`buyer_id_key\` (\`buyer_id\`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 CREATE TABLE IF NOT EXISTS \`themis\`.\`ads_buyer_stat_feature\` (
   \`id\`                        int(11)              NOT NULL AUTO_INCREMENT,
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS \`themis\`.\`ads_buyer_stat_feature\` (
   \`email_act\`                 int(1)               COMMENT 'd_EDM-邮件分组',
   \`update_time\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (\`id\`) USING BTREE,
-  KEY \`buyer_id_key\` (\`buyer_id\`)
+  UNIQUE KEY \`buyer_id_key\` (\`buyer_id\`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 "
 mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
