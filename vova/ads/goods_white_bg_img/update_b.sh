@@ -21,7 +21,7 @@ select /*+ REPARTITION(2) */
   vgg.img_id,
   vgg.img_url,
   vgg.is_default,
-  vgg.img_ctime
+  vgg.create_time img_ctime
 from
 (
   select /*+ REPARTITION(1) */
@@ -36,7 +36,7 @@ from
     and dg.first_cat_id in (5768,194,5777,5714)
 ) t1
 left join
-  ods_vova_vts.ods_vova_goods_gallery vgg
+  ods_vova_vteos.ods_vova_goods_gallery vgg
 on t1.goods_id = vgg.goods_id
 where vgg.img_id is not null and vgg.img_url != '' and vgg.is_delete = 0
 ;
@@ -66,7 +66,7 @@ from
     goods_id goods_id
   from
     ads.ads_vova_goods_white_bg_img_b_arc
-  where pt ='${cur_date}' and to_date(img_ctime) <= '${cur_date}' and to_date(img_ctime) >= date_sub('${cur_date}', 1)
+  where pt ='${cur_date}' and to_date(img_ctime) = '${cur_date}'
 ) arc_new
 left join
 (

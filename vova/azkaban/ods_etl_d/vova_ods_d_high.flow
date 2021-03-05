@@ -628,12 +628,13 @@ nodes:
         dependsOn:
           - themis_goods_start
 
+# goods_gallery: themis (vts) 迁到 themis_eos (vteos)
       - name: vova_goods_gallery
         type: command
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=goods_gallery --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=150
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vteos --table_name=goods_gallery --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=150
         dependsOn:
           - themis_goods_start
 

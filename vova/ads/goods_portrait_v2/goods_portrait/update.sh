@@ -9,7 +9,7 @@ sql="
 ALTER TABLE ads.ads_vova_goods_portrait DROP if exists partition(pt = '$(date -d "${pre_date:0:10} -180day" +%Y-%m-%d)');
 with tmp_goods_portrait as
 (SELECT
-  dg.goods_id,
+  dg.goods_id,dg.goods_name,dg.goods_sn,dg.is_on_sale,
   dg.cat_id,
   dg.first_cat_id,
   dg.second_cat_id,
@@ -480,7 +480,11 @@ select
   t6.bs_nlrf_rate_5_8w  bs_nlrf_rate_5_8w,  -- 非物流退款率
   ord_cnt_1w,
   ord_cnt_15d,
-  ord_cnt_1m
+  ord_cnt_1m,
+  a.goods_id,
+  a.goods_name,
+  a.goods_sn,
+  a.is_on_sale
 from tmp_goods_portrait a
 left join tmp_goods_painting_pt b
   on a.goods_id = b.goods_id
