@@ -168,6 +168,15 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_vova_mct_auth_status
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_mct_auth_status
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
   - name: ads_vova_traff_control
     type: command
     config:
@@ -176,6 +185,8 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - ads_vova_mct_profile
+      - ads_vova_mct_fulfillment_order
+      - judge_vova_mct_auth_status
 
   - name: ads_vova_mct_profile
     type: command
@@ -396,3 +407,15 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - ads_vova_buyer_goods_rating_d
+
+  - name: ads_vova_mct_fulfillment_order
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/merchant/mct_order_update.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_refund
+      - judge_dwd_vova_fact_logistics
+      - judge_dim_vova_order_goods
+      - judge_dim_vova_merchant

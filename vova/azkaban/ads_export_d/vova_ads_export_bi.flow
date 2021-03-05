@@ -19,6 +19,7 @@ nodes:
       - ads_vova_buyer_stat_feature_export
       - ads_vova_second_cat_goods_ranking_list_export
       - ads_vova_category_recommend_default_export
+      - ads_vova_goods_restrict_export
 
   - name: start_flag
     type: command
@@ -113,6 +114,15 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_ads_vova_goods_restrict_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_restrict_d
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
   - name: ads_vova_buyer_portrait_brand_likes_sqoop_export
     type: command
     config:
@@ -201,3 +211,12 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_ads_vova_category_recommend_default_export
+
+  - name: ads_vova_goods_restrict_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_restrict/update_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_goods_restrict_d
