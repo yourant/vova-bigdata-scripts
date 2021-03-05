@@ -1,0 +1,222 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_activity_ac_brand_export
+      - ads_vova_activity_best_sale_export
+      - ads_vova_activity_clearance_sale_export
+      - ads_vova_activity_daily_selection_export
+      - ads_vova_activity_home_garden_export
+      - ads_vova_activity_men_cloth_and_shoes_export
+      - ads_vova_activity_outlets_export
+      - ads_vova_activity_women_cloth_export
+      - ads_vova_activity_women_clothing_clearance_sale_export
+      - ads_vova_activity_new_user_export
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: judge_ads_vova_activity_ac_brand
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_ac_brand
+      retries: 20
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_activity_best_sale
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_best_sale
+      retries: 20
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_activity_clearance_sale
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_clearance_sale
+      retries: 20
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_activity_daily_selection
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_daily_selection
+      retries: 20
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_ads_vova_activity_home_garden
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_home_garden
+      retries: 20
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_ads_vova_activity_men_cloth_and_shoes
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_men_cloth_and_shoes
+      retries: 20
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_activity_outlets
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_outlets
+      retries: 20
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_activity_women_cloth
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_women_cloth
+      retries: 20
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_activity_women_clothing_clearance_sale
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_women_clothing_clearance_sale
+      retries: 20
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_activity_new_user
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_new_user
+      retries: 20
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+  - name:  ads_vova_activity_ac_brand_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_ac_brand/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_activity_ac_brand
+      - start_flag
+
+  - name:  ads_vova_activity_best_sale_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_best_sale/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_activity_best_sale
+      - start_flag
+
+  - name:  ads_vova_activity_clearance_sale_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_clearance_sale/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_activity_clearance_sale
+      - start_flag
+
+  - name:  ads_vova_activity_daily_selection_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_daily_selection/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_activity_daily_selection
+      - start_flag
+
+  - name:  ads_vova_activity_home_garden_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_home_garden/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_activity_home_garden
+      - start_flag
+
+  - name:  ads_vova_activity_men_cloth_and_shoes_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_men_cloth_and_shoes/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_activity_men_cloth_and_shoes
+      - start_flag
+
+  - name:  ads_vova_activity_outlets_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_outlets/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_activity_outlets
+      - start_flag
+
+  - name:  ads_vova_activity_women_cloth_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_women_cloth/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_activity_women_cloth
+      - start_flag
+
+
+  - name:  ads_vova_activity_women_clothing_clearance_sale_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_women_clothing_clearance/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_activity_women_clothing_clearance_sale
+      - start_flag
+
+
+  - name:  ads_vova_activity_new_user_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_new_user/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_activity_new_user
+      - start_flag

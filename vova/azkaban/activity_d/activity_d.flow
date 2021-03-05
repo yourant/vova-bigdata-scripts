@@ -1,0 +1,202 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_activity_ac_brand
+      - ads_vova_activity_best_sale
+      - ads_vova_activity_clearance_sale
+      - ads_vova_activity_daily_selection
+      - ads_vova_activity_home_garden
+      - ads_vova_activity_men_cloth_and_shoes
+      - ads_vova_activity_outlets
+      - ads_vova_activity_women_cloth
+      - ads_vova_activity_women_clothing_clearance_sale
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+
+  - name: judge_dwd_vova_activity_goods_ctry_behave
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_activity_goods_ctry_behave
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_dim_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_devices
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_devices
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_refund
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_refund
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_pay
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_buyers
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_buyers
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_ads_vova_goods_portrait_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_portrait_v2
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+  - name:  ads_vova_activity_ac_brand
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_ac_brand/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_activity_goods_ctry_behave
+      - judge_dim_vova_goods
+
+  - name:  ads_vova_activity_best_sale
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_best_sale/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_activity_goods_ctry_behave
+      - judge_dim_vova_goods
+
+  - name:  ads_vova_activity_clearance_sale
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_clearance_sale/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_activity_goods_ctry_behave
+      - judge_dim_vova_goods
+
+
+  - name:  ads_vova_activity_daily_selection
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_daily_selection/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_activity_goods_ctry_behave
+      - judge_dim_vova_goods
+
+
+  - name:  ads_vova_activity_home_garden
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_home_garden/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_activity_goods_ctry_behave
+      - judge_dim_vova_goods
+
+
+  - name:  ads_vova_activity_men_cloth_and_shoes
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_men_cloth_and_shoes/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_activity_goods_ctry_behave
+      - judge_dim_vova_goods
+
+  - name:  ads_vova_activity_outlets
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_outlets/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_activity_goods_ctry_behave
+      - judge_dim_vova_goods
+
+
+  - name:  ads_vova_activity_women_cloth
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_women_cloth/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_activity_goods_ctry_behave
+      - judge_dim_vova_goods
+
+  - name:  ads_vova_activity_women_clothing_clearance_sale
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_women_clothing_clearance/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_activity_goods_ctry_behave
+      - judge_dim_vova_goods
+
+  - name:  ads_vova_activity_new_user
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_new_user/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_activity_goods_ctry_behave
+      - judge_ads_vova_goods_portrait_v2
+      - judge_dim_vova_buyers
+      - judge_dwd_vova_fact_pay
+      - judge_dwd_vova_fact_refund
+      - judge_dim_vova_devices
+      - judge_dim_vova_goods

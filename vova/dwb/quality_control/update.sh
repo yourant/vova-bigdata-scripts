@@ -19,6 +19,7 @@ refund_rate,
 complaint_rate,
 cancal_rate,
 cb_rate,
+start_refund_rate,
 pt
 from
 (select
@@ -31,6 +32,7 @@ nvl(sum(is_refund_9w)/count(*)*100,0) as refund_rate,
 nvl(sum(complaint_90d)/count(*)*100,0) as complaint_rate,
 nvl(sum(is_cancal_2w)/count(*)*100,0) as cancal_rate,
 nvl(sum(is_cb)/count(*)*100,0) as cb_rate,
+nvl(sum(is_start_refund_9w)/count(*)*100,0) as start_refund_rate,
 substr(weekday,0,10) as pt
 from
 (select
@@ -45,6 +47,7 @@ if(fr.refund_type_id not in (1,7)  and ogs.sku_pay_status > 1 and ((fr.rr_audit_
 if(fr.recheck_type =2 and fl.delivered_time is not null and datediff(fl.delivered_time,fp.pay_time) <90   ,1,0) complaint_90d,
 if(og.sku_order_status=2 and fr.refund_type_id not in (2,12) and datediff(fr.create_time,fp.pay_time)<14 ,1,0 ) as is_cancal_2w,
 if(cr.track_id is not null and cr.create_time>=fp.pay_time and datediff(cr.create_time,fp.pay_time) <60 ,1,0) is_cb,
+if(fr.refund_type_id= 2 AND datediff(fr.create_time,fp.pay_time) <63,1,0) as is_start_refund_9w,
 concat(date_sub(date(fp.pay_time),if(dayofweek(date(fp.pay_time))=1,6,dayofweek(date(fp.pay_time))-2)),'~',date_add(date(fp.pay_time),if(dayofweek(date(fp.pay_time))=1,0,8-dayofweek(date(fp.pay_time))))) as weekday
 from
 dwd.dwd_vova_fact_pay fp

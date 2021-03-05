@@ -20,7 +20,7 @@ nodes:
   - name: ads_zq_fn_rec_mlb_goods
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ads/fn/fn_rec_goods/mlb_rec_update.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/fn/fn_rec_goods/mlb_rec_update.sh
       retries: 30
       retry.backoff: 300000
     dependsOn:
@@ -29,26 +29,26 @@ nodes:
   - name: ads_zq_fn_rec_goods
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ads/fn/fn_rec_goods/update.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/fn/fn_rec_goods/update.sh
       retries: 30
       retry.backoff: 300000
     dependsOn:
-      - judge_fact_log_goods_click
-      - judge_fn_dim_goods
+      - judge_dwd_vova_log_goods_click
+      - judge_dim_zq_goods
 
-  - name: judge_fact_log_goods_click
+  - name: judge_dwd_vova_log_goods_click
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh fact_log_goods_click
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_click
       retries: 30
       retry.backoff: 300000
     dependsOn:
       - start_flag
 
-  - name: judge_fn_dim_goods
+  - name: judge_dim_zq_goods
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh fn_dim_goods
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_zq_goods
       retries: 30
       retry.backoff: 300000
     dependsOn:

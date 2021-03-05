@@ -54,7 +54,7 @@ nodes:
   - name: judge_zq_fn_vector_group
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=fn_images_vector_group_20201113 --from=mlb --to=data
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=fn_images_vector_group_20201113 --from=java_server --to=data
       retries: 30
       retry.backoff: 300000
     dependsOn:

@@ -13,6 +13,8 @@ CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_quality_control_core_tag
 ) COMMENT '质量品控核心指标报表' PARTITIONED BY (pt STRING)
     STORED AS PARQUETFILE;
 
+alter table dwb.dwb_vova_quality_control_core_tag add columns(`start_refund_rate` decimal(13,2)       COMMENT '订单支付后9周的退款发起率') cascade;
+
 DROP TABLE dwb.dwb_vova_quality_control_refund;
 CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_quality_control_refund
 (
@@ -32,6 +34,10 @@ CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_quality_control_refund
     `mct_refund_15w_rate`                decimal(13,2)       COMMENT '15周商家退款率'
 ) COMMENT '质量品控退款报表' PARTITIONED BY (pt STRING)
     STORED AS PARQUETFILE;
+
+alter table dwb.dwb_vova_quality_control_refund add columns(`start_refund_9w_rate` decimal(13,2)       COMMENT '订单支付后9周的退款发起率') cascade;
+alter table dwb.dwb_vova_quality_control_refund add columns(`start_refund_9w_lrf_rate` decimal(13,2)       COMMENT '订单支付后9周的物流退款发起率') cascade;
+alter table dwb.dwb_vova_quality_control_refund add columns(`start_refund_9w_nlrf_rate` decimal(13,2)       COMMENT '订单支付后9周的非物流退款发起率') cascade;
 
 
 DROP TABLE dwb.dwb_vova_quality_control_delivered;

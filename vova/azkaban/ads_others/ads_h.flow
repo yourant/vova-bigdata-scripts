@@ -1,0 +1,67 @@
+---
+config:
+  failure.emails: ted.wan@vova.com.hk
+  retries: 0
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_activity_flash_sale_new_h
+      - ads_vova_activity_flash_sale_new_h_export
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: judge_vova_gsn_coupon_activity_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_gsn_coupon_activity_h
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_gsn_coupon_sign_goods_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_gsn_coupon_sign_goods_h
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_ads_lower_price_goods_red_packet_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_ads_lower_price_goods_red_packet_h
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+  - name: ads_vova_activity_flash_sale_new_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_flash_sale_new/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_vova_gsn_coupon_activity_h
+      - judge_vova_gsn_coupon_sign_goods_h
+      - judge_vova_ads_lower_price_goods_red_packet_h
+
+  - name: ads_vova_activity_flash_sale_new_h_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_flash_sale_new/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - ads_vova_activity_flash_sale_new_h

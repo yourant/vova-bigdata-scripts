@@ -42,7 +42,7 @@ nodes:
   - name: ads_fn_goods_portrait_export
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ads/fn/fn_goods_portrait/sqoop_export.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_portrait_v2/fn_goods_portrait/sqoop_export.sh
       retries: 5
       retry.backoff: 600000
     dependsOn:

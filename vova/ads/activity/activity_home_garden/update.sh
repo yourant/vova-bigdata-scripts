@@ -35,36 +35,27 @@ with tmp_home_garden as (
  from
  (
    SELECT
-     nvl(gb.gs_id, 'all') AS goods_id,
-     nvl(db.region_id,0) as region_id,
-     sum( gb.expre_cnt ) AS expre_cnt,
-     sum( gb.clk_cnt ) AS clk_cnt,
-     sum( gb.ord_cnt ) AS ord_cnt,
-     sum( gb.gmv ) AS gmv,
-     sum( gb.sales_vol) as sales_vol,
-     count(distinct IF ( gb.expre_cnt > 0, gb.buyer_id, NULL )) as users,
-     count( DISTINCT IF ( gb.clk_cnt > 0, gb.buyer_id, NULL ) ) AS click_uv
+     cb.goods_id,
+     cb.region_id,
+     cb.expre_cnt,
+     cb.clk_cnt,
+     cb.ord_cnt,
+     cb.gmv,
+     cb.sales_vol,
+     cb.expre_uv as users,
+     cb.click_uv
    FROM
-       dws.dws_vova_buyer_goods_behave gb
-   LEFT JOIN
-     dim.dim_vova_buyers db
-   ON db.buyer_id = gb.buyer_id
-   left join
-     dim.dim_vova_goods dg
-   on dg.goods_id = gb.gs_id
-   WHERE gb.pt <= '${cur_date}'
-       AND gb.pt > date_sub( '${cur_date}', 7 )
-       and gb.first_cat_id = 5712
-       AND db.region_id IS NOT NULL
-       AND db.region_id != 0
-       and dg.brand_id <=0
-   GROUP BY cube(gb.gs_id, db.region_id)
+    dwd.dwd_vova_activity_goods_ctry_behave cb
+  WHERE
+       cb.pt = '${cur_date}'
+       and cb.first_cat_id = 5712
+       AND cb.region_id IS NOT NULL
+       AND cb.region_id IN (0,4003,4056,4017,4143,3858)
+       and cb.is_brand =0
  ) t1
  left join
    dim.dim_vova_goods dg
  on t1.goods_id = dg.goods_id
- where t1.goods_id != 'all'
-     and t1.region_id in (0,4003,4056,4017,4143,3858)
 )
 
 INSERT overwrite TABLE ads.ads_vova_activity_home_garden PARTITION ( pt = '${cur_date}' )
@@ -148,7 +139,7 @@ from
 
 #如果使用spark-sql运行，则执行spark-sql -e
 spark-sql \
---executor-memory 6G --executor-cores 1 \
+--executor-memory 4G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=10" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
