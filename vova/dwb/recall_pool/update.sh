@@ -22,7 +22,8 @@ a.expre_pv,
 e.clk_pv,
 d.expre_uv,
 nvl(c.pay_uv, 0) pay_uv,
-nvl(c.gmv, 0) gmv
+nvl(c.gmv, 0) gmv,
+nvl(c.order_cnt, 0) order_cnt
 from (
          select nvl(datasource, 'all')    datasource1,
                 nvl(rec_page_code, 'all') rec_page_code1,
@@ -108,13 +109,14 @@ left join (
                 nvl(rec_code, 'all')      rec_code1,
                 nvl(rec_version, 'all')   rec_version1,
                 count(distinct device_id,buyer_id)                  pay_uv,
-                sum(price)                gmv
+                sum(price)                gmv,
+                count(distinct order_goods_id) order_cnt
          from (select datasource,
                       rec_page_code,
                       rec_code,
                       explode(split(concat(rp_name, ',all'), ',')) rp_name,
                       is_single,
-                      rec_version,price,device_id,buyer_id
+                      rec_version,price,device_id,buyer_id,order_goods_id
                from dwd.dwd_vova_ab_test_pay
                where pt = '${cur_date}') tmp
          group by cube (datasource, rec_page_code, rp_name, is_single, rec_code, rec_version)
@@ -148,7 +150,7 @@ tmp.gmv,
 concat(round(tmp.expre_pv * 100 / tmp2.expre_pv, 2),'%') expre_pv_rate,
 concat(round(tmp.expre_uv * 100 / tmp2.expre_uv, 2),'%') expre_uv_rate,
 '',
-''
+'',tmp.order_cnt
 from tmp.tmp_vova_recall_pool_v2_tmp tmp
 left join (select * from tmp.tmp_vova_recall_pool_v2_tmp where rp_name1 = 'all') tmp2
 on tmp.datasource1 = tmp2.datasource1
