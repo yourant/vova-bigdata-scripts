@@ -11,6 +11,9 @@ nodes:
       command: echo "stop job"
     dependsOn:
       - ads_vova_mct_manage_module
+      - sqoop_ads_vova_channel_region_top
+      - sqoop_ads_vova_age_range_top
+      - sqoop_ads_vova_red_packet_gsn_goods
 
 
   - name: start_flag
@@ -109,6 +112,16 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_ods_vova_gsn_coupon_sign_goods_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_gsn_coupon_sign_goods_h
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
 #  - name: judge_dws_vova_buyer_goods_behave
 #    type: command
 #    config:
@@ -164,6 +177,18 @@ nodes:
       - judge_dim_vova_goods
       - judge_dim_vova_buyers
 
+# [8525]商家红包替换逻辑改为gsn逻辑
+### 红包商品对应 gsn 下的全部 goods_id
+  - name: ads_vova_red_packet_gsn_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/lower_price_goods_red_packet/update_gsn_goods.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_ods_vova_gsn_coupon_sign_goods_h
+
 
 ## export #############################################################
   - name: sqoop_ads_vova_channel_region_top
@@ -183,6 +208,15 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - ads_vova_age_range_top
+
+  - name: sqoop_ads_vova_red_packet_gsn_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/lower_price_goods_red_packet/sqoop_export_gsn_goods.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - ads_vova_red_packet_gsn_goods
 
 # 活动会场 家居  # 统一迁移
 #  - name: ads_vova_activity_home_garden
