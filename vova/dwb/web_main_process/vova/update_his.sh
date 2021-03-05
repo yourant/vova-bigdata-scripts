@@ -61,16 +61,16 @@ CASE when t1.event_name ='page_view' and t1.page_code='homepage' THEN t1.domain_
 CASE when t1.event_name ='page_view' THEN t1.domain_userId end activate_domain_userId,
 CASE when t1.event_name ='page_view' and  t1.page_code='cart' THEN t1.domain_userId end cart_domain_userId,
 CASE when t1.event_name ='page_view' and  t1.page_code='checkout' THEN t1.domain_userId end check_out_domain_userId,
-CASE when t1.event_name ='page_view' and  t1.page_code='product' THEN t1.domain_userId end product_detail_domain_userId,
-CASE when t1.event_name ='data' and t1.page_code='product' and t1.element_name = 'pdAddToCartSuccess' THEN t1.domain_userId end add_cart_success_domain_userId,
+CASE when t1.event_name ='page_view' and  t1.page_code in ('product', 'product_detail') THEN t1.domain_userId end product_detail_domain_userId,
+CASE when t1.event_name ='data' and t1.page_code in ('product', 'product_detail') and t1.element_name = 'pdAddToCartSuccess' THEN t1.domain_userId end add_cart_success_domain_userId,
 CASE when t1.event_name ='common_click' and t1.page_code='checkout' and t1.element_name = 'continue_checkout' THEN t1.domain_userId end continue_checkout_domain_userId
 from
 (
-select pt,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,view_type,NULL element_name,NULL list_name from dwd.dwd_vova_log_page_view where pt>='2021-01-01' and pt<='2021-01-26' and datasource IN ('vova') and platform in ('pc', 'web')
+select pt,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,view_type,NULL element_name,NULL list_name from dwd.dwd_vova_log_page_view where pt>='2021-02-06' and pt<='2021-03-03' and datasource IN ('vova') and platform in ('pc', 'web')
 union all
-select pt,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,NULL view_type,element_name,NULL list_name from dwd.dwd_vova_log_data where pt>='2021-01-01' and pt<='2021-01-26' and datasource IN ('vova') and platform in ('pc', 'web')
+select pt,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,NULL view_type,element_name,NULL list_name from dwd.dwd_vova_log_data where pt>='2021-02-06' and pt<='2021-03-03' and datasource IN ('vova') and platform in ('pc', 'web')
 union all
-select pt,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,NULL view_type,element_name,NULL list_name from dwd.dwd_vova_log_common_click where pt>='2021-01-01' and pt<='2021-01-26' and datasource IN ('vova') and platform in ('pc', 'web')
+select pt,datasource,domain_userId,platform,buyer_id,event_name,geo_country,os_type,page_code,device_id,referrer,NULL view_type,element_name,NULL list_name from dwd.dwd_vova_log_common_click where pt>='2021-02-06' and pt<='2021-03-03' and datasource IN ('vova') and platform in ('pc', 'web')
 ) t1
 left join dwd.dwd_vova_fact_original_channel voc on voc.domain_userid = t1.domain_userid
 ) log_data
@@ -103,8 +103,8 @@ SELECT fp.buyer_id,
 FROM dwd.dwd_vova_fact_pay fp
 group by fp.buyer_id, fp.datasource
 ) pre_order on pre_order.min_order_id = fp.order_id AND fp.datasource = pre_order.datasource
-WHERE date(fp.pay_time) >= '2021-01-01'
-and date(fp.pay_time)<= '2021-01-26'
+WHERE date(fp.pay_time) >= '2021-02-06'
+and date(fp.pay_time)<= '2021-03-03'
 AND fp.datasource = 'vova'
 AND fp.from_domain not like '%api%'
 GROUP BY CUBE (date(fp.pay_time), nvl(fp.region_code,'NALL'), nvl(fp.datasource,'NA'), nvl(voc.original_channel, 'unknown'))
@@ -156,8 +156,8 @@ FROM (
                          0        AS clicks_uv
                   FROM dwd.dwd_vova_log_goods_impression log
                    LEFT JOIN dwd.dwd_vova_fact_original_channel voc on voc.domain_userid = log.domain_userid AND voc.datasource = log.datasource
-                  WHERE log.pt >= '2021-01-01'
-                    AND log.pt <= '2021-01-26'
+                  WHERE log.pt >= '2021-02-06'
+                    AND log.pt <= '2021-03-03'
                     AND log.platform IN ('pc', 'web')
                     AND log.datasource = 'vova'
                   GROUP BY CUBE (log.pt, log.platform, nvl(log.geo_country,'NALL'), nvl(voc.original_channel, 'unknown'), log.datasource)
@@ -173,8 +173,8 @@ FROM (
                          count(DISTINCT log.domain_userid) AS clicks_uv
                   FROM dwd.dwd_vova_log_goods_click log
                    LEFT JOIN dwd.dwd_vova_fact_original_channel voc on voc.domain_userid = log.domain_userid AND voc.datasource = log.datasource
-                  WHERE log.pt >= '2021-01-01'
-                    AND log.pt <= '2021-01-26'
+                  WHERE log.pt >= '2021-02-06'
+                    AND log.pt <= '2021-03-03'
                     AND log.platform IN ('pc', 'web')
                     AND log.datasource = 'vova'
                   GROUP BY CUBE (log.pt, log.platform, nvl(log.geo_country,'NALL'), nvl(voc.original_channel, 'unknown'), log.datasource)
