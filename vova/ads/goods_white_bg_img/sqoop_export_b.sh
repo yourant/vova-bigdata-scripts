@@ -8,6 +8,11 @@ fi
 
 echo "${pre_date}"
 
+hive -e "msck repair table ads.ads_vova_goods_white_bg_img_res_b;"
+if [ $? -ne 0 ];then
+  exit 1
+fi
+
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.map.memory.mb=8096 \

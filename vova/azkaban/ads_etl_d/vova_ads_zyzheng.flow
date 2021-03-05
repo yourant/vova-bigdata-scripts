@@ -10,7 +10,7 @@ nodes:
     config:
       command: echo "stop job"
     dependsOn:
-      - ads_vova_flash_sale_coupon_goods_export
+#      - ads_vova_flash_sale_coupon_goods_export
       - ads_vova_web_examination
       - ads_vova_goods_display_sort_export
       - ads_vova_goods_performance
@@ -164,27 +164,45 @@ nodes:
     dependsOn:
       - start_flag
 
-  -  name: ads_vova_flash_sale_coupon_goods
-     type: command
-     config:
-       command: sh /mnt/vova-bigdata-scripts/vova/ads/flash_sale_coupon_goods/update.sh
-       retries: 10
-       retry.backoff: 600000
-     dependsOn:
-       - judge_dwd_vova_log_goods_impression
-       - judge_dwd_vova_log_goods_click
-       - judge_dwd_vova_fact_pay
-       - judge_ods_vova_activity_coupon
-       - judge_ods_vova_ads_lower_price_goods_red_packet
+  - name: judge_dwd_vova_fact_refund
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_refund
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
 
-  -  name: ads_vova_flash_sale_coupon_goods_export
-     type: command
-     config:
-       command: sh /mnt/vova-bigdata-scripts/vova/ads/flash_sale_coupon_goods/update_export.sh
-       retries: 10
-       retry.backoff: 600000
-     dependsOn:
-       - ads_vova_flash_sale_coupon_goods
+  - name: judge_dwd_vova_fact_logistics
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_logistics
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+#  -  name: ads_vova_flash_sale_coupon_goods
+#     type: command
+#     config:
+#       command: sh /mnt/vova-bigdata-scripts/vova/ads/flash_sale_coupon_goods/update.sh
+#       retries: 10
+#       retry.backoff: 600000
+#     dependsOn:
+#       - judge_dwd_vova_log_goods_impression
+#       - judge_dwd_vova_log_goods_click
+#       - judge_dwd_vova_fact_pay
+#       - judge_ods_vova_activity_coupon
+#       - judge_ods_vova_ads_lower_price_goods_red_packet
+#
+#  -  name: ads_vova_flash_sale_coupon_goods_export
+#     type: command
+#     config:
+#       command: sh /mnt/vova-bigdata-scripts/vova/ads/flash_sale_coupon_goods/update_export.sh
+#       retries: 10
+#       retry.backoff: 600000
+#     dependsOn:
+#       - ads_vova_flash_sale_coupon_goods
 
   -  name: ads_vova_web_examination
      type: command
@@ -301,5 +319,4 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - ads_zq_fn_vova_goods
-      
 
