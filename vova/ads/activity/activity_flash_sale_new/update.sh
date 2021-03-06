@@ -1,9 +1,9 @@
 #!/bin/bash
 #指定日期和引擎
-pre_date=$1
+pt=$1
 #默认日期为昨天
 if [ ! -n "$1" ]; then
-  pre_date=$(date -d "-1 day" +%Y-%m-%d)
+  pt=$(date -d "-1 hour" +'%Y-%m-%d-%H')
 fi
 sql="
 WITH tmp_all AS (
@@ -20,7 +20,7 @@ SELECT
 FROM
     dwd.dwd_vova_activity_goods_ctry_behave cb
 WHERE
-    cb.pt = date(date_sub('${pre_date}',1))
+    cb.pt = date(date_sub(substr('${pt}',0,10),2))
     AND cb.region_id in (0, 4003, 4056, 4017, 4143, 3858 )
     ),
 tmp_red_package_goods(
@@ -125,7 +125,7 @@ where rank<=30
 )
 
 
-INSERT overwrite TABLE ads.ads_vova_activity_flash_sale_new partition (pt='${pre_date}')
+INSERT overwrite TABLE ads.ads_vova_activity_flash_sale_new partition (pt='${pt}')
 select
 goods_id,
 region_id,
@@ -175,6 +175,8 @@ tmp_top_hot_sell
 ;
 
 "
+
+echo $sql
 
 #如果使用spark-sql运行，则执行spark-sql -e
 spark-sql \

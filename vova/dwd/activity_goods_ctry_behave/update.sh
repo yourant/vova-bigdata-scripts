@@ -37,7 +37,7 @@ FROM
     LEFT JOIN dim.dim_vova_buyers db ON db.buyer_id = gb.buyer_id
 WHERE
     gb.pt <= '${pre_date}' AND gb.pt > date_sub( '${pre_date}', 7 )
-    AND db.region_id IS NOT NULL
+    AND db.region_id IS NOT NULL AND db.region_id != 0
 GROUP BY
     gb.gs_id,
     db.region_id grouping sets ( ( gb.gs_id, db.region_id ), ( gb.gs_id ) )
