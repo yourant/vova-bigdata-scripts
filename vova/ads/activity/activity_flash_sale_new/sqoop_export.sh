@@ -1,13 +1,15 @@
 #!/bin/bash
 #指定日期和引擎
-pre_date=$1
+pt=$1
 #默认日期为昨天
 if [ ! -n "$1" ]; then
-  pre_date=$(date -d "-1 day" +%Y-%m-%d)
+  pt=$(date -d "-1 hour" +'%Y-%m-%d-%H')
 fi
 
+echo ${pt}
 
-sh /mnt/vova-bigdata-scripts/common/table_check.sh  ads.ads_vova_activity_flash_sale_new 1360 "pt='${pre_date}'"
+
+sh /mnt/vova-bigdata-scripts/common/table_check.sh  ads.ads_vova_activity_flash_sale_new 1360 "pt='${pt}'"
 
 if [ $? -ne 0 ];then
   exit 1
@@ -62,7 +64,7 @@ sqoop export \
 --hcatalog-table ads_vova_activity_flash_sale_new \
 --columns goods_id,region_id,first_cat_id,second_cat_id,biz_type,rp_type,rank  \
 --hcatalog-partition-keys pt \
---hcatalog-partition-values ${pre_date} \
+--hcatalog-partition-values ${pt} \
 --fields-terminated-by '\001'
 
 if [ $? -ne 0 ];then

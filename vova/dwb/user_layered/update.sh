@@ -11,91 +11,91 @@ spark-sql --conf "spark.app.name=dwb_vova_dau_summary" --conf "spark.dynamicAllo
 DROP TABLE IF EXISTS tmp.tmp_vova_yesterday_dau;
 CREATE TABLE IF NOT EXISTS tmp.tmp_vova_yesterday_dau  STORED AS PARQUETFILE  as
 select
-buyer_id
+buyer_id,platform,region_code
 from (select
-buyer_id
+buyer_id,platform,region_code
 from (select
-buyer_id,
+buyer_id,platform,region_code
 row_number() over(partition by device_id ORDER BY max_collector_time desc) rn
 from dwd.dwd_vova_fact_start_up where start_up_date = '${cur_date}' ) tmp
-where tmp.rn = 1) t group by buyer_id;
+where tmp.rn = 1) t group by buyer_id,platform,region_code;
 
 --获取访问周期
 DROP TABLE IF EXISTS tmp.tmp_vova_user_cycle;
 CREATE TABLE IF NOT EXISTS tmp.tmp_vova_user_cycle  STORED AS PARQUETFILE  as
-select /*+ REPARTITION(4) */ buyer_id,
+select /*+ REPARTITION(4) */ buyer_id,platform,region_code,
 (unix_timestamp(max(max_collector_time), 'yyyy-MM-dd HH:mm:ss') - unix_timestamp(min(min_collector_time), 'yyyy-MM-dd HH:mm:ss')) / 60 / 60 / 24 / count(1) cycle
 from dwd.dwd_vova_fact_start_up
-group by buyer_id;
+group by buyer_id,platform,region_code;
 --获取昨日浏览商品
 DROP TABLE IF EXISTS tmp.tmp_vova_yesterday_view;
 CREATE TABLE IF NOT EXISTS tmp.tmp_vova_yesterday_view  STORED AS PARQUETFILE  as
 select
-buyer_id,
+buyer_id,os_type platform,geo_country region_code,
 count(distinct virtual_goods_id) cnt
 from dwd.dwd_vova_log_goods_impression
 where pt = '${cur_date}'
-group by buyer_id;
+group by buyer_id,os_type,geo_country;
 --获取购买周期
 DROP TABLE IF EXISTS tmp.tmp_vova_user_buy_cycle;
 CREATE TABLE IF NOT EXISTS tmp.tmp_vova_user_buy_cycle  STORED AS PARQUETFILE  as
 select
 /*+ REPARTITION(4) */
-buyer_id,
+buyer_id,platform,region_code,
 count(1) cnt,
 (max(unix_timestamp(pay_time)) - min(unix_timestamp(pay_time))) / 60 / 60 / 24 / count(1) buy_rate
 from dwd.dwd_vova_fact_pay
-group by buyer_id;
+group by buyer_id,platform,region_code;
 --获取连续未登陆
 DROP TABLE IF EXISTS tmp.tmp_vova_no_load_7_10;
 CREATE TABLE IF NOT EXISTS tmp.tmp_vova_no_load_7_10  STORED AS PARQUETFILE  as
 select
-'${cur_date}' now_date,
+'${cur_date}' now_date,platform,region_code,
 count(1) cnt
 from (
 select
-buyer_id
+buyer_id,platform,region_code
 from (
-select buyer_id,
+select buyer_id,platform,region_code,
 max(start_up_date) last_load_date
 from (
 select
-buyer_id,
+buyer_id,platform,region_code,
 start_up_date
 from (select
-buyer_id,
+buyer_id,platform,region_code,
 start_up_date,
 row_number() over(partition by device_id ORDER BY max_collector_time desc) rn
 from dwd.dwd_vova_fact_start_up where pt >= date_sub('${cur_date}', 10)) tmp
-where tmp.rn = 1) group by buyer_id) t where last_load_date < date_sub('${cur_date}', 7) group by buyer_id
-);
+where tmp.rn = 1) group by buyer_id,platform,region_code) t where last_load_date < date_sub('${cur_date}', 7) group by buyer_id,platform,region_code
+) group by platform,region_code;
 DROP TABLE IF EXISTS tmp.tmp_vova_no_load_10_15;
 CREATE TABLE IF NOT EXISTS tmp.tmp_vova_no_load_10_15  STORED AS PARQUETFILE  as
 select
-'${cur_date}' now_date,
+'${cur_date}' now_date,platform,region_code,
 count(1) cnt
 from (
 select
-buyer_id
+buyer_id,platform,region_code
 from (
-select buyer_id,
+select buyer_id,platform,region_code,
 max(start_up_date) last_load_date
 from (
 select
-buyer_id,
+buyer_id,platform,region_code,
 start_up_date
 from (select
-buyer_id,
+buyer_id,platform,region_code,
 start_up_date,
 row_number() over(partition by device_id ORDER BY max_collector_time desc) rn
 from dwd.dwd_vova_fact_start_up where pt >= date_sub('${cur_date}', 15)) tmp
-where tmp.rn = 1) group by buyer_id) t where last_load_date < date_sub('${cur_date}', 10) group by buyer_id
-);
+where tmp.rn = 1) group by buyer_id,platform,region_code) t where last_load_date < date_sub('${cur_date}', 10) group by buyer_id,platform,region_code
+) group by platform,region_code;
 
 DROP TABLE IF EXISTS tmp.tmp_vova_user_result;
 CREATE TABLE IF NOT EXISTS tmp.tmp_vova_user_result  STORED AS PARQUETFILE  as
 select
-'${cur_date}' now_date,
+'${cur_date}' now_date,nvl(nvl(a.platform,'NA'),'all') platform,nvl(nvl(a.region_code,'NA'),'all') region_code,
 count(case when b.email like '%vovaopen.com%' and c.buyer_id is null then a.buyer_id else null end) latent_user,  --潜在用户
 count(case when b.email like '%vovaopen.com%' and c.buyer_id is not null then a.buyer_id else null end) to_change_user,  --待转化用户
 count(case when b.email not like '%vovaopen.com%' and c.buyer_id is null
@@ -118,11 +118,13 @@ from tmp.tmp_vova_yesterday_dau a
 join dim.dim_vova_buyers b
 on a.buyer_id = b.buyer_id
 left join tmp.tmp_vova_user_buy_cycle c
-on a.buyer_id = c.buyer_id
+on a.buyer_id = c.buyer_id and a.platform = c.platform and a.region_code = c.region_code
 join tmp.tmp_vova_user_cycle d
-on a.buyer_id = d.buyer_id
+on a.buyer_id = d.buyer_id and a.platform = d.platform and a.region_code = d.region_code
 left join tmp.tmp_vova_yesterday_view e
-on a.buyer_id = e.buyer_id;
+on a.buyer_id = e.buyer_id and a.platform = e.platform and a.region_code = e.region_code
+group by cube(nvl(a.platform,'NA'),nvl(a.region_code,'NA'))
+;
 
 insert overwrite table dwb.dwb_vova_user_layered_result PARTITION (pt = '${cur_date}')
 select
@@ -150,9 +152,9 @@ c.cnt leave_user, --流失用户
 concat(round(b.cnt * 100 / d.cnt,2),'%') leave_rate
 from tmp.tmp_vova_user_result a
 join tmp.tmp_vova_no_load_7_10 b
-on a.now_date = b.now_date
+on a.now_date = b.now_date and a.platform = b.platform and a.region_code = b.region_code
 join tmp.tmp_vova_no_load_10_15 c
-on a.now_date = c.now_date
+on a.now_date = c.now_date and a.platform = c.platform and a.region_code = c.region_code
 join (select '${cur_date}' now_date,count(1) cnt from tmp.tmp_vova_yesterday_dau) d
 on a.now_date = d.now_date
 "

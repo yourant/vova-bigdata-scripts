@@ -82,3 +82,7 @@ CREATE external TABLE IF NOT EXISTS dwd.dwd_vova_ab_test_pay
 alter table dwd.dwd_vova_ab_test_pay ADD COLUMNS (
 is_brand STRING COMMENT '是否品牌'
 ) CASCADE;
+
+alter table dwd.dwd_vova_ab_test_pay ADD COLUMNS (
+order_goods_id STRING COMMENT '是否品牌'
+) CASCADE;
