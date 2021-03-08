@@ -25,7 +25,7 @@ fi
 #-Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 #-Dmapreduce.job.queuename=important \
 #--connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
-#--username bimaster --password sYG2Ri3yIDu2NPki \
+#--username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
 #--table ads_gsn_avg_price \
 #--update-key "goods_sn" \
 #--update-mode allowinsert \

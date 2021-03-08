@@ -20,6 +20,19 @@ nodes:
       - ads_vova_second_cat_goods_ranking_list_export
       - ads_vova_category_recommend_default_export
       - ads_vova_goods_restrict_export
+      - ads_vova_mct_cat_relation_export
+      - ads_vova_search_words_pool_d_export
+      - ads_vova_search_words_pool_his_d_export
+      - ads_vova_buyer_releation_d_export
+      - ads_vova_buyer_portrait_d_export
+      - ads_vova_country_hot_words_export
+      - ads_mct_vova_d_export
+      - ads_vova_goods_d_export
+      - ads_vova_search_sort_d_export
+      - ads_vova_goods_sn_cut_price_export
+      - ads_vova_goods_id_country_behave_export
+      - ads_vova_goods_id_behave_m_export
+      - ads_vova_goods_id_behave_m_logistics_export
 
   - name: start_flag
     type: command
@@ -220,3 +233,254 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_ads_vova_goods_restrict_d
+
+
+  - name: judge_ads_vova_mct_cat_relation
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_mct_cat_relation
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_mct_cat_relation_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/mct_cat_relation_d/update_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_mct_cat_relation
+
+
+  - name: judge_ads_vova_search_words_pool_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_search_words_pool_d
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_search_words_pool_d_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/search_words_pool_d/update_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_search_words_pool_d
+
+  - name: judge_ads_vova_search_words_pool_his_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_search_words_pool_his_d
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_search_words_pool_his_d_export
+    type: command
+    config:
+      command: sh //mnt/vova-bigdata-scripts/vova/ads/search_words_pool_d/update_his_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_search_words_pool_his_d
+
+
+
+  - name: judge_ads_vova_buyer_releation_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_buyer_releation_d
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_buyer_releation_d_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_releation_d/update_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_buyer_releation_d
+
+
+  - name: judge_ads_vova_buyer_portrait_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_buyer_portrait_d
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_buyer_portrait_d_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_portrait/update_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_buyer_portrait_d
+
+
+  - name: judge_ads_vova_country_hot_words
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_country_hot_words
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_country_hot_words_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/country_hot_words/update_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_country_hot_words
+      
+
+  - name: judge_ads_vova_goods_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_d
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_goods_d_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods/update_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_goods_d
+
+  - name: judge_ads_vova_mct_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_mct_d
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: ads_mct_vova_d_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/merchant/update_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_mct_d
+      
+  - name: judge_ads_vova_search_sort_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_search_sort_d
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_search_sort_d_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/search_sort_d/update_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_search_sort_d
+
+
+  - name: judge_ads_vova_goods_sn_cut_price
+    type: command
+    config:
+      command: sh sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_sn_cut_price
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_goods_sn_cut_price_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/back_stage/cut_price/update_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_goods_sn_cut_price
+      
+
+  - name: judge_ads_vova_gsn_reduce_valid_goods
+    type: command
+    config:
+      command: sh sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_gsn_reduce_valid_goods
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_gsn_reduce_valid_goods_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/back_stage/cut_price/goods_id_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_gsn_reduce_valid_goods
+
+
+  - name: judge_ads_vova_goods_id_country_behave
+    type: command
+    config:
+      command: sh sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_id_country_behave
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_goods_id_country_behave_export
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/goods_id_country_behave/export.sh
+      retries: 5
+    dependsOn:
+      - judge_ads_vova_goods_id_country_behave
+
+
+  - name: judge_ads_vova_goods_id_behave_m
+    type: command
+    config:
+      command: sh sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_id_country_behave
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_goods_id_behave_m_logistics_export
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/goods_id_behave_m/logistics_report_export.sh
+      retries: 5
+    dependsOn:
+      - judge_ads_vova_goods_id_behave_m
+
+  - name: ads_vova_goods_id_behave_m_export
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/goods_id_behave_m/export.sh
+      retries: 5
+    dependsOn:
+      - judge_ads_vova_goods_id_behave_m

@@ -26,6 +26,10 @@ nodes:
       - ads_vova_flash_sale_goods_d
       - ads_vova_goods_changed_record_d
       - ads_vova_buyer_goods_rating_redis_d
+      - ads_vova_search_sort_d
+      - ads_vova_goods_id_behave_2m
+      - ads_vova_goods_id_behave_m
+      - ads_vova_goods_id_country_behave
 
   - name: start_flag
     type: command
@@ -419,3 +423,66 @@ nodes:
       - judge_dwd_vova_fact_logistics
       - judge_dim_vova_order_goods
       - judge_dim_vova_merchant
+
+  - name: ads_vova_search_sort_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/search_sort_d/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_portrait
+      - judge_dwd_vova_fact_start_up
+
+
+  - name: judge_vova_goods_on_sale_record
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_goods_on_sale_record
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+  - name: ads_vova_goods_id_behave_2m
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_id_behave_2m/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_vova_goods_on_sale_record
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_common_click
+      - judge_dwd_vova_fact_pay
+
+
+  - name: ads_vova_goods_id_behave_m
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/goods_id_behave_m/update.sh
+      retries: 5
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_vova_goods_on_sale_record
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_common_click
+      - judge_dwd_vova_fact_pay
+      - judge_dwd_vova_fact_refund
+      - judge_dwd_vova_fact_logistics
+      - judge_dim_vova_order_goods
+
+  - name: ads_vova_goods_id_country_behave
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/goods_id_country_behave/update.sh
+      retries: 5
+    dependsOn:
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_fact_pay
+      - judge_dim_vova_goods

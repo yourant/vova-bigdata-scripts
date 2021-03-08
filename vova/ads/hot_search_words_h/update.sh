@@ -70,7 +70,7 @@ fi
 #drop table if exists themis.hot_search_word_new;
 #drop table if exists themis.hot_search_word_pre;
 #"
-#mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -psYG2Ri3yIDu2NPki -e "${sql}"
+#mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
 ##如果脚本失败，则报错
 #if [ $? -ne 0 ]; then
 #  exit 1
@@ -108,7 +108,7 @@ fi
 #) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='热搜词汇表';
 #"
 #
-#mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -psYG2Ri3yIDu2NPki -e "${sql}"
+#mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
 ##如果脚本失败，则报错
 #if [ $? -ne 0 ]; then
 #  exit 1
@@ -118,7 +118,7 @@ fi
 #-Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 #-Dmapreduce.job.queuename=important \
 #--connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis?useUnicode=true\&characterEncoding=utf-8 \
-#--username bimaster --password sYG2Ri3yIDu2NPki \
+#--username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
 #--table hot_search_word_new \
 #--m 1 \
 #--columns app_from,language_id,gender,is_shield,hot_word,search_counts \
@@ -135,7 +135,7 @@ fi
 ##rename table themis.hot_search_word to themis.hot_search_word_pre;
 ##rename table themis.hot_search_word_new to themis.hot_search_word;
 #echo "----------开始rename-------"
-#mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -psYG2Ri3yIDu2NPki <<EOF
+#mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
 #rename table themis.hot_search_word to themis.hot_search_word_pre,themis.hot_search_word_new to themis.hot_search_word;
 #EOF
 #echo "-------rename结束--------"
