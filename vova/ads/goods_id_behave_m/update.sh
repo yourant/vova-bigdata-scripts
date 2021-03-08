@@ -160,7 +160,7 @@ left join ads_goods_id_behave_m_grr grr on ctr.goods_id = grr.goods_id
 left join ads_goods_id_behave_m_lgrr lgrr on ctr.goods_id = lgrr.goods_id;
 "
 #如果使用spark-sql运行，则执行spark-sql -e
-spark-sql  --conf "spark.app.name=ads_vova_goods_id_behave_m_zhangyin" -e "$sql"
+spark-sql  --conf "spark.app.name=ads_vova_goods_id_behave_m_zhangyin" --conf "spark.dynamicAllocation.maxExecutors=150" -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
