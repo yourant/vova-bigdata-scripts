@@ -13,7 +13,7 @@ sql="
 drop table if exists themis.ads_search_sort_d_new;
 drop table if exists themis.ads_search_sort_d_pre;
 "
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -psYG2Ri3yIDu2NPki -e "${sql}"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS themis.ads_search_sort_d (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='搜索排序';
 "
 
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -psYG2Ri3yIDu2NPki -e "${sql}"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1
@@ -67,12 +67,13 @@ sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=default \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
---username bimaster --password sYG2Ri3yIDu2NPki \
+--username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
+--m 1 \
 --table ads_search_sort_d_new \
 --update-key "user_id" \
 --update-mode allowinsert \
 --hcatalog-database ads \
---hcatalog-table ads_search_sort_d \
+--hcatalog-table ads_vova_search_sort_d \
 --hcatalog-partition-keys pt \
 --hcatalog-partition-values ${pre_date} \
 --fields-terminated-by '\001'
@@ -82,7 +83,7 @@ if [ $? -ne 0 ];then
   exit 1
 fi
 echo "----------开始rename-------"
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -psYG2Ri3yIDu2NPki <<EOF
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
 rename table themis.ads_search_sort_d to themis.ads_search_sort_d_pre,themis.ads_search_sort_d_new to themis.ads_search_sort_d;
 EOF
 echo "-------rename结束--------"

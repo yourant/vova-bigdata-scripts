@@ -11,7 +11,7 @@ sql="
 drop table if exists themis.goods_sn_behave_new;
 drop table if exists themis.goods_sn_behave_pre;
 "
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -psYG2Ri3yIDu2NPki -e "${sql}"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS themis.goods_sn_behave_new (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 "
 
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -psYG2Ri3yIDu2NPki -e "${sql}"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1
@@ -67,7 +67,7 @@ sqoop export \
 -Dmapreduce.job.queuename=important \
 -Dsqoop.export.records.per.statement=1000 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
---username bimaster --password sYG2Ri3yIDu2NPki \
+--username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
 --m 1 \
 --table goods_sn_behave_new \
 --hcatalog-database ads \

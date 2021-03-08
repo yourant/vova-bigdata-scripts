@@ -10,13 +10,13 @@ sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=default \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
---username bimaster --password sYG2Ri3yIDu2NPki \
+--username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
 --m 1 \
 --table dim_goods \
 --update-key "goods_id" \
 --update-mode allowinsert \
 --hcatalog-database ads \
---hcatalog-table ads_goods_d \
+--hcatalog-table ads_vova_goods_d \
 --fields-terminated-by '\001'
 
 #如果脚本失败，则报错

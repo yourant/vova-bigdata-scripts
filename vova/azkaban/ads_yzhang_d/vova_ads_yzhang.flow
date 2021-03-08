@@ -26,6 +26,7 @@ nodes:
       - ads_vova_flash_sale_goods_d
       - ads_vova_goods_changed_record_d
       - ads_vova_buyer_goods_rating_redis_d
+      - ads_vova_search_sort_d
 
   - name: start_flag
     type: command
@@ -419,3 +420,13 @@ nodes:
       - judge_dwd_vova_fact_logistics
       - judge_dim_vova_order_goods
       - judge_dim_vova_merchant
+
+  - name: ads_vova_search_sort_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/search_sort_d/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_portrait
+      - judge_dwd_vova_fact_start_up
