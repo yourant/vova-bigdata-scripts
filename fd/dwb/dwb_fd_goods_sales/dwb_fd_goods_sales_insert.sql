@@ -1,5 +1,4 @@
 insert overwrite table dwb.dwb_fd_goods_sales partition (pt='${pt}')
-
 select
 project_name,
 cat_name,
@@ -30,9 +29,9 @@ shop_price
  from
   dwd.dwd_fd_order_goods
 where pay_status=2
--- and date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${pt}' --UTC时间
+and date(from_unixtime(pay_time,'yyyy-MM-dd HH:mm:ss')) = '${pt}' --UTC时间
 -- 北京时间如下
-and date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '${pt}'
+-- and date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') = '${pt}'
  ) t
 group by
 project_name,
