@@ -795,7 +795,7 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_traff_control
-      retries: 5
+      retries: 50
       retry.backoff: 600000
     dependsOn:
       - start_flag

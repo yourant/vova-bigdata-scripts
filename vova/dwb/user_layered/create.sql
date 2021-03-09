@@ -25,6 +25,11 @@ leave_user string, --流失用户
 leave_rate string
 ) COMMENT '用户分层' PARTITIONED BY (pt STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
+alter table dwb.dwb_vova_user_layered_result ADD COLUMNS (
+platform STRING COMMENT '平台',
+region_code STRING COMMENT '国家'
+) CASCADE;
+
 CREATE TABLE dwb_vova_user_layered_result(
 now_date CHAR(30),
 dau CHAR(30),

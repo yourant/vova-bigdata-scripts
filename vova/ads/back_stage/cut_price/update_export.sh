@@ -10,12 +10,13 @@ sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=default \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
---username bimaster --password sYG2Ri3yIDu2NPki \
+--username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
 --table ads_goods_sn_cut_price \
+--m 1 \
 --update-key "goods_sn,event_date" \
 --update-mode allowinsert \
 --hcatalog-database ads \
---hcatalog-table ads_goods_sn_cut_price \
+--hcatalog-table ads__vova_goods_sn_cut_price \
 --hcatalog-partition-keys pt \
 --hcatalog-partition-values $pre_date \
 --fields-terminated-by '\001' \

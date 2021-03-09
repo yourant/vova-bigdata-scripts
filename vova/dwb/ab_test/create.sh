@@ -25,6 +25,9 @@ CREATE EXTERNAL TABLE IF NOT EXISTS dwb.dwb_vova_ab_test
 ) COMMENT 'ab实验' PARTITIONED BY (pt STRING)
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
+alter table dwb.dwb_vova_ab_test ADD COLUMNS (
+order_cnt STRING COMMENT '订单数'
+) CASCADE;
 
 
 DROP TABLE IF EXISTS dwb.dwb_vova_gcr_ab;
@@ -100,3 +103,7 @@ CREATE EXTERNAL TABLE dwb.dwb_vova_ab_test_norepeat
 )
     PARTITIONED BY (pt STRING)
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
+
+alter table dwb.dwb_vova_ab_test_norepeat ADD COLUMNS (
+order_cnt STRING COMMENT '订单数'
+) CASCADE;

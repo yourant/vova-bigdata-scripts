@@ -312,11 +312,9 @@ from tmp.tmp_fact_order_cause_h_expre_cause_h
 ) t where order_goods_id is not null;
 "
 #如果使用spark-sql运行，则执行spark-sql -e
-spark-sql --queue important --conf "spark.app.name=vova_fact_order_cause_h" -e "$sql"
+spark-sql --conf "spark.dynamicAllocation.maxExecutors=80"  --conf "spark.app.name=vova_fact_order_cause_h" -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
 fi
-
-
 

@@ -127,7 +127,8 @@ select
     concat(nvl(round(c.pay_uv * 100 / d.expre_uv, 3), 0), '%')  cr,
     nvl(round(c.pay_uv / d.expre_uv, 6), 0)                     impressions_cr,
     nvl(round(c.gmv / d.expre_uv, 6), 0)                        gmv_cr,
-    coalesce(a.brand_status,c.brand_status) brand_status
+    coalesce(a.brand_status,c.brand_status) brand_status,
+    nvl(c.order_cnt, 0)
 from tmp.tmp_ab_expre_pv a
          left join tmp.ab_expre_uv d
                    on a.datasource = d.datasource
@@ -194,6 +195,7 @@ from tmp.tmp_ab_expre_pv a
            nvl(c.rec_version, 'all')             rec_version,
            nvl(if(c.rp_name like '%47%','Y','N'), 'all')             brand_status,
            count(distinct c.device_id, c.buyer_id) pay_uv,
+           count(distinct c.order_goods_id) order_cnt,
            sum(price)                          gmv
     from dwd.dwd_vova_ab_test_pay c
     where pt = '${cur_date}'
