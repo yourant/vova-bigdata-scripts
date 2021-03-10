@@ -111,3 +111,24 @@ nodes:
     dependsOn:
       - mlb_vova_rec_goods_scorebase_data_d
 
+# 推荐基础商品数据取数与商品标题embedding调度
+  - name: mlb_vova_rec_b_g_base_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_b_g_base_d/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+
+  - name: mlb_vova_rec_b_g_base_d_job_message_put
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=ads_rec_b_g_base_d --from=data --to=java_server --jtype=1D --retry=0
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_vova_rec_b_g_base_d
+
+
+
