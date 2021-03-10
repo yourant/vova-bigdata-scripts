@@ -1,3 +1,21 @@
+with order_info_paiyed as (
+    SELECT
+        user_id,
+        order_id,
+        order_time,
+        coupon_code,
+        project_name,
+        pay_status,
+        -1 * bonus as bonus,
+        integral,
+        integral_money,
+        email,
+        goods_amount,
+        date_format(from_utc_timestamp(from_unixtime(pay_time), 'PRC'), 'yyyy-MM-dd') as pay_time_prc
+    FROM dwd.dwd_fd_order_info
+    where order_status != 2 and pay_status = 2
+)
+
 insert overwrite table dwd.dwd_fd_coupon_used_detail PARTITION (pt = '${pt}')
 select
     /*+ REPARTITION(1) */
