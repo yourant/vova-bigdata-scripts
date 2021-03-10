@@ -94,6 +94,24 @@ nodes:
         dependsOn:
           - goods_start
 
+      - name: vova_goods_h
+        type: command
+        config:
+          retries: 10
+          retry.backoff: 120000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=goods --inc_column=last_update_time --etl_type=INCTIME --period_type=hour --partition_num=100
+        dependsOn:
+          - goods_start
+
+      - name: vova_category_h
+        type: command
+        config:
+          retries: 10
+          retry.backoff: 120000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=category  --etl_type=ALL --period_type=hour --partition_num=1
+        dependsOn:
+          - goods_start
+
       - name: vova_region_h
         type: command
         config:

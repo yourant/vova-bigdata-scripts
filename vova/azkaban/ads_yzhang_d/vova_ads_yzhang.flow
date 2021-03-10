@@ -383,14 +383,14 @@ nodes:
       - judge_dwd_vova_fact_pay
       - judge_vova_region
 
-  #- name: ads_vova_flash_sale_goods_d_export
-  #  type: command
-  #  config:
-  #    command: sh /mnt/vova-bigdata-scripts/vova/ads/flash_sale_goods/update_export.sh
-  #    retries: 5
-  #    retry.backoff: 600000
-  #  dependsOn:
-  #    - ads_vova_flash_sale_goods_d
+  - name: ads_vova_flash_sale_goods_d_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/flash_sale_goods/update_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - ads_vova_flash_sale_goods_d
 
 
   - name: ads_vova_buyer_goods_rating_d

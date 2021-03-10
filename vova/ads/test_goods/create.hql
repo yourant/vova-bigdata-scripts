@@ -71,3 +71,29 @@ CREATE TABLE IF NOT EXISTS ads.ads_test_goods_h
    last_update_time STRING
 ) COMMENT '测试集商品数据'
  partitioned BY (pt string,hour string) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
+
+
+
+drop table ads.ads_vova_test_goods_h;
+CREATE EXTERNAL TABLE IF NOT EXISTS ads.ads_vova_test_goods_h(
+id INT,
+datasource STRING,
+platform STRING,
+region_codes STRING,
+region_ids STRING,
+goods_id INT,
+users BIGINT,
+clicks BIGINT,
+impressions BIGINT,
+sales_order BIGINT,
+is_compliance BIGINT,
+employee_name STRING,
+select_cat_channel STRING,
+gmv DOUBLE,
+ctr DOUBLE,
+gcr DOUBLE,
+test_status BIGINT,
+test_result BIGINT,
+create_time TIMESTAMP,
+last_update_time STRING
+) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
