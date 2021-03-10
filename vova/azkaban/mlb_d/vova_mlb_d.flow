@@ -48,6 +48,25 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_ads_vova_goods_portrait
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_portrait_v2
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_traff_control
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_traff_control
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
 ########################
 # [8429]Me页面推荐策略调整
   - name: mlb_vova_rec_m_nbi_nb_d
@@ -71,5 +90,24 @@ nodes:
       - judge_dim_vova_devices
       - judge_dim_vova_buyers
 
+# [8229]构建商品评分并应用于搜索及mostpopular
+  - name: mlb_vova_rec_goods_scorebase_data_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_b_goods_score/get_data.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_ads_vova_goods_portrait
+      - judge_ads_vova_traff_control
 
+  - name: mlb_vova_rec_goods_scorebase_data_d_job_message_put
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=ads_rec_goods_scorebase_data_d --from=data --to=java_server --jtype=1D --retry=0
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_vova_rec_goods_scorebase_data_d
 
