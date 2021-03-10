@@ -457,6 +457,16 @@ nodes:
       - judge_ads_vova_goods_portrait
       - judge_dwd_vova_fact_pay
 
+# [8748]屏蔽sn商品转gsn未被跟卖商品统计 发邮件
+  - name: dwb_vova_high_refund_goods_gsn
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/high_refund_goods_restrict/update_email_high_refund_goods_gsn.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - dwb_vova_high_refund_goods_restrict_monitor
+
 # 首页效率监控体系-V2
   - name: dwb_vova_homepage_total_efficiency_v2
     type: command
