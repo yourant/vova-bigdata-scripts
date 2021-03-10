@@ -66,6 +66,43 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_dwd_vova_fact_comment
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_comment
+      retries: 100
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_refund
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_refund
+      retries: 100
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_order_goods
+      retries: 100
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_pay
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay
+      retries: 100
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+
 
 ########################
 # [8429]Me页面推荐策略调整
@@ -130,5 +167,20 @@ nodes:
     dependsOn:
       - mlb_vova_rec_b_g_base_d
 
-
+# [7381]基于用户属性的新用户冷启动策略
+  - name: mlb_vova_new_user_rec
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_user_rec/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_goods_behave
+      - judge_dwd_vova_fact_comment
+      - judge_dwd_vova_fact_refund
+      - judge_dim_vova_order_goods
+      - judge_dwd_vova_fact_pay
+      - judge_dim_vova_buyers
+      - judge_dim_vova_goods
+      - judge_ads_vova_goods_portrait
 
