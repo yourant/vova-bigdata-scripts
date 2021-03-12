@@ -53,14 +53,15 @@ WITH user_info as (
          SELECT goods_id, AVG(age) AS goods_age_tag
          FROM behavior_age_info
          GROUP BY goods_id
+         HAVING COUNT(duid) >= 5
      )-- 计算商品平均年龄，并对商品行为数少于5的做过滤，增加置信度
 insert overwrite table ads.ads_fd_goods_age_group partition (pt='${pt}')
 SELECT
 /*+ REPARTITION(3) */
        goods_id,
        CASE
-           WHEN goods_age_tag > 50 THEN 1
-           WHEN goods_age_tag <= 50 THEN 0
+           WHEN goods_age_tag > 35 THEN 1
+           WHEN goods_age_tag <= 35 THEN 0
            ELSE 0
            end AS goods_age_group
 FROM goods_age;
