@@ -55,8 +55,9 @@ WITH user_info as (
          GROUP BY goods_id
      )-- 计算商品平均年龄，并对商品行为数少于5的做过滤，增加置信度
 insert overwrite table ads.ads_fd_goods_age_group partition (pt='${pt}')
+SELECT
 /*+ REPARTITION(3) */
-SELECT goods_id,
+       goods_id,
        CASE
            WHEN goods_age_tag > 50 THEN 1
            WHEN goods_age_tag <= 50 THEN 0
