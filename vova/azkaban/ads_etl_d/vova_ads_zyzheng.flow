@@ -182,6 +182,13 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_ads_vova_min_price_goods_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_min_price_goods_d
+    dependsOn:
+      - start_flag
+
 #  -  name: ads_vova_flash_sale_coupon_goods
 #     type: command
 #     config:
@@ -310,6 +317,7 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - ads_vova_goods_performance
+      - judge_ads_vova_min_price_goods_d
 
   - name: ads_zq_fn_vova_goods_export
     type: command
