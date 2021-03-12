@@ -21,3 +21,7 @@ CREATE EXTERNAL TABLE dwb.dwb_vova_recall_pool_v2
 )
     COMMENT '召回监控报表'
     PARTITIONED BY (pt STRING)  STORED AS PARQUETFILE;
+
+alter table dwb.dwb_vova_recall_pool_v2 ADD COLUMNS (
+order_cnt STRING COMMENT '订单数'
+) CASCADE;

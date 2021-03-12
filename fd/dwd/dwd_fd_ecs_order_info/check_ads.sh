@@ -12,12 +12,12 @@ else
 fi
 echo "pt: ${pt}"
 
-ar_host="artemis2slave.cpbbe5ehgjpf.us-east-1.rds.amazonaws.com"
+ar_host="bd-warehouse-maxscale.gitvv.com"
 ar_user="market"
 ar_pwd="MyF4k2y9jJSv"
 
 max_pt="select  max(date) from artemis.ads_adgroup_daily_flat_report;"
-result_pt=`mysql -h "${ar_host}" -u"${ar_user}" -p"${ar_pwd}" -N -e "${max_pt}"`
+result_pt=`mysql -h "${ar_host}" -u"${ar_user}" -p"${ar_pwd}" -P3312 -N -e "${max_pt}"`
 
 if [ "${pt}" == "${result_pt}" ]; then
         echo 'artemis-db '${pt}'广告花费已经入库!'

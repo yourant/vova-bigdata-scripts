@@ -10,12 +10,12 @@ sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=default \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com/themis \
---username bimaster --password sYG2Ri3yIDu2NPki \
+--username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
 --table ads_mct_d \
 --update-key "merchant_id" \
 --update-mode allowinsert \
 --hcatalog-database ads \
---hcatalog-table ads_mct_d \
+--hcatalog-table ads_vova_mct_d \
 --hcatalog-partition-keys pt \
 --hcatalog-partition-values ${pre_date} \
 --fields-terminated-by '\001'

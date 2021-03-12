@@ -9,8 +9,8 @@ fi
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=default \
---connect jdbc:mysql://db-logistics-w.gitvv.com:3306/themis_logistics_report \
---username vvreport4vv --password nTTPdJhVp!DGv5VX4z33Fw@tHLmIG8oS \
+--connect jdbc:mariadb:aurora://db-logistics-w.gitvv.com:3306/themis_logistics_report \
+--username vvreport4vv --password nTTPdJhVp!DGv5VX4z33Fw@tHLmIG8oS --connection-manager org.apache.sqoop.manager.MySQLManager \
 --table ads_user_portrait \
 --update-key "user_id" \
 --update-mode allowinsert \

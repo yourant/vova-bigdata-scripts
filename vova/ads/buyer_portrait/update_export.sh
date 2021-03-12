@@ -12,7 +12,7 @@ sql="
 drop table if exists themis.ads_buyer_portrait_d_new;
 drop table if exists themis.ads_buyer_portrait_d_pre;
 "
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -psYG2Ri3yIDu2NPki -e "${sql}"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS themis.ads_buyer_portrait_d (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='用户画像';
 "
 
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -psYG2Ri3yIDu2NPki -e "${sql}"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1
@@ -50,12 +50,14 @@ sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dsqoop.export.records.per.statement=3000 \
 -Dmapreduce.job.queuename=default \
+-Dmapreduce.map.memory.mb=8192 \
+-Dmapreduce.reduce.memory.mb=8192 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
---username bimaster --password sYG2Ri3yIDu2NPki \
+--username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
 --table ads_buyer_portrait_d_new \
---m 2 \
+--m 1 \
 --hcatalog-database ads \
---hcatalog-table ads_buyer_portrait_d \
+--hcatalog-table ads_vova_buyer_portrait_d \
 --hcatalog-partition-keys pt \
 --hcatalog-partition-values ${pre_date} \
 --fields-terminated-by '\001'
@@ -65,7 +67,7 @@ if [ $? -ne 0 ];then
   exit 1
 fi
 
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -psYG2Ri3yIDu2NPki <<EOF
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
 rename table themis.ads_buyer_portrait_d to themis.ads_buyer_portrait_d_pre,themis.ads_buyer_portrait_d_new to themis.ads_buyer_portrait_d;
 EOF
 

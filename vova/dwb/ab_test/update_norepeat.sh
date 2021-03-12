@@ -107,8 +107,8 @@ from dwd.dwd_vova_ab_test_cart a
 where a.pt = '${cur_date}'
   and b.device_id is null
 ;
-
-INSERT OVERWRITE TABLE  tmp.tmp_ab_pay_not_repeat
+DROP TABLE IF EXISTS tmp.tmp_ab_pay_not_repeat;
+CREATE TABLE IF NOT EXISTS tmp.tmp_ab_pay_not_repeat as
 select  /*+ REPARTITION(5) */ a.datasource,
        a.platform,
        a.os,
@@ -117,7 +117,8 @@ select  /*+ REPARTITION(5) */ a.datasource,
        a.rec_version,
        a.price,
        a.device_id,
-       a.buyer_id
+       a.buyer_id,
+       a.order_goods_id
 from dwd.dwd_vova_ab_test_pay a
          left join
      (select device_id,buyer_id
@@ -159,7 +160,8 @@ select
     nvl(c.pay_uv, 0),
     concat(nvl(round(c.pay_uv * 100 / d.expre_uv, 3), 0), '%')  cr,
     nvl(round(c.pay_uv / d.expre_uv, 6), 0)                     impressions_cr,
-    nvl(round(c.gmv / d.expre_uv, 6), 0)                        gmv_cr
+    nvl(round(c.gmv / d.expre_uv, 6), 0)                        gmv_cr,
+    nvl(c.order_cnt, 0)
 from (
          select nvl(datasource, 'all')    datasource,
                 nvl(platform, 'all')      platform,
@@ -248,7 +250,8 @@ from (
            nvl(rec_code, 'all')                rec_code,
            nvl(rec_version, 'all')             rec_version,
            count(distinct device_id, buyer_id) pay_uv,
-           sum(price)                          gmv
+           sum(price)                          gmv,
+           count(distinct order_goods_id) order_cnt
     from tmp.tmp_ab_pay_not_repeat
     group by cube (datasource, platform, os, rec_page_code, rec_code, rec_version)
 ) c

@@ -1,0 +1,37 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_buyer_releation_d_export
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+
+  - name: judge_ads_vova_buyer_releation_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_buyer_releation_d
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_buyer_releation_d_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_releation_d/update_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_buyer_releation_d
