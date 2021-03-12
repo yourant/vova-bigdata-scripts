@@ -44,7 +44,7 @@ from (
          from (
                   select a.goods_id,
                          max(a.group_number) group_number
-                  from ads.ads_vova_min_price_goods_h a
+                  from ads.ads_vova_min_price_goods_d a
                            join dim.dim_vova_order_goods b on a.goods_id = b.goods_id
                            join ods_vova_vts.ods_vova_order_goods_status e on b.order_goods_id = e.order_goods_id
                             left join dwd.dwd_vova_fact_refund d on b.order_goods_id = d.order_goods_id
@@ -56,7 +56,7 @@ from (
                   left join (
              select a.group_number,
                     sum(b.shop_price * b.goods_number + b.shipping_fee) / sum(b.goods_number) group_avg_price
-             from ads.ads_vova_min_price_goods_h a
+             from ads.ads_vova_min_price_goods_d a
                       join dim.dim_vova_order_goods b on a.goods_id = b.goods_id
                       join ods_vova_vts.ods_vova_order_goods_status e on b.order_goods_id = e.order_goods_id
                       left join dwd.dwd_vova_fact_refund d on b.order_goods_id = d.order_goods_id

@@ -379,6 +379,15 @@ nodes:
       retry.backoff: 300000
     dependsOn:
       - start_flag
+
+  - name: judge_ads_vova_min_price_goods_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_min_price_goods_d
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
 ############################################################
 # 报表
 # 集运订单全链路时效监控
@@ -650,6 +659,7 @@ nodes:
       - judge_dwd_vova_fact_order_cause_v2
       - judge_dwd_vova_fact_cart_cause_v2
       - judge_dwd_vova_fact_pay
+      - judge_ads_vova_min_price_goods_d
 
 # 留存红包发放数据
   - name: dwb_vova_stay_coupon
