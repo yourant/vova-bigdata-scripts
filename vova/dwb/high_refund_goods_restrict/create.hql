@@ -105,7 +105,26 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_vova_high_refund_goods_restrict_today
 STORED AS PARQUETFILE
 ;
 
+#################################################################
+[8748]屏蔽sn商品转gsn未被跟卖商品统计
+任务描述
+需求背景：
+统计5091，屏蔽的sn商品中，转gsn后，gsn下商品数为0的gsn商品
 
+需求内容：
+1. 字段：goods_sn | 一级品类名称 | 近7日gmv
+2. 邮件发送方（每日发送）：
+Fusang@vova.com.hk,Fiona.yang@vova.com.hk
+
+DROP TABLE IF EXISTS dwb.dwb_vova_high_refund_goods_gsn;
+CREATE TABLE IF NOT EXISTS dwb.dwb_vova_high_refund_goods_gsn
+(
+    goods_sn       string         COMMENT 'gsn',
+    first_cat_name string         COMMENT '一级品类名称',
+    gmv_last_day7  decimal(16, 4) COMMENT '近7日gmv'
+) COMMENT '屏蔽sn商品转gsn未被跟卖商品统计' PARTITIONED BY (pt STRING)
+STORED AS PARQUETFILE
+;
 
 
 

@@ -11,6 +11,8 @@ s3path=`date -d "${pre_date} 00:00:00" +%Y/%m/%d`
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=default \
+-Dmapreduce.map.memory.mb=8192 \
+-Dmapreduce.reduce.memory.mb=8192 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
 --username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
 --table mct_cat_relation \

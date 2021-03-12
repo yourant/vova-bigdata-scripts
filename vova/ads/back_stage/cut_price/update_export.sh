@@ -16,7 +16,7 @@ sqoop export \
 --update-key "goods_sn,event_date" \
 --update-mode allowinsert \
 --hcatalog-database ads \
---hcatalog-table ads__vova_goods_sn_cut_price \
+--hcatalog-table ads_vova_goods_sn_cut_price \
 --hcatalog-partition-keys pt \
 --hcatalog-partition-values $pre_date \
 --fields-terminated-by '\001' \

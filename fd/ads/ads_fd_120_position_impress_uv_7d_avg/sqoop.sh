@@ -19,17 +19,17 @@ fi
 echo "pt: ${pt}"
 echo "pt_7d: ${pt_8d}"
 
-ar_host="artemis-data.cpbbe5ehgjpf.us-east-1.rds.amazonaws.com"
+ar_host="bd-warehouse-maxscale.gitvv.com"
 ar_user="data-report"
 ar_pwd='C27PoowhAZIU$LHeI%Gs'
 
 old_data="DELETE FROM data_report.rpt_120_position_impression_avg  WHERE data_time = '${pt_8d}';"
-result_pt=`mysql -h "${ar_host}" -u"${ar_user}" -p"${ar_pwd}" -N -e "${old_data}"`
+result_pt=`mysql -h "${ar_host}" -u"${ar_user}" -p"${ar_pwd}" -P3313 -N -e "${old_data}"`
 
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=default \
---connect jdbc:mysql://artemis-data.cpbbe5ehgjpf.us-east-1.rds.amazonaws.com:3306/data_report \
+--connect jdbc:mysql://bd-warehouse-maxscale.gitvv.com:3313/data_report \
 --username data-report \
 --password 'C27PoowhAZIU$LHeI%Gs' \
 --table rpt_120_position_impression_avg \

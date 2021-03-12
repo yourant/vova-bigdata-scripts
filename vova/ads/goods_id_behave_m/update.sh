@@ -129,6 +129,7 @@ and og.sku_shipping_status > 0
 )
 insert overwrite table ads.ads_vova_goods_id_behave_m partition(pt='${pt}')
 select
+/*+ REPARTITION(5) */
 ctr.goods_id,
 clicks,
 impressions,
@@ -160,7 +161,23 @@ left join ads_goods_id_behave_m_grr grr on ctr.goods_id = grr.goods_id
 left join ads_goods_id_behave_m_lgrr lgrr on ctr.goods_id = lgrr.goods_id;
 "
 #如果使用spark-sql运行，则执行spark-sql -e
-spark-sql  --conf "spark.app.name=ads_vova_goods_id_behave_m_zhangyin" --conf "spark.dynamicAllocation.maxExecutors=150" -e "$sql"
+spark-sql \
+--executor-memory 8G --executor-cores 1 \
+--conf "spark.sql.parquet.writeLegacyFormat=true"  \
+--conf "spark.dynamicAllocation.minExecutors=5" \
+--conf "spark.dynamicAllocation.initialExecutors=20" \
+--conf "spark.dynamicAllocation.maxExecutors=150" \
+--conf "spark.app.name=ads_vova_goods_id_behave_m_zhangyin" \
+--conf "spark.default.parallelism = 380" \
+--conf "spark.sql.shuffle.partitions=380" \
+--conf "spark.sql.adaptive.enabled=true" \
+--conf "spark.sql.adaptive.join.enabled=true" \
+--conf "spark.shuffle.sort.bypassMergeThreshold=10000" \
+--conf "spark.sql.inMemoryColumnarStorage.compressed=true" \
+--conf "spark.sql.inMemoryColumnarStorage.partitionPruning=true" \
+--conf "spark.sql.inMemoryColumnarStorage.batchSize=100000" \
+--conf "spark.network.timeout=300" \
+-e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1

@@ -314,6 +314,15 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_ads_vova_goods_portrait
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_portrait_v2
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
 ############################################################
 # 报表
 # AC数据报表-search数据表现
@@ -445,6 +454,18 @@ nodes:
       - judge_dim_vova_order_goods
       - judge_dim_vova_goods
       - judge_ads_vova_goods_restrict_d
+      - judge_ads_vova_goods_portrait
+      - judge_dwd_vova_fact_pay
+
+# [8748]屏蔽sn商品转gsn未被跟卖商品统计 发邮件
+  - name: dwb_vova_high_refund_goods_gsn
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/high_refund_goods_restrict/update_email_high_refund_goods_gsn.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - dwb_vova_high_refund_goods_restrict_monitor
 
 # 首页效率监控体系-V2
   - name: dwb_vova_homepage_total_efficiency_v2
