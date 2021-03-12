@@ -136,6 +136,105 @@ FROM (
               ) fin
          GROUP BY fin.goods_sn, fin.datasource, fin.platform, fin.region_code
          HAVING goods_sn != 'all'
+
+         UNION ALL
+
+         SELECT fin.goods_sn,
+                'app_group' AS datasource,
+                fin.platform,
+                fin.region_code,
+                sum(impressions)    AS impressions,
+                sum(clicks)         AS clicks,
+                sum(users)          AS users,
+                sum(sales_order)    AS sales_order,
+                sum(gmv)            AS gmv,
+                current_timestamp() AS last_update_time
+         FROM (
+                  SELECT nvl(goods_sn, 'all')    AS goods_sn,
+                         nvl(platform, 'all')    AS platform,
+                         nvl(region_code, 'all') AS region_code,
+                         nvl(datasource, 'all')  AS datasource,
+                         count(*)                AS impressions,
+                         0                       AS clicks,
+                         0                       AS users,
+                         0                       AS sales_order,
+                         0                       AS gmv
+                  FROM (
+                           SELECT log.virtual_goods_id,
+                                  nvl(dg.goods_sn, 'NA')      AS goods_sn,
+                                  case when log.platform = 'mob' then 'mob'
+                                       when log.platform in ('pc', 'web') then 'web'
+                                       else 'others' end as platform,
+                                  nvl(log.geo_country, 'NALL') AS region_code,
+                                  nvl(log.datasource, 'NA')        AS datasource
+                           FROM dwd.dwd_vova_log_goods_impression log
+                                    INNER JOIN dim.dim_vova_goods dg ON log.virtual_goods_id = dg.virtual_goods_id
+                                    left join dim.dim_zq_site dzs on dzs.datasource = log.datasource
+                           WHERE log.pt >= date_sub('${cur_date}', 6)
+                             AND log.pt <= '${cur_date}'
+                             AND log.dp = 'others'
+                             AND log.datasource not in ('vova', 'ac')
+                             AND dzs.datasource is null
+                       ) temp
+                  GROUP BY CUBE (temp.goods_sn, temp.datasource, temp.platform, temp.region_code)
+                  UNION ALL
+                  SELECT nvl(goods_sn, 'all')      AS goods_sn,
+                         nvl(platform, 'all')      AS platform,
+                         nvl(region_code, 'all')   AS region_code,
+                         nvl(datasource, 'all')    AS datasource,
+                         0                         AS impressions,
+                         count(*)                  AS clicks,
+                         count(DISTINCT device_id) AS users,
+                         0                         AS sales_order,
+                         0                         AS gmv
+                  FROM (
+                           SELECT log.virtual_goods_id,
+                                  case when log.platform = 'mob' then log.device_id
+                                       else log.domain_userid end as device_id,
+                                  nvl(dg.goods_sn, 'NA')      AS goods_sn,
+                                  case when log.platform = 'mob' then 'mob'
+                                       when log.platform in ('pc', 'web') then 'web'
+                                       else 'others' end as platform,
+                                  nvl(log.geo_country, 'NALL') AS region_code,
+                                  nvl(log.datasource, 'NA')        AS datasource
+                           FROM dwd.dwd_vova_log_goods_click log
+                                    INNER JOIN dim.dim_vova_goods dg ON log.virtual_goods_id = dg.virtual_goods_id
+                                    left join dim.dim_zq_site dzs on dzs.datasource = log.datasource
+                           WHERE log.pt >= date_sub('${cur_date}', 6)
+                             AND log.pt <= '${cur_date}'
+                             AND log.dp = 'others'
+                             AND log.datasource not in ('vova', 'ac')
+                             AND dzs.datasource is null
+                       ) temp
+                  GROUP BY CUBE (temp.goods_sn, temp.datasource, temp.platform, temp.region_code)
+                  UNION ALL
+                  SELECT nvl(goods_sn, 'all')     AS goods_sn,
+                         nvl(platform, 'all')     AS platform,
+                         nvl(region_code, 'all')  AS region_code,
+                         nvl(datasource, 'all')   AS datasource,
+                         0                        AS impressions,
+                         0                        AS clicks,
+                         0                        AS users,
+                         COUNT(DISTINCT order_id) AS sales_order,
+                         SUM(gmv)                 AS gmv
+                  FROM (
+                           SELECT dg.goods_sn,
+                                  fp.order_id,
+                                  nvl(fp.region_code, 'NALL')                       AS region_code,
+                                  fp.goods_number * fp.shop_price + fp.shipping_fee AS gmv,
+                                  fp.datasource,
+                                  IF(fp.from_domain LIKE '%api%', 'mob', 'web')     AS platform
+                           FROM dwd.dwd_vova_fact_pay fp
+                             INNER JOIN dim.dim_vova_goods dg ON fp.goods_id = dg.goods_id
+                           WHERE DATE(fp.pay_time) >= date_sub('${cur_date}', 6)
+                             AND DATE(fp.pay_time) <= '${cur_date}'
+                             AND fp.datasource not in ('vova', 'ac')
+                       ) temp
+                  GROUP BY CUBE (temp.goods_sn, temp.datasource, temp.platform, temp.region_code)
+              ) fin
+         GROUP BY fin.goods_sn, fin.datasource, fin.platform, fin.region_code
+         HAVING goods_sn != 'all' AND fin.datasource = 'all'
+
      ) final
      LEFT JOIN
      (
