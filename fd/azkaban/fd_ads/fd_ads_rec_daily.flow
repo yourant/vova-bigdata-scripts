@@ -11,7 +11,7 @@ nodes:
   - name: judge_dim_fd_category
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_fd_category
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fd_dim_category
     dependsOn:
       - fd_job_start
 
@@ -109,8 +109,3 @@ nodes:
       command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_rec_goods_age_group/sqoop.sh ${azkaban.flow.start.timestamp} ${pt}
     dependsOn:
       - ads_fd_rec_goods_age_group
-
-  - name: fd_job_end
-    type: noop
-    dependsOn:
-      - sync_ads_fd_goods_inspired

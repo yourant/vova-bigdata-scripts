@@ -22,6 +22,7 @@ with goods_click_impression as (
          group by goods_id, virtual_goods_id, project_name
      )
 insert overwrite table ads.ads_fd_goods_performance_30d partition (pt = "${pt}")
+/*+ REPARTITION(3) */
 select goods_id                   as goods_id,
        virtual_goods_id           as virtual_goods_id,
        project_name               as project_name,
