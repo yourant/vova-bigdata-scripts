@@ -111,7 +111,7 @@ from dwd.dwd_vova_fact_pay og
 left join dwd.dwd_vova_fact_order_cause_v2 oc on og.order_goods_id = oc.order_goods_id
 where date(og.pay_time) >= date_sub('${cur_date}', 6)
 and date(og.pay_time) <=  '${cur_date}'
-and (og.from_domain like '%api.vova%' or og.from_domain like '%api.airyclub%')
+and (og.from_domain like '%api%')
 and oc.pre_page_code is not null
 ) t1
 group by cube (t1.datasource, t1.rec_page_code, t1.goods_id, t1.region_code)
@@ -155,9 +155,11 @@ log.geo_country,
 log.device_id
 FROM dwd.dwd_vova_log_goods_impression log
 inner join dim.dim_vova_goods dg on dg.virtual_goods_id = log.virtual_goods_id
+left join dim.dim_zq_site dzs on dzs.datasource = log.datasource
 WHERE log.pt >= date_sub('${cur_date}', 6)
   AND log.pt <= '${cur_date}'
   AND log.platform = 'mob'
+  AND dzs.datasource is null
      ) temp
 group by cube (datasource, rec_page_code, goods_id, nvl(geo_country, 'NA'))
 
@@ -200,9 +202,11 @@ log.geo_country,
 log.device_id
 FROM dwd.dwd_vova_log_goods_click log
 inner join dim.dim_vova_goods dg on dg.virtual_goods_id = log.virtual_goods_id
+left join dim.dim_zq_site dzs on dzs.datasource = log.datasource
 WHERE log.pt >= date_sub('${cur_date}', 6)
   AND log.pt <= '${cur_date}'
   AND log.platform = 'mob'
+  AND dzs.datasource is null
      ) temp
 group by cube (datasource, rec_page_code, goods_id, nvl(geo_country, 'NA'))
 
@@ -241,7 +245,7 @@ from dwd.dwd_vova_fact_pay og
 left join dwd.dwd_vova_fact_order_cause_v2 oc on og.order_goods_id = oc.order_goods_id
 where date(og.pay_time) >= date_sub('${cur_date}', 6)
 and date(og.pay_time) <=  '${cur_date}'
-and (og.from_domain like '%api.vova%' or og.from_domain like '%api.airyclub%')
+and (og.from_domain like '%api%')
 and oc.pre_page_code is not null
 ) t1
 WHERE rec_page_code != 'others'
@@ -277,9 +281,11 @@ dg.goods_id,
 log.device_id
 FROM dwd.dwd_vova_log_goods_impression log
 inner join dim.dim_vova_goods dg on dg.virtual_goods_id = log.virtual_goods_id
+left join dim.dim_zq_site dzs on dzs.datasource = log.datasource
 WHERE log.pt >= date_sub('${cur_date}', 6)
   AND log.pt <= '${cur_date}'
   AND log.platform = 'mob'
+  AND dzs.datasource is null
      ) temp
 WHERE rec_page_code != 'others'
 group by cube (datasource, goods_id, nvl(temp.region_code, 'NALL'))
@@ -314,9 +320,11 @@ dg.goods_id,
 log.device_id
 FROM dwd.dwd_vova_log_goods_click log
 inner join dim.dim_vova_goods dg on dg.virtual_goods_id = log.virtual_goods_id
+left join dim.dim_zq_site dzs on dzs.datasource = log.datasource
 WHERE log.pt >= date_sub('${cur_date}', 6)
   AND log.pt <= '${cur_date}'
   AND log.platform = 'mob'
+  AND dzs.datasource is null
      ) temp
 WHERE rec_page_code != 'others'
 group by cube (datasource, goods_id, nvl(temp.region_code, 'NALL'))
@@ -327,10 +335,8 @@ inner join dim.dim_vova_goods dg on dg.goods_id = t1.goods_id
 INNER JOIN dim.dim_vova_merchant dm ON dm.mct_id = dg.mct_id
 LEFT JOIN ods_vova_vts.ods_vova_brand b ON b.brand_id = dg.brand_id
 left join dim.dim_vova_category c on dg.cat_id = c.cat_id
-left join dim.dim_zq_site dzs on dzs.datasource = t1.datasource
 WHERE (t1.clicks > 0 OR t1.sales_order > 0)
 AND t1.goods_id != 'all' AND t1.region_code IN ('all', 'FR', 'DE', 'IT', 'ES', 'GB', 'TW')
-AND dzs.datasource is null
 "
 
 spark-sql \
