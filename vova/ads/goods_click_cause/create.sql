@@ -82,3 +82,9 @@ CREATE EXTERNAL TABLE IF NOT EXISTS ads.ads_vova_user_behave_link_d
     row format delimited fields terminated by '\001'  STORED AS PARQUETFILE
     location 's3://vova-mlb/REC/data/base/ads_vova_user_behave_link_d'
 ;
+
+alter table ads.ads_vova_user_behave_link_d add columns(`goods_clk_list` string,
+`goods_cart_list` string,
+`goods_wish_list` string,
+`search_words_list` string
+ ) cascade;

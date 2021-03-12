@@ -28,6 +28,7 @@ nodes:
       - dwb_vova_mct_rank_data
       - dwb_vova_search_view_monitor
       - dwb_vova_abnormal_low_price_goods
+      - dwb_vova_stay_coupon
 
 
   - name: start_flag
@@ -369,6 +370,15 @@ nodes:
       retry.backoff: 300000
     dependsOn:
       - start_flag
+
+  - name: judge_vova_stay_coupon
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_stay_coupon
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
 ############################################################
 # 报表
 # 集运订单全链路时效监控
@@ -640,3 +650,14 @@ nodes:
       - judge_dwd_vova_fact_order_cause_v2
       - judge_dwd_vova_fact_cart_cause_v2
       - judge_dwd_vova_fact_pay
+
+# 留存红包发放数据
+  - name: dwb_vova_stay_coupon
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/vova_stay_coupon/update.sh
+      retries: 3
+      retry.backoff: 600000
+      job.priority: 10
+    dependsOn:
+      - judge_vova_stay_coupon
