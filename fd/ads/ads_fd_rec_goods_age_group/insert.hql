@@ -8,7 +8,9 @@ WITH user_info as (
          SELECT duid,
                 cast(substr(from_unixtime(unix_timestamp(), 'yyyy-MM-dd'), 1, 4) - substr(birthday, 1, 4) as int) as age
          FROM user_info
-         WHERE birthday != '1990-01-01 00:00:00.0'
+         WHERE birthday != '1900-01-01'
+           AND birthday != '1990-01-01'
+           AND birthday != '1970-01-01'
            AND birthday IS NOT NULL
      ),-- 提取用户年龄,去除默认值和空值
 
