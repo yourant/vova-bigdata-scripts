@@ -11,6 +11,7 @@ WITH user_info as (
          WHERE birthday != '1900-01-01'
            AND birthday != '1990-01-01'
            AND birthday != '1970-01-01'
+           AND birthday != '1970-07-01'
            AND birthday IS NOT NULL
      ),-- 提取用户年龄,去除默认值和空值
 
@@ -55,7 +56,9 @@ WITH user_info as (
          HAVING COUNT(duid) >= 5
      )-- 计算商品平均年龄，并对商品行为数少于5的做过滤，增加置信度
 insert overwrite table ads.ads_fd_goods_age_group partition (pt='${pt}')
-SELECT goods_id,
+SELECT
+/*+ REPARTITION(3) */
+       goods_id,
        CASE
            WHEN goods_age_tag > 35 THEN 1
            WHEN goods_age_tag <= 35 THEN 0

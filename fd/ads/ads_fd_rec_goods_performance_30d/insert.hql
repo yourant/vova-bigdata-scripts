@@ -22,7 +22,9 @@ with goods_click_impression as (
          group by goods_id, virtual_goods_id, project_name
      )
 insert overwrite table ads.ads_fd_goods_performance_30d partition (pt = "${pt}")
-select goods_id                   as goods_id,
+select
+/*+ REPARTITION(3) */
+       goods_id                   as goods_id,
        virtual_goods_id           as virtual_goods_id,
        project_name               as project_name,
        nvl(gci.click_num, 0)      as click,

@@ -19,7 +19,7 @@ shell_path="${base_path}/${table}"
 hive -f ${shell_path}/create.hql
 spark-sql \
   --conf "spark.app.name=${table}_${user}" \
-  --conf "spark.dynamicAllocation.maxExecutors=60" \
+  --conf "spark.dynamicAllocation.maxExecutors=200" \
   -d pt="${pt}" \
   -f ${shell_path}/insert.hql
 
