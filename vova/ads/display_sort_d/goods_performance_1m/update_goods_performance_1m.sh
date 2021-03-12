@@ -358,7 +358,7 @@ AND final.datasource = 'all'
 "
 
 spark-sql \
---executor-memory 6G --executor-cores 1 \
+--executor-memory 8G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=10" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
