@@ -21,22 +21,13 @@ select
 from
 (
   select
-    distinct goods_id goods_id
+    distinct goods_sn goods_sn
   from
-  (
-    select
-      distinct goods_id goods_id
-    from
-      ods_vova_vts.ods_vova_gsn_coupon_sign_goods_h
-    union all
-    select distinct goods_id goods_id
-    from
-      ods_vova_vbts.ods_vova_ads_lower_price_goods_red_packet_h
-  )
+    ods_vova_vts.ods_vova_gsn_coupon_sign_goods_h
 ) t1
 left join
   dim.dim_vova_goods dg
-on t1.goods_id = dg.goods_id
+on t1.goods_sn = dg.goods_sn
 where dg.goods_id is not null
 ;
 "
