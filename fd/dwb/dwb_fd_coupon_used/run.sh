@@ -2,7 +2,7 @@
 table="dwb_fd_coupon_used"
 user="gaohaitao"
 
-base_path="/mnt/vova-bigdata-scripts/fd/dwd"
+base_path="/mnt/vova-bigdata-scripts/fd/dwb"
 
 if [ ! -n "$1" ]; then
   pt=$(date -d "- 1 days" +"%Y-%m-%d")

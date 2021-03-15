@@ -17,6 +17,7 @@ nodes:
       - dwd_vova_log_goods_impression
       - dwd_vova_log_impressions
       - dwd_vova_log_data
+      - dwd_vova_log_analysis
 
   - name: start_flag
     type: noop
@@ -100,6 +101,15 @@ nodes:
       retries: 4
       retry.backoff: 600000
       command: sh /mnt/vova-bigdata-scripts/vova/dwd/fact_log/data/fact_log_data_update.sh
+    dependsOn:
+      - judge_vova_fact_log_v2_h
+
+  - name: dwd_vova_log_analysis
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/vova/dwd/fact_log/analysis/update.sh
     dependsOn:
       - judge_vova_fact_log_v2_h
 

@@ -9,7 +9,7 @@ fi
 
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
--Dmapreduce.job.queuename=important \
+-Dmapreduce.job.queuename=default \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
 --username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
 --table ads_gsn_reduce_valid_goods \
@@ -17,7 +17,7 @@ sqoop export \
 --update-key "goods_id,add_cycle" \
 --update-mode allowinsert \
 --hcatalog-database ads \
---hcatalog-table ads_gsn_reduce_valid_goods \
+--hcatalog-table ads_vova_gsn_reduce_valid_goods \
 --hcatalog-partition-keys pt \
 --hcatalog-partition-values $pt \
 --fields-terminated-by '\001' \
