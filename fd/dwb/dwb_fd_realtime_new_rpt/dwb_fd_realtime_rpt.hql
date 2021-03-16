@@ -95,6 +95,3 @@ group by project,
          country,
          hour
 ;
-
-insert overwrite table dwb.dwb_fd_realtime_new_rpt partition (pt = '${pt}')
-
