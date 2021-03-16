@@ -38,7 +38,7 @@ from (
                 sum(if(pt = date_sub('${pt}', 7), goods_amount, 0))   as goods_amount_7d_ago
          from dwb.dwb_fd_realtime_new_rpt
          where pt in ('${pt}', date_sub('${pt}', 1), date_sub('${pt}', 7))
-           and hour <= '${hour}'
+           and hour <= ${hour}
          group by project,
                   platform,
                   country) t1
