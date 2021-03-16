@@ -19,6 +19,7 @@ nodes:
       - ads_vova_goods_performance_page
       - ads_vova_goods_sn_performance
       - ads_zq_fn_vova_goods_export
+      - ads_app_group_export
 
   - name: start_flag
     type: command
@@ -182,6 +183,13 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_ads_vova_min_price_goods_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_min_price_goods_d
+    dependsOn:
+      - start_flag
+
 #  -  name: ads_vova_flash_sale_coupon_goods
 #     type: command
 #     config:
@@ -310,6 +318,7 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - ads_vova_goods_performance
+      - judge_ads_vova_min_price_goods_d
 
   - name: ads_zq_fn_vova_goods_export
     type: command
@@ -319,4 +328,22 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - ads_zq_fn_vova_goods
+
+  - name: ads_app_group
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/display_sort_d/app_group/app_group_update.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - ads_vova_goods_performance
+
+  - name: ads_app_group_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/display_sort_d/app_group/app_group_export.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - ads_app_group
 

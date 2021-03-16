@@ -1,0 +1,111 @@
+---
+config:
+  failure.emails: jhlu@i9i8.com
+  retries: 10
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_job_start
+    type: noop
+
+  - name: judge_dim_fd_category
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fd_dim_category
+    dependsOn:
+      - fd_job_start
+
+  - name: judge_ods_fd_vb_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_goods
+    dependsOn:
+      - fd_job_start
+
+  - name: judge_dwd_fd_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_goods
+    dependsOn:
+      - fd_job_start
+
+  - name: judge_oods_fd_vb_virtual_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_virtual_goods
+    dependsOn:
+      - fd_job_start
+
+  - name: judge_ods_fd_snowplow_goods_event_hour
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_snowplow_goods_event_hour
+    dependsOn:
+      - fd_job_start
+
+  - name: judge_ods_fd_vb_user_duid
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_user_duid
+    dependsOn:
+      - fd_job_start
+
+  - name: judge_ods_fd_vb_users
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_users
+    dependsOn:
+      - fd_job_start
+
+  - name: sync_to_redis_rec_cat_info
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_rec_cat_info/sync_to_redis.sh
+    dependsOn:
+      - judge_dim_fd_category
+
+  - name: sync_to_redis_rec_goods_cat_id
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_rec_goods_cat_id/sync_to_redis.sh
+    dependsOn:
+      - judge_ods_fd_vb_goods
+
+  - name: ads_fd_rec_goods_performance_30d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_rec_goods_performance_30d/run.sh ${azkaban.flow.start.timestamp} ${pt}
+    dependsOn:
+      - judge_ods_fd_snowplow_goods_event_hour
+      - judge_oods_fd_vb_virtual_goods
+      - judge_dwd_fd_order_goods
+
+  - name: sync_to_redis_rec_goods_performance_30d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_rec_goods_performance_30d/sync_to_redis.sh ${azkaban.flow.start.timestamp} ${pt}
+    dependsOn:
+      - ads_fd_rec_goods_performance_30d
+
+  - name: ads_fd_rec_goods_age_group
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_rec_goods_age_group/run.sh ${azkaban.flow.start.timestamp} ${pt}
+    dependsOn:
+      - judge_ods_fd_snowplow_goods_event_hour
+      - judge_ods_fd_vb_user_duid
+      - judge_ods_fd_vb_users
+
+  - name: sync_to_redis_ads_fd_rec_goods_age_group
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_rec_goods_age_group/sync_to_redis.sh ${azkaban.flow.start.timestamp} ${pt}
+    dependsOn:
+      - ads_fd_rec_goods_age_group
+
+  - name: sync_to_mysql_ads_fd_rec_goods_age_group
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_rec_goods_age_group/sqoop.sh ${azkaban.flow.start.timestamp} ${pt}
+    dependsOn:
+      - ads_fd_rec_goods_age_group

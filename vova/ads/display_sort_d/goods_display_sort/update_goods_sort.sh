@@ -73,9 +73,10 @@ FROM (
                         THEN 'male'
                     ELSE 'unknown' END AS gender
          FROM dwd.dwd_vova_log_goods_impression log
+           left join dim.dim_zq_site dzs on dzs.datasource = log.datasource
          WHERE log.pt >= date_sub('${cur_date}', 6)
            AND log.pt <= '${cur_date}'
-           AND log.datasource in ('vova', 'airyclub', 'floryhub')
+           AND dzs.datasource is null
      ) temp
 GROUP BY temp.virtual_goods_id, temp.gender, temp.platform, temp.project_name
 UNION ALL
@@ -103,9 +104,10 @@ FROM (
                         THEN 'male'
                     ELSE 'unknown' END AS gender
          FROM dwd.dwd_vova_log_goods_click log
+           left join dim.dim_zq_site dzs on dzs.datasource = log.datasource
          WHERE log.pt >= date_sub('${cur_date}', 6)
            AND log.pt <= '${cur_date}'
-           AND log.datasource in ('vova', 'airyclub', 'floryhub')
+           AND dzs.datasource is null
      ) temp
 GROUP BY temp.virtual_goods_id, temp.gender, temp.platform, temp.project_name
 ) final
