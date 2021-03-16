@@ -6,7 +6,8 @@ hour                                string COMMENT 'd_小时',
 order_number                        bigint COMMENT 'd_订单数',
 gmv                                 decimal(15,4) COMMENT 'd_gmv',
 session_number                      bigint COMMENT 'd_session数',
-conversion_rate                     decimal(15,4) COMMENT 'd_整体转化率'
+conversion_rate                     decimal(15,4) COMMENT 'd_整体转化率',
+goods_amount                        decimal(15,4) comment 'd_goods_amount'
 )partitioned by(pt string)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
 STORED AS parquet
