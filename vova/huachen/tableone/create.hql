@@ -15,6 +15,7 @@ create external table if not exists tmp.merchant_data
     cart_rate DECIMAL(15,2) COMMENT '加购转化率'
 ) COMMENT '商家数据';
 
+/*
 drop table tmp.sc;
 create external table if not exists tmp.sc
 (
@@ -22,6 +23,7 @@ create external table if not exists tmp.sc
     first_cat_name STRING COMMENT '商品一级类目名称',
     goods_sold_cnt BIGINT COMMENT '商品出单数'
 ) COMMENT '商品出单数量'
+    ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 ;
 
 drop table tmp.csc;
@@ -78,4 +80,4 @@ create external table if not exists tmp.tmp_ex_uv
     first_cat_name STRING COMMENT '商品一级类目名称',
     expre_uv BIGINT COMMENT '商品曝光UV'
 ) COMMENT '商品曝光UV'
-;
+;*/
