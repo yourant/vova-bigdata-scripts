@@ -145,12 +145,14 @@ sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=default \
 -Dsqoop.export.records.per.statement=1000 \
+-Dmapreduce.map.memory.mb=8192 \
+-Dmapreduce.reduce.memory.mb=8192 \
 --connect jdbc:mysql://rec-themis.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/rec_themis \
 --username yzhang13 --password xfwtH3h9sdc2OcKd \
 --m 1 \
 --table goods_id_behave_new \
 --hcatalog-database ads \
---hcatalog-table ads_goods_id_behave \
+--hcatalog-table ads_vova_goods_id_behave \
 --hcatalog-partition-keys pt  \
 --hcatalog-partition-values  ${pt} \
 --fields-terminated-by '\001' \

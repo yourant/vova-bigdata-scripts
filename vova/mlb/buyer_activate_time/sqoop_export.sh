@@ -12,17 +12,19 @@ sql="
 drop table if exists rec_recall.mlb_vova_buyer_activate_time_pre;
 drop table if exists rec_recall.mlb_vova_buyer_activate_time_new;
 create table rec_recall.mlb_vova_buyer_activate_time_new(
-\`id\`             int(11)     NOT NULL AUTO_INCREMENT COMMENT '自增主键',
-\`buyer_id\`       bigint      NOT NULL COMMENT '用户id',
-PRIMARY KEY (\`id\`) USING BTREE,
+id             int(11)     NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+buyer_id       bigint      NOT NULL COMMENT '用户id',
+activate_time  varchar(20) NOT NULL COMMENT '激活时间',
+PRIMARY KEY (id) USING BTREE,
 UNIQUE KEY buyer_id (buyer_id) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='近180天有pv的用户及激活时间';
 
 create table if not exists rec_recall.mlb_vova_buyer_activate_time (
-\`id\`             int(11)     NOT NULL AUTO_INCREMENT COMMENT '自增主键',
-\`buyer_id\`       bigint      NOT NULL COMMENT '用户id',
-PRIMARY KEY (\`id\`) USING BTREE,
--- UNIQUE KEY buyer_id (buyer_id) USING BTREE
+id             int(11)     NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+buyer_id       bigint      NOT NULL COMMENT '用户id',
+activate_time  varchar(20) NOT NULL COMMENT '激活时间',
+PRIMARY KEY (id) USING BTREE,
+UNIQUE KEY buyer_id (buyer_id) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='近180天有pv的用户及激活时间';
 "
 mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pv5NxDS1N007jbIISAvB7yzJg2GSbL9zF -e "${sql}"
@@ -37,11 +39,11 @@ sqoop export \
 -Dsqoop.export.records.per.statement=1000 \
 --connect jdbc:mysql://rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/rec_recall?disableMariaDbDriver \
 --username bimaster --password v5NxDS1N007jbIISAvB7yzJg2GSbL9zF \
---m 5 \
+--m 1 \
 --table mlb_vova_buyer_activate_time_new \
 --hcatalog-database mlb \
 --hcatalog-table mlb_vova_buyer_activate_time_day180 \
---columns buyer_id \
+--columns buyer_id,activate_time \
 --hcatalog-partition-keys pt \
 --hcatalog-partition-values ${pre_date} \
 --fields-terminated-by '\001'

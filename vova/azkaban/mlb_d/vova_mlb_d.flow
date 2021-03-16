@@ -48,6 +48,62 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_ads_vova_goods_portrait
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_portrait_v2
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_traff_control
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_traff_control
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_comment
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_comment
+      retries: 100
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_refund
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_refund
+      retries: 100
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_order_goods
+      retries: 100
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_pay
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay
+      retries: 100
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+
+
 ########################
 # [8429]Me页面推荐策略调整
   - name: mlb_vova_rec_m_nbi_nb_d
@@ -70,6 +126,89 @@ nodes:
     dependsOn:
       - judge_dim_vova_devices
       - judge_dim_vova_buyers
+
+# [8229]构建商品评分并应用于搜索及mostpopular
+  - name: mlb_vova_rec_goods_scorebase_data_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_b_goods_score/get_data.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_ads_vova_goods_portrait
+      - judge_ads_vova_traff_control
+
+  - name: mlb_vova_rec_goods_scorebase_data_d_job_message_put
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=ads_rec_goods_scorebase_data_d --from=data --to=java_server --jtype=1D --retry=0
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_vova_rec_goods_scorebase_data_d
+
+# 推荐基础商品数据取数与商品标题embedding调度
+  - name: mlb_vova_rec_b_g_base_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_b_g_base_d/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+
+  - name: mlb_vova_rec_b_g_base_d_job_message_put
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=ads_rec_b_g_base_d --from=data --to=java_server --jtype=1D --retry=0
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_vova_rec_b_g_base_d
+
+# [7381]基于用户属性的新用户冷启动策略
+  - name: mlb_vova_new_user_rec
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_user_rec/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_goods_behave
+      - judge_dwd_vova_fact_comment
+      - judge_dwd_vova_fact_refund
+      - judge_dim_vova_order_goods
+      - judge_dwd_vova_fact_pay
+      - judge_dim_vova_buyers
+      - judge_dim_vova_goods
+      - judge_ads_vova_goods_portrait
+
+# [7832]冷启动兜底策略取数
+  - name: mlb_vova_new_user_reg_rec_get_data
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_user_reg_rec/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_goods_behave
+      - judge_dim_vova_goods
+      - judge_dwd_vova_fact_comment
+      - judge_dwd_vova_fact_refund
+      - judge_dim_vova_order_goods
+      - judge_dwd_vova_fact_pay
+      - judge_dim_vova_buyers
+
+  - name: mlb_vova_new_user_reg_rec_out_data
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_user_reg_rec/out_update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_vova_new_user_reg_rec_get_data
+      - mlb_vova_new_user_rec
 
 
 

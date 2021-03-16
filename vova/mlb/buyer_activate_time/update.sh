@@ -18,8 +18,9 @@ job_name="mlb_vova_buyer_activate_time_day180_req8466_chenkai_${cur_date}"
 ###逻辑sql
 sql="
 insert overwrite table mlb.mlb_vova_buyer_activate_time_day180 PARTITION (pt = '${cur_date}')
-select /*+ REPARTITION(1) */
-  buyer_id
+select /*+ REPARTITION(2) */
+  buyer_id,
+  cast(activate_time as string) activate_time
 from
 (
   select
