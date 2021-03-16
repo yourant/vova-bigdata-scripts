@@ -46,6 +46,7 @@ from (
                              and pay_status = 2
                              and to_date(date_format(to_utc_timestamp(pay_time, 'America/Los_Angeles'),
                                                      'yyyy-MM-dd HH:mm:ss')) = '${pt}'
+                             and hour(to_utc_timestamp(pay_time, 'America/Los_Angeles')) <= '${hour}'
                              and email NOT REGEXP '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
                        ) t1
                            left join ods_fd_vb.ods_fd_user_agent_analysis t2 on t1.user_agent_id = t2.user_agent_id
