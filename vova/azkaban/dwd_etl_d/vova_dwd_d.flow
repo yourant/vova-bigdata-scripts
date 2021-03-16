@@ -35,6 +35,7 @@ nodes:
       - dwd_vova_fact_original_channel
       - dwd_vova_web_fact_order_cause
       - dwd_vova_web_fact_cart_cause
+      - dwd_vova_log_analysis
 
   - name: start_flag
     type: command
@@ -859,4 +860,13 @@ nodes:
       - judge_ads_vova_traff_control
       - start_flag
 
-
+  - name: dwd_vova_log_analysis
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/vova/dwd/fact_log/analysis/update.sh
+    dependsOn:
+      - judge_dim_vova_devices
+      - judge_dim_vova_goods
+      - judge_dim_vova_buyers

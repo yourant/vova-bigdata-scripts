@@ -1,0 +1,59 @@
+---
+config:
+  failure.emails: yzhang13@vova.com.hk
+  retries: 5
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_goods_sn_behave_export
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: ads_vova_goods_id_behave_8h
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/goods_id_behave/goods_id_behave.sh
+      retries: 5
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_goods_id_behave_export
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/goods_id_behave/goods_id_behave_export.sh
+      retries: 5
+    dependsOn:
+      - ads_vova_goods_id_behave_8h
+
+  - name: ads_vova_goods_sn_to_id_export
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/goods_id_behave/goods_sn_to_id_export.sh
+      retries: 5
+    dependsOn:
+      - ads_vova_goods_id_behave_export
+
+  - name: ads_vova_goods_sn_behave_8h
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/goods_sn_behave/update.sh
+      retries: 5
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_goods_sn_behave_export
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/goods_sn_behave/export.sh
+      retries: 5
+    dependsOn:
+      - ads_vova_goods_sn_behave_8h
+      - ads_vova_goods_sn_to_id_export

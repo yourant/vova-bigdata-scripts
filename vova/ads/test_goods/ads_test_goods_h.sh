@@ -30,3 +30,22 @@ if [ $? -ne 0 ];then
   echo "test_goods job error"
   exit 1
 fi
+
+sqoop export \
+-Dorg.apache.sqoop.export.text.dump_data_on_error=true \
+-Dsqoop.export.records.per.statement=100 \
+-Dsqoop.export.statements.per.transaction=1 \
+--connect jdbc:mysql://rec-backend.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com/backend?characterEncoding=utf-8 \
+--username bimaster --password kkooxGjFy7Vgu21x \
+-m 1 \
+--table test_goods_behave \
+--update-key "datasource,goods_id,platform,region_codes" \
+--update-mode allowinsert \
+--hcatalog-database ads \
+--hcatalog-table ads_vova_test_goods_h \
+--fields-terminated-by '\001' \
+--columns "id,datasource,goods_id,platform,region_codes,region_ids,users,clicks,impressions,sales_order,gmv,ctr,gcr,test_status,test_result,create_time,last_update_time"
+
+if [ $? -ne 0 ];then
+   exit 1
+fi
