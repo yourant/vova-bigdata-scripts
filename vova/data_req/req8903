@@ -1,0 +1,36 @@
+CREATE EXTERNAL TABLE IF NOT exists tmp.tmp_req8079_o(
+device_id string,
+session_id string,
+country string,
+app_version string,
+is_tablet int,
+vpn int,
+device_model string,
+os_type string,
+os_version string,
+pt string,
+activate_date string,
+activate_duration int
+) row format delimited fields terminated by  ',' stored as textfile;
+
+
+alter table tmp.tmp_req8079_o set TBLPROPERTIES('EXTERNAL'='true')
+
+
+insert overwrite table tmp.tmp_req8079
+select
+t1.*,
+t2.tel,
+t2.consignee
+from
+tmp.tmp_req8079_o t1
+left join dim.dim_vova_buyers db
+on t1.device_id = db.current_device_id
+left join
+(select user_id,
+tel,
+consignee,
+row_number() over(partition by user_id order by order_time desc) rank
+from ods_vova_vts.ods_vova_order_info) t2
+on db.buyer_id = t2.user_id and t2.rank=1
+where device_id != 'device_id'

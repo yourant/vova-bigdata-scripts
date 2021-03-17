@@ -20,6 +20,7 @@ nodes:
       - ads_vova_activity_women_cloth_export
       - ads_vova_activity_women_clothing_clearance_sale_export
       - ads_vova_activity_new_user_export
+      - ads_vova_activity_user_only_export
 
   - name: start_flag
     type: command
@@ -113,6 +114,15 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_new_user
+      retries: 20
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_activity_user_only
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_user_only
       retries: 20
       retry.backoff: 300000
     dependsOn:
@@ -219,4 +229,15 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_ads_vova_activity_new_user
+      - start_flag
+
+
+  - name:  ads_vova_activity_user_only_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_user_only/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_activity_user_only
       - start_flag

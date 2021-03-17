@@ -6,37 +6,23 @@ if [ ! -n "$1" ]; then
   pre_date=$(date -d "-1 day" +%Y-%m-%d)
 fi
 sql="
-insert overwrite table ads.ads_vova_goods_knowledge_graph_default
+insert overwrite table ads.ads_vova_goods_knowledge_graph partition(pt='${pre_date}')
 select
 /*+ repartition(1) */
-goods_id,
-goods_name,
-goods_desc,
-goods_sn,
-first_cat_id,
-second_cat_id,
-brand_id,
-is_on_sale,
-is_delete,
-sale_vol
-from
-(select
-dg.goods_id,
+gs_id as goods_id,
 dg.goods_name,
 dg.goods_desc,
 dg.goods_sn,
-dg2.first_cat_id,
-dg2.second_cat_id,
+gp.first_cat_id,
+gp.second_cat_id,
 dg.brand_id,
 dg.is_on_sale,
-dg.is_delete,
-sale_vol
-from ods_vova_vts.ods_vova_goods dg
-inner join dim.dim_vova_goods dg2 on dg.goods_id = dg2.goods_id
-left join (select goods_id,sum(goods_number) as sale_vol from dwd.dwd_vova_fact_pay where date(pay_time)<='${pre_date}' and date(pay_time)>date_sub('${pre_date}',90) group by goods_id) sales
-on dg.goods_id = sales.goods_id
-where  dg2.is_on_sale=1)
-where  first_cat_id is not null
+dg.is_delete
+from ads.ads_vova_goods_portrait gp
+inner join ods_vova_vts.ods_vova_goods dg
+on gp.gs_id = dg.goods_id
+where gp.pt='${pre_date}' and expre_cnt_1w>=500 and ord_cnt_1w>=1
+;
 "
 
 
@@ -46,7 +32,7 @@ spark-sql \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=5" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
---conf "spark.app.name=ads_vova_goods_knowledge_graph_default" \
+--conf "spark.app.name=ads_vova_goods_knowledge_graph" \
 --conf "spark.sql.crossJoin.enabled=true" \
 --conf "spark.default.parallelism = 300" \
 --conf "spark.sql.shuffle.partitions=300" \

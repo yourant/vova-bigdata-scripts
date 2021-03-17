@@ -6,9 +6,9 @@ if [ ! -n "$1" ]; then
   pre_date=$(date -d "-1 day" +%Y-%m-%d)
 fi
 sql="
-insert overwrite table ads.ads_vova_goods_knowledge_graph_default
+insert overwrite table ads.ads_vova_goods_knowledge_graph_default_all
 select
-/*+ repartition(1) */
+/*+ repartition(10) */
 goods_id,
 goods_name,
 goods_desc,
@@ -17,8 +17,7 @@ first_cat_id,
 second_cat_id,
 brand_id,
 is_on_sale,
-is_delete,
-sale_vol
+is_delete
 from
 (select
 dg.goods_id,
@@ -30,12 +29,12 @@ dg2.second_cat_id,
 dg.brand_id,
 dg.is_on_sale,
 dg.is_delete,
-sale_vol
+row_number() over(partition by dg2.first_cat_id order by nvl(ord_cnt_1m,0) desc,nvl(expre_cnt_1m,0) desc ) rank
 from ods_vova_vts.ods_vova_goods dg
 inner join dim.dim_vova_goods dg2 on dg.goods_id = dg2.goods_id
-left join (select goods_id,sum(goods_number) as sale_vol from dwd.dwd_vova_fact_pay where date(pay_time)<='${pre_date}' and date(pay_time)>date_sub('${pre_date}',90) group by goods_id) sales
-on dg.goods_id = sales.goods_id
-where  dg2.is_on_sale=1)
+left join  ads.ads_vova_goods_portrait gp
+on gp.gs_id = dg.goods_id
+where gp.pt='2021-03-08' and dg2.is_on_sale=1)
 where  first_cat_id is not null
 "
 
