@@ -241,6 +241,13 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_dwd_vova_fact_refund
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_refund
+    dependsOn:
+      - start_flag
+
   - name: judge_ods_vova_order_nps
     type: command
     config:
