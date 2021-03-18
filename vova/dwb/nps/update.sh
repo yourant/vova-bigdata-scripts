@@ -6,7 +6,10 @@ if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 ###逻辑sql
-
+#dwd_vova_fact_pay
+#dwd_vova_fact_refund
+#dim_vova_order_goods
+#ods_vova_order_nps
 sql="
 drop table if exists tmp.tmp_dwb_vova_nps_email;
 create table tmp.tmp_dwb_vova_nps_email as
