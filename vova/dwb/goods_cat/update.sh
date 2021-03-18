@@ -248,11 +248,10 @@ echo "end_time:"  `date +"%Y-%m-%d %H:%M:%S" -d "8 hour"`
 # --conf spark.dynamicAllocation.maxExecutors=20 \
 # --conf spark.app.name=alarm_system \
 # --conf spark.executor.memoryOverhead=2048 \
-# --jars /usr/share/java/javamail.jar \
-# --class com.vova.monitor.MonitorMain s3://vomkt-emr-rec/jar/rpt-monitor-1.0.2.jar \
-# --env product --db rpt --tlb goods_gcr_gmv_report --op check_index,send_message \
+# --jars s3://vomkt-emr-rec/jar/vova-bd-monitor/javamail.jar \
+# --class com.vova.bigdata.sparkbatch.monitor.MonitorMain s3://vomkt-emr-rec/jar/vova-bd-monitor/vova-bigdata-monitor-main.jar \
+# --env prod --db dwb --tlb dwb_vova_goods_gcr_gmv_report --op check_index,send_message \
 # --date ${cur_date}
-#
 # #如果脚本失败，则报错
 # if [ $? -ne 0 ];then
 #   exit 1

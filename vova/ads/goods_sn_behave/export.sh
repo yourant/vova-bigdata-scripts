@@ -107,7 +107,7 @@ sqoop export \
 --m 1 \
 --table goods_sn_behave_new \
 --hcatalog-database ads \
---hcatalog-table ads_goods_sn_behave \
+--hcatalog-table ads_vova_goods_sn_behave \
 --hcatalog-partition-keys pt  \
 --hcatalog-partition-values  ${pt} \
 --fields-terminated-by '\001' \

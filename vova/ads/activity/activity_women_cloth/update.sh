@@ -343,7 +343,7 @@ FROM
                 mpg.min_price_goods_id,
                 dg.second_cat_id
             FROM
-                ads.ads_vova_min_price_goods_h mpg
+                ads.ads_vova_min_price_goods_d mpg
                 LEFT JOIN dim.dim_vova_goods dg ON mpg.min_price_goods_id = dg.goods_id
             WHERE
                 pt = '${pre_date}'

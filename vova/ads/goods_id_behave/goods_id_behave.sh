@@ -27,9 +27,9 @@ spark-submit --master yarn --deploy-mode cluster \
 --env product --pt $pt --pre_pt $pre_pt --stime $stime --etime $etime --pre_month $pre_month --pre_last_year $pre_last_year
 "
 spark-submit --master yarn  \
---conf "spark.app.name=ads_vova_goods_id_behave_zhangyin" \
 --conf "spark.dynamicAllocation.maxExecutors=200" \
 --conf spark.executor.memory=6G \
+--conf "spark.app.name=ads_vova_goods_id_behave_8h_zhangyin" \
 --class com.vova.bigdata.sparkbatch.dataprocess.ads.GoodsIdBehave \
 s3://vomkt-emr-rec/jar/vova-bigdata/vova-bigdata-sparkbatch/vova-bigdata-sparkbatch-1.0-SNAPSHOT.jar \
 --env product --pt $pt --pre_pt $pre_pt --stime "$stime" --etime "$etime" --pre_month $pre_month --pre_last_year $pre_last_year

@@ -116,7 +116,7 @@ from
   tmp_all.region_id,
   tmp_red_package_goods.type,
   tmp_red_package_goods.gsn_status,
-  row_number() over(partition by tmp_red_package_goods.type,region_id order by tmp_red_package_goods.gsn_status desc, gmv / click_uv * clk_cnt / expre_cnt desc) rank
+  row_number() over(partition by tmp_red_package_goods.type,region_id order by tmp_red_package_goods.gsn_status desc, if(type=1, gmv / click_uv * clk_cnt / expre_cnt, ord_cnt/expre_cnt ) desc) rank
   from
   tmp_all
   INNER join tmp_red_package_goods on tmp_all.goods_id = tmp_red_package_goods.goods_id
