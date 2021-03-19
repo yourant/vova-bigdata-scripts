@@ -1,6 +1,7 @@
 DROP TABLE dwb.dwb_vova_ad_cost;
 CREATE EXTERNAL TABLE IF NOT EXISTS dwb.dwb_vova_ad_cost
 (
+    event_date      date COMMENT 'event_date',
     datasource      string COMMENT 'datasource',
     region_code     string COMMENT 'region_code',
     ga_channel      string COMMENT 'ga_channel',
