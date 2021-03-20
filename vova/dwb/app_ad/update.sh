@@ -534,6 +534,8 @@ cost2.region_code
 ) t2 on base.event_date = t2.event_date
 AND base.datasource = t2.datasource
 AND base.region_code = t2.region_code
+WHERE base.event_date >= '2021-02-01'
+AND base.event_date != 'all'
 ;
 
 insert overwrite table dwb.dwb_vova_ad_gmv PARTITION (pt)
