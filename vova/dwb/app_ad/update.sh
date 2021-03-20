@@ -600,7 +600,7 @@ trunc(dd.activate_date, 'MM')
 
 #如果使用spark-sql运行，则执行spark-sql -e
 spark-sql \
---executor-memory 4G --executor-cores 1 \
+--executor-memory 6G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=20" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
