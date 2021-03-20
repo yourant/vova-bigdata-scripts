@@ -10,11 +10,12 @@ fi
 #ods_yx_cy.ods_yx_ads_ga_channel_daily_gmv_flat_report
 #ods_yx_yxlc.ods_yx_temp_device_order_date_cohort
 #ods_yx_yxl.ods_yx_temp_device_order_date_cohort
+#utc time -> cn
 
 sql="
 
-drop table if exists tmp.tmp_zyzheng_yx_cost;
-create table tmp.tmp_zyzheng_yx_cost as
+drop table if exists tmp.tmp_dwb_vova_ad_cost;
+create table tmp.tmp_dwb_vova_ad_cost as
 select
 /*+ REPARTITION(1) */
 nvl(date, 'all') AS event_date,
@@ -90,8 +91,8 @@ WHERE parent_id = 0 and region_display = 1
 group by cube(date, if(ads_site_code = 'AC', 'airyclub', 'vova'), ga_channel, r.region_code, platform)
 ;
 
-drop table if exists tmp.tmp_zyzheng_yx_est;
-create table tmp.tmp_zyzheng_yx_est as
+drop table if exists tmp.tmp_dwb_vova_ad_est;
+create table tmp.tmp_dwb_vova_ad_est as
 select
 /*+ REPARTITION(1) */
 nvl(install_date, 'all') AS event_date,
@@ -139,15 +140,15 @@ group by cube(install_date, project_name, ga_channel, country, platform)
 
 
 
-drop table if exists tmp.tmp_zyzheng_yx_install;
-create table tmp.tmp_zyzheng_yx_install as
+drop table if exists tmp.tmp_dwb_vova_ad_install;
+create table tmp.tmp_dwb_vova_ad_install as
 select
 /*+ REPARTITION(1) */
 nvl(dd.datasource, 'all') AS datasource,
 nvl(dd.ga_channel, 'all') AS ga_channel,
 nvl(dd.platform, 'all') AS platform,
 nvl(nvl(dd.region_code, 'NA') , 'all') AS region_code,
-nvl(date(dd.activate_time), 'all') AS activate_date,
+nvl(date_format(from_utc_timestamp(dd.activate_time,'GMT+8'),'yyyy-MM-dd'), 'all') AS activate_date,
 count(DISTINCT device_id) AS activate_dau
 from
 (
@@ -196,21 +197,21 @@ dim.dim_vova_devices dd
 WHERE dd.datasource in ('vova', 'airyclub')
 and date(dd.activate_time) >= '2020-01-01'
 ) dd
-group by cube (date(dd.activate_time), dd.datasource, dd.ga_channel, dd.platform, nvl(dd.region_code, 'NA'))
+group by cube (date_format(from_utc_timestamp(dd.activate_time,'GMT+8'),'yyyy-MM-dd'), dd.datasource, dd.ga_channel, dd.platform, nvl(dd.region_code, 'NA'))
 HAVING activate_date != 'all'
 ;
 
 
-drop table if exists tmp.tmp_zyzheng_yx_gmv_base;
-create table tmp.tmp_zyzheng_yx_gmv_base as
+drop table if exists tmp.tmp_dwb_vova_ad_gmv_base;
+create table tmp.tmp_dwb_vova_ad_gmv_base as
 select
 /*+ REPARTITION(1) */
 nvl(dd.datasource, 'all') AS datasource,
 nvl(dd.ga_channel, 'all') AS ga_channel,
 nvl(dd.platform, 'all') AS platform,
 nvl(nvl(dd.region_code, 'NA') , 'all') AS region_code,
-nvl(date(dd.activate_time), 'all') AS activate_date,
-nvl(date(dd.pay_time), 'all') AS pay_date,
+nvl(date_format(from_utc_timestamp(dd.activate_time,'GMT+8'),'yyyy-MM-dd'), 'all') AS activate_date,
+nvl(date_format(from_utc_timestamp(dd.pay_time,'GMT+8'),'yyyy-MM-dd'), 'all') AS pay_date,
 sum(gmv) AS gmv
 from
 (
@@ -265,14 +266,16 @@ WHERE fp.datasource in ('vova', 'airyclub')
 and fp.from_domain like '%api%'
 and date(dd.activate_time) >= '2020-01-01'
 and date(dd.activate_time) <= date(fp.pay_time)
+and date(fp.pay_time) >= '2020-01-01'
 ) dd
-group by cube (date(dd.activate_time), date(dd.pay_time), dd.datasource, dd.ga_channel, dd.platform, nvl(dd.region_code, 'NA'))
+group by cube (date_format(from_utc_timestamp(dd.activate_time,'GMT+8'),'yyyy-MM-dd'), date_format(from_utc_timestamp(dd.pay_time,'GMT+8'),'yyyy-MM-dd'), dd.datasource, dd.ga_channel, dd.platform, nvl(dd.region_code, 'NA'))
 HAVING activate_date != 'all' AND pay_date != 'all'
 ;
 
-drop table if exists tmp.tmp_zyzheng_yx_gmv_30_180d;
-create table tmp.tmp_zyzheng_yx_gmv_30_180d as
+drop table if exists tmp.tmp_dwb_vova_ad_gmv_30_180d;
+create table tmp.tmp_dwb_vova_ad_gmv_30_180d as
 select
+/*+ REPARTITION(1) */
 d2.event_date,
 d.datasource,
 d.ga_channel,
@@ -289,7 +292,7 @@ dd.region_code,
 dd.activate_date,
 sum(gmv) AS gmv
 from
-tmp.tmp_zyzheng_yx_gmv_base dd
+tmp.tmp_dwb_vova_ad_gmv_base dd
 where datediff(pay_date, activate_date) >= 0
 AND datediff(pay_date, activate_date) <= 180
 group by
@@ -312,9 +315,10 @@ d.platform,
 d.region_code
 ;
 
-drop table if exists tmp.tmp_zyzheng_yx_gmv_30_7d;
-create table tmp.tmp_zyzheng_yx_gmv_30_7d as
+drop table if exists tmp.tmp_dwb_vova_ad_gmv_30_7d;
+create table tmp.tmp_dwb_vova_ad_gmv_30_7d as
 select
+/*+ REPARTITION(1) */
 d2.event_date,
 d.datasource,
 d.ga_channel,
@@ -331,7 +335,7 @@ dd.region_code,
 dd.activate_date,
 sum(gmv) AS gmv
 from
-tmp.tmp_zyzheng_yx_gmv_base dd
+tmp.tmp_dwb_vova_ad_gmv_base dd
 where datediff(pay_date, activate_date) >= 0
 AND datediff(pay_date, activate_date) <= 7
 group by
@@ -357,6 +361,7 @@ set hive.exec.dynamici.partition=true;
 set hive.exec.dynamic.partition.mode=nonstrict;
 insert overwrite table dwb.dwb_vova_ad_cost PARTITION (pt)
 select
+/*+ REPARTITION(1) */
 cost.event_date,
 cost.datasource,
 cost.region_code,
@@ -372,36 +377,36 @@ nvl(gmv180.gmv, 0) AS gmv_180d,
 nvl(est.est_gmv_7d, 0) AS est_gmv_7d,
 cost.event_date AS pt
 from
-tmp.tmp_zyzheng_yx_cost cost
-left join tmp.tmp_zyzheng_yx_install install
+tmp.tmp_dwb_vova_ad_cost cost
+left join tmp.tmp_dwb_vova_ad_install install
 on cost.datasource = install.datasource
 and cost.event_date = install.activate_date
 and cost.region_code = install.region_code
 and cost.ga_channel = install.ga_channel
 and cost.platform = install.platform
 
-left join tmp.tmp_zyzheng_yx_gmv_30_180d gmv180
+left join tmp.tmp_dwb_vova_ad_gmv_30_180d gmv180
 on cost.datasource = gmv180.datasource
 and cost.event_date = gmv180.event_date
 and cost.region_code = gmv180.region_code
 and cost.ga_channel = gmv180.ga_channel
 and cost.platform = gmv180.platform
 
-left join tmp.tmp_zyzheng_yx_gmv_30_7d gmv7
+left join tmp.tmp_dwb_vova_ad_gmv_30_7d gmv7
 on cost.datasource = gmv7.datasource
 and cost.event_date = gmv7.event_date
 and cost.region_code = gmv7.region_code
 and cost.ga_channel = gmv7.ga_channel
 and cost.platform = gmv7.platform
 
-left join tmp.tmp_zyzheng_yx_est est
+left join tmp.tmp_dwb_vova_ad_est est
 on cost.datasource = est.datasource
 and cost.event_date = est.event_date
 and cost.region_code = est.region_code
 and cost.ga_channel = est.ga_channel
 and cost.platform = est.platform
 
-left join tmp.tmp_zyzheng_yx_cost cost2
+left join tmp.tmp_dwb_vova_ad_cost cost2
 on cost.datasource = cost2.datasource
 and cost.event_date = cost2.event_date
 and cost.region_code = cost2.region_code
@@ -409,10 +414,131 @@ and cost2.platform = 'all'
 and cost2.ga_channel = 'all'
 WHERE cost.event_date >= '2021-02-01'
 AND cost.event_date != 'all'
+
+UNION ALL
+
+select
+/*+ REPARTITION(1) */
+base.event_date,
+base.datasource,
+base.region_code,
+'all-ads' AS ga_channel,
+base.platform,
+base.activate_dau,
+base.tot_gmv,
+base.tot_cost,
+t2.tot_region_gmv,
+t2.tot_region_cost,
+base.gmv_7d,
+base.gmv_180d,
+base.est_gmv_7d,
+base.event_date AS pt
+from
+(
+select
+event_date,
+datasource,
+region_code,
+platform,
+sum(activate_dau) AS activate_dau,
+sum(tot_gmv) AS tot_gmv,
+sum(tot_cost) AS tot_cost,
+sum(gmv_7d) AS gmv_7d,
+sum(gmv_180d) AS gmv_180d,
+sum(est_gmv_7d) AS est_gmv_7d,
+event_date AS pt
+from
+(
+select
+cost.event_date,
+cost.datasource,
+cost.region_code,
+cost.ga_channel,
+cost.platform,
+nvl(install.activate_dau, 0) AS activate_dau,
+nvl(cost.tot_gmv, 0) AS tot_gmv,
+nvl(cost.tot_cost, 0) AS tot_cost,
+nvl(gmv7.gmv, 0) AS gmv_7d,
+nvl(gmv180.gmv, 0) AS gmv_180d,
+nvl(est.est_gmv_7d, 0) AS est_gmv_7d,
+cost.event_date AS pt
+from
+tmp.tmp_dwb_vova_ad_cost cost
+inner join
+(
+select
+distinct ga_channel
+from
+ods_yx_cy.ods_yx_ads_ga_channel_daily_flat_report
+where cost> 0
+) cost_ga_channel ON cost_ga_channel.ga_channel = cost.ga_channel
+left join tmp.tmp_dwb_vova_ad_install install
+on cost.datasource = install.datasource
+and cost.event_date = install.activate_date
+and cost.region_code = install.region_code
+and cost.ga_channel = install.ga_channel
+and cost.platform = install.platform
+
+left join tmp.tmp_dwb_vova_ad_gmv_30_180d gmv180
+on cost.datasource = gmv180.datasource
+and cost.event_date = gmv180.event_date
+and cost.region_code = gmv180.region_code
+and cost.ga_channel = gmv180.ga_channel
+and cost.platform = gmv180.platform
+
+left join tmp.tmp_dwb_vova_ad_gmv_30_7d gmv7
+on cost.datasource = gmv7.datasource
+and cost.event_date = gmv7.event_date
+and cost.region_code = gmv7.region_code
+and cost.ga_channel = gmv7.ga_channel
+and cost.platform = gmv7.platform
+
+left join tmp.tmp_dwb_vova_ad_est est
+on cost.datasource = est.datasource
+and cost.event_date = est.event_date
+and cost.region_code = est.region_code
+and cost.ga_channel = est.ga_channel
+and cost.platform = est.platform
+) fin
+group by
+event_date,
+datasource,
+region_code,
+platform
+) base
+left join
+(
+select
+cost2.event_date,
+cost2.datasource,
+cost2.region_code,
+sum(tot_gmv) AS tot_region_gmv,
+sum(tot_cost) AS tot_region_cost
+from
+tmp.tmp_dwb_vova_ad_cost cost2
+inner join
+(
+select
+distinct ga_channel
+from
+ods_yx_cy.ods_yx_ads_ga_channel_daily_flat_report
+where cost> 0
+) cost_ga_channel ON cost_ga_channel.ga_channel = cost2.ga_channel
+WHERE cost2.event_date >= '2021-02-01'
+AND cost2.event_date != 'all'
+AND cost2.platform = 'all'
+group by
+cost2.event_date,
+cost2.datasource,
+cost2.region_code
+) t2 on base.event_date = t2.event_date
+AND base.datasource = t2.datasource
+AND base.region_code = t2.region_code
 ;
 
 insert overwrite table dwb.dwb_vova_ad_gmv PARTITION (pt)
 select
+/*+ REPARTITION(1) */
 dd.datasource,
 dd.region_code,
 dd.ga_channel,
@@ -424,12 +550,44 @@ sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_da
 sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 180,gmv,0)) AS gmv_180d,
 trunc(dd.activate_date, 'MM') AS pt
 from
-tmp.tmp_zyzheng_yx_gmv_base dd
+tmp.tmp_dwb_vova_ad_gmv_base dd
 where datediff(pay_date, activate_date) >= 0
 AND datediff(pay_date, activate_date) <= 180
 group by
 dd.datasource,
 dd.ga_channel,
+dd.platform,
+dd.region_code,
+trunc(dd.activate_date, 'MM')
+
+UNION ALL
+
+select
+/*+ REPARTITION(1) */
+dd.datasource,
+dd.region_code,
+'all-ads' AS ga_channel,
+dd.platform,
+sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 1,gmv,0)) AS gmv_1d,
+sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 7,gmv,0)) AS gmv_7d,
+sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 30,gmv,0)) AS gmv_30d,
+sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 90,gmv,0)) AS gmv_90d,
+sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 180,gmv,0)) AS gmv_180d,
+trunc(dd.activate_date, 'MM') AS pt
+from
+tmp.tmp_dwb_vova_ad_gmv_base dd
+inner join
+(
+select
+distinct ga_channel
+from
+ods_yx_cy.ods_yx_ads_ga_channel_daily_flat_report
+where cost> 0
+) cost_ga_channel ON cost_ga_channel.ga_channel = dd.ga_channel
+where datediff(pay_date, activate_date) >= 0
+AND datediff(pay_date, activate_date) <= 180
+group by
+dd.datasource,
 dd.platform,
 dd.region_code,
 trunc(dd.activate_date, 'MM')
