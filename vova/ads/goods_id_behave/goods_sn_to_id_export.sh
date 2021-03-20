@@ -46,21 +46,24 @@ if [ $? -ne 0 ];then
   exit 1
 fi
 
-#sqoop export \
-#-Dorg.apache.sqoop.export.text.dump_data_on_error=true \
-#-Dmapreduce.job.queuename=default \
-#-Dsqoop.export.records.per.statement=1000 \
-#--connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
-#--username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
-#--table rec_sntoid \
-#--update-key "goods_sn,source" \
-#--update-mode allowinsert \
-#--hcatalog-database ads \
-#--hcatalog-table ads_goods_sn_to_id \
-#--hcatalog-partition-keys pt  \
-#--hcatalog-partition-values  ${pt} \
-#--fields-terminated-by '\001' \
-#--columns "goods_sn,source,goods_id_list"
-#if [ $? -ne 0 ];then
-#   exit 1
-#fi
+sqoop export \
+-Dorg.apache.sqoop.export.text.dump_data_on_error=true \
+-Dmapreduce.job.queuename=default \
+-Dsqoop.export.records.per.statement=1000 \
+-Dmapreduce.map.memory.mb=8192 \
+-Dmapreduce.reduce.memory.mb=8192 \
+--connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
+--username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
+--table rec_sntoid \
+--m 1 \
+--update-key "goods_sn,source" \
+--update-mode allowinsert \
+--hcatalog-database ads \
+--hcatalog-table ads_vova_goods_sn_to_id \
+--hcatalog-partition-keys pt  \
+--hcatalog-partition-values  ${pt} \
+--fields-terminated-by '\001' \
+--columns "goods_sn,source,goods_id_list"
+if [ $? -ne 0 ];then
+   exit 1
+fi

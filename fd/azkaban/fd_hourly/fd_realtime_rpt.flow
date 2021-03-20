@@ -53,9 +53,14 @@ nodes:
       - judge_dim_fd_region
       - judge_ods_fd_snowplow_all_event
 
-
+  - name: dwb_fd_realtime_rpt_comparison
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_realtime_rpt_comparison/run.sh ${azkaban.flow.start.timestamp} ${pt} ${hour}
+    dependsOn:
+      - new_fd_realtime_run
 
   - name: new_fd_realtime_end
     type: noop
     dependsOn:
-      - new_fd_realtime_run
+      - dwb_fd_realtime_rpt_comparison

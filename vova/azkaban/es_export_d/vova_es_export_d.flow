@@ -116,7 +116,7 @@ nodes:
       retries: 5
     dependsOn:
       - start_flag
-      - judge_ads_vova_goods_performance_page
+      - judge_ads_vova_goods_performanceg_page
 
   - name: export_es_ads_vova_goods_performance_2m
     type: command

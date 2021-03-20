@@ -26,6 +26,7 @@ nodes:
       - dwb_ac_web_ltv
       - dwb_vova_flash_sale
       - dwb_vova_min_price_goods
+      - dwb_vova_nps_email
 
   - name: start_flag
     type: command
@@ -237,6 +238,20 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_traff_control
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_refund
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_refund
+    dependsOn:
+      - start_flag
+
+  - name: judge_ods_vova_order_nps
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_order_nps
     dependsOn:
       - start_flag
 
@@ -475,4 +490,24 @@ nodes:
 #       - judge_dwd_vova_fact_pay
 #       - judge_dwd_vova_fact_act_ord_gs
 
+  -  name: dwb_vova_nps
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/nps/update.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - judge_dwd_vova_fact_pay
+       - judge_dwd_vova_fact_refund
+       - judge_dim_vova_order_goods
+       - judge_ods_vova_order_nps
+
+  -  name: dwb_vova_nps_email
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/nps/update_email.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - dwb_vova_nps
 

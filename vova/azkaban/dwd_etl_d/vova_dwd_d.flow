@@ -35,6 +35,7 @@ nodes:
       - dwd_vova_fact_original_channel
       - dwd_vova_web_fact_order_cause
       - dwd_vova_web_fact_cart_cause
+      - dwd_vova_log_analysis
 
   - name: start_flag
     type: command
@@ -782,24 +783,6 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: judge_dws_vova_buyer_goods_behave
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dws_vova_buyer_goods_behave
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - start_flag
-
-  - name: judge_ads_vova_traff_control
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_traff_control
-      retries: 50
-      retry.backoff: 600000
-    dependsOn:
-      - start_flag
-
 
   - name: dwd_vova_fact_search_word
     type: command
@@ -843,20 +826,14 @@ nodes:
       - judge_dwd_vova_log_goods_impression
       - judge_dwd_vova_log_data
 
-  - name: dwd_vova_activity_goods_ctry_behave
+
+  - name: dwd_vova_log_analysis
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/dwd/activity_goods_ctry_behave/update.sh
-      retries: 10
+      retries: 4
       retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/vova/dwd/fact_log/analysis/update.sh
     dependsOn:
-      - judge_dws_vova_buyer_goods_behave
-      - judge_dim_vova_buyers
-      - judge_dim_vova_goods
-      - dwd_vova_fact_pay
-      - dwd_vova_fact_refund
       - judge_dim_vova_devices
-      - judge_ads_vova_traff_control
-      - start_flag
-
-
+      - judge_dim_vova_goods
+      - judge_dim_vova_buyers

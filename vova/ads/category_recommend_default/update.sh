@@ -123,9 +123,9 @@ GROUP BY
 INSERT overwrite TABLE ads.ads_vova_category_recommend_default
 SELECT
     tmp1.cat_id,
-    tmp1.type,
     tmp1.region_id,
     tmp1.gender,
+    tmp1.type,
     row_number ( ) over ( PARTITION BY tmp1.region_id, tmp1.gender, tmp1.type ORDER BY nvl ( tmp2.gmv, 0 ) DESC ) rank
 FROM
     tmp_all_type tmp1
