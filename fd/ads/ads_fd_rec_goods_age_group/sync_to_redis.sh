@@ -20,7 +20,6 @@ spark-submit \
   --conf spark.yarn.appMasterEnv.redisTable=$table \
   --conf spark.yarn.appMasterEnv.redisKey=$key \
   --conf spark.yarn.appMasterEnv.sql="${sql}" \
-  --conf spark.yarn.appMasterEnv.redisExpireSeconds=600 \
   --conf spark.app.name=FDSparkToRedis_${table} \
   --class com.fd.bigdata.sparkbatch.util.job.SparkToRedis \
   s3://vomkt-emr-rec/jar/warehouse/fd/SparkToRedis.jar
