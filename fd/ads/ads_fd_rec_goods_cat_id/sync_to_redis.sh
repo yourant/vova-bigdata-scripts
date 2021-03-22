@@ -1,7 +1,7 @@
 #bin/sh
 table="fd_goods_cat_id"
 key="goods_id"
-sql="select goods_id,cat_id from ods_fd_vb.ods_fd_goods limit 20"
+sql="select goods_id,cat_id from ods_fd_vb.ods_fd_goods"
 
 spark-submit \
   --master yarn \
