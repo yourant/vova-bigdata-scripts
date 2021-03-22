@@ -35,3 +35,59 @@ CREATE EXTERNAL TABLE IF NOT EXISTS dwb.dwb_vova_ad_gmv
 --sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=yxl --table_name=temp_device_order_date_cohort --etl_type=ALL  --mapers=5 --period_type=day --partition_num=3 --split_id=install_date
 --sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=yxlc --table_name=temp_device_order_date_cohort --etl_type=ALL  --mapers=5 --period_type=day --partition_num=3 --split_id=install_date
 
+insert overwrite table dwb.dwb_vova_ad_gmv PARTITION (pt)
+select
+/*+ REPARTITION(1) */
+dd.datasource,
+dd.region_code,
+dd.ga_channel,
+dd.platform,
+sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 1,gmv,0)) AS gmv_1d,
+sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 7,gmv,0)) AS gmv_7d,
+sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 30,gmv,0)) AS gmv_30d,
+sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 90,gmv,0)) AS gmv_90d,
+sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 180,gmv,0)) AS gmv_180d,
+trunc(dd.activate_date, 'MM') AS pt
+from
+tmp.tmp_dwb_vova_ad_gmv_base dd
+where datediff(pay_date, activate_date) >= 0
+AND datediff(pay_date, activate_date) <= 180
+group by
+dd.datasource,
+dd.ga_channel,
+dd.platform,
+dd.region_code,
+trunc(dd.activate_date, 'MM')
+
+UNION ALL
+
+select
+/*+ REPARTITION(1) */
+dd.datasource,
+dd.region_code,
+'all-ads' AS ga_channel,
+dd.platform,
+sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 1,gmv,0)) AS gmv_1d,
+sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 7,gmv,0)) AS gmv_7d,
+sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 30,gmv,0)) AS gmv_30d,
+sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 90,gmv,0)) AS gmv_90d,
+sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 180,gmv,0)) AS gmv_180d,
+trunc(dd.activate_date, 'MM') AS pt
+from
+tmp.tmp_dwb_vova_ad_gmv_base dd
+inner join
+(
+select
+distinct ga_channel
+from
+ods_yx_cy.ods_yx_ads_ga_channel_daily_flat_report
+where cost> 0
+) cost_ga_channel ON cost_ga_channel.ga_channel = dd.ga_channel
+where datediff(pay_date, activate_date) >= 0
+AND datediff(pay_date, activate_date) <= 180
+group by
+dd.datasource,
+dd.platform,
+dd.region_code,
+trunc(dd.activate_date, 'MM')
+;

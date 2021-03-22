@@ -201,20 +201,8 @@ group by cube (date_format(from_utc_timestamp(dd.activate_time,'GMT+8'),'yyyy-MM
 HAVING activate_date != 'all'
 ;
 
-
-drop table if exists tmp.tmp_dwb_vova_ad_gmv_base;
-create table tmp.tmp_dwb_vova_ad_gmv_base as
-select
-/*+ REPARTITION(1) */
-nvl(dd.datasource, 'all') AS datasource,
-nvl(dd.ga_channel, 'all') AS ga_channel,
-nvl(dd.platform, 'all') AS platform,
-nvl(nvl(dd.region_code, 'NA') , 'all') AS region_code,
-nvl(date_format(from_utc_timestamp(dd.activate_time,'GMT+8'),'yyyy-MM-dd'), 'all') AS activate_date,
-nvl(date_format(from_utc_timestamp(dd.pay_time,'GMT+8'),'yyyy-MM-dd'), 'all') AS pay_date,
-sum(gmv) AS gmv
-from
-(
+drop table if exists tmp.tmp_dwb_vova_ad_gmv_base_detail;
+create table tmp.tmp_dwb_vova_ad_gmv_base_detail as
 select
 fp.datasource,
 CASE
@@ -258,7 +246,8 @@ else 'others' end AS platform,
 fp.region_code,
 fp.goods_number * fp.shop_price + fp.shipping_fee AS gmv,
 dd.activate_time,
-fp.pay_time
+fp.pay_time,
+(unix_timestamp(fp.pay_time) - unix_timestamp(dd.activate_time)) / 3600 AS diff_h
 from
 dwd.dwd_vova_fact_pay fp
 left join dim.dim_vova_devices dd on dd.device_id = fp.device_id AND fp.datasource = dd.datasource
@@ -267,7 +256,22 @@ and fp.from_domain like '%api%'
 and date(dd.activate_time) >= '2020-01-01'
 and date(dd.activate_time) <= date(fp.pay_time)
 and date(fp.pay_time) >= '2020-01-01'
-) dd
+;
+
+
+drop table if exists tmp.tmp_dwb_vova_ad_gmv_base;
+create table tmp.tmp_dwb_vova_ad_gmv_base as
+select
+/*+ REPARTITION(1) */
+nvl(dd.datasource, 'all') AS datasource,
+nvl(dd.ga_channel, 'all') AS ga_channel,
+nvl(dd.platform, 'all') AS platform,
+nvl(nvl(dd.region_code, 'NA') , 'all') AS region_code,
+nvl(date_format(from_utc_timestamp(dd.activate_time,'GMT+8'),'yyyy-MM-dd'), 'all') AS activate_date,
+nvl(date_format(from_utc_timestamp(dd.pay_time,'GMT+8'),'yyyy-MM-dd'), 'all') AS pay_date,
+sum(gmv) AS gmv
+from
+tmp.tmp_dwb_vova_ad_gmv_base_detail dd
 group by cube (date_format(from_utc_timestamp(dd.activate_time,'GMT+8'),'yyyy-MM-dd'), date_format(from_utc_timestamp(dd.pay_time,'GMT+8'),'yyyy-MM-dd'), dd.datasource, dd.ga_channel, dd.platform, nvl(dd.region_code, 'NA'))
 HAVING activate_date != 'all' AND pay_date != 'all'
 ;
@@ -541,43 +545,39 @@ AND base.event_date != 'all'
 insert overwrite table dwb.dwb_vova_ad_gmv PARTITION (pt)
 select
 /*+ REPARTITION(1) */
-dd.datasource,
-dd.region_code,
-dd.ga_channel,
-dd.platform,
-sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 1,gmv,0)) AS gmv_1d,
-sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 7,gmv,0)) AS gmv_7d,
-sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 30,gmv,0)) AS gmv_30d,
-sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 90,gmv,0)) AS gmv_90d,
-sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 180,gmv,0)) AS gmv_180d,
-trunc(dd.activate_date, 'MM') AS pt
+nvl(dd.datasource, 'all') AS datasource,
+nvl(nvl(dd.region_code, 'NA') , 'all') AS region_code,
+nvl(dd.ga_channel, 'all') AS ga_channel,
+nvl(dd.platform, 'all') AS platform,
+sum(if((unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 >= 0 AND (unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 <= 24,gmv,0)) AS gmv_1d,
+sum(if((unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 >= 0 AND (unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 <= 168,gmv,0)) AS gmv_7d,
+sum(if((unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 >= 0 AND (unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 <= 720,gmv,0)) AS gmv_30d,
+sum(if((unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 >= 0 AND (unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 <= 2160,gmv,0)) AS gmv_90d,
+sum(if((unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 >= 0 AND (unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 <= 4320,gmv,0)) AS gmv_180d,
+nvl(trunc(date_format(from_utc_timestamp(dd.activate_time, 'GMT+8'), 'yyyy-MM-dd'), 'MM'), 'all') AS pt
 from
-tmp.tmp_dwb_vova_ad_gmv_base dd
-where datediff(pay_date, activate_date) >= 0
-AND datediff(pay_date, activate_date) <= 180
-group by
-dd.datasource,
-dd.ga_channel,
-dd.platform,
-dd.region_code,
-trunc(dd.activate_date, 'MM')
+tmp.tmp_dwb_vova_ad_gmv_base_detail dd
+where (unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 >= 0
+AND (unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 <= 4320
+group by cube (trunc(date_format(from_utc_timestamp(dd.activate_time, 'GMT+8'), 'yyyy-MM-dd'), 'MM'), dd.datasource, dd.ga_channel, dd.platform, nvl(dd.region_code, 'NA'))
+HAVING pt != 'all'
 
 UNION ALL
 
 select
 /*+ REPARTITION(1) */
-dd.datasource,
-dd.region_code,
+nvl(dd.datasource, 'all') AS datasource,
+nvl(nvl(dd.region_code, 'NA') , 'all') AS region_code,
 'all-ads' AS ga_channel,
-dd.platform,
-sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 1,gmv,0)) AS gmv_1d,
-sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 7,gmv,0)) AS gmv_7d,
-sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 30,gmv,0)) AS gmv_30d,
-sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 90,gmv,0)) AS gmv_90d,
-sum(if(datediff(pay_date, activate_date) >= 0 AND datediff(pay_date, activate_date) <= 180,gmv,0)) AS gmv_180d,
-trunc(dd.activate_date, 'MM') AS pt
+nvl(dd.platform, 'all') AS platform,
+sum(if((unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 >= 0 AND (unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 <= 24,gmv,0)) AS gmv_1d,
+sum(if((unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 >= 0 AND (unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 <= 168,gmv,0)) AS gmv_7d,
+sum(if((unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 >= 0 AND (unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 <= 720,gmv,0)) AS gmv_30d,
+sum(if((unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 >= 0 AND (unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 <= 2160,gmv,0)) AS gmv_90d,
+sum(if((unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 >= 0 AND (unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 <= 4320,gmv,0)) AS gmv_180d,
+nvl(trunc(date_format(from_utc_timestamp(dd.activate_time, 'GMT+8'), 'yyyy-MM-dd'), 'MM'), 'all') AS pt
 from
-tmp.tmp_dwb_vova_ad_gmv_base dd
+tmp.tmp_dwb_vova_ad_gmv_base_detail dd
 inner join
 (
 select
@@ -586,13 +586,10 @@ from
 ods_yx_cy.ods_yx_ads_ga_channel_daily_flat_report
 where cost> 0
 ) cost_ga_channel ON cost_ga_channel.ga_channel = dd.ga_channel
-where datediff(pay_date, activate_date) >= 0
-AND datediff(pay_date, activate_date) <= 180
-group by
-dd.datasource,
-dd.platform,
-dd.region_code,
-trunc(dd.activate_date, 'MM')
+where (unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 >= 0
+AND (unix_timestamp(dd.pay_time) - unix_timestamp(dd.activate_time)) / 3600 <= 4320
+group by cube (trunc(date_format(from_utc_timestamp(dd.activate_time, 'GMT+8'), 'yyyy-MM-dd'), 'MM'), dd.datasource, dd.platform, nvl(dd.region_code, 'NA'))
+HAVING pt != 'all'
 ;
 
 
