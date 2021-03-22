@@ -1,0 +1,16 @@
+---
+config:
+  failure.emails: jhlu@i9i8.com
+  retries: 10
+  retry.backoff: 300000
+
+nodes:
+  - name: ods_fd_rar_start
+    type: noop
+
+  - name: ods_fd_rar_persona
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=rar --etl_type=INCTIME --inc_column=update_time --split_id=domain_id --table_name=persona --partition_num=1 --period_type=day
+    dependsOn:
+      - ods_fd_rar_start
