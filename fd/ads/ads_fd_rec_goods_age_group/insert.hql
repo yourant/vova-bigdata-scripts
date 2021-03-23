@@ -1,7 +1,7 @@
 WITH user_age AS (
     SELECT domain_id as duid
          , age_group as age_label
-    FROM tmp.fd_persona
+    FROM ods_fd_rar.ods_fd_persona
     where age_group in (0, 1)
 )-- 提取用户年龄标签,去除默认值和空值
 

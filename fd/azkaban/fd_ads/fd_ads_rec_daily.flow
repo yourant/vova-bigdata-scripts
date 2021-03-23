@@ -43,20 +43,6 @@ nodes:
     dependsOn:
       - fd_job_start
 
-  - name: judge_ods_fd_vb_user_duid
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_user_duid
-    dependsOn:
-      - fd_job_start
-
-  - name: judge_ods_fd_vb_users
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_users
-    dependsOn:
-      - fd_job_start
-
   - name: judge_ods_fd_vb_goods_attr
     type: command
     config:
@@ -68,6 +54,13 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_attribute
+    dependsOn:
+      - fd_job_start
+
+  - name: judge_ods_fd_rar_persona
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_rar_persona
     dependsOn:
       - fd_job_start
 
@@ -107,10 +100,9 @@ nodes:
       command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_rec_goods_age_group/run.sh ${azkaban.flow.start.timestamp} ${pt}
     dependsOn:
       - judge_ods_fd_snowplow_goods_event_hour
-      - judge_ods_fd_vb_user_duid
-      - judge_ods_fd_vb_users
       - judge_ods_fd_vb_attribute
       - judge_ods_fd_vb_goods_attr
+      - judge_ods_fd_rar_persona
 
   - name: sync_to_redis_ads_fd_rec_goods_age_group
     type: command
