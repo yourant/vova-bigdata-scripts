@@ -1,0 +1,76 @@
+---
+config:
+  failure.emails: andy.zhang@vova.com.hk
+  retries: 5
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - rpt_goods_sn_1w
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: judge_fact_log_goods_click
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh fact_log_goods_click
+    dependsOn:
+      - start_flag
+
+  - name: judge_fact_log_goods_impression
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh fact_log_goods_impression
+    dependsOn:
+      - start_flag
+
+  - name: judge_fact_pay
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh fact_pay
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dim_order_goods
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_fact_refund
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh fact_refund
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_fact_logistics
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh fact_logistics
+    dependsOn:
+      - start_flag
+
+  - name: rpt_goods_sn_1w
+    type: command
+    config:
+      command: sh /mnt/vova-bd-scripts/rpt/merchant_shield/merchant_back_goods_d.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_fact_log_goods_click
+      - judge_fact_log_goods_impression
+      - judge_fact_pay
+      - judge_dim_order_goods
+      - judge_fact_refund
+      - judge_fact_logistics
