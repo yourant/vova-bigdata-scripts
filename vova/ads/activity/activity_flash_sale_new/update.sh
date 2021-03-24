@@ -40,8 +40,8 @@ select
     2 as type,
     min(gca.gsn_status) as gsn_status
 from
-    ods_vova_vts.ods_vova_gsn_coupon_activity gca
-inner join ods_vova_vts.ods_vova_gsn_coupon_sign_goods gcsg
+    ods_vova_vts.ods_vova_gsn_coupon_activity_h gca
+inner join ods_vova_vts.ods_vova_gsn_coupon_sign_goods_h gcsg
     on gca.goods_sn = gcsg.goods_sn
 where gca.gsn_status in (1,2)
       and gca.is_delete = 0
@@ -123,6 +123,7 @@ from
 )
 where rank<=30
 )
+
 
 
 INSERT overwrite TABLE ads.ads_vova_activity_flash_sale_new partition (pt='${pt}')
