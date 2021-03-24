@@ -1,0 +1,479 @@
+---
+config:
+  retries: 4
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_buyer_push_portrait_export
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+#商品域翻译数据抽取
+  - name: vova_goods_languages_merge
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/vova/ods/merge/vova_goods_languages.sh
+    dependsOn:
+      - vova_goods_languages_ar
+      - vova_goods_languages_be
+      - vova_goods_languages_cs
+      - vova_goods_languages_da
+      - vova_goods_languages_de
+      - vova_goods_languages_el
+      - vova_goods_languages_en
+      - vova_goods_languages_es
+      - vova_goods_languages_et
+      - vova_goods_languages_fi
+      - vova_goods_languages_fr
+      - vova_goods_languages_ga
+      - vova_goods_languages_he
+      - vova_goods_languages_hr
+      - vova_goods_languages_ht
+      - vova_goods_languages_hu
+      - vova_goods_languages_id
+      - vova_goods_languages_is
+      - vova_goods_languages_it
+      - vova_goods_languages_ja
+      - vova_goods_languages_ko
+      - vova_goods_languages_lt
+      - vova_goods_languages_ms
+      - vova_goods_languages_mt
+      - vova_goods_languages_nl
+      - vova_goods_languages_no
+      - vova_goods_languages_pl
+      - vova_goods_languages_pt
+      - vova_goods_languages_ru
+      - vova_goods_languages_se
+      - vova_goods_languages_sk
+      - vova_goods_languages_sl
+      - vova_goods_languages_th
+      - vova_goods_languages_tr
+      - vova_goods_languages_tw
+      - vova_goods_languages_zh
+
+  - name: vova_goods_languages_ar
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_ar --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_be
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_be --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_cs
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_cs --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_da
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_da --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_de
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_de --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_el
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_el --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_en
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_en --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_es
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_es --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_et
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_et --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_fi
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_fi --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_fr
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_fr --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_ga
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_ga --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_he
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_he --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_hr
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_hr --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_ht
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_ht --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_hu
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_hu --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_id
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_id --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_is
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_is --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_it
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_it --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_ja
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_ja --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_ko
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_ko --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_lt
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_lt --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_ms
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_ms --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_mt
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_mt --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_nl
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_nl --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_no
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_no --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_pl
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_pl --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_pt
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_pt --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_ru
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_ru --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_se
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_se --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_sk
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_sk --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_sl
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_sl --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_th
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_th --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_tr
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_tr --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_tw
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_tw --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+
+  - name: vova_goods_languages_zh
+    type: command
+    config:
+      retries: 4
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_zh --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_buyers
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_buyers
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_buyer_goods_rating_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_buyer_goods_rating_d
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_buyer_portrait_feature
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_buyer_portrait_feature
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_buyer_push_portrait
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_portrait/push.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_buyers
+      - judge_dim_vova_goods
+      - judge_ads_vova_buyer_portrait_feature
+      - judge_ads_vova_buyer_goods_rating_d
+      - vova_goods_languages_merge
+
+  - name: ads_vova_buyer_push_portrait_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_portrait/push_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - ads_vova_buyer_push_portrait

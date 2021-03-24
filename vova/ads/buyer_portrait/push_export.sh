@@ -97,16 +97,16 @@ fi
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=default \
--Dmapreduce.map.memory.mb=4056 \
+-Dmapreduce.map.memory.mb=8192 \
+-Dmapreduce.reduce.memory.mb=8192 \
 -Dsqoop.export.records.per.statement=1000 \
--Dmapreduce.job.am.node-label-expression=CORE \
--Dmapreduce.job.node-label-expression=CORE \
---connect jdbc:mysql://db-logistics-w.gitvv.com:3306/themis_logistics_report \
---username vvreport4vv --password nTTPdJhVp!DGv5VX4z33Fw@tHLmIG8oS \
+--connect jdbc:mariadb:aurora://db-logistics-w.gitvv.com:3306/themis_logistics_report \
+--username vvreport4vv --password 'nTTPdJhVp!DGv5VX4z33Fw@tHLmIG8oS' \
+--connection-manager org.apache.sqoop.manager.MySQLManager \
 --table user_push_portrait_new \
 --m 20 \
 --hcatalog-database ads \
---hcatalog-table ads_buyer_push_portrait \
+--hcatalog-table ads_vova_buyer_push_portrait \
 --hcatalog-partition-keys pt \
 --hcatalog-partition-values ${pt} \
 --fields-terminated-by '\001'

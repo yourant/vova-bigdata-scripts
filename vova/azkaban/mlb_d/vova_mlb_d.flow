@@ -13,6 +13,9 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - mlb_vova_rec_m_nbi_nb_d
+      - mlb_algo_vova_comatrix
+      - mlb_algo_vova_item2vec
+      - mlb_algo_vova_mix_als
 
   - name: start_flag
     type: command
@@ -103,6 +106,41 @@ nodes:
       - start_flag
 
 
+  - name: judge_dwd_vova_log_common_click
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_common_click
+      retries: 100
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_goods_id_behave_2m
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_id_behave_2m
+      retries: 100
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_goods_click
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_click
+      retries: 100
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dws_vova_buyer_portrait
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dws_vova_buyer_portrait
+      retries: 100
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
 
 ########################
 # [8429]Me页面推荐策略调整
@@ -211,4 +249,55 @@ nodes:
       - mlb_vova_new_user_rec
 
 
+  - name: mlb_algo_vova_comatrix
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/algo_vova_comatrix/algo_vova_comatrix.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_common_click
+      - judge_ads_vova_goods_id_behave_2m
+      - judge_dwd_vova_fact_pay
 
+
+  - name: mlb_algo_vova_item2vec
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/algo_vova_item2vec/algo_vova_item2vec.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_common_click
+      - judge_ads_vova_goods_id_behave_2m
+      - judge_dwd_vova_fact_pay
+
+  - name: mlb_algo_vova_mix_als
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/algo_vova_mix_als/algo_vova_mix_als.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_common_click
+      - judge_ads_vova_goods_id_behave_2m
+      - judge_dwd_vova_fact_pay
+
+
+  - name: mlb_vova_algo_usercall_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/algo/ads_algo_usercall_d.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_portrait
+      - judge_dwd_vova_fact_pay
+      - judge_dim_vova_goods
+      - judge_ads_vova_traff_control

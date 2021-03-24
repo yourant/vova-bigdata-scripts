@@ -30,7 +30,7 @@ nodes:
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - judge_vova_fact_buyer_portrait_base
+      - judge_dwd_vova_fact_buyer_portrait_base
       - judge_dim_vova_category
       - judge_dim_vova_goods
     condition: all_success
@@ -44,7 +44,7 @@ nodes:
     dependsOn:
       - dws_vova_buyer_portrait_process
 
-  - name: judge_vova_fact_buyer_portrait_base
+  - name: judge_dwd_vova_fact_buyer_portrait_base
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_buyer_portrait_base
@@ -71,7 +71,7 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: judge_vova_fact_pay
+  - name: judge_dwd_vova_fact_pay
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay
@@ -87,7 +87,7 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: judge_fact_log_goods_impression
+  - name: judge_dwd_vova_log_goods_impression
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_impression
@@ -96,7 +96,7 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: judge_fact_log_goods_click
+  - name: judge_dwd_vova_log_goods_click
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_click
@@ -106,7 +106,7 @@ nodes:
       - start_flag
 
 
-  - name: judge_fact_log_common_click
+  - name: judge_dwd_vova_log_common_click
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_common_click
@@ -122,11 +122,11 @@ nodes:
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - judge_fact_log_goods_impression
-      - judge_fact_log_goods_click
-      - judge_fact_log_common_click
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_common_click
       - judge_dim_vova_goods
-      - judge_vova_fact_pay
+      - judge_dwd_vova_fact_pay
 
   - name: dws_vova_goods_1d
     type: command
@@ -135,10 +135,10 @@ nodes:
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - judge_fact_log_goods_impression
-      - judge_fact_log_goods_click
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_log_goods_click
       - judge_dim_vova_order_goods
-      - judge_vova_fact_pay
+      - judge_dwd_vova_fact_pay
     condition: all_success
 
   - name: dws_vova_goods_core_feature_his
@@ -148,10 +148,10 @@ nodes:
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - judge_fact_log_goods_impression
+      - judge_dwd_vova_log_goods_impression
       - judge_dim_vova_goods
-      - judge_fact_log_goods_click
-      - judge_vova_fact_pay
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_fact_pay
 
   - name: dws_vova_devices
     type: command
@@ -160,8 +160,8 @@ nodes:
       retries: 20
       retry.backoff: 600000
     dependsOn:
-      - judge_vova_start_up
-      - judge_vova_fact_pay
+      - judge_dwd_vova_fact_start_up
+      - judge_dwd_vova_fact_pay
       - judge_dim_vova_devices
     condition: all_success
 
@@ -174,7 +174,7 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: judge_vova_start_up
+  - name: judge_dwd_vova_fact_start_up
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_start_up

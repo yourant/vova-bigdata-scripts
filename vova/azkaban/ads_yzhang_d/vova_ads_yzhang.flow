@@ -24,7 +24,7 @@ nodes:
       - ads_vova_goods_sn_cut_price
       - ads_vova_gsn_reduce_valid_goods
       - ads_vova_flash_sale_goods_d_export
-      - ads_vova_goods_changed_record_d
+      - ads_vova_goods_changed_record_d_export
       - ads_vova_buyer_goods_rating_redis_d
       - ads_vova_search_sort_d
       - ads_vova_goods_id_behave_2m
@@ -344,14 +344,14 @@ nodes:
     dependsOn:
       - start_flag
 
- #- name: ads_vova_goods_changed_record_d_export
- #  type: command
- #  config:
- #    command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_changed_record_d/update_export.sh
- #    retries: 5
- #    retry.backoff: 600000
- #  dependsOn:
- #    - ads_vova_goods_changed_record_d
+  - name: ads_vova_goods_changed_record_d_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_changed_record_d/update_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - ads_vova_goods_changed_record_d
 
   - name: judge_vova_flash_sale_apply
     type: command
