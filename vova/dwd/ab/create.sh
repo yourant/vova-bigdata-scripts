@@ -15,6 +15,9 @@ CREATE external TABLE IF NOT EXISTS dwd.dwd_vova_ab_test_expre
 ) COMMENT 'dwd_vova_fact_ab_test_expre'
     PARTITIONED BY ( pt string) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
+
+
+
 alter table dwd.dwd_vova_ab_test_expre ADD COLUMNS (
 is_brand STRING COMMENT '是否品牌'
 ) CASCADE;
