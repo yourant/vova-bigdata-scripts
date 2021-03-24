@@ -34,6 +34,7 @@ nodes:
       - dwb_vova_high_refund_goods_restrict_monitor
       - dwb_vova_finance_self_mct_refund
       - dwb_vova_buyer_life_cycle_monitor
+      - dwb_vova_red_packet_report
 
   - name: start_flag
     type: command
@@ -296,6 +297,7 @@ nodes:
     dependsOn:
       - start_flag
 
+# ads.ads_vova_mct_rank
   - name: judge_ads_vova_traff_control
     type: command
     config:
@@ -320,6 +322,53 @@ nodes:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_portrait_v2
       retries: 5
       retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+# ods_vova_vts.ods_vova_gsn_coupon_activity;
+  - name: judge_ods_vova_gsn_coupon_activity
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_gsn_coupon_activity
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+# ods_vova_vts.ods_vova_gsn_coupon_sign_goods;
+  - name: judge_ods_vova_gsn_coupon_sign_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_gsn_coupon_sign_goods
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+# ods_vova_vts.ods_vova_gsn_coupon_history_log;
+  - name: judge_ods_vova_gsn_coupon_history_log
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_gsn_coupon_history_log
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+# ods_vova_vts.ods_vova_gsn_coupon_sign_history_log;
+  - name: judge_ods_vova_gsn_coupon_sign_history_log
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_gsn_coupon_sign_history_log
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_category
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_category
     dependsOn:
       - start_flag
 
@@ -655,10 +704,24 @@ nodes:
       - judge_dwd_vova_fact_pay
       - judge_dim_vova_devices
 
-
-
-
-
+# [8713]红包商品报表 red_packet_report
+  - name: dwb_vova_red_packet_report
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/red_packet_report/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_pay
+      - judge_dim_vova_goods
+      - judge_dim_vova_merchant
+      - judge_dim_vova_category
+      - judge_ods_vova_gsn_coupon_activity
+      - judge_ods_vova_gsn_coupon_sign_goods
+      - judge_ods_vova_gsn_coupon_history_log
+      - judge_ods_vova_gsn_coupon_sign_history_log
+      - judge_ads_vova_traff_control
+      - judge_dwd_vova_log_goods_impression
 
 
 
