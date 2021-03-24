@@ -1,10 +1,11 @@
-create external table if not exists tmp.merchant_refund_data
+drop table ads.ads_vova_mct_refund_w;
+create external table if not exists ads.ads_vova_mct_refund_w
 (
     mct_id BIGINT COMMENT '商品所属商家',
-    mct_name STRING COMMENT '商家名称',
-    first_cat_name STRING COMMENT '商品一级类目名称',
+    first_cat_id BIGINT COMMENT '商品一级类目ID',
     country     STRING COMMENT '国家',
-    shipping_type STRING COMMENT '物流渠道',
+    shipping_type INTEGER COMMENT '物流渠道',
+    count_date TIMESTAMP ,
     refund_amount DECIMAL(15,4) COMMENT '退款金额',
     refund_number BIGINT COMMENT '退款子订单数',
     refund_rate DECIMAL(15,4) COMMENT '退款率',
@@ -18,4 +19,5 @@ create external table if not exists tmp.merchant_refund_data
     refund_rate_not_receive DECIMAL(15,4) COMMENT '未收到退款率',
     refund_rate_others DECIMAL(15,4) COMMENT '其他退款率',
     refund_rate_empty_package DECIMAL(15,4) COMMENT '空包裹退款率'
-) COMMENT '商家退款数据';
+) COMMENT '商家退款数据(周)' PARTITIONED BY (pt STRING)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;

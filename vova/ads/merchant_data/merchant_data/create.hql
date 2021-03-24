@@ -1,20 +1,20 @@
-drop table tmp.merchant_data;
-create external table if not exists tmp.merchant_data
+drop table ads.ads_vova_mct_perf_d;
+create external table if not exists ads.ads_vova_mct_perf_d
 (
     mct_id BIGINT COMMENT '商品所属商家',
-    mct_name STRING COMMENT '商家名称',
-    first_cat_name STRING COMMENT '商品一级类目名称',
+    first_cat_id BIGINT COMMENT '商品一级类目ID',
+    count_date TIMESTAMP,
     mct_gvm     DECIMAL(15,4) COMMENT '销售额',
-    goods_number BIGINT COMMENT '子订单量',
+    goods_order_number BIGINT COMMENT '子订单量',
     mct_gvm_shipped DECIMAL(15,4) COMMENT '已发货销售额',
-    goods_number_shipped BIGINT COMMENT '已发货子订单量',
+    goods_order_number_shipped BIGINT COMMENT '已发货子订单量',
     price DECIMAL(15,4) COMMENT '笔单价',
-    goods_sold_rate DECIMAL(15,2) COMMENT '商品动销率',
-    goods_new_sold_rate DECIMAL(15,2) COMMENT '新品动销率',
+    goods_sold_rate DECIMAL(15,4) COMMENT '商品动销率',
+    goods_new_sold_rate DECIMAL(15,4) COMMENT '新品动销率',
     add_cart_cnt BIGINT COMMENT '加购商品数',
-    cart_rate DECIMAL(15,2) COMMENT '加购转化率'
-) COMMENT '商家数据';
-
+    cart_rate DECIMAL(15,4) COMMENT '加购转化率'
+) COMMENT '商家数据' PARTITIONED BY (pt STRING)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 /*
 drop table tmp.sc;
 create external table if not exists tmp.sc
