@@ -24,7 +24,7 @@ nvl(tmp.expre_cnt,0) expre_cnt,
 nvl(tmp.well_comment_cnt,0 ) as well_comment_cnt
 from
 dim.dim_vova_goods dg
-left join ads.ads_vova_min_price_goods_h mpg
+left join ads.ads_vova_min_price_goods_d mpg
 ON mpg.goods_id = dg.goods_id
 AND mpg.pt = '${pre_date}'
 AND strategy = 'c'

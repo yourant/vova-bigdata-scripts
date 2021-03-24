@@ -1,0 +1,94 @@
+---
+config:
+  failure.emails: andy.zhang@vova.com.hk,kaicheng@vova.com.hk
+  retries: 10
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_vova_most_popular_deep_rank_job_message_put
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+## judge ##################################
+# dwd.dwd_vova_log_goods_click
+  - name: judge_dwd_vova_log_goods_click
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_click
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+# dwd.dwd_vova_log_goods_impression
+  - name: judge_dwd_vova_log_goods_impression
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_impression
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+# dim.dim_vova_goods
+  - name: judge_dim_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+# dim.dim_vova_buyers
+  - name: judge_dim_vova_buyers
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_buyers
+    dependsOn:
+      - start_flag
+
+# ads.ads_vova_goods_portrait
+  - name: judge_ads_vova_goods_portrait
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_portrait_v2
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+## job ############################
+# [8970]deep rank调度任务开发
+  - name: mlb_vova_most_popular_deep_rank
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/most_popular_deep_rank/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_goods_impression
+      - judge_dim_vova_goods
+      - judge_dim_vova_buyers
+      - judge_ads_vova_goods_portrait
+
+# 执行完成后 发消息
+  - name: mlb_vova_most_popular_deep_rank_job_message_put
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=rec_deep_rank_data_w --from=data --to=java_server --jtype=7D --retry=0
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_vova_most_popular_deep_rank

@@ -10,7 +10,7 @@ sql="
 drop table if exists themis_logistics_report.goods_id_behave_m_new;
 drop table if exists themis_logistics_report.goods_id_behave_m_pre;
 "
-mysql -h vova-db-logistics.cei8p8whxxwd.us-east-1.rds.amazonaws.com -u vvreport4vv -pnTTPdJhVp\!DGv5VX4z33Fw@tHLmIG8oS -e "${sql}"
+mysql -h db-logistics-w.gitvv.com -u vvreport4vv -pnTTPdJhVp\!DGv5VX4z33Fw@tHLmIG8oS -e "${sql}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS themis_logistics_report.goods_id_behave_m (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 "
 
-mysql -h vova-db-logistics.cei8p8whxxwd.us-east-1.rds.amazonaws.com -u vvreport4vv -pnTTPdJhVp\!DGv5VX4z33Fw@tHLmIG8oS -e "${sql}"
+mysql -h db-logistics-w.gitvv.com -u vvreport4vv -pnTTPdJhVp\!DGv5VX4z33Fw@tHLmIG8oS -e "${sql}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1
@@ -64,7 +64,7 @@ if [ $? -ne 0 ];then
 fi
 
 echo "----------开始rename-------"
-mysql -h vova-db-logistics.cei8p8whxxwd.us-east-1.rds.amazonaws.com -u vvreport4vv -pnTTPdJhVp\!DGv5VX4z33Fw@tHLmIG8oS <<EOF
+mysql -h db-logistics-w.gitvv.com -u vvreport4vv -pnTTPdJhVp\!DGv5VX4z33Fw@tHLmIG8oS <<EOF
 rename table themis_logistics_report.goods_id_behave_m to themis_logistics_report.goods_id_behave_m_pre,themis_logistics_report.goods_id_behave_m_new to themis_logistics_report.goods_id_behave_m;
 EOF
 echo "-------rename结束--------"
