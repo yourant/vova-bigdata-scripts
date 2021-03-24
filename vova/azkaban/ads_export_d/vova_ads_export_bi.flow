@@ -32,6 +32,11 @@ nodes:
       - ads_vova_goods_id_country_behave_export
       - ads_vova_goods_id_behave_m_export
       - ads_vova_goods_id_behave_m_logistics_export
+      - ads_vova_mct_perf_d_export
+      - ads_vova_mct_refund_m_export
+      - ads_vova_mct_refund_cnt_m_export
+      - ads_vova_mct_refund_cnt_w_export
+      - ads_vova_mct_refund_w_export
 
   - name: start_flag
     type: command
@@ -135,6 +140,51 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_ads_vova_mct_perf_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_mct_perf_d
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_mct_refund_m
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_mct_refund_m
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_mct_refund_cnt_m
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_mct_refund_cnt_m
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_mct_refund_cnt_w
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_mct_refund_cnt_w
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_mct_refund_w
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_mct_refund_w
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
   - name: ads_vova_buyer_portrait_brand_likes_sqoop_export
     type: command
     config:
@@ -201,7 +251,6 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_ads_vova_buyer_stat_feature
-
 
 
   - name: ads_vova_second_cat_goods_ranking_list_export
@@ -463,3 +512,49 @@ nodes:
       retries: 5
     dependsOn:
       - judge_ads_vova_goods_id_behave_m
+
+  - name: ads_vova_mct_perf_d_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/mct_perf_d/update_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_mct_perf_d
+
+  - name: ads_vova_mct_refund_m_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/merchant_data/mrchant_refund_month/update_sqoop.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_mct_refund_m
+
+  - name: ads_vova_mct_refund_cnt_m_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/merchant_data/mct_refund_cnt_m/update_sqoop.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_mct_refund_cnt_m
+
+
+  - name: ads_vova_mct_refund_cnt_w_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/merchant_data/mct_refund_cnt_w/update_sqoop.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_mct_refund_cnt_w
+
+  - name: ads_vova_mct_refund_w_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/merchant_data/merchant_refund_week/update_sqoop.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_mct_refund_w
