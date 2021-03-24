@@ -32,15 +32,7 @@ from
     nvl(amr.rank, 0) rank,
     fp.shipping_fee+fp.shop_price*fp.goods_number gmv
   from
-  (
-    select distinct
-      goods_id
-    from
-      ods_vova_vts.ods_vova_gsn_coupon_sign_goods
-  ) t1
-  left join
     dwd.dwd_vova_fact_pay fp
-  on t1.goods_id = fp.goods_id
   left join
     ads.ads_vova_mct_rank amr
   on fp.first_cat_id = amr.first_cat_id and fp.mct_id = amr.mct_id
@@ -169,7 +161,7 @@ select /*+ REPARTITION(1) */
   t1.mct_id mct_id                ,  -- d_商家ID
   dm.mct_name mct_name            ,  -- d_商家名称
   t1.first_cat_id first_cat_id    ,  -- d_一级品类ID
-  dc.first_cat_name first_cat_name,  -- d_一级品类名称
+  regexp_replace(dc.first_cat_name,'\'','') first_cat_name,  -- d_一级品类名称
   t1.is_brand                     ,  -- d_是否brand(Y,N)
   amr.rank rank                   ,  -- i_店铺一级类目等级
   t4.avg_first_cat_rank_gmv first_cat_rank_gmv_avg,  -- i_所属类目当前等级的gmv均值
@@ -292,7 +284,7 @@ and amr.pt ='${cur_date}'
 insert overwrite table dwb.dwb_vova_red_packet_goods partition(pt='${cur_date}')
 select /*+ REPARTITION(1) */
   t1.first_cat_id        ,
-  t1.first_cat_name      ,
+  regexp_replace(t1.first_cat_name,'\'','') first_cat_name ,
   t1.second_cat_id       ,
   t1.second_cat_name     ,
   t1.is_brand            ,
@@ -308,9 +300,9 @@ select /*+ REPARTITION(1) */
   t2.impression_pv       ,
   t2.impression_uv       ,
   t3.gmv red_packet_order_gmv,
-  if(t3.red_packet_gmv > 0, t3.red_packet_gmv, 0) red_packet_gmv,
+  t3.red_packet_gmv red_packet_gmv,
   t3.order_goods_cnt red_packet_order_cnt,
-  if(red_packet_gmv > 0, round(nvl(t3.red_packet_gmv/t3.order_goods_cnt, 0), 4), 0) red_packet_avg_gmv,
+  round(nvl(t3.red_packet_gmv/t3.order_goods_cnt, 0), 4) red_packet_avg_gmv,
   t3.pay_uv pay_uv,
   round(nvl(t3.pay_uv / t2.impression_uv, 0), 4) cr
 from
@@ -369,7 +361,7 @@ on t1.goods_id = t3.goods_id
 insert overwrite table dwb.dwb_vova_red_packet_cat partition(pt='${cur_date}')
 select /*+ REPARTITION(1) */
   t1.first_cat_id,
-  t2.first_cat_name,
+  regexp_replace(t2.first_cat_name,'\'','') first_cat_name,
   t1.second_cat_id,
   t3.second_cat_name,
   t1.is_brand,
