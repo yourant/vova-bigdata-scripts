@@ -1,5 +1,5 @@
-drop table rpt.rpt_mct_shield;
-CREATE TABLE IF NOT EXISTS rpt.rpt_mct_shield
+drop table dwb.dwb_vova_mct_shield;
+CREATE external  TABLE IF NOT EXISTS dwb.dwb_vova_mct_shield
 (
     datasource     string comment '数据平台',
     event_date                     date   COMMENT '订单确认日期',
@@ -16,3 +16,22 @@ CREATE TABLE IF NOT EXISTS rpt.rpt_mct_shield
     not_logistic_refund_order_5to8 bigint COMMENT '非物流退款订单5-8周'
 ) COMMENT '商家屏蔽' PARTITIONED BY (pt STRING)
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
+    
+    
+CREATE external TABLE dwb.dwb_vova_goods_sn_1d(
+  goods_sn string COMMENT 'goods_sn', 
+  pv_goods_impression_1w bigint COMMENT 'goods_impression pv', 
+  pv_goods_click_1w bigint COMMENT 'goods_click pv', 
+  uv_1w bigint COMMENT '??UV', 
+  gmv_1w decimal(13,4) COMMENT '??', 
+  gcr_1w decimal(10,4) COMMENT 'gcr', 
+  ctr_1w decimal(10,4) COMMENT 'ctr', 
+  create_time timestamp COMMENT '', 
+  last_update_time timestamp COMMENT '')
+PARTITIONED BY (pt string)  ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
+
+CREATE external TABLE dwb.dwb_vova_goods_id_1d(
+  goods_id int COMMENT 'goods_id',
+  refund_rate_nonlogistics_8w decimal(10,4) COMMENT '')
+PARTITIONED BY (pt string) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
+

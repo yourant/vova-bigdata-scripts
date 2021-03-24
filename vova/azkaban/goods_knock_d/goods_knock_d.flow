@@ -17,49 +17,50 @@ nodes:
     config:
       command: echo "start job"
 
-  - name: judge_dim_goods
+  - name: judge_dim_vova_goods
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dim_goods
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
       retries: 100
       retry.backoff: 120000
     dependsOn:
       - start_flag
 
-  - name: judge_fact_pay
+  - name: judge_dwd_vova_fact_pay
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh fact_pay
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay
       retries: 100
       retry.backoff: 120000
     dependsOn:
       - start_flag
 
-  - name: judge_fact_log_goods_impression
+  - name: judge_dwd_vova_log_goods_impression
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh fact_log_goods_impression
-      retries: 100
-      retry.backoff: 120000
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_impression
+      retries: 10
+      retry.backoff: 300000
     dependsOn:
       - start_flag
+
 
   - name: judge_vova_rec_gid_pic_similar
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh vova_rec_gid_pic_similar
-      retries: 100
-      retry.backoff: 120000
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_rec_gid_pic_similar
+      retries: 5
+      retry.backoff: 600000
     dependsOn:
       - start_flag
 
   - name: goods_knock_d
     type: command
     config:
-      command:  sh /mnt/vova-bd-scripts/rpt/goods_knock/update.sh
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/goods_knock/update.sh
       retries: 5
     dependsOn:
       - judge_vova_rec_gid_pic_similar
-      - judge_fact_log_goods_impression
-      - judge_fact_pay
-      - judge_dim_goods
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_fact_pay
+      - judge_dim_vova_goods

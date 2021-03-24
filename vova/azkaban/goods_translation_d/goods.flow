@@ -9,7 +9,7 @@ nodes:
     config:
       command: echo "stop job"
     dependsOn:
-      - buyer_push_portrait_export
+      - ads_vova_buyer_push_portrait_export
 
   - name: start_flag
     type: command
@@ -22,7 +22,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/merge/vova_goods_languages.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/ods/merge/vova_goods_languages.sh
     dependsOn:
       - vova_goods_languages_ar
       - vova_goods_languages_be
@@ -66,7 +66,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_ar --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_ar --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -76,7 +76,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_be --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_be --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -86,7 +86,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_cs --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_cs --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -96,7 +96,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_da --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_da --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -106,7 +106,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_de --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_de --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -116,7 +116,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_el --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_el --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -126,7 +126,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_en --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_en --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -136,7 +136,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_es --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_es --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -146,7 +146,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_et --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_et --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -156,7 +156,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_fi --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_fi --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -166,7 +166,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_fr --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_fr --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -176,7 +176,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_ga --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_ga --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -186,7 +186,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_he --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_he --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -196,7 +196,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_hr --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_hr --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -206,7 +206,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_ht --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_ht --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -216,7 +216,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_hu --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_hu --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -226,7 +226,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_id --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_id --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -236,7 +236,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_is --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_is --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -246,7 +246,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_it --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_it --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -256,7 +256,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_ja --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_ja --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -266,7 +266,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_ko --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_ko --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -276,7 +276,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_lt --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_lt --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -286,7 +286,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_ms --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_ms --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -296,7 +296,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_mt --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_mt --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -306,7 +306,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_nl --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_nl --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -316,7 +316,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_no --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_no --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -326,7 +326,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_pl --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_pl --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -336,7 +336,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_pt --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_pt --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -346,7 +346,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_ru --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_ru --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -356,7 +356,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_se --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_se --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -366,7 +366,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_sk --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_sk --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -376,7 +376,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_sl --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_sl --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -386,7 +386,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_th --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_th --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -396,7 +396,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_tr --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_tr --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -406,7 +406,7 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_tw --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_tw --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
@@ -416,64 +416,64 @@ nodes:
     config:
       retries: 4
       retry.backoff: 600000
-      command: sh /mnt/vova-bd-scripts/ods/sqoop_import_themis.sh  --source=rec_foundation --table=goods_languages_zh --inc-column=last_update_time --etlType=INCTIME
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vrf  --table_name=goods_languages_zh --inc_column=last_update_time --etl_type=INCTIME   --period_type=day --partition_num=10
     dependsOn:
       - start_flag
 
-  - name: judge_dim_buyers
+  - name: judge_dim_vova_buyers
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dim_buyers
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_buyers
       retries: 5
       retry.backoff: 600000
     dependsOn:
       - start_flag
 
-  - name: judge_dim_goods
+  - name: judge_dim_vova_goods
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dim_goods
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
       retries: 5
       retry.backoff: 600000
     dependsOn:
       - start_flag
 
-  - name: judge_ads_buyer_goods_rating_d
+  - name: judge_ads_vova_buyer_goods_rating_d
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh ads_buyer_goods_rating_d
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_buyer_goods_rating_d
       retries: 5
       retry.backoff: 600000
     dependsOn:
       - start_flag
 
-  - name: judge_ads_buyer_portrait_feature
+  - name: judge_ads_vova_buyer_portrait_feature
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh ads_buyer_portrait_feature
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_buyer_portrait_feature
       retries: 5
       retry.backoff: 600000
     dependsOn:
       - start_flag
 
-  - name: buyer_push_portrait
+  - name: ads_vova_buyer_push_portrait
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ads/buyer_portrait/push.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_portrait/push.sh
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - judge_dim_buyers
-      - judge_dim_goods
-      - judge_ads_buyer_portrait_feature
-      - judge_ads_buyer_goods_rating_d
+      - judge_dim_vova_buyers
+      - judge_dim_vova_goods
+      - judge_ads_vova_buyer_portrait_feature
+      - judge_ads_vova_buyer_goods_rating_d
       - vova_goods_languages_merge
 
-  - name: buyer_push_portrait_export
+  - name: ads_vova_buyer_push_portrait_export
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ads/buyer_portrait/push_export.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_portrait/push_export.sh
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - buyer_push_portrait
+      - ads_vova_buyer_push_portrait

@@ -9,7 +9,7 @@ if [ ! -n "$1" ]; then
 fi
 
 # 前置依赖表：dim层，dwd.dwd_vova_fact_mbrmct_mct_cd
-spark-submit --name ads_algo_mct_group_d --deploy-mode client --master yarn --driver-cores 1 --driver-memory 2G --class com.vova.model.Main s3://vova-mlb/REC/util/mct_group.jar ${pt} ${isUpdateDatabase}
+spark-submit --name mlb_vova_algo_mct_group_d_shudeyou --deploy-mode client --master yarn --driver-cores 1 --driver-memory 2G --class com.vova.mct_group.Main s3://vova-mlb/REC/util/mct_group.jar ${pt} ${isUpdateDatabase}
 
 
 if [ $? -ne 0 ]; then

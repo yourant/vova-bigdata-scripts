@@ -69,3 +69,16 @@ CREATE EXTERNAL TABLE `ods_vova_vts.ods_vova_user_wallet_part`(
 STORED AS PARQUETFILE;
 
 
+CREATE EXTERNAL TABLE `ods_vova_vrf.ods_vova_goods_languages_merge`(
+  `id` bigint COMMENT '自增ID',
+  `goods_id` bigint COMMENT '商品Id',
+  `language_code` string COMMENT '语言',
+  `source` string COMMENT '翻译来源',
+  `goods_name` string COMMENT '商品名称',
+  `keywords` string COMMENT '商品关键字',
+  `goods_desc` string COMMENT '商品描述',
+  `create_time` timestamp COMMENT '添加时间',
+  `last_update_time` timestamp COMMENT '最后更新时间'
+  ) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
+
+

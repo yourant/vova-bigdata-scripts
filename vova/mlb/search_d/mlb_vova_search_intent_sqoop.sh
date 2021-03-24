@@ -4,8 +4,8 @@ if [ ! -n "$1" ];then
    pt=`date -d "-1 day" +%Y-%m-%d`
 fi
 
-db_username=""
-db_password=""
+db_username="bdwriter"
+db_password="Dd7LvXRPDP4iIJ7FfT8e"
 
 echo "import to mysql database"
 
@@ -63,8 +63,7 @@ fi
 
 #sqoop?~H| ?~Y?mysql?~U??~M?
 mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u ${db_username} -p${db_password} <<EOF
-rename table themis.ads_query_dic to themis.ads_query_dic_old;
-rename table themis.ads_query_dic_tmp to themis.ads_query_dic;
+rename table themis.ads_query_dic to themis.ads_query_dic_old,themis.ads_query_dic_tmp to themis.ads_query_dic;
 EOF
 
 #if error

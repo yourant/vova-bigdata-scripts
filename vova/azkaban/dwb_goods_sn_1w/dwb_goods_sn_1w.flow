@@ -10,67 +10,107 @@ nodes:
     config:
       command: echo "stop job"
     dependsOn:
-      - rpt_goods_sn_1w
+      - dwb_vova_merchant_back_goods_sn_d
+      - dwb_vova_merchant_back_goods_d
 
   - name: start_flag
     type: command
     config:
       command: echo "start job"
 
-  - name: judge_fact_log_goods_click
+  - name: judge_dwd_vova_log_goods_click
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh fact_log_goods_click
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_click
+      retries: 10
+      retry.backoff: 300000
     dependsOn:
       - start_flag
 
-  - name: judge_fact_log_goods_impression
+  - name: judge_dwd_vova_log_goods_impression
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh fact_log_goods_impression
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_impression
+      retries: 10
+      retry.backoff: 300000
     dependsOn:
       - start_flag
 
-  - name: judge_fact_pay
+  - name: judge_dwd_vova_fact_pay
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh fact_pay
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay
+      retries: 10
+      retry.backoff: 300000
     dependsOn:
       - start_flag
 
-  - name: judge_dim_order_goods
+  - name: judge_dim_vova_order_goods
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh dim_order_goods
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_order_goods
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_refund
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_refund
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_logistics
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_logistics
+      retries: 10
+      retry.backoff: 300000
     dependsOn:
       - start_flag
 
 
-  - name: judge_fact_refund
+  - name: judge_vova_goods_display_sort
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh fact_refund
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_goods_display_sort
+      retries: 10
+      retry.backoff: 300000
     dependsOn:
       - start_flag
 
-
-  - name: judge_fact_logistics
+  - name: judge_dim_vova_goods
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/ods/judge_check.sh fact_logistics
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+      retries: 10
+      retry.backoff: 300000
     dependsOn:
       - start_flag
 
-  - name: rpt_goods_sn_1w
+  - name: dwb_vova_merchant_back_goods_d
     type: command
     config:
-      command: sh /mnt/vova-bd-scripts/rpt/merchant_shield/merchant_back_goods_d.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/merchant_shield/merchant_back_goods_d.sh
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - judge_fact_log_goods_click
-      - judge_fact_log_goods_impression
-      - judge_fact_pay
-      - judge_dim_order_goods
-      - judge_fact_refund
-      - judge_fact_logistics
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_goods_impression
+      - judge_dwd_vova_fact_pay
+      - judge_dim_vova_order_goods
+      - judge_dwd_vova_fact_refund
+      - judge_dwd_vova_fact_logistics
+
+  - name: dwb_vova_merchant_back_goods_sn_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/merchant_shield/merchant_back_goods_sn_d.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_vova_goods_display_sort
+      - judge_dim_vova_goods

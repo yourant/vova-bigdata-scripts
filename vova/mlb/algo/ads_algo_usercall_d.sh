@@ -8,6 +8,7 @@ fi
 ###依赖的表：dwd.fact_pay，dwd.dim_goods，dws.dws_buyer_portrait，ods.vova_activity_coupon_tag
 spark-submit --master yarn \
 --name ads_algo_usercall_d \
+--executor-memory 8G \
 --conf spark.sql.autoBroadcastJoinThreshold=10485760 \
 --deploy-mode client \
 --conf spark.dynamicAllocation.maxExecutors=150 \

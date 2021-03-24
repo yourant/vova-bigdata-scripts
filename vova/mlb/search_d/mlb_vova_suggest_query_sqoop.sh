@@ -4,8 +4,8 @@ if [ ! -n "$1" ];then
    pt=`date -d "-1 day" +%Y-%m-%d`
 fi
 
-db_username=""
-db_password=""
+db_username="bdwriter"
+db_password="Dd7LvXRPDP4iIJ7FfT8e"
 
 echo "import to mysql database"
 
@@ -30,7 +30,7 @@ CREATE TABLE themis.ads_suggest_query_tmp (
   update_time datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id) USING BTREE,
   UNIQUE KEY query (query) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=262294 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC
 "
 
 mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u ${db_username} -p${db_password} -e "${create_tmp_table}"
@@ -59,8 +59,7 @@ if [ $? -ne 0 ];then
 fi
 
 mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u ${db_username} -p${db_password} <<EOF
-rename table themis.ads_suggest_query to themis.ads_suggest_query_old;
-rename table themis.ads_suggest_query_tmp to themis.ads_suggest_query;
+rename table themis.ads_suggest_query to themis.ads_suggest_query_old,themis.ads_suggest_query_tmp to themis.ads_suggest_query;
 EOF
 
 #if error
