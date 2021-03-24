@@ -56,7 +56,7 @@ and gc.page_code ='search_result'
 group by t1.query,t1.goods_id,t1.goods_sn,t1.rank,t1.language
 ) t2
 ) t3
-where t3.row_num <= 50 and t3.query_count > 20 and query !='' and query is not null
+where t3.row_num <= 50 and t3.query_count > 20 and query !='' and query is not null and length(query)<=128
 "
 spark-sql --conf "spark.dynamicAllocation.maxExecutors=100" --conf "spark.app.name=ads_vova_search_words_pool_zhangyin" -e "$sql"
 #如果脚本失败，则报错

@@ -69,7 +69,7 @@ SELECT
        case when datasource in ('airyclub','vova') then datasource
          else 'others'
          end dp
-FROM dwd.dwd_vova_log_page_view_history
+FROM dwd.dwd_vova_log_screen_view_history
 WHERE pt='${pt}'
 ;
 "

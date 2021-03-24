@@ -19,6 +19,8 @@ nodes:
       - ads_vova_activity_outlets
       - ads_vova_activity_women_cloth
       - ads_vova_activity_women_clothing_clearance_sale
+      - ads_vova_activity_user_only
+      - ads_vova_activity_new_user
 
   - name: start_flag
     type: command
@@ -91,6 +93,15 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_ads_vova_min_price_goods_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_min_price_goods_d
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
 
   - name:  ads_vova_activity_ac_brand
     type: command
@@ -154,6 +165,7 @@ nodes:
     dependsOn:
       - judge_dwd_vova_activity_goods_ctry_behave
       - judge_dim_vova_goods
+      - judge_ads_vova_min_price_goods_d
 
   - name:  ads_vova_activity_outlets
     type: command
@@ -164,6 +176,7 @@ nodes:
     dependsOn:
       - judge_dwd_vova_activity_goods_ctry_behave
       - judge_dim_vova_goods
+      - judge_ads_vova_min_price_goods_d
 
 
   - name:  ads_vova_activity_women_cloth
@@ -175,6 +188,7 @@ nodes:
     dependsOn:
       - judge_dwd_vova_activity_goods_ctry_behave
       - judge_dim_vova_goods
+      - judge_ads_vova_min_price_goods_d
 
   - name:  ads_vova_activity_women_clothing_clearance_sale
     type: command
@@ -185,6 +199,7 @@ nodes:
     dependsOn:
       - judge_dwd_vova_activity_goods_ctry_behave
       - judge_dim_vova_goods
+      - judge_ads_vova_min_price_goods_d
 
   - name:  ads_vova_activity_new_user
     type: command
@@ -199,4 +214,14 @@ nodes:
       - judge_dwd_vova_fact_pay
       - judge_dwd_vova_fact_refund
       - judge_dim_vova_devices
+      - judge_dim_vova_goods
+
+  - name:  ads_vova_activity_user_only
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_user_only/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_activity_goods_ctry_behave
       - judge_dim_vova_goods

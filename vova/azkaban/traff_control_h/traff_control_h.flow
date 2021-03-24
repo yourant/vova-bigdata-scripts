@@ -1,0 +1,44 @@
+---
+config:
+  failure.emails: yzhang13@vova.com.hk
+  retries: 3
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_traff_control_h
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+
+  - name: judge_vova_fact_log_v2_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_v2_h
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+  - name: ads_vova_traff_control_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/traff_control/traff_control_h.sh
+    dependsOn:
+      - ads_vova_mct_page_traff_h
+
+
+  - name: ads_vova_mct_page_traff_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/mct_page_traff/update.sh
+    dependsOn:
+      - judge_vova_fact_log_v2_h

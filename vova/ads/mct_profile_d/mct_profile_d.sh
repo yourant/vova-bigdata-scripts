@@ -233,11 +233,11 @@ select
 og.mct_id,
 c.first_cat_id,
 og.order_goods_id,
-case when datediff(fl.valid_tracking_date,fl.confirm_time)<7  and og.sku_pay_status>1 then 1 else 0 end so_order_cnt_3_6w
+case when datediff(fl.valid_tracking_date,og.confirm_time)<7  and og.sku_pay_status>1 then 1 else 0 end so_order_cnt_3_6w
 from dim.dim_vova_order_goods og
 left join dwd.dwd_vova_fact_logistics fl on fl.order_goods_id=og.order_goods_id
 left join dim.dim_vova_category c on og.cat_id = c.cat_id
-where datediff('${pre_date}', date(og.confirm_time)) between 6 and 36
+where datediff('${pre_date}', date(og.confirm_time)) between 6 and 36 and (date(og.confirm_time)< '2021-02-04' or date(og.confirm_time)>'2021-02-19')
 ) t1
 group by t1.mct_id,t1.first_cat_id
 ) t8 on t0.mct_id=t8.mct_id and t0.first_cat_id = t8.first_cat_id
@@ -358,7 +358,7 @@ where pt >='$pre_month' and pt <='$pre_date'
 group by mct_id,first_cat_id
 ) t14 on t0.mct_id= t14.mct_id and t0.first_cat_id = t14.first_cat_id
 "
-spark-sql --executor-memory 6G --conf "spark.app.name=ads_vova_mct_profile_d_zhangyin"  -e "$sql"
+spark-sql --executor-memory 6G --conf "spark.app.name=ads_vova_mct_profile_d_zhangyin" --conf "spark.dynamicAllocation.maxExecutors=150"  -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1

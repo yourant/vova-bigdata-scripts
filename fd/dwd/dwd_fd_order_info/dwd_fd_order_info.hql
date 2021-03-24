@@ -1,6 +1,17 @@
-INSERT overwrite table dwd.dwd_fd_order_info
-select 
+with order_info_with_duid as (
+select * from (
+select
+    oi.*,
     ud.sp_duid,
+    row_num() over (partition by oi.order_id order by ud.last_update_time desc) as ud_rn
+from ods_fd_vb.ods_fd_order_info oi
+left join ods_fd_vb.ods_fd_user_duid ud on ud.user_id = oi.user_id and ud.last_update_time < oi.order_time
+)
+where ud_rn = 1
+)
+INSERT overwrite table tmp.dwd_fd_order_info
+select 
+    sp_duid,
     oi.order_id,
     oi.party_id,
     oi.order_sn,
@@ -183,19 +194,11 @@ from(
         display_goods_amount_exchange,
         display_bonus_exchange,
         token,
-        payer_id
-    from ods_fd_vb.ods_fd_order_info
+        payer_id,
+        sp_duid
+    from order_info_with_duid
     where email not regexp '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
 )oi
-left join (
-    select du.user_id,du.sp_duid
-    from (
-        select user_id, sp_duid,row_number () OVER (PARTITION BY user_id ORDER BY last_update_time DESC) AS rank
-          from ods_fd_vb.ods_fd_user_duid
-         where sp_duid IS NOT NULL
-    )du where du.rank = 1
-
-) ud ON oi.user_id = ud.user_id
 left join dim.dim_fd_user_agent ua ON oi.user_agent_id = ua.user_agent_id
 left join dim.dim_fd_region r ON oi.country_id = r.region_id
 left join dim.dim_fd_language l ON oi.language_id = l.language_id

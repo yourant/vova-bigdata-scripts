@@ -17,7 +17,7 @@ sql="
 insert overwrite table ads.ads_vova_red_packet_gsn_goods partition(pt='${cur_date}')
 select
   dg.goods_id,
-  t1.goods_sn
+  dg.goods_sn
 from
 (
   select

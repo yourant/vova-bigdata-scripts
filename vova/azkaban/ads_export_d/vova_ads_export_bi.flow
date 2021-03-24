@@ -23,7 +23,6 @@ nodes:
       - ads_vova_mct_cat_relation_export
       - ads_vova_search_words_pool_d_export
       - ads_vova_search_words_pool_his_d_export
-      - ads_vova_buyer_releation_d_export
       - ads_vova_buyer_portrait_d_export
       - ads_vova_country_hot_words_export
       - ads_mct_vova_d_export
@@ -291,26 +290,6 @@ nodes:
       - judge_ads_vova_search_words_pool_his_d
 
 
-
-  - name: judge_ads_vova_buyer_releation_d
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_buyer_releation_d
-      retries: 20
-      retry.backoff: 120000
-    dependsOn:
-      - start_flag
-
-  - name: ads_vova_buyer_releation_d_export
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_releation_d/update_export.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - judge_ads_vova_buyer_releation_d
-
-
   - name: judge_ads_vova_buyer_portrait_d
     type: command
     config:
@@ -407,7 +386,7 @@ nodes:
   - name: judge_ads_vova_goods_sn_cut_price
     type: command
     config:
-      command: sh sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_sn_cut_price
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_sn_cut_price
       retries: 20
       retry.backoff: 120000
     dependsOn:
@@ -426,7 +405,7 @@ nodes:
   - name: judge_ads_vova_gsn_reduce_valid_goods
     type: command
     config:
-      command: sh sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_gsn_reduce_valid_goods
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_gsn_reduce_valid_goods
       retries: 20
       retry.backoff: 120000
     dependsOn:
@@ -445,7 +424,7 @@ nodes:
   - name: judge_ads_vova_goods_id_country_behave
     type: command
     config:
-      command: sh sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_id_country_behave
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_id_country_behave
       retries: 20
       retry.backoff: 120000
     dependsOn:
@@ -463,7 +442,7 @@ nodes:
   - name: judge_ads_vova_goods_id_behave_m
     type: command
     config:
-      command: sh sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_id_country_behave
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_id_country_behave
       retries: 20
       retry.backoff: 120000
     dependsOn:

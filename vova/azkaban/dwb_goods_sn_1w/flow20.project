@@ -1,0 +1,2 @@
+azkaban-flow-version: 2.0
+flow.num.job.threads: 1

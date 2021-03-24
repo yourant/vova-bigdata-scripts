@@ -19,11 +19,11 @@ CREATE external TABLE IF NOT EXISTS ads.ads_vova_buyer_portrait_d
   ship_cnt_his bigint(20) NOT NULL DEFAULT '0' COMMENT '历史发货成功订单数',
   max_visits_cnt_cw bigint(20) NOT NULL DEFAULT '0' COMMENT '过去的每个自然周访问的最高频次，0-7',
   price_range varchar(32) DEFAULT '' COMMENT '价格区间'
-  PRIMARY KEY (`user_id`)
+  PRIMARY KEY (user_id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='用户画像';
 
-drop table ads.ads_buyer_push_portrait;
-CREATE TABLE IF NOT EXISTS ads.ads_buyer_push_portrait
+drop table ads.ads_vova_buyer_push_portrait;
+CREATE external TABLE IF NOT EXISTS ads.ads_vova_buyer_push_portrait
 (
     user_id                bigint COMMENT '用户id',
     email                  string COMMENT '邮箱',
@@ -42,7 +42,13 @@ CREATE TABLE IF NOT EXISTS ads.ads_buyer_push_portrait
     goods_id_b             bigint COMMENT '用户偏好商品B',
     goods_name_b           string COMMENT '用户偏好商品B对应语言的标题',
     goods_thumb_b          string COMMENT '用户偏好商品B对应语言的主图url',
-    goods_keywords_b       string COMMENT '用户偏好商品B对应语言的关键词'
+    goods_keywords_b       string COMMENT '用户偏好商品B对应语言的关键词',
+    last_logint_type       bigint COMMENT '上次登入间隔类型',
+    last_buyer_type        bigint COMMENT '上次购买间隔类型',
+    buy_times_type         bigint COMMENT '近90天购买频率',
+    utc                    bigint COMMENT '时区',
+    email_act              bigint COMMENT 'i_邮箱活跃度',
+    is_brand               bigint COMMENT 'd_是否brand爱好者'
 ) COMMENT '推送用户画像'
  PARTITIONED BY ( pt string) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
@@ -71,7 +77,7 @@ CREATE TABLE IF NOT EXISTS ads.ads_buyer_push_portrait
   goods_name_b varchar(255)  COMMENT '用户偏好商品B对应语言的标题',
   goods_thumb_b varchar(255) COMMENT '用户偏好商品B对应语言的主图url',
   goods_keywords_b varchar(255)  COMMENT '用户偏好商品B对应语言的关键词',
-  PRIMARY KEY (`user_id`),
+  PRIMARY KEY (user_id),
   KEY region_code (region_code) USING BTREE,
   KEY language (language) USING BTREE,
   KEY user_age_group (user_age_group) USING BTREE,

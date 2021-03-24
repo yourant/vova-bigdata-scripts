@@ -10,7 +10,7 @@ sql="
 drop table if exists themis_logistics_report.goods_id_behave_m_new;
 drop table if exists themis_logistics_report.goods_id_behave_m_pre;
 "
-mysql -h vova-db-logistics.cei8p8whxxwd.us-east-1.rds.amazonaws.com -u vvreport4vv -pnTTPdJhVp\!DGv5VX4z33Fw@tHLmIG8oS -e "${sql}"
+mysql -h db-logistics-w.gitvv.com -u vvreport4vv -pnTTPdJhVp\!DGv5VX4z33Fw@tHLmIG8oS -e "${sql}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS themis_logistics_report.goods_id_behave_m (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 "
 
-mysql -h vova-db-logistics.cei8p8whxxwd.us-east-1.rds.amazonaws.com -u vvreport4vv -pnTTPdJhVp\!DGv5VX4z33Fw@tHLmIG8oS -e "${sql}"
+mysql -h db-logistics-w.gitvv.com -u vvreport4vv -pnTTPdJhVp\!DGv5VX4z33Fw@tHLmIG8oS -e "${sql}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1
@@ -46,12 +46,14 @@ sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=default \
 -Dsqoop.export.records.per.statement=1000 \
+-Dmapreduce.map.memory.mb=8192 \
+-Dmapreduce.reduce.memory.mb=8192 \
 --connect jdbc:mariadb:aurora://db-logistics-w.gitvv.com:3306/themis_logistics_report \
 --username vvreport4vv --password nTTPdJhVp!DGv5VX4z33Fw@tHLmIG8oS --connection-manager org.apache.sqoop.manager.MySQLManager \
 --m 10 \
 --table goods_id_behave_m_new \
 --hcatalog-database ads \
---hcatalog-table ads_goods_id_behave_m \
+--hcatalog-table ads_vova_goods_id_behave_m \
 --hcatalog-partition-keys pt  \
 --hcatalog-partition-values  ${pt} \
 --fields-terminated-by '\001' \
@@ -62,7 +64,7 @@ if [ $? -ne 0 ];then
 fi
 
 echo "----------开始rename-------"
-mysql -h vova-db-logistics.cei8p8whxxwd.us-east-1.rds.amazonaws.com -u vvreport4vv -pnTTPdJhVp\!DGv5VX4z33Fw@tHLmIG8oS <<EOF
+mysql -h db-logistics-w.gitvv.com -u vvreport4vv -pnTTPdJhVp\!DGv5VX4z33Fw@tHLmIG8oS <<EOF
 rename table themis_logistics_report.goods_id_behave_m to themis_logistics_report.goods_id_behave_m_pre,themis_logistics_report.goods_id_behave_m_new to themis_logistics_report.goods_id_behave_m;
 EOF
 echo "-------rename结束--------"

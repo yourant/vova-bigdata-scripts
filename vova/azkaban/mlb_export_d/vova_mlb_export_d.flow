@@ -33,6 +33,25 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_mlb_vova_new_user_rec
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_new_user_rec
+      retries: 20
+      retry.backoff: 900000
+    dependsOn:
+      - start_flag
+
+  - name: judge_mlb_vova_new_user_reg_rec_out_data
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_new_user_reg_rec_out_data
+      retries: 20
+      retry.backoff: 1200000
+    dependsOn:
+      - start_flag
+
+
 ########################
   - name: sqoop_mlb_vova_rec_m_nbi_nb_d
     type: command
@@ -52,8 +71,61 @@ nodes:
     dependsOn:
       - judge_mlb_vova_buyer_activate_time
 
+# [7381]基于用户属性的新用户冷启动策略
+  - name: sqoop_mlb_vova_rec_m_nurecall_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_user_rec/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_new_user_rec
 
+  - name: sqoop_mlb_vova_rec_m_nurecall_nb_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_user_rec/sqoop_export_nb.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_new_user_rec
 
+# [7832]冷启动兜底策略
+  - name: sqoop_mlb_vova_rec_m_nurecallad_d_sqoop_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_user_reg_rec/nurecallad_d_sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_new_user_reg_rec_out_data
+
+  - name: sqoop_mlb_vova_rec_m_nurecallad_nb_d_sqoop_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_user_reg_rec/nurecallad_nb_d_sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_new_user_reg_rec_out_data
+
+  - name: sqoop_mlb_vova_rec_m_nurecallreg_d_sqoop_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_user_reg_rec/nurecallreg_d_sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_new_user_reg_rec_out_data
+
+  - name: sqoop_mlb_vova_rec_m_nurecallreg_nb_d_sqoop_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_user_reg_rec/nurecallreg_nb_d_sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_new_user_reg_rec_out_data
 
 
 
