@@ -27,6 +27,8 @@ nodes:
       - dwb_vova_flash_sale
       - dwb_vova_min_price_goods
       - dwb_vova_nps_email
+      - dwb_vova_app_ad
+      - dwb_vova_flash_sale_new
 
   - name: start_flag
     type: command
@@ -252,6 +254,20 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_order_nps
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_ads_ga_channel_daily_gmv_flat_report
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_ads_ga_channel_daily_gmv_flat_report
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_ads_ga_channel_daily_flat_report
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_ads_ga_channel_daily_flat_report
     dependsOn:
       - start_flag
 
@@ -510,4 +526,32 @@ nodes:
        retry.backoff: 600000
      dependsOn:
        - dwb_vova_nps
+
+  -  name: dwb_vova_app_ad
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/app_ad/update.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - judge_dwd_vova_fact_pay
+       - judge_dim_vova_devices
+       - judge_vova_ads_ga_channel_daily_gmv_flat_report
+       - judge_vova_ads_ga_channel_daily_flat_report
+
+  -  name: dwb_vova_flash_sale_new
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/flash_sale/update_new.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - judge_dwd_vova_fact_pay
+       - judge_dwd_vova_fact_start_up
+       - judge_dwd_vova_fact_order_cause_v2
+       - judge_dwd_vova_log_screen_view
+       - judge_dwd_vova_log_common_click
+       - judge_dwd_vova_log_goods_click
+       - judge_dwd_vova_log_goods_impression
+       - judge_ads_vova_flash_sale_goods_d
 
