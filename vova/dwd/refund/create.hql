@@ -24,13 +24,13 @@ CREATE EXTERNAL TABLE IF NOT EXISTS dwd.dwd_vova_fact_refund
     audit_status                   string COMMENT '退款审核状态',
     audit_time                     timestamp COMMENT '退款审核时间',
     sku_pay_status                 bigint COMMENT '支付状态',
-    recheck_type                 bigint COMMENT '退款审核复核类型，0:默认，1:平台抽查，2:顾客申诉'
+    recheck_type                   bigint COMMENT '退款审核复核类型，0:默认，1:平台抽查，2:顾客申诉',
+    rr_audit_status                string comment '客服退款审核状态',
+    rr_audit_time                  timestamp comment '客服退款审核时间',
+    refund_type_desc               string comment 'refund_type.refund_type'
 ) COMMENT '退款事实表'
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
-
-# 2021-01-29
-alter table dwd.dwd_vova_fact_refund add columns(`rr_audit_status` string comment '客服退款审核状态');
-alter table dwd.dwd_vova_fact_refund add columns(`rr_audit_time` timestamp comment '客服退款审核时间');
-
+select count(*),count(distinct order_goods_id) from dwd.dwd_vova_fact_refund;
+select refund_type_desc,count(*),count(distinct order_goods_id) from dwd.dwd_vova_fact_refund group by refund_type_desc;
 

@@ -10,10 +10,12 @@ sql="
 INSERT OVERWRITE TABLE ads.ads_vova_sale_goods_m PARTITION (pt = '${cur_date}')
 SELECT
 /*+ REPARTITION(5) */
-distinct fp.goods_id
+fp.goods_id,
+sum(fp.goods_number) AS sales_order
 FROM dwd.dwd_vova_fact_pay fp
 WHERE DATE(fp.pay_time) >= date_sub('${cur_date}', 29)
   AND DATE(fp.pay_time) <= '${cur_date}'
+GROUP BY fp.goods_id
 ;
 "
 

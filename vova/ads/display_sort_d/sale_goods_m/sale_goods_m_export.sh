@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS themis.ads_vova_sale_goods_m_new
 (
     id                   int(11)          NOT NULL AUTO_INCREMENT,
     goods_id             int(11) UNSIGNED NOT NULL COMMENT '商品id',
+    sales_order          int(11) NOT NULL DEFAULT '0' COMMENT '销量',
     create_time          timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_update_time     timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
@@ -36,7 +37,7 @@ sqoop export \
 --username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
 --table ads_vova_sale_goods_m_new \
 --m 1 \
---columns goods_id \
+--columns goods_id,sales_order \
 --hcatalog-database ads \
 --hcatalog-table ads_vova_sale_goods_m \
 --hcatalog-partition-keys pt \
