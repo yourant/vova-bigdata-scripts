@@ -1,19 +1,18 @@
 #!/bin/bash
-#指定日期和引擎
-event_name="traff_control"
+event_name="traff_control_d"
 day=$1
-#默认日期为昨天
+isUpdateDatabase=$2
+# 如果day为空取前一天
 if [ ! -n "$1" ];then
-day=`date -d "-1 day" +%Y/%m/%d/%H`
+   day=`date -d "-1 day" +%Y-%m-%d`
+   isUpdateDatabase=true
 fi
-
 echo "----day: "${day}"; traff_control----"
 spark-submit --master yarn \
---conf spark.app.name=ads_traffic_control_shudeyou \
---class com.vova.model_new.Main \
-s3://vova-mlb/REC/util/traffic_control.jar ${day}
-
-#如果脚本失败，则报错
+--deploy-mode client  \
+--conf spark.dynamicAllocation.maxExecutors=50 \
+--name ads_vova_traffic_control_shudeyou  \
+--class com.vova.mct_traff.MctTraff s3://vova-mlb/REC/util/traffic_control.jar ${day} ${isUpdateDatabase}
 if [ $? -ne 0 ];then
   echo "${event_name} job error"
   exit 1
