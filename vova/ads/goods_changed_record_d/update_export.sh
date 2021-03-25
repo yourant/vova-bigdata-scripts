@@ -16,7 +16,7 @@ sqoop export \
 --update-key "goods_id,daytime" \
 --update-mode allowinsert \
 --hcatalog-database ads \
---hcatalog-table ads_goods_changed_record_d \
+--hcatalog-table ads_vova_goods_changed_record_d \
 --hcatalog-partition-keys pt \
 --hcatalog-partition-values ${pt} \
 --fields-terminated-by '\001' \

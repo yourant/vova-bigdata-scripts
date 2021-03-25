@@ -36,6 +36,10 @@ nodes:
         dependsOn:
           - vova_goods_comment
           - vova_order_nps
+          - vova_gsn_coupon_activity
+          - vova_gsn_coupon_sign_goods
+          - vova_gsn_coupon_history_log
+          - vova_gsn_coupon_sign_history_log
 
 #互动域数据抽取
       - name: vova_goods_comment

@@ -1,0 +1,25 @@
+---
+config:
+  failure.emails: yzhang13@vova.com.hk
+  retries: 3
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - yarn_log
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: yarn_log
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/yarn_log.sh ${app}
+    dependsOn:
+      - start_flag

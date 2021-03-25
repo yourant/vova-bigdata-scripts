@@ -233,7 +233,7 @@ select
 og.mct_id,
 c.first_cat_id,
 og.order_goods_id,
-case when datediff(fl.valid_tracking_date,fl.confirm_time)<7  and og.sku_pay_status>1 then 1 else 0 end so_order_cnt_3_6w
+case when datediff(fl.valid_tracking_date,og.confirm_time)<7  and og.sku_pay_status>1 then 1 else 0 end so_order_cnt_3_6w
 from dim.dim_vova_order_goods og
 left join dwd.dwd_vova_fact_logistics fl on fl.order_goods_id=og.order_goods_id
 left join dim.dim_vova_category c on og.cat_id = c.cat_id
