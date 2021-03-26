@@ -29,15 +29,19 @@ from
     fp.mct_id,
     fp.order_id,
     fp.order_goods_id,
-    nvl(amr.rank, 0) rank,
+    amr.rank rank,
     fp.shipping_fee+fp.shop_price*fp.goods_number gmv
   from
     dwd.dwd_vova_fact_pay fp
   left join
-    ads.ads_vova_mct_rank amr
+  (
+    select *
+    from
+      ads.ads_vova_mct_rank
+    where pt ='${cur_date}'
+  ) amr
   on fp.first_cat_id = amr.first_cat_id and fp.mct_id = amr.mct_id
   where fp.datasource = 'vova' and to_date(fp.pay_time) ='${cur_date}'
-    and amr.pt ='${cur_date}'
 )
 group by first_cat_id, rank
 ;
@@ -93,7 +97,7 @@ from
     fp.order_goods_id order_goods_id,
     fp.bonus bonus,
     if(dg.brand_id > 0, 'Y', 'N') is_brand,
-    nvl(amr.rank, 0) rank,
+    amr.rank rank,
     fp.shipping_fee+fp.shop_price*fp.goods_number gmv,
     oge.ext_name ext_name,
     nvl(oge.extension_info, 0) coupon_value -- 订单实际优惠金额，
@@ -103,7 +107,12 @@ from
     dim.dim_vova_goods dg
   on fp.goods_id = dg.goods_id
   left join
-    ads.ads_vova_mct_rank amr
+  (
+    select *
+    from
+      ads.ads_vova_mct_rank
+    where pt ='${cur_date}'
+  ) amr
   on fp.first_cat_id = amr.first_cat_id and fp.mct_id = amr.mct_id
   left join
   (
@@ -114,7 +123,6 @@ from
   on fp.order_goods_id = oge.rec_id
   where fp.datasource = 'vova'
     and to_date(fp.pay_time) ='${cur_date}'
-    and amr.pt ='${cur_date}'
     and oge.rec_id is not null
 ) t1
 group by cube(
@@ -126,35 +134,86 @@ group by cube(
 
 create table if not EXISTS tmp.tmp_red_packet_goods_req8713_${table_suffix} as
 select /*+ REPARTITION(1) */
-  dg.first_cat_id,
-  dg.first_cat_name,
-  dg.second_cat_id,
-  dg.second_cat_name,
-  if(dg.brand_id>0, 'Y','N') is_brand,
-  dg.virtual_goods_id,
-  dg.mct_id,
-  dg.mct_name,
-  amr.rank,
-  gcsg.goods_id,
-  gca.gsn_status,
-  gcsg.coupon_num,
-  gcsg.remain_num,
-  gca.reach_time
+  t2.first_cat_id,
+  t2.first_cat_name,
+  t2.second_cat_id,
+  t2.second_cat_name,
+  t2.is_brand,
+  t2.virtual_goods_id,
+  t2.mct_id,
+  t2.mct_name,
+  amr.rank rank,
+  t2.goods_id,
+  t2.gsn_status,
+  t2.coupon_num,
+  t2.remain_num,
+  t2.reach_time
 from
-  ods_vova_vts.ods_vova_gsn_coupon_activity gca
-inner join
-  ods_vova_vts.ods_vova_gsn_coupon_sign_goods gcsg
-on gca.goods_sn = gcsg.goods_sn
-left join
-  dim.dim_vova_goods dg
-on gcsg.goods_id = dg.goods_id
+(
+  select
+    dg.first_cat_id,
+    dg.first_cat_name,
+    dg.second_cat_id,
+    dg.second_cat_name,
+    if(dg.brand_id>0, 'Y','N') is_brand,
+    dg.virtual_goods_id,
+    dg.mct_id,
+    dg.mct_name,
+    t2.goods_id,
+    t2.gsn_status,
+    t2.coupon_num,
+    t2.remain_num,
+    t2.reach_time,
+    if(t1.create_time is null, t2.create_time, t1.create_time) create_time
+  from
+  (
+    select
+      gcsg.goods_id goods_id,
+      gca.gsn_status gsn_status,
+      gcsg.coupon_num coupon_num,
+      gcsg.remain_num remain_num,
+      gca.reach_time reach_time,
+      gcsg.create_time create_time
+    from
+      ods_vova_vts.ods_vova_gsn_coupon_activity gca
+    inner join
+      ods_vova_vts.ods_vova_gsn_coupon_sign_goods gcsg
+    on gca.goods_sn = gcsg.goods_sn
+    where gca.gsn_status != 4
+      and gca.is_delete = 0
+    union all
+    select
+      t2.goods_id goods_id,
+      5 gsn_status,
+      t2.coupon_num coupon_num,
+      t2.remain_num remain_num,
+      t1.send_time reach_time,
+      t1.create_time create_time
+    from
+      ods_vova_vts.ods_vova_gsn_coupon_history_log t1
+    inner join
+      ods_vova_vts.ods_vova_gsn_coupon_sign_history_log t2
+    on t2.gchl_id = t1.log_id
+    where to_date(t2.create_time) >= '${cur_date}' or to_date(t2.last_update_time) >= '${cur_date}'
+  ) t2
+  left join
+    dim.dim_vova_goods dg
+  on t2.goods_id = dg.goods_id
+  left join
+  (
+    select
+      goods_id,
+      min(create_time) create_time
+    from
+      ods_vova_vts.ods_vova_gsn_coupon_sign_history_log
+    group by goods_id
+  ) t1
+  on t2.goods_id = t1.goods_id
+) t2
 left join
   ads.ads_vova_mct_rank amr
-on dg.mct_id = amr.mct_id and dg.first_cat_id = amr.first_cat_id
-where gca.is_delete = 0
-  and amr.pt = '${cur_date}'
+on to_date(t2.create_time) = amr.pt and t2.mct_id = amr.mct_id and t2.first_cat_id = amr.first_cat_id
 ;
-
 
 insert overwrite table dwb.dwb_vova_red_packet_mct partition(pt='${cur_date}')
 select /*+ REPARTITION(1) */
@@ -245,7 +304,12 @@ from
   )
 ) t1
 left join
-  ads.ads_vova_mct_rank amr
+(
+  select *
+  from
+    ads.ads_vova_mct_rank
+  where pt ='${cur_date}'
+) amr
 on t1.mct_id = amr.mct_id and t1.first_cat_id = amr.first_cat_id
 left join
   tmp.tmp_coupon_gmv_req8713_${table_suffix} t2
@@ -277,7 +341,6 @@ left join
 on t1.first_cat_id = dc.first_cat_id
 where t1.mct_id != 'all'
 and t1.first_cat_id != 'all'
-and amr.pt ='${cur_date}'
 ;
 
 -- tables 2
@@ -316,31 +379,41 @@ left join
   from
     tmp.tmp_red_packet_goods_req8713_${table_suffix} t1
   left join
-    dwd.dwd_vova_log_goods_impression dlgi
+  (
+    select
+      virtual_goods_id, device_id
+    from
+      dwd.dwd_vova_log_goods_impression
+    where pt = '${cur_date}'
+      and dp = 'vova'
+      and (page_code = 'RNflashsale'
+        or (page_code ='theme_activity' and list_type = '/hongbao')
+        )
+    union all
+    select
+      element_id virtual_goods_id, device_id
+    from
+      dwd.dwd_vova_log_impressions_arc
+    where pt ='${cur_date}'
+      and datasource = 'vova'
+      and event_type = 'goods'
+      and get_json_object(extra, '$.activity') = 'merchant_coupon'
+  ) dlgi
   on t1.virtual_goods_id = dlgi.virtual_goods_id
-  where dlgi.pt = '${cur_date}'
-    and dlgi.dp = 'vova'
-    and (dlgi.page_code = 'RNflashsale'
-        or (dlgi.page_code ='theme_activity' and dlgi.list_type = '/hongbao')
-        -- or dlgi.activity = 'merchant_coupon' -- todo
-      )
   group by t1.goods_id
 ) t2
 on t1.goods_id = t2.goods_id
 left join
 (
   select
-    t1.goods_id,
+    fp.goods_id,
     sum(fp.shipping_fee+fp.shop_price*fp.goods_number) gmv, -- 子订单gmv
     sum(oge.extension_info) discount, -- 红包折扣
     count(distinct fp.order_goods_id) order_goods_cnt, -- 子订单数
     sum(fp.shipping_fee+fp.shop_price*fp.goods_number)-sum(oge.extension_info) red_packet_gmv, -- 使用红包的子订单金额(gmv-红包)
     count(distinct device_id) pay_uv -- 红包活动中的支付人数
   from
-    tmp.tmp_red_packet_goods_req8713_${table_suffix} t1
-  left join
     dwd.dwd_vova_fact_pay fp
-  on t1.goods_id = fp.goods_id
   left join
   (
     select * from
@@ -351,7 +424,7 @@ left join
   where fp.datasource = 'vova'
     and to_date(fp.pay_time) = '${cur_date}'
     and oge.rec_id is not null
-  group by t1.goods_id
+  group by fp.goods_id
 ) t3
 on t1.goods_id = t3.goods_id
 ;

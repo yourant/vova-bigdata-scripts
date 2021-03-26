@@ -18,6 +18,8 @@ CREATE external TABLE IF NOT EXISTS dwd.dwd_vova_ab_test_expre
 
 
 
+
+
 alter table dwd.dwd_vova_ab_test_expre ADD COLUMNS (
 is_brand STRING COMMENT '是否品牌'
 ) CASCADE;
