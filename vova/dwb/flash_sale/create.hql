@@ -93,6 +93,30 @@ CREATE EXTERNAL TABLE dwb.dwb_vova_flash_sale_per_hour
 ) COMMENT 'rpt_flash_sale_per_hour' PARTITIONED BY (pt STRING)
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
+select pt,count(*),count(distinct event_date,region_code,platform) from dwb.dwb_vova_daily_flash_sale_new group by pt;
+DROP TABLE dwb.dwb_vova_daily_flash_sale_new;
+CREATE EXTERNAL TABLE dwb.dwb_vova_daily_flash_sale_new
+(
+    event_date                     date,
+    region_code                    string,
+    platform                       string,
+    market_paid_order_num          bigint,
+    market_paid_buyer_num          bigint,
+    market_order_order_num         bigint,
+    market_order_user_num          bigint,
+    flash_sale_goods_gmv           decimal(15, 2),
+    flash_sale_order_info_gmv      decimal(15, 2),
+    market_order_again_order_num   bigint,
+    market_paid_again_order_num    bigint,
+    market_gmv                     decimal(15, 2),
+    on_sale_uv                     bigint,
+    upcoming_uv                    bigint,
+    cohort_1                       bigint,
+    market_dau                     bigint,
+    datasource                     string
+) COMMENT 'dwb_vova_daily_flash_sale_new' PARTITIONED BY (pt STRING)
+    ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
+
 DROP TABLE dwb.dwb_vova_flash_sale_data;
 CREATE EXTERNAL TABLE dwb.dwb_vova_flash_sale_data
 (

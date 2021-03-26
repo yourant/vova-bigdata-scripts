@@ -6,6 +6,8 @@ if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 ###逻辑sql
+#dim.dim_vova_devices
+#dwd.dwd_vova_fact_pay
 #ods_yx_cy.ods_yx_ads_ga_channel_daily_flat_report
 #ods_yx_cy.ods_yx_ads_ga_channel_daily_gmv_flat_report
 #ods_yx_yxlc.ods_yx_temp_device_order_date_cohort
