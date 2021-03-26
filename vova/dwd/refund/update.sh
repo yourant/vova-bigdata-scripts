@@ -34,7 +34,8 @@ select /*+ REPARTITION(10) */
        ogs.sku_pay_status,
        rat.recheck_type,
        rr.audit_status rr_audit_status,
-       rr.audit_time rr_audit_time
+       rr.audit_time rr_audit_time,
+       rt.refund_type AS refund_type_desc
 from ods_vova_vts.ods_vova_refund_reason rr
          left join (select *
                     FROM (select rrt.value as refund_reason,
@@ -52,6 +53,7 @@ from ods_vova_vts.ods_vova_refund_reason rr
 left join ods_vova_vts.ods_vova_order_goods_status ogs on ogs.order_goods_id = rr.order_goods_id
 left join ods_vova_vts.ods_vova_order_goods og on og.rec_id = rr.order_goods_id
 LEFT JOIN ods_vova_vts.ods_vova_order_info oi ON oi.order_id = og.order_id
+LEFT JOIN ods_vova_vts.ods_vova_refund_type rt ON rt.refund_type_id = rr.refund_type_id
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
 spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" --conf "spark.app.name=dwd_vova_fact_refund" -e "$sql"

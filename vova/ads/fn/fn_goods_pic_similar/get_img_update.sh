@@ -24,7 +24,7 @@ FROM dim.dim_zq_goods fdg
                 t1.last_update_time,
                 t1.img_url
          FROM (
-                  SELECT gg.img_original,
+                  SELECT if(gg.img_original like '/spider%', concat('https://supply-img.vova.com.hk', gg.img_original), gg.img_original) as img_original,
                          gg.goods_id,
                          gg.img_id,
                          gg.img_url,

@@ -35,6 +35,11 @@ nodes:
         type: noop
         dependsOn:
           - vova_goods_comment
+          - vova_order_nps
+          - vova_gsn_coupon_activity
+          - vova_gsn_coupon_sign_goods
+          - vova_gsn_coupon_history_log
+          - vova_gsn_coupon_sign_history_log
 
 #互动域数据抽取
       - name: vova_goods_comment
@@ -46,6 +51,54 @@ nodes:
         dependsOn:
           - themis_intact_start
 
+      - name: vova_order_nps
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_nps --mapers=2 --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_intact_start
+
+## gsn_coupon_activity 红包活动 gsn 表
+      - name: vova_gsn_coupon_activity
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=gsn_coupon_activity --mapers=2 --etl_type=ALL  --period_type=day --partition_num=1
+        dependsOn:
+          - themis_intact_start
+
+## gsn_coupon_sign_goods 红包活动报名表
+      - name: vova_gsn_coupon_sign_goods
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=gsn_coupon_sign_goods --mapers=2 --etl_type=ALL  --period_type=day --partition_num=1
+        dependsOn:
+          - themis_intact_start
+
+## gsn_coupon_history_log 红包活动 gsn 历史表
+      - name: vova_gsn_coupon_history_log
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=gsn_coupon_history_log --mapers=2 --etl_type=ALL  --period_type=day --partition_num=1
+        dependsOn:
+          - themis_intact_start
+
+## gsn_coupon_sign_history_log 红包活动报名表
+      - name: vova_gsn_coupon_sign_history_log
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=gsn_coupon_sign_history_log --mapers=2 --etl_type=ALL  --period_type=day --partition_num=1
+        dependsOn:
+          - themis_intact_start
 
 # flow: bimaster
   - name: bimaster_flow
@@ -245,6 +298,8 @@ nodes:
           - vova_adwords_ad_carousel
           - vova_campaign_adgroup_mapping
           - vova_campaign_mapping
+          - vova_yx_lg_temp_device_order_date_cohort
+          - vova_yx_lgc_temp_device_order_date_cohort
 
       - name: report_ychen_start
         type: noop
@@ -300,6 +355,24 @@ nodes:
           retries: 4
           retry.backoff: 600000
           command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=cy --table_name=campaign_mapping --etl_type=ALL --mapers=1 --period_type=day --partition_num=3 --primary_key=CampaignId
+        dependsOn:
+          - report_ychen_start
+
+      - name: vova_yx_lg_temp_device_order_date_cohort
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=yxl --table_name=temp_device_order_date_cohort --etl_type=ALL  --mapers=5 --period_type=day --partition_num=3 --split_id=install_date
+        dependsOn:
+          - report_ychen_start
+
+      - name: vova_yx_lgc_temp_device_order_date_cohort
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=yxlc --table_name=temp_device_order_date_cohort --etl_type=ALL  --mapers=5 --period_type=day --partition_num=3 --split_id=install_date
         dependsOn:
           - report_ychen_start
 

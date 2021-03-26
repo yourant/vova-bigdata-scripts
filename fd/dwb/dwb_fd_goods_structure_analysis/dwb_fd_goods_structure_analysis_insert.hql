@@ -62,7 +62,7 @@ FROM (
 	            DATEDIFF('${pt}', to_date(rgp.on_sale_time_utc)) as diff_sale_day,
 	            NVL(gppa.department_type,'测试款') as provider_attribute_name,
 	            nvl(og.goods_sales_number,0) as goods_sales_number,
-	            if(rgp.is_on_sale = 1 and DATEDIFF('${pt}', to_date(rgp.on_sale_time_utc)) <= 30,'新款','老款') as goods_style,
+	            if(rgp.is_on_sale = 1 and rgpp.on_sale_cnt = 1 and DATEDIFF('${pt}', to_date(rgp.on_sale_time_utc)) <= 30,'新款','老款') as goods_style,
 	            if(rgp.is_on_sale = 1 and '${pt}' = to_date(rgp.on_sale_time_utc),'yes','no') as up_sale,
 	            if(rgp.is_on_sale = 0 and '${pt}' = to_date(rgp.on_sale_time_utc),'yes','no') as down_sale
 	        FROM (
@@ -120,6 +120,23 @@ FROM (
 	            where g.virtual_goods_id is not null
 
 	         ) rgp
+
+	         --计算商品最近30天上架次数
+	        LEFT JOIN(
+
+	            select
+                    lower(project_name) as project_name,
+                    field_id as goods_id,
+                    count(if(new_value = 1 and field_name = 'is_on_sale',1,null)) as on_sale_cnt --上架次数
+                from ods_fd_vb.ods_fd_project_goods_history
+                where lower(project_name) IN ('floryday','airydress')
+                and table_name = 'goods_project'
+                and field_name ='is_on_sale'
+                and field_id_name ='goods_id'
+                and to_date(to_utc_timestamp(modify_time, 'America/Los_Angeles')) >= date_sub('${pt}',29)
+                group by lower(project_name),field_id
+
+	        )rgpp on  rgpp.project_name = rgp.project_name and rgpp.goods_id = rgp.goods_id
 
 	        --计算商品的供应商
 	         LEFT JOIN ods_fd_ecshop.ods_fd_goods_provider_department gppa on gppa.goods_id = rgp.goods_id

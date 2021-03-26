@@ -10,11 +10,10 @@ pt=`date -d "-1 day" +%Y-%m-%d`
 echo "$pt"
 spark-submit \
 --master yarn --deploy-mode client \
---num-executors 100 \
---executor-memory 15G \
---conf spark.dynamicAllocation.enabled=false \
---conf spark.app.name=UserPushPortrait \
---class com.vova.data.UserPushPortrait s3://vomkt-emr-rec/jar/vova-bd-user-push-1.0.0.jar \
+--executor-memory 8G \
+--conf "spark.dynamicAllocation.maxExecutors=100" \
+--conf spark.app.name=ads_vova_user_push_d_zhangyin \
+--class com.vova.bigdata.sparkbatch.dataprocess.ads.UserPushPortrait s3://vomkt-emr-rec/jar/vova-bigdata/vova-bigdata-sparkbatch/vova-bigdata-sparkbatch-1.0-SNAPSHOT.jar \
 --env product --pt $cur_date --no_pt 2020-11-03
 
 if [ $? -ne 0 ];then

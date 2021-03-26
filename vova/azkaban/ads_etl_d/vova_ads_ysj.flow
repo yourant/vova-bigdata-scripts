@@ -1,0 +1,178 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: huachen@vova.com.hk,yzhang13@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_mct_perf_d
+      - ads_vova_mct_refund_m
+      - ads_vova_mct_refund_cnt_m
+      - ads_vova_mct_refund_cnt_w
+      - ads_vova_mct_refund_w
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: judge_dim_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_pay
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_goods_impression
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_impression
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_common_click
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_common_click
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_category
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_category
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_order_goods
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_logistics
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_logistics
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_refund
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_refund
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_shipping_carrier
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_shipping_carrier
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_goods_on_sale_record
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_goods_on_sale_record
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_mct_perf_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/mct_perf_d/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_pay
+      - judge_dim_vova_goods
+      - judge_vova_goods_on_sale_record
+      - judge_dwd_vova_log_common_click
+      - judge_dwd_vova_log_goods_impression
+      - judge_dim_vova_order_goods
+
+  - name: ads_vova_mct_refund_m
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/merchant_data/mrchant_refund_month/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_order_goods
+      - judge_dim_vova_category
+      - judge_dwd_vova_fact_refund
+      - judge_dwd_vova_fact_logistics
+      - judge_dim_vova_shipping_carrier
+
+  - name: ads_vova_mct_refund_cnt_m
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/merchant_data/mct_refund_cnt_m/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_order_goods
+      - judge_dim_vova_category
+      - judge_dwd_vova_fact_refund
+      - judge_dwd_vova_fact_logistics
+      - judge_dim_vova_shipping_carrier
+
+  - name: ads_vova_mct_refund_cnt_w
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/merchant_data/mct_refund_cnt_w/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_order_goods
+      - judge_dim_vova_category
+      - judge_dwd_vova_fact_refund
+      - judge_dwd_vova_fact_logistics
+      - judge_dim_vova_shipping_carrier
+
+  - name: ads_vova_mct_refund_w
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/merchant_data/merchant_refund_week/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_order_goods
+      - judge_dim_vova_category
+      - judge_dwd_vova_fact_refund
+      - judge_dwd_vova_fact_logistics
+      - judge_dim_vova_shipping_carrier

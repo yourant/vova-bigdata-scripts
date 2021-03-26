@@ -461,8 +461,6 @@ if [ $? -ne 0 ];then
 fi
 
 spark-submit --master yarn \
---conf spark.executor.memory=10g \
---queue important \
 --conf spark.dynamicAllocation.maxExecutors=20 \
 --conf spark.app.name=alarm_system \
 --conf spark.executor.memoryOverhead=2048 \
