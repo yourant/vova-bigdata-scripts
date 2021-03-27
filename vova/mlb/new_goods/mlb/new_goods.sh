@@ -18,7 +18,7 @@ echo "$cur_date2"
 #ads.ads_vova_hot_search_word
 #dim.dim_vova_goods
 #dim.dim_vova_merchant
-#dwd.dwd_vova_dwd_vova_fact_pay
+#dwd.dwd_vova_fact_pay
 
 sql="
 INSERT OVERWRITE TABLE mlb.mlb_vova_hot_goods_group PARTITION (pt = '${cur_date}')
@@ -593,6 +593,9 @@ spark-sql \
 --conf "spark.shuffle.sort.bypassMergeThreshold=10000" \
 -e "$sql"
 
+if [ $? -ne 0 ];then
+  exit 1
+fi
 
 sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=data_new_goods_rec --from=data --to=mlb --jtype=1D --retry=0
 

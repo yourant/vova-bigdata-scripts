@@ -162,7 +162,7 @@ create external TABLE mlb.mlb_vova_rec_img_relate_group_nb_d
 
 
 msck repair table mlb.mlb_vova_rec_new_goods_base_nb_d;
-select count(*),count(DISTINCT goods_id),pt from mlb.rec_new_goods_base_nb_d group by pt;
+select count(*),count(DISTINCT goods_id),pt from mlb.mlb_vova_rec_new_goods_base_nb_d group by pt;
 DROP TABLE mlb.mlb_vova_rec_new_goods_base_nb_d;
 create external TABLE mlb.mlb_vova_rec_new_goods_base_nb_d
 (
