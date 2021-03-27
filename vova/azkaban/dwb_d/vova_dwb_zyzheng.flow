@@ -566,7 +566,6 @@ nodes:
        - judge_dim_vova_merchant
        - judge_dim_vova_goods
        - judge_dim_vova_order_goods
-       - judge_dim_vova_category
        - judge_dwd_vova_fact_pay
 
 

@@ -10,7 +10,7 @@ cur_date=$1
 #dim_vova_category
 #dwd_vova_fact_pay
 if [ ! -n "$1" ];then
-cur_date=`date -d "-1 day" +%Y-%m-%d`
+cur_date=`date -d "-0 day" +%Y-%m-%d`
 fi
 
 cur_week=`date -d "$cur_date" +%w`
