@@ -81,7 +81,7 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/job_message_get_last.sh --jname=ads_vova_goods_white_bg_img_res_a_cv --from=cv --to=data
-      retries: 30
+      retries: 10
       retry.backoff: 1200000
     dependsOn:
       - start_flag
@@ -91,7 +91,7 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/job_message_get_last.sh --jname=ads_vova_goods_white_bg_img_res_b_cv --from=cv --to=data
-      retries: 30
+      retries: 10
       retry.backoff: 1200000
     dependsOn:
       - start_flag
