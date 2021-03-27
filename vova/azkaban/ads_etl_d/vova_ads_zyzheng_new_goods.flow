@@ -78,7 +78,7 @@ nodes:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_traff_control
       retries: 20
       retry.backoff: 360000
-    dependsOn:hot_search_words_h
+    dependsOn:
       - start_flag
 
   - name: judge_ads_vova_min_price_goods_d
