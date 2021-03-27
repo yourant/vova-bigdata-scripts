@@ -35,6 +35,7 @@ nodes:
       - dwb_vova_finance_self_mct_refund
       - dwb_vova_buyer_life_cycle_monitor
       - dwb_vova_red_packet_report
+      - dwb_vova_active_user_form_m
 
   - name: start_flag
     type: command
@@ -724,9 +725,28 @@ nodes:
       - judge_dwd_vova_log_goods_impression
 
 
+# [8931]活跃用户构成成分报表需求
+## 每天执行一次
+  - name: dwb_vova_active_user_form_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/active_user_form/update_t1_day.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_devices
+      - judge_dwd_vova_log_screen_view
+      - judge_dwd_vova_fact_pay
 
-
-
+## 每月一号执行一次，脚本内判断是否当月一号，不是则正常退出
+  - name: dwb_vova_active_user_form_m
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/active_user_form/update_t2_month.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - dwb_vova_active_user_form_d
 
 
 
