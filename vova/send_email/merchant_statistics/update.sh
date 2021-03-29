@@ -3,8 +3,14 @@
 #sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_status_log --etl_type=INIT  --period_type=day --partition_num=3
 cur_date=$1
 #默认日期为昨天
+#dependence
+#dim_vova_merchant
+#dim_vova_goods
+#dim_vova_order_goods
+#dim_vova_category
+#dwd_vova_fact_pay
 if [ ! -n "$1" ];then
-cur_date=`date -d "-1 day" +%Y-%m-%d`
+cur_date=`date -d "-0 day" +%Y-%m-%d`
 fi
 
 cur_week=`date -d "$cur_date" +%w`
@@ -113,7 +119,7 @@ spark-submit \
 --env prod \
 -sql "${query_sql}"  \
 -head "${head}"  \
--receiver "ethan.zheng@i9i8.com" \
+-receiver "ethan.zheng@i9i8.com,fusang@vova.com.hk,yjwang4@vova.com.hk" \
 -title "商家本月gmv统计(${cur_date})" \
 --type attachment \
 --fileName "商家本月gmv统计(${cur_date})"

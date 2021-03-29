@@ -1,0 +1,144 @@
+---
+config:
+  failure.emails: ethan.zheng@i9i8.com
+  retries: 20
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - mlb_vova_rec_new_goods_training_rec_base
+      - judge_mlb_vova_rec_new_goods_training_others
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: judge_ods_vova_images_vector
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_images_vector
+      retries: 20
+      retry.backoff: 360000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_goods_portrait_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_portrait_v2
+      retries: 20
+      retry.backoff: 360000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_mct_profile
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_mct_profile
+      retries: 20
+      retry.backoff: 360000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+      retries: 20
+      retry.backoff: 360000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_merchant
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_merchant
+      retries: 20
+      retry.backoff: 360000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_pay
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay
+      retries: 20
+      retry.backoff: 360000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_traff_control
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_traff_control
+      retries: 20
+      retry.backoff: 360000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_min_price_goods_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_min_price_goods_d
+      retries: 20
+      retry.backoff: 360000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_hot_search_words_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_hot_search_words_h
+      retries: 20
+      retry.backoff: 360000
+    dependsOn:
+      - start_flag
+
+#  - name: ads_vova_vova_rec_new_goods_poll_update
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/vova/ads/new_goods/examination/new_goods_test_pre.sh
+#      retries: 20
+#      retry.backoff: 360000
+#    dependsOn:
+#      - mlb_vova_rec_new_goods_training_rec_base
+#      - judge_mlb_vova_rec_new_goods_training_others
+
+  - name: mlb_vova_rec_new_goods_training
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_goods/mlb/new_goods.sh
+      retries: 20
+      retry.backoff: 360000
+    dependsOn:
+      - judge_ods_vova_images_vector
+      - judge_ads_vova_goods_portrait_v2
+      - judge_ads_vova_mct_profile
+      - judge_dim_vova_goods
+      - judge_dim_vova_merchant
+      - judge_dwd_vova_fact_pay
+      - judge_ads_vova_traff_control
+      - judge_ads_vova_min_price_goods_d
+
+  - name: mlb_vova_rec_new_goods_training_rec_base
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_goods/mlb/new_goods_base.sh
+      retries: 20
+      retry.backoff: 360000
+    dependsOn:
+      - mlb_vova_rec_new_goods_training
+
+  - name: judge_mlb_vova_rec_new_goods_training_others
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=mlb_new_goods_rec --from=mlb --to=data
+      retries: 50
+      retry.backoff: 360000
+    dependsOn:
+      - mlb_vova_rec_new_goods_training

@@ -37,6 +37,7 @@ nodes:
       - ads_vova_mct_refund_cnt_m_export
       - ads_vova_mct_refund_cnt_w_export
       - ads_vova_mct_refund_w_export
+      - ads_vova_sale_goods_m_export
 
   - name: start_flag
     type: command
@@ -460,6 +461,15 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_ads_vova_sale_goods_m
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_sale_goods_m
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
   - name: ads_vova_gsn_reduce_valid_goods_export
     type: command
     config:
@@ -558,3 +568,12 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_ads_vova_mct_refund_w
+
+  - name: ads_vova_sale_goods_m_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/display_sort_d/sale_goods_m/sale_goods_m_export.sh
+      retries: 20
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_sale_goods_m

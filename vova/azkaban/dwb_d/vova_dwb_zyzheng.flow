@@ -29,6 +29,7 @@ nodes:
       - dwb_vova_nps_email
       - dwb_vova_app_ad
       - dwb_vova_flash_sale_new
+      - dwb_vova_bd_email
 
   - name: start_flag
     type: command
@@ -554,4 +555,18 @@ nodes:
        - judge_dwd_vova_log_goods_click
        - judge_dwd_vova_log_goods_impression
        - judge_ads_vova_flash_sale_goods_d
+
+  -  name: dwb_vova_bd_email
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/send_email/merchant_statistics/update.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - judge_dim_vova_merchant
+       - judge_dim_vova_goods
+       - judge_dim_vova_order_goods
+       - judge_dwd_vova_fact_pay
+
+
 
