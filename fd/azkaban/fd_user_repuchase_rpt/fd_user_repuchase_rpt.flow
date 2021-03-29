@@ -41,7 +41,7 @@ nodes:
   - name: dwb_fd_user_repurchase_weekly_rpt
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_users_repurchase_week/run.sh ${pt}
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_users_repurchase_weekly/run.sh ${pt}
     dependsOn:
       - dwd_fd_user_repurchase_weekly
 

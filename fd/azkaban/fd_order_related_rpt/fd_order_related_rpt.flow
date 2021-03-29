@@ -1,0 +1,36 @@
+---
+config:
+  failure.emails: qwang@i9i8.com
+  retries: 20
+  retry.backoff: 300000
+
+nodes:
+  - name: country_order_rpt_start
+    type: noop
+
+  - name: judge_dwd_fd_order_info
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_info
+    dependsOn:
+      - country_order_rpt_start
+
+  - name: country_order_rpt_caculate
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_country_order_rpt/run.sh ${pt}
+    dependsOn:
+      - judge_dwd_fd_order_info
+  
+  - name: order_coupon_rpt_caculate
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_order_coupon_rpt/run.sh ${pt}
+    dependsOn:
+      - judge_dwd_fd_order_info
+
+  - name: country_order_rpt_end
+    type: noop
+    dependsOn:
+      - country_order_rpt_caculate
+      - order_coupon_rpt_caculate
