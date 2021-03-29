@@ -22,6 +22,13 @@ nodes:
     dependsOn:
       - fd_goods_structure_analysis_start
 
+  - name: judge_ods_fd_goods_provider_department
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_goods_provider_department
+    dependsOn:
+      - fd_goods_structure_analysis_start
+
   - name: judge_dwd_fd_order_goods
     type: command
     config:
@@ -36,6 +43,7 @@ nodes:
     dependsOn:
       - judge_ods_fd_vb_project_goods_history
       - judge_fd_dim_goods
+      - judge_ods_fd_goods_provider_department
       - judge_dwd_fd_order_goods
 
   - name: fd_goods_structure_analysis_end

@@ -25,7 +25,7 @@ nodes:
 
       - name: judge_ods_fd_goods_test_pipeline
         type: command
-        config:
+        config: 
           command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_goods_test_pipeline
         dependsOn:
           - fd_goods_test_finder_rpt_flow_start
@@ -46,11 +46,17 @@ nodes:
           - judge_ods_fd_goods_test_pipeline
           - judge_dim_fd_goods
 
-
       - name: judge_ods_fd_vb_goods_preorder_plan
         type: command
         config:
           command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_goods_preorder_plan
+        dependsOn:
+          - fd_goods_test_finder_rpt_flow_start
+    
+      - name: judge_ods_fd_vb_goods_test_goods_report
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_goods_test_goods_report
         dependsOn:
           - fd_goods_test_finder_rpt_flow_start
 
@@ -90,6 +96,7 @@ nodes:
         config:
           command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_test_finder_rpt/run.sh ${pt}
         dependsOn:
+          - judge_ods_fd_vb_goods_test_goods_report
           - dwd_fd_goods_test_thread_single
           - dwd_fd_finished_preorder
           - judge_dwd_fd_order_goods

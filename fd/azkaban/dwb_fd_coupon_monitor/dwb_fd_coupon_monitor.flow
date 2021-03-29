@@ -1,0 +1,69 @@
+---
+config:
+  failure.emails: htgao@i9i8.com
+  retries: 20
+  retry.backoff: 300000
+
+nodes:
+  - name: dwb_fd_coupon_monitor_start
+    type: noop
+    
+  - name: judge_ods_fd_vb_ok_coupon
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_ok_coupon
+    dependsOn:
+        - dwb_fd_coupon_monitor_start
+
+  - name: judge_ods_fd_vb_ok_coupon_config
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_ok_coupon_config
+    dependsOn:
+        - dwb_fd_coupon_monitor_start
+
+  - name: judge_dwd_fd_order_info
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_info
+    dependsOn:
+        - dwb_fd_coupon_monitor_start
+
+  - name: judge_ods_fd_vb_order_extension
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_order_extension
+    dependsOn:
+        - dwb_fd_coupon_monitor_start
+
+  - name: dwb_fd_coupon_create_detail
+    type: command  
+    config:
+        command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_coupon_create_detail/run.sh ${pt}
+    dependsOn:
+        - judge_ods_fd_vb_ok_coupon
+        - judge_ods_fd_vb_ok_coupon_config
+        - judge_dwd_fd_order_info
+
+  - name: dwd_fd_coupon_used_detail
+    type: command  
+    config:
+        command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_coupon_used_detail/run.sh ${pt}
+    dependsOn:
+        - judge_ods_fd_vb_ok_coupon
+        - judge_ods_fd_vb_ok_coupon_config
+        - judge_dwd_fd_order_info
+        - judge_ods_fd_vb_order_extension
+
+  - name: dwb_fd_coupon_used
+    type: command  
+    config:
+        command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_coupon_used/run.sh ${pt}
+    dependsOn:
+        - dwd_fd_coupon_used_detail
+
+  - name: dwb_fd_coupon_monitor_end
+    type: noop
+    dependsOn:
+        - dwb_fd_coupon_create_detail
+        - dwb_fd_coupon_used
