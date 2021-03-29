@@ -5,7 +5,7 @@ config:
   retry.backoff: 300000
 
 nodes:
-  - name: fd_user_repurchase_monthly_rpt_start
+  - name: fd_users_repurchase_monthly_rpt_start
     type: noop
 
   - name: judge_dwd_fd_order_channel_analytics
@@ -13,40 +13,40 @@ nodes:
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_channel_analytics
     dependsOn:
-      - fd_user_repurchase_monthly_rpt_start
+      - fd_users_repurchase_monthly_rpt_start
 
   - name: judge_dwd_fd_order_info
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_info
     dependsOn:
-      - fd_user_repurchase_monthly_rpt_start 
+      - fd_users_repurchase_monthly_rpt_start 
 
   - name: judge_ods_fd_vb_users
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_users
     dependsOn:
-      - fd_user_repurchase_monthly_rpt_start
+      - fd_users_repurchase_monthly_rpt_start
 
-  - name: dwd_fd_user_repurchase_monthly
+  - name: dwd_fd_users_repurchase_monthly
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_user_repurchase_monthly/run.sh ${pt}
+      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_users_repurchase_monthly/run.sh ${pt}
     dependsOn:
       - judge_dwd_fd_order_channel_analytics
       - judge_dwd_fd_order_info
       - judge_ods_fd_vb_users
 
-  - name: dwb_fd_user_repurchase_monthly_rpt
+  - name: dwb_fd_users_repurchase_monthly_rpt
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwd_fd_user_repurchase_monthly/run.sh ${pt}
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_users_repurchase_monthly/run.sh ${pt}
     dependsOn:
-      - dwd_fd_user_repurchase_monthly
+      - dwd_fd_users_repurchase_monthly
 
-  - name: fd_user_repurchase_monthly_rpt_end
+  - name: fd_users_repurchase_monthly_rpt_end
     type: noop
     dependsOn:
-      - dwb_fd_user_repurchase_monthly_rpt
+      - dwb_fd_users_repurchase_monthly_rpt
 

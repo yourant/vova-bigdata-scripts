@@ -1,0 +1,67 @@
+---
+config:
+  failure.emails: htgao@i9i8.com
+  retries: 20
+  retry.backoff: 300000
+
+nodes:
+  - name: app_user_coupon_start
+    type: noop
+
+  - name: judge_dwd_fd_order_info
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_info
+    dependsOn:
+        - app_user_coupon_start
+
+  - name: judge_ods_fd_vb_app_install_record
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_app_install_record
+    dependsOn:
+        - app_user_coupon_start
+
+  - name: judge_ods_fd_vb_ok_coupon_config
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_ok_coupon_config
+    dependsOn:
+        - app_user_coupon_start
+    
+  - name: judge_ods_fd_vb_ok_coupon
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_ok_coupon
+    dependsOn:
+        - app_user_coupon_start
+    
+  - name: judge_ods_fd_vb_users
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_users
+    dependsOn:
+        - app_user_coupon_start
+
+  - name: app_user_coupon_report_base
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_user_coupon_rpt/run.sh ${pt}
+    dependsOn:
+        - judge_dwd_fd_order_info
+        - judge_ods_fd_vb_app_install_record
+        - judge_ods_fd_vb_ok_coupon_config
+        - judge_ods_fd_vb_ok_coupon
+        - judge_ods_fd_vb_users
+    
+  - name: app_user_coupon_report_caculate
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_user_coupon_rpt/run_rpt.sh ${pt}
+    dependsOn:
+        - app_user_coupon_report_base
+
+  - name: app_user_coupon_end
+    type: noop
+    dependsOn:
+        - app_user_coupon_report_caculate

@@ -1,0 +1,40 @@
+---
+config:
+  failure.emails: ekko.zhang@i9i8.com
+  retries: 5
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_abtest_funnel_rate_rpt
+    type: noop
+
+  - name: fd_abtest_funnel_rate_rpt_flow
+    type: flow
+    config:
+      prop: value
+    nodes:
+      - name: fd_abtest_funnel_rate_start_rpt_start
+        type: noop
+      
+      - name: fd_abtest_funnel_rate_start_rpt_run
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_abtest_funnel_rate_rpt/run.sh ${pt}
+        dependsOn:
+          - fd_abtest_funnel_rate_start_rpt_start
+
+
+      - name: fd_abtest_funnel_rate_start_rpt_end
+        type: noop
+        dependsOn:
+          - fd_abtest_funnel_rate_start_rpt_run
+
+    dependsOn:
+      - fd_abtest_funnel_rate_rpt
+
+
+  - name: dwb_fd_order_goods_end
+    type: noop
+    dependsOn:
+      - fd_abtest_funnel_rate_rpt_flow
+
