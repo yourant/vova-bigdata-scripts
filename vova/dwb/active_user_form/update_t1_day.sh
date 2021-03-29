@@ -48,15 +48,16 @@ from
       dim.dim_vova_devices dd
     left join
       dwd.dwd_vova_log_screen_view sv
-    on dd.device_id = sv.device_id
+    on dd.device_id = sv.device_id and trunc(activate_time, 'MM') <= trunc(sv.pt, 'MM')
     left join
     (
       select *
       from
         dwd.dwd_vova_fact_pay
       where to_date(pay_time) = '${cur_date}'
+        and datasource = 'vova'
     ) fp
-    on dd.device_id = fp.device_id
+    on dd.device_id = fp.device_id and trunc(activate_time, 'MM') <= trunc(fp.pay_time, 'MM')
     where dd.datasource = 'vova'
       and dd.platform in ('ios','android')
       and sv.pt = '${cur_date}'

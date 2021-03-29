@@ -55,19 +55,22 @@ from
       dim.dim_vova_devices dd
     left join
       dwd.dwd_vova_log_screen_view sv
-    on dd.device_id = sv.device_id
+    on dd.device_id = sv.device_id and trunc(activate_time, 'MM') <= trunc(sv.pt, 'MM')
     left join
     (
       select *
       from
         dwd.dwd_vova_fact_pay
       where trunc(pay_time, 'MM') = '${cur_date}'
+        and datasource = 'vova'
     ) fp
-    on dd.device_id = fp.device_id
+    on dd.device_id = fp.device_id and trunc(activate_time, 'MM') <= trunc(fp.pay_time, 'MM')
     where dd.datasource = 'vova'
       and dd.platform in ('ios','android')
       and trunc(sv.pt, 'MM') = '${cur_date}'
       and sv.dp = 'vova'
+
+
   )
   group by cube(region_code, main_channel, platform, activate_month)
 )
@@ -77,7 +80,7 @@ where region_code in ('all','GB','FR','DE','IT','ES','US')
 "
 #如果使用spark-sql运行，则执行spark-sql -e
 spark-sql \
---executor-cores 1 \
+--executor-memory 10G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true" \
 --conf "spark.dynamicAllocation.minExecutors=10" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
