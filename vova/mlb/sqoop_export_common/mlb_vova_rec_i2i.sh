@@ -9,8 +9,8 @@ if [ ! -n "$1" ]; then
 fi
 
 # 从 freedoms 拿到 table_name 和 dt
-table_name=`echo $freedoms | jq '.table_name'`
-pre_date=`echo $freedoms | jq '.dt'`
+table_name=`echo $freedoms | jq '.table_name' | sed $'s/\"//g'`
+pre_date=`echo $freedoms | jq '.dt' | sed $'s/\"//g'`
 
 if [ ! -n "${table_name}" ]; then
   echo "Error: 任务: mlb_sqoop_i2i, freedoms 中没有配置 table_name！！！"
@@ -27,6 +27,7 @@ echo "final table_name： ${table_name}"
 # 判断对应表、对应分区 是否有数据
 hive -e "msck repair table mlb.${table_name};"
 if [ $? -ne 0 ];then
+  echo "Failed: msck repair table mlb.${table_name};"
   exit 1
 fi
 
@@ -73,14 +74,14 @@ fi
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.map.memory.mb=8096 \
--Dsqoop.export.records.per.statement=1000 \
+-Dsqoop.export.records.per.statement=500 \
 --connect jdbc:mysql://rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/rec_recall \
 --username bimaster --password v5NxDS1N007jbIISAvB7yzJg2GSbL9zF \
 --m 1 \
 --table ${table_name}_new \
 --hcatalog-database mlb \
 --hcatalog-table ${table_name} \
---columns goods_id,rec_goods_id_list,score_list,model_name \
+--columns goods_id,rec_goods_list,score_list,model_name \
 --hcatalog-partition-keys pt \
 --hcatalog-partition-values ${pre_date} \
 --fields-terminated-by '\001'
