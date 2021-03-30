@@ -30,6 +30,7 @@ nodes:
       - dwb_vova_app_ad
       - dwb_vova_flash_sale_new
       - dwb_vova_bd_email
+      - dwb_vova_conversion_monitor_push
 
   - name: start_flag
     type: command
@@ -568,5 +569,24 @@ nodes:
        - judge_dim_vova_order_goods
        - judge_dwd_vova_fact_pay
 
+  -  name: dwb_vova_conversion_monitor
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/conversion_monitor/update.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - judge_dim_vova_goods
+       - judge_dwd_vova_fact_pay
+       - judge_dwd_vova_log_goods_impression
+
+  -  name: dwb_vova_conversion_monitor_push
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/conversion_monitor/send.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - dwb_vova_conversion_monitor
 
 
