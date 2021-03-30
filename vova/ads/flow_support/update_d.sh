@@ -31,6 +31,7 @@ tmp.tmp_ads_vova_six_mct_flow_support_goods dg
 INNER JOIN dim.dim_vova_goods dvg on dvg.goods_id = dg.goods_id
 LEFT JOIN ods_vova_vbai.ods_vova_images_vector iv on dg.goods_id = iv.goods_id
 LEFT JOIN ads.ads_vova_six_mct_flow_support_goods_his his ON his.goods_id = dg.goods_id AND his.pt = '${cur_date}'
+WHERE dvg.is_on_sale = 1
 ;
 "
 

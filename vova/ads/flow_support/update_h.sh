@@ -3,7 +3,7 @@
 cur_date=$1
 #默认日期为昨天
 if [ ! -n "$1" ];then
-cur_date=`date -d "-1 day" +%Y-%m-%d`
+cur_date=`date -d "-0 day" +%Y-%m-%d`
 fi
 ###逻辑sql
 #dependence
@@ -32,6 +32,8 @@ device_id,
 original_name,
 collector_ts,
 page_code,
+recall_pool,
+get_rp_name(recall_pool) AS recall_pool_name,
 pt
 from
 (
@@ -41,6 +43,7 @@ dg.goods_id,
 log.device_id,
 log.collector_ts,
 log.page_code,
+log.recall_pool,
 log.pt
 FROM dwd.dwd_vova_log_goods_impression_arc log
          INNER JOIN tmp.tmp_ads_vova_six_mct_flow_support_goods dg ON log.virtual_goods_id = dg.virtual_goods_id
@@ -57,6 +60,7 @@ dg.goods_id,
 log.device_id,
 log.collector_ts,
 log.page_code,
+log.recall_pool,
 log.pt
 FROM dwd.dwd_vova_log_goods_click_arc log
          INNER JOIN tmp.tmp_ads_vova_six_mct_flow_support_goods dg ON log.virtual_goods_id = dg.virtual_goods_id
@@ -89,6 +93,7 @@ count(DISTINCT if(log.original_name = 'goods_click', log.device_id, null)) AS cl
 0 AS sales_order
 from
 ads.ads_vova_six_mct_flow_support_collector_data log
+WHERE log.recall_pool_name LIKE '%59%'
 group by log.goods_id
 
 UNION ALL
@@ -127,6 +132,7 @@ ads.ads_vova_six_mct_flow_support_collector_data log
 where log.pt = '${cur_date}'
 AND log.original_name = 'goods_impression'
 AND log.page_code IN ('product_detail', 'product_list')
+AND log.recall_pool_name LIKE '%59%'
 group by log.goods_id,log.page_code
 ;
 
@@ -142,6 +148,7 @@ ads.ads_vova_six_mct_flow_support_collector_data log
 INNER JOIN tmp.tmp_ads_vova_six_mct_flow_support_goods dg ON log.goods_id = dg.goods_id
 where log.pt = '${cur_date}'
 AND log.original_name = 'goods_impression'
+AND log.recall_pool_name LIKE '%59%'
 group by dg.mct_id,log.page_code
 ;
 
