@@ -6,6 +6,10 @@ if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 ###逻辑sql
+#dependence
+#dim_vova_goods
+#dwd_vova_fact_pay
+#dwd_vova_log_goods_impression
 sql="
 DROP TABLE if exists tmp.tmp_dwb_vova_conversion_monitor_base;
 CREATE TABLE tmp.tmp_dwb_vova_conversion_monitor_base as
