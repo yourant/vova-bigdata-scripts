@@ -2,8 +2,28 @@
 
 - 数仓mlb库表由推荐组建表
 
+- vova-bigdata-scripts 导数脚本
+
+  - [mlb_vova_rec_i2i.sh](https://g.gitvv.com/bigdata/vova-bigdata-scripts/src/branch/master/vova/mlb/sqoop_export_common/mlb_vova_rec_i2i.sh)
+  - [mlb_vova_rec_u2i.sh](https://g.gitvv.com/bigdata/vova-bigdata-scripts/src/branch/master/vova/mlb/sqoop_export_common/mlb_vova_rec_u2i.sh)
+  - [mlb_vova_rec_q2i.sh](https://g.gitvv.com/bigdata/vova-bigdata-scripts/src/branch/master/vova/mlb/sqoop_export_common/mlb_vova_rec_q2i.sh)
+
+  > 脚本手动执行时 第一个参数为 json 字符串
+
+  ```shell
+  sh mlb_vova_rec_i2i.sh '{"table_name":"mlb_vova_rec_i2i_match_support_a_d","dt":"2021-03-29"}'
+  ```
+
+- Azkaban flow:
+
+  - [vova_mlb_rec_i2i_sqoop_export.flow](https://g.gitvv.com/bigdata/vova-bigdata-scripts/src/branch/master/vova/azkaban/mlb_export_d/vova_mlb_rec_i2i_sqoop_export.flow)
+  - [vova_mlb_rec_u2i_sqoop_export.flow](https://g.gitvv.com/bigdata/vova-bigdata-scripts/src/branch/master/vova/azkaban/mlb_export_d/vova_mlb_rec_u2i_sqoop_export.flow)
+  - [vova_mlb_rec_q2i_sqoop_export.flow](https://g.gitvv.com/bigdata/vova-bigdata-scripts/src/branch/master/vova/azkaban/mlb_export_d/vova_mlb_rec_q2i_sqoop_export.flow)
+
+  > 不需要手动配置调度，通过消息弹起 flow
+
 - job messager 配置:
-  - 添加 召回类型与 Azkaban 中对应 flow 的关系 
+  - 添加 召回类型与 Azkaban 中对应 flow 的关系 (已配置完成)
 
   ```shell
   curl -L -X POST 'http://ab81e133a11e611ebbee60ebf226a60d-1866282236.us-east-1.elb.amazonaws.com/vova/api/jobmss/upsert-job-flow' -H 'Content-Type: application/json' --data-raw '{
@@ -41,7 +61,7 @@
   }'
   ```
 
-  - 推荐组同学发消息
+  - 推荐组同学需要发的消息
 
   ```shell
   curl -L -X POST 'http://ab81e133a11e611ebbee60ebf226a60d-1866282236.us-east-1.elb.amazonaws.com/vova/api/jobmss/out' -H 'Content-Type: application/json' --data-raw '{
