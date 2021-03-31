@@ -48,6 +48,7 @@ device_id,
 original_name,
 collector_ts,
 page_code,
+list_type,
 recall_pool,
 get_rp_name(recall_pool) AS recall_pool_name,
 pt
@@ -59,6 +60,7 @@ dg.goods_id,
 log.device_id,
 log.collector_ts,
 log.page_code,
+log.list_type,
 log.recall_pool,
 log.pt
 FROM dwd.dwd_vova_log_goods_impression_arc log
@@ -76,6 +78,7 @@ dg.goods_id,
 log.device_id,
 log.collector_ts,
 log.page_code,
+log.list_type,
 log.recall_pool,
 log.pt
 FROM dwd.dwd_vova_log_goods_click_arc log
@@ -153,7 +156,10 @@ CREATE TABLE tmp.tmp_ads_vova_six_mct_flow_support_page_goods_1d
 select
 /*+ REPARTITION(1) */
 log.goods_id,
-log.page_code,
+case
+when page_code in ('homepage','product_list') and  list_type in ('/product_list_popular','/product_list') then 'product_list'
+when page_code ='product_detail' and list_type ='/detail_also_like' then 'product_detail'
+else concat(page_code, '_new') end as page_code,
 count(*) AS impressions
 from
 ads.ads_vova_six_mct_flow_support_collector_data log
@@ -161,7 +167,10 @@ where log.pt = '${cur_date}'
 AND log.original_name = 'goods_impression'
 AND log.page_code IN ('product_detail', 'product_list')
 AND log.recall_pool_name LIKE '%59%'
-group by log.goods_id,log.page_code
+group by log.goods_id,case
+when page_code in ('homepage','product_list') and  list_type in ('/product_list_popular','/product_list') then 'product_list'
+when page_code ='product_detail' and list_type ='/detail_also_like' then 'product_detail'
+else concat(page_code, '_new') end
 ;
 
 DROP TABLE IF EXISTS tmp.tmp_ads_vova_six_mct_flow_support_page_mct_1d;
@@ -169,7 +178,10 @@ CREATE TABLE tmp.tmp_ads_vova_six_mct_flow_support_page_mct_1d
 select
 /*+ REPARTITION(1) */
 dg.mct_id,
-log.page_code,
+case
+when page_code in ('homepage','product_list') and  list_type in ('/product_list_popular','/product_list') then 'product_list'
+when page_code ='product_detail' and list_type ='/detail_also_like' then 'product_detail'
+else concat(page_code, '_new') end as page_code,
 count(*) AS impressions
 from
 ads.ads_vova_six_mct_flow_support_collector_data log
@@ -177,7 +189,11 @@ INNER JOIN tmp.tmp_ads_vova_six_mct_flow_support_goods dg ON log.goods_id = dg.g
 where log.pt = '${cur_date}'
 AND log.original_name = 'goods_impression'
 AND log.recall_pool_name LIKE '%59%'
-group by dg.mct_id,log.page_code
+group by log.goods_id,
+case
+when page_code in ('homepage','product_list') and  list_type in ('/product_list_popular','/product_list') then 'product_list'
+when page_code ='product_detail' and list_type ='/detail_also_like' then 'product_detail'
+else concat(page_code, '_new') end
 ;
 
 
