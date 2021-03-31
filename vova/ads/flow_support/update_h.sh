@@ -189,7 +189,7 @@ INNER JOIN tmp.tmp_ads_vova_six_mct_flow_support_goods dg ON log.goods_id = dg.g
 where log.pt = '${cur_date}'
 AND log.original_name = 'goods_impression'
 AND log.recall_pool_name LIKE '%59%'
-group by log.goods_id,
+group by dg.mct_id,
 case
 when page_code in ('homepage','product_list') and  list_type in ('/product_list_popular','/product_list') then 'product_list'
 when page_code ='product_detail' and list_type ='/detail_also_like' then 'product_detail'
