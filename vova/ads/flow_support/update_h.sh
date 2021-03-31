@@ -7,19 +7,35 @@ cur_date=`date -d "-0 day" +%Y-%m-%d`
 fi
 ###逻辑sql
 #dependence
-#ads_vova_six_rank_mct
+#ods_vova_goods_h
+#ods_vova_virtual_goods_h
+#ods_vova_order_info_h
+#ods_vova_order_goods_h
 #ods_vova_vbai.ods_vova_images_vector
+#dim_vova_category
+#dwd_vova_log_goods_impression_arc
+#dwd_vova_log_goods_click_arc
+#ads_vova_six_rank_mct
 sql="
 DROP TABLE IF EXISTS tmp.tmp_ads_vova_six_mct_flow_support_goods;
 CREATE TABLE tmp.tmp_ads_vova_six_mct_flow_support_goods
 SELECT /*+ REPARTITION(1) */
-       dg.goods_id,
-       dg.virtual_goods_id,
-       dg.first_cat_id,
-       dg.mct_id,
-       six.mct_name
+    dg.goods_id,
+    dg.virtual_goods_id,
+    dg.first_cat_id,
+    dg.mct_id,
+    six.mct_name
 FROM ads.ads_vova_six_rank_mct six
-         INNER JOIN dim.dim_vova_goods dg ON dg.first_cat_id = six.first_cat_id AND dg.mct_id = six.mct_id
+         INNER JOIN
+     (
+         SELECT g.goods_id,
+                vg.virtual_goods_id,
+                dc.first_cat_id,
+                g.merchant_id AS mct_id
+         FROM ods_vova_vts.ods_vova_goods_h g
+                  INNER JOIN ods_vova_vts.ods_vova_virtual_goods_h vg ON vg.goods_id = g.goods_id
+                  INNER JOIN dim.dim_vova_category dc ON dc.cat_id = g.cat_id
+     ) dg ON dg.first_cat_id = six.first_cat_id AND dg.mct_id = six.mct_id
 ;
 
 set hive.exec.dynamic.partition=true;
@@ -71,6 +87,17 @@ WHERE log.datasource = 'vova'
 ) t1
 ;
 
+DROP TABLE IF EXISTS tmp.tmp_ads_vova_six_mct_flow_support_goods_min_collector;
+CREATE TABLE tmp.tmp_ads_vova_six_mct_flow_support_goods_min_collector
+SELECT /*+ REPARTITION(1) */
+       log.goods_id,
+       min(collector_ts) AS min_collector_ts
+FROM ads.ads_vova_six_mct_flow_support_collector_data log
+WHERE log.original_name = 'goods_impression'
+AND log.recall_pool_name LIKE '%59%'
+group by log.goods_id
+;
+
 INSERT OVERWRITE TABLE ads.ads_vova_six_mct_flow_support_goods_his PARTITION (pt = '${cur_date}')
 select
 /*+ REPARTITION(1) */
@@ -108,12 +135,13 @@ COUNT(DISTINCT oi.order_id) AS sales_order
 FROM ods_vova_vts.ods_vova_order_info_h oi
          INNER JOIN ods_vova_vts.ods_vova_order_goods_h og ON oi.order_id = og.order_id
          INNER JOIN tmp.tmp_ads_vova_six_mct_flow_support_goods dg ON og.goods_id = dg.goods_id
+         INNER JOIN tmp.tmp_ads_vova_six_mct_flow_support_goods_min_collector min ON min.goods_id = og.goods_id
 WHERE oi.pay_status >= 1
   AND oi.from_domain LIKE '%api%'
   AND oi.project_name = 'vova'
   AND oi.email not regexp '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
   AND oi.parent_order_id = 0
-  AND date(oi.pay_time) >= '2021-03-26'
+  AND oi.order_time >= min.min_collector_ts
 group by og.goods_id
 ) t1
 group by goods_id
