@@ -186,10 +186,10 @@ select
 /*+ REPARTITION(1) */
 dg.goods_id,
 page_code_list.page_code,
-his.impressions AS his_impressions,
-t1.impressions AS t1_impressions,
-t2.impressions AS t2_impressions,
-t3.impressions AS t3_impressions,
+nvl(his.impressions, 0) AS his_impressions,
+nvl(t1.impressions, 0) AS t1_impressions,
+nvl(t2.impressions, 0) AS t2_impressions,
+nvl(t3.impressions, 0) AS t3_impressions,
 case
 when his.impressions >= 30000 THEN 1
 when his.impressions >= 20000 AND gcr < 60 THEN 1
