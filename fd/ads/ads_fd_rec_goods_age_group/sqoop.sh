@@ -4,15 +4,11 @@ user="lujiaheng"
 
 base_path="/mnt/vova-bigdata-scripts/fd/ads"
 
-if [ ! -n "$1" ]; then
-  pt=$(date -d "- 1 hours" +"%Y-%m-%d")
+ts=$(date -d "$1" +"%Y-%m-%d %H")
+if [ "$#" -ne 2 ]; then
+  pt=$(date -d "$ts" +"%Y-%m-%d")
 else
-  echo $1 | grep -Eq "[0-9]{4}-[0-9]{2}-[0-9]{2}" && date -d "$1" +"%Y-%m-%d" >/dev/null
-  if [[ $? -ne 0 ]]; then
-    echo "接收的时间格式${1}不符合:%Y-%m-%d，请输入正确的格式!"
-    exit
-  fi
-  pt=$1
+  pt=$2
 fi
 echo "pt: ${pt}"
 
