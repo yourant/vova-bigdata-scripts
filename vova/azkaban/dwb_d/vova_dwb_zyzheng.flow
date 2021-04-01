@@ -31,6 +31,7 @@ nodes:
       - dwb_vova_flash_sale_new
       - dwb_vova_bd_email
       - dwb_vova_conversion_monitor_push
+      - dwb_vova_new_merchant_gmv_d
 
   - name: start_flag
     type: command
@@ -589,4 +590,13 @@ nodes:
      dependsOn:
        - dwb_vova_conversion_monitor
 
-
+  -  name: dwb_vova_new_merchant_gmv_d
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/vova/dwb/merchant_kpi/new_activate_update.sh
+       retries: 10
+       retry.backoff: 600000
+     dependsOn:
+       - judge_dim_vova_merchant
+       - judge_dim_vova_goods
+       - judge_dwd_vova_fact_pay
