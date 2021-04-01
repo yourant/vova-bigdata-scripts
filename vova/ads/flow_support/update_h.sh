@@ -74,6 +74,25 @@ UNION ALL
 
 select
 dg.goods_id,
+'goods_impression' as original_name,
+log.device_id,
+log.collector_ts,
+log.page_code,
+log.list_type,
+log.recall_pool,
+log.pt
+FROM dwd.dwd_vova_log_impressions_arc log
+         INNER JOIN tmp.tmp_ads_vova_six_mct_flow_support_goods dg ON log.element_id = dg.virtual_goods_id
+WHERE log.datasource = 'vova'
+  AND log.platform = 'mob'
+  AND log.pt >= date_sub('${cur_date}', 1)
+  AND log.pt <= '${cur_date}'
+  AND log.element_id is not null
+
+UNION ALL
+
+select
+dg.goods_id,
 'goods_click' as original_name,
 log.device_id,
 log.collector_ts,
@@ -87,6 +106,26 @@ WHERE log.datasource = 'vova'
   AND log.platform = 'mob'
   AND log.pt >= date_sub('${cur_date}', 1)
   AND log.pt <= '${cur_date}'
+
+UNION ALL
+
+select
+dg.goods_id,
+'goods_click' as original_name,
+log.device_id,
+log.collector_ts,
+log.page_code,
+log.list_type,
+log.recall_pool,
+log.pt
+FROM dwd.dwd_vova_log_click_arc log
+         INNER JOIN tmp.tmp_ads_vova_six_mct_flow_support_goods dg ON log.element_id = dg.virtual_goods_id
+WHERE log.datasource = 'vova'
+  AND log.platform = 'mob'
+  AND log.pt >= date_sub('${cur_date}', 1)
+  AND log.pt <= '${cur_date}'
+  AND log.event_type='goods'
+  AND log.element_id is not null
 ) t1
 ;
 
