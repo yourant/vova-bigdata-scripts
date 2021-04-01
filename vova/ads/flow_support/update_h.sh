@@ -204,7 +204,6 @@ from
 ads.ads_vova_six_mct_flow_support_collector_data log
 where log.pt = '${cur_date}'
 AND log.original_name = 'goods_impression'
-AND log.page_code IN ('product_detail', 'product_list')
 AND log.recall_pool_name LIKE '%59%'
 group by log.goods_id,case
 when page_code in ('homepage','product_list') and  list_type in ('/product_list_popular','/product_list') then 'product_list'
