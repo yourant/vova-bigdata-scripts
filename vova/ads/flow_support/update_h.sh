@@ -292,6 +292,7 @@ group by mct_id
 
 INSERT OVERWRITE TABLE ads.ads_vova_six_mct_goods_flow_support_h PARTITION (pt = '${cur_date}')
 select
+/*+ REPARTITION(1) */
 goods_id,
 page_code
 from

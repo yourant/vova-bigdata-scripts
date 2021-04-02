@@ -32,6 +32,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS mlb.mlb_vova_six_mct_flow_support_d
 (
     goods_id             bigint,
     first_cat_id         bigint,
+    second_cat_id        bigint,
     brand_id             bigint,
     goods_name           string,
     img_vec              string,
