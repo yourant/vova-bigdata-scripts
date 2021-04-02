@@ -6,6 +6,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS ads.ads_vova_six_mct_flow_support_collector_
     original_name    string,
     collector_ts     string,
     page_code        string,
+    list_type        string,
     recall_pool      string,
     recall_pool_name string
 ) COMMENT 'ads_vova_six_mct_flow_support_collector_data' PARTITIONED BY (pt STRING)

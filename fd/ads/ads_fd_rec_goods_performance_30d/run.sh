@@ -6,7 +6,7 @@ base_path="/mnt/vova-bigdata-scripts/fd/ads"
 
 ts=$(date -d "$1" +"%Y-%m-%d %H")
 
-if [ "$#" -ne 3 ]; then
+if [ "$#" -ne 2 ]; then
   pt=$(date -d "$ts" +"%Y-%m-%d")
 else
   pt=$2
