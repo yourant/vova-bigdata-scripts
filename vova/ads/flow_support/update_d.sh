@@ -16,6 +16,7 @@ SELECT
 /*+ REPARTITION(1) */
 dg.goods_id,
 dvg.first_cat_id,
+nvl(dvg.second_cat_id, 0) AS second_cat_id,
 dvg.brand_id,
 dvg.goods_name,
 iv.img_vec,
