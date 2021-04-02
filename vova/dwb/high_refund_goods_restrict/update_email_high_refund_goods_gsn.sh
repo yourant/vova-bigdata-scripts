@@ -37,6 +37,21 @@ from
     where dgg.goods_sn like 'SN%' and dg.goods_sn like 'GSN%'
       and dgg.pt= date_sub('${cur_date}', 1)  -- 由于屏蔽数据放在 t-1 分区，所以昨天屏蔽的商品在前天分区
     group by dgg.pt, dg.goods_sn
+
+    UNION
+
+    select
+      dgg.pt pt,
+      dg.goods_sn goods_sn_new, -- 变更后的 goods_sn
+      count(distinct(if(dg.is_on_sale = 1, dg.goods_id, null))) on_sale_goods_cnt -- 在架商品数
+    from
+      dwb.dwb_vova_goods_gsn dgg
+    left join
+      dim.dim_vova_goods dg
+    on dgg.goods_id = dg.goods_id
+    where dg.goods_sn like 'GSN%'
+      and dgg.pt= '${cur_date}'
+    group by dgg.pt, dg.goods_sn
   )
   where on_sale_goods_cnt = 0
 ) t1

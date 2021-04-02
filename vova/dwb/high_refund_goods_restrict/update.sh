@@ -129,7 +129,8 @@ left join
     count(distinct goods_id) sales_goods_cnt -- 有销量的商品数
   from
     dwd.dwd_vova_fact_pay
-  where to_date(pay_time) = '${cur_date}'
+  where to_date(pay_time) <= '${cur_date}'
+    AND date(pay_time) > date_sub('${cur_date}', 63)
 ) t4
 on t1.pt = t4.pt
 left join
