@@ -6,7 +6,6 @@ if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 ###逻辑sql
-select count(*) from als_images.fn_rec_gid_pic_similar;
 sql="
 insert overwrite table ads.fn_ads_min_price_goods partition(pt='${cur_date}')
 select

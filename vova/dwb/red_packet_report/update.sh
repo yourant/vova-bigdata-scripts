@@ -427,10 +427,10 @@ left join
   group by fp.goods_id
 ) t3
 on t1.goods_id = t3.goods_id
+where t3.gmv > 0
 ;
 
 -- table 3
-
 insert overwrite table dwb.dwb_vova_red_packet_cat partition(pt='${cur_date}')
 select /*+ REPARTITION(1) */
   t1.first_cat_id,

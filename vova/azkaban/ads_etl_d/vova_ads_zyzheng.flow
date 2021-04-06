@@ -20,6 +20,7 @@ nodes:
       - ads_vova_goods_sn_performance
       - ads_zq_fn_vova_goods_export
       - ads_app_group_export
+      - ads_vova_sale_goods_m
 
   - name: start_flag
     type: command
@@ -190,6 +191,24 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_vova_images_vector
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_images_vector
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_six_mct_goods_flow_support_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_six_mct_goods_flow_support_h
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
 #  -  name: ads_vova_flash_sale_coupon_goods
 #     type: command
 #     config:
@@ -346,4 +365,24 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - ads_app_group
+
+  - name: ads_vova_sale_goods_m
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/display_sort_d/sale_goods_m/sale_goods_m_update.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_pay
+
+  - name: ads_vova_six_mct_goods_flow_support_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/flow_support/update_d.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_vova_images_vector
+      - judge_ads_vova_six_mct_goods_flow_support_h
 

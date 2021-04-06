@@ -4,9 +4,9 @@ cur_date=$1
 #默认日期为昨天
 if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
-month_age_date=`date -d "-30 day" +%Y-%m-%d`
-his_date=`date -d "-58 day" +%Y-%m-%d`
 fi
+month_age_date=`date -d "29 days ago ${cur_date}" +%Y-%m-%d`
+his_date=`date -d "57 days ago ${cur_date}" +%Y-%m-%d`
 
 spark-sql   --conf "spark.app.name=customer_satisfaction_send_email" --conf "spark.sql.autoBroadcastJoinThreshold=-1"  --conf "spark.sql.crossJoin.enabled=true"  --conf "spark.dynamicAllocation.maxExecutors=120"  -e "
 
@@ -39,7 +39,7 @@ from dim.dim_vova_order_goods a
     select order_sn
     from (
              select a.order_sn, dense_rank() over (partition by a.region_code order by a.order_sn) rn
-             from dim.dim_vova_goods a
+             from dim.dim_vova_order_goods a
                       join dwd.dwd_vova_fact_pay b on a.order_goods_id = b.order_goods_id
                       left join (select email from dwb.dwb_vova_customer_satisfaction where pt < '${cur_date}') c
                                 on a.email = c.email

@@ -92,10 +92,10 @@ CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_buyer_life_cycle_monitor (
   activate_pay_day14_uv bigint         COMMENT 'i_14天下单用户数',
   activate_pay_day28_uv bigint         COMMENT 'i_28天下单用户数',
   gmv_day0              decimal(16,4)  COMMENT 'i_当天GMV',
-  gmv_day0_3            decimal(16,4)  COMMENT 'i_天GMV',
-  gmv_day0_7            decimal(16,4)  COMMENT 'i_天GMV',
-  gmv_day0_14           decimal(16,4)  COMMENT 'i_4天GMV',
-  gmv_day0_28           decimal(16,4)  COMMENT 'i_8天GMV',
+  gmv_day0_3            decimal(16,4)  COMMENT 'i_3天GMV',
+  gmv_day0_7            decimal(16,4)  COMMENT 'i_7天GMV',
+  gmv_day0_14           decimal(16,4)  COMMENT 'i_14天GMV',
+  gmv_day0_28           decimal(16,4)  COMMENT 'i_28天GMV',
   order_cnt_day0        bigint         COMMENT 'i_当天订单数',
   order_cnt_day0_3      bigint         COMMENT 'i_3天订单数',
   order_cnt_day0_7      bigint         COMMENT 'i_7天订单数',
@@ -122,3 +122,45 @@ CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_buyer_life_cycle_monitor (
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE
 LOCATION "s3://bigdata-offline/warehouse/dwb/dwb_vova_buyer_life_cycle_monitor/"
 ;
+
+#################################################
+[8661]部分字段口径修改【用户生命周期监控报表】
+https://zt.gitvv.com/index.php?m=task&f=view&taskID=32798
+
+在 [8070]用户生命周期监控报表 上修改
+任务描述
+1、当日补贴成本和30日补贴成本字段口径修改；
+2、增加60天、90天、180天相关数据；
+https://docs.google.com/spreadsheets/d/19T8u5FUpg_AimNmB_880I-3R0IgdTJgy0-CZm-JmVOg/edit#gid=2010163347
+
+# activate_pay_day28_uv bigint         COMMENT 'i_28天下单用户数',
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(activate_pay_day60_uv int comment '60天下单用户数') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(activate_pay_day90_uv int comment '90天下单用户数') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(activate_pay_day180_uv int comment '180天下单用户数') cascade;
+
+# gmv_day0_28           decimal(16,4)  COMMENT 'i_28天GMV',
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(gmv_day0_60 decimal(16,4) comment '60天GMV') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(gmv_day0_90 decimal(16,4) comment '90天GMV') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(gmv_day0_180 decimal(16,4) comment '180天GMV') cascade;
+
+# order_cnt_day0_28     bigint         COMMENT 'i_28天订单数',
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(order_cnt_day0_60 int comment '60天订单数') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(order_cnt_day0_90 int comment '90天订单数') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(order_cnt_day0_180 int comment '180天订单数') cascade;
+
+# liv_day0_28           double         COMMENT '28天LTV',
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(liv_day0_60 double comment '60天LTV') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(liv_day0_90 double comment '90天LTV') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(liv_day0_180 double comment '180天LTV') cascade;
+
+# cr_day0_28            double         COMMENT '28天转化率',
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(cr_day0_60 double comment '60天转化率') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(cr_day0_90 double comment '90天转化率') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(cr_day0_180 double comment '180天转化率') cascade;
+
+# avg_order_cnt_day0_28 double         COMMENT '28天平均订单数'
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(avg_order_cnt_day0_60 double comment '60天平均订单数') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(avg_order_cnt_day0_90 double comment '90天平均订单数') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(avg_order_cnt_day0_180 double comment '180天平均订单数') cascade;
+
+

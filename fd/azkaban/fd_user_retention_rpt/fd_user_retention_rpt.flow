@@ -1,7 +1,7 @@
 ---
 config:
-  failure.emails: ekko.zhang@i9i8.com
-  retries: 5
+  failure.emails: htgao@i9i8.com
+  retries: 20
   retry.backoff: 300000
 
 nodes:

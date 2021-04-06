@@ -1,0 +1,64 @@
+---
+config:
+  failure.emails: htgao@i9i8.com
+  retries: 20
+  retry.backoff: 300000
+
+nodes:
+  - name: app_retention_activity_start
+    type: noop
+    
+  - name: judge_fd_dw_dwd_end
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fd_dw_dwd_end
+    dependsOn:
+        - app_retention_activity_start
+
+  - name: app_retention
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_app_user_retention/run.sh ${pt}
+    dependsOn:
+        - judge_fd_dw_dwd_end
+    
+  - name: app_checkin
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_app_checkin/run.sh ${pt}
+    dependsOn:
+        - app_retention
+    
+  - name: app_play
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_app_play_wheel/run.sh ${pt}
+    dependsOn:
+        - app_checkin
+    
+  - name: app_register
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_app_register/run.sh ${pt}
+    dependsOn:
+        - app_play
+
+  - name: app_point
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_app_points_page/run.sh ${pt}
+    dependsOn:
+        - app_register
+
+  - name: app_retention_activity_rpt
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_app_retention_activity_rpt/run.sh ${pt}
+    dependsOn:
+        - app_point
+
+  - name: app_retention_activity_end
+    type: noop
+    dependsOn:
+        - app_retention_activity_rpt
+

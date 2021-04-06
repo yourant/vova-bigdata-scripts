@@ -88,7 +88,7 @@ and cast(regexp_replace(a.app_version, '\\\.', 0) as bigint) >= 2010700
 and a.geo_country in ('FR', 'DE', 'IT', 'ES') and a.os_type in ('ios', 'android') group by pt,geo_country,os_type,buyer_id,device_id) a
          left join (select buyer_id, cpn_create_time
                     from dim.dim_vova_coupon
-                    where cpn_cfg_id = 1728300
+                    where cpn_cfg_id = 1729523
                     group by buyer_id, cpn_create_time) b
                    on a.buyer_id = b.buyer_id
          join dim.dim_vova_devices c on a.device_id = c.device_id

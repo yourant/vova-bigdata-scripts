@@ -57,10 +57,10 @@ nodes:
     dependsOn:
       - fd_job_start
 
-  - name: judge_ods_fd_rar_persona
+  - name: judge_ods_fd_rar_user_persona
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_rar_persona
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_rar_user_persona
     dependsOn:
       - fd_job_start
 
@@ -102,7 +102,7 @@ nodes:
       - judge_ods_fd_snowplow_goods_event_hour
       - judge_ods_fd_vb_attribute
       - judge_ods_fd_vb_goods_attr
-      - judge_ods_fd_rar_persona
+      - judge_ods_fd_rar_user_persona
 
   - name: sync_to_redis_ads_fd_rec_goods_age_group
     type: command
