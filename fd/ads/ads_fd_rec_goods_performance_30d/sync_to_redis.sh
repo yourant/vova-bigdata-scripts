@@ -8,7 +8,7 @@ fi
 
 table="fd_goods_performance_30d"
 key="goods_id"
-sql="select goods_id,click,impression,sales from ads.ads_fd_goods_performance_30d where pt = '${pt}' and project_name = 'floryday' and goods_id is not null"
+sql="select goods_id,click,impression,sales from ads.ads_fd_goods_performance_30d where pt = '${pt}' and goods_id is not null"
 
 spark-submit \
   --master yarn \

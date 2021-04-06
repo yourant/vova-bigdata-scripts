@@ -9,8 +9,7 @@ pre_week=`date -d "7 day ago ${cur_date}" +%Y-%m-%d`
 pre_date=`date -d "1 day ago ${cur_date}" +%Y-%m-%d`
 ###逻辑sql
 sql="
-DROP TABLE IF EXISTS tmp.vova_rec_page_code_report;
-CREATE TABLE IF NOT EXISTS tmp.vova_rec_page_code_report STORED AS PARQUETFILE as
+INSERT OVERWRITE TABLE tmp.vova_rec_page_code_report
 select
 /*+ REPARTITION(20) */
 t1.datasource,
@@ -137,8 +136,7 @@ from dwb.dwb_vova_rec_report where pt='$pre_date' and page_code='NA' and list_ty
 
 
 
-drop table if exists tmp.vova_rec_report_01;
-create table tmp.vova_rec_report_01  STORED AS PARQUETFILE as
+INSERT OVERWRITE TABLE tmp.vova_rec_report_01
 select
 /*+ REPARTITION(1) */
 t1.datasource,
