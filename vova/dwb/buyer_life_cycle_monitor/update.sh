@@ -34,10 +34,10 @@ select /*+ REPARTITION(1) */
   if(datediff('${cur_date}', pt)>=14, activate_pay_day14_uv,'NA') activate_pay_day14_uv, -- 14天下单用户数
   if(datediff('${cur_date}', pt)>=28, activate_pay_day28_uv,'NA') activate_pay_day28_uv, -- 28天下单用户数
   gmv_day0, -- 当天GMV
-  if(datediff('${cur_date}', pt)>=3,  gmv_day0_3 ,'NA') gmv_day0_3 , -- 天GMV
-  if(datediff('${cur_date}', pt)>=7,  gmv_day0_7 ,'NA') gmv_day0_7 , -- 天GMV
-  if(datediff('${cur_date}', pt)>=14, gmv_day0_14,'NA') gmv_day0_14, -- 4天GMV
-  if(datediff('${cur_date}', pt)>=28, gmv_day0_28,'NA') gmv_day0_28, -- 8天GMV
+  if(datediff('${cur_date}', pt)>=3,  gmv_day0_3 ,'NA') gmv_day0_3 , -- 3天GMV
+  if(datediff('${cur_date}', pt)>=7,  gmv_day0_7 ,'NA') gmv_day0_7 , -- 7天GMV
+  if(datediff('${cur_date}', pt)>=14, gmv_day0_14,'NA') gmv_day0_14, -- 14天GMV
+  if(datediff('${cur_date}', pt)>=28, gmv_day0_28,'NA') gmv_day0_28, -- 28天GMV
   order_cnt_day0, -- 当天订单数
   if(datediff('${cur_date}', pt)>=3,  order_cnt_day0_3 ,'NA') order_cnt_day0_3 , -- 3天订单数
   if(datediff('${cur_date}', pt)>=7,  order_cnt_day0_7 ,'NA') order_cnt_day0_7 , -- 7天订单数
@@ -60,6 +60,25 @@ select /*+ REPARTITION(1) */
   if(datediff('${cur_date}', pt)>=7,  avg_order_cnt_day0_7 ,'NA') avg_order_cnt_day0_7 , -- 7天平均订单数
   if(datediff('${cur_date}', pt)>=14, avg_order_cnt_day0_14,'NA') avg_order_cnt_day0_14, -- 14天平均订单数
   if(datediff('${cur_date}', pt)>=28, avg_order_cnt_day0_28,'NA') avg_order_cnt_day0_28,  -- 28天平均订单数
+  -- 新增
+  if(datediff('${cur_date}', pt)>=60,  activate_pay_day60_uv,'NA')  activate_pay_day60_uv, -- 60天下单用户数
+  if(datediff('${cur_date}', pt)>=90,  activate_pay_day90_uv,'NA')  activate_pay_day90_uv, -- 90天下单用户数
+  if(datediff('${cur_date}', pt)>=180, activate_pay_day180_uv,'NA') activate_pay_day180_uv, -- 180天下单用户数
+  if(datediff('${cur_date}', pt)>=60,  gmv_day0_60,'NA')  gmv_day0_60, -- 60天GMV
+  if(datediff('${cur_date}', pt)>=90,  gmv_day0_90,'NA')  gmv_day0_90, -- 90天GMV
+  if(datediff('${cur_date}', pt)>=180, gmv_day0_180,'NA') gmv_day0_180, -- 180天GMV
+  if(datediff('${cur_date}', pt)>=60,  order_cnt_day0_60,'NA')  order_cnt_day0_60, -- 60天订单数
+  if(datediff('${cur_date}', pt)>=90,  order_cnt_day0_90,'NA')  order_cnt_day0_90, -- 90天订单数
+  if(datediff('${cur_date}', pt)>=180, order_cnt_day0_180,'NA') order_cnt_day0_180, -- 180天订单数
+  if(datediff('${cur_date}', pt)>=60,  liv_day0_60,'NA')  liv_day0_60, -- 60天LTV
+  if(datediff('${cur_date}', pt)>=90,  liv_day0_90,'NA')  liv_day0_90, -- 90天LTV
+  if(datediff('${cur_date}', pt)>=180, liv_day0_180,'NA') liv_day0_180, -- 180天LTV
+  if(datediff('${cur_date}', pt)>=60,  cr_day0_60,'NA')  cr_day0_60,-- 60天转化率
+  if(datediff('${cur_date}', pt)>=90,  cr_day0_90,'NA')  cr_day0_90,-- 90天转化率
+  if(datediff('${cur_date}', pt)>=180, cr_day0_180,'NA') cr_day0_180,-- 180天转化率
+  if(datediff('${cur_date}', pt)>=60,  avg_order_cnt_day0_60,'NA')  avg_order_cnt_day0_60,  -- 60天平均订单数
+  if(datediff('${cur_date}', pt)>=90,  avg_order_cnt_day0_90,'NA')  avg_order_cnt_day0_90,  -- 90天平均订单数
+  if(datediff('${cur_date}', pt)>=180, avg_order_cnt_day0_180,'NA') avg_order_cnt_day0_180,  -- 180天平均订单数
   pt
 from
 (
@@ -76,16 +95,28 @@ select
   count(distinct activate_pay_device_id_day0_7 ) activate_pay_day7_uv , -- 7天下单用户数
   count(distinct activate_pay_device_id_day0_14) activate_pay_day14_uv, -- 14天下单用户数
   count(distinct activate_pay_device_id_day0_28) activate_pay_day28_uv, -- 28天下单用户数
+  count(distinct activate_pay_device_id_day0_60) activate_pay_day60_uv, -- 60天下单用户数
+  count(distinct activate_pay_device_id_day0_90) activate_pay_day90_uv, -- 90天下单用户数
+  count(distinct activate_pay_device_id_day0_180) activate_pay_day180_uv, -- 180天下单用户数
+
   sum(gmv_day0   ) gmv_day0   , -- 当天GMV
-  sum(gmv_day0_3 ) gmv_day0_3 , -- 天GMV
-  sum(gmv_day0_7 ) gmv_day0_7 , -- 天GMV
-  sum(gmv_day0_14) gmv_day0_14, -- 4天GMV
-  sum(gmv_day0_28) gmv_day0_28, -- 8天GMV
+  sum(gmv_day0_3 ) gmv_day0_3 , -- 3天GMV
+  sum(gmv_day0_7 ) gmv_day0_7 , -- 7天GMV
+  sum(gmv_day0_14) gmv_day0_14, -- 14天GMV
+  sum(gmv_day0_28) gmv_day0_28, -- 28天GMV
+  sum(gmv_day0_60) gmv_day0_60, -- 60天GMV
+  sum(gmv_day0_90) gmv_day0_90, -- 90天GMV
+  sum(gmv_day0_180) gmv_day0_180, -- 180天GMV
+
   count(distinct order_id_day0   ) order_cnt_day0   , -- 当天订单数
   count(distinct order_id_day0_3 ) order_cnt_day0_3 , -- 3天订单数
   count(distinct order_id_day0_7 ) order_cnt_day0_7 , -- 7天订单数
   count(distinct order_id_day0_14) order_cnt_day0_14, -- 14天订单数
   count(distinct order_id_day0_28) order_cnt_day0_28, -- 28天订单数
+  count(distinct order_id_day0_60) order_cnt_day0_60, -- 60天订单数
+  count(distinct order_id_day0_90) order_cnt_day0_90, -- 90天订单数
+  count(distinct order_id_day0_180) order_cnt_day0_180, -- 180天订单数
+
   round(nvl(sum(bonus_day0) / count(distinct activate_pay_device_id), 0), 4) avg_bonus_day0, -- 当日补贴成本
   round(nvl(sum(bonus_day0_30) / count(distinct activate_pay_device_id), 0), 4) avg_bonus_day0_30, -- 30天补贴成本
   round(nvl(sum(gmv_day0   ) / count(distinct device_id), 0), 4) liv_day0   , -- 当天LTV
@@ -93,16 +124,27 @@ select
   round(nvl(sum(gmv_day0_7 ) / count(distinct device_id), 0), 4) liv_day0_7 , -- 7天LTV
   round(nvl(sum(gmv_day0_14) / count(distinct device_id), 0), 4) liv_day0_14, -- 14天LTV
   round(nvl(sum(gmv_day0_28) / count(distinct device_id), 0), 4) liv_day0_28, -- 28天LTV
+  round(nvl(sum(gmv_day0_60) / count(distinct device_id), 0), 4) liv_day0_60, -- 60天LTV
+  round(nvl(sum(gmv_day0_90) / count(distinct device_id), 0), 4) liv_day0_90, -- 90天LTV
+  round(nvl(sum(gmv_day0_180) / count(distinct device_id), 0), 4) liv_day0_180, -- 180天LTV
+
   round(nvl(count(distinct activate_pay_device_id) / count(distinct device_id), 0), 4) cr, -- 当天转化率
   round(nvl(count(distinct activate_pay_device_id_day0_3 ) / count(distinct device_id), 0), 4) cr_day0_3 ,-- 3天转化率
   round(nvl(count(distinct activate_pay_device_id_day0_7 ) / count(distinct device_id), 0), 4) cr_day0_7 ,-- 7天转化率
   round(nvl(count(distinct activate_pay_device_id_day0_14) / count(distinct device_id), 0), 4) cr_day0_14,-- 14天转化率
   round(nvl(count(distinct activate_pay_device_id_day0_28) / count(distinct device_id), 0), 4) cr_day0_28,-- 28天转化率
+  round(nvl(count(distinct activate_pay_device_id_day0_60) / count(distinct device_id), 0), 4) cr_day0_60,-- 60天转化率
+  round(nvl(count(distinct activate_pay_device_id_day0_90) / count(distinct device_id), 0), 4) cr_day0_90,-- 90天转化率
+  round(nvl(count(distinct activate_pay_device_id_day0_180) / count(distinct device_id), 0), 4) cr_day0_180,-- 180天转化率
+
   round(nvl(count(distinct order_id_day0   ) / count(distinct activate_pay_device_id), 0), 4) avg_order_cnt, -- 当天平均订单数
   round(nvl(count(distinct order_id_day0_3 ) / count(distinct activate_pay_device_id_day0_3 ), 0), 4) avg_order_cnt_day0_3 , -- 3天平均订单数
   round(nvl(count(distinct order_id_day0_7 ) / count(distinct activate_pay_device_id_day0_7 ), 0), 4) avg_order_cnt_day0_7 , -- 7天平均订单数
   round(nvl(count(distinct order_id_day0_14) / count(distinct activate_pay_device_id_day0_14), 0), 4) avg_order_cnt_day0_14, -- 14天平均订单数
   round(nvl(count(distinct order_id_day0_28) / count(distinct activate_pay_device_id_day0_28), 0), 4) avg_order_cnt_day0_28,  -- 28天平均订单数
+  round(nvl(count(distinct order_id_day0_60) / count(distinct activate_pay_device_id_day0_60), 0), 4) avg_order_cnt_day0_60,  -- 60天平均订单数
+  round(nvl(count(distinct order_id_day0_90) / count(distinct activate_pay_device_id_day0_90), 0), 4) avg_order_cnt_day0_90,  -- 90天平均订单数
+  round(nvl(count(distinct order_id_day0_180) / count(distinct activate_pay_device_id_day0_180), 0), 4) avg_order_cnt_day0_180,  -- 180天平均订单数
   nvl(pt, 'all') pt
 from
 (
@@ -131,16 +173,28 @@ from
     if(datediff(dd.first_pay_time, dd.pt) >=0 and datediff(dd.first_pay_time, dd.pt) <= 7,  dd.device_id, null) activate_pay_device_id_day0_7, -- 7天下单用户数
     if(datediff(dd.first_pay_time, dd.pt) >=0 and datediff(dd.first_pay_time, dd.pt) <= 14, dd.device_id, null) activate_pay_device_id_day0_14, -- 14天下单用户数
     if(datediff(dd.first_pay_time, dd.pt) >=0 and datediff(dd.first_pay_time, dd.pt) <= 28, dd.device_id, null) activate_pay_device_id_day0_28, -- 28天下单用户数
+    if(datediff(dd.first_pay_time, dd.pt) >=0 and datediff(dd.first_pay_time, dd.pt) <= 60, dd.device_id, null) activate_pay_device_id_day0_60, -- 60天下单用户数
+    if(datediff(dd.first_pay_time, dd.pt) >=0 and datediff(dd.first_pay_time, dd.pt) <= 90, dd.device_id, null) activate_pay_device_id_day0_90, -- 90天下单用户数
+    if(datediff(dd.first_pay_time, dd.pt) >=0 and datediff(dd.first_pay_time, dd.pt) <= 180, dd.device_id, null) activate_pay_device_id_day0_180, -- 180天下单用户数
+
     if(datediff(fp.pt, dd.pt) = 0, gmv, 0) gmv_day0, -- 当天GMV
     if(datediff(fp.pt, dd.pt) >=0 and datediff(fp.pt, dd.pt) <= 3,  fp.gmv, 0) gmv_day0_3, -- 3天GMV
     if(datediff(fp.pt, dd.pt) >=0 and datediff(fp.pt, dd.pt) <= 7,  fp.gmv, 0) gmv_day0_7, -- 7天GMV
     if(datediff(fp.pt, dd.pt) >=0 and datediff(fp.pt, dd.pt) <= 14, fp.gmv, 0) gmv_day0_14, -- 14天GMV
     if(datediff(fp.pt, dd.pt) >=0 and datediff(fp.pt, dd.pt) <= 28, fp.gmv, 0) gmv_day0_28, -- 28天GMV
+    if(datediff(fp.pt, dd.pt) >=0 and datediff(fp.pt, dd.pt) <= 60, fp.gmv, 0) gmv_day0_60, -- 60天GMV
+    if(datediff(fp.pt, dd.pt) >=0 and datediff(fp.pt, dd.pt) <= 90, fp.gmv, 0) gmv_day0_90, -- 90天GMV
+    if(datediff(fp.pt, dd.pt) >=0 and datediff(fp.pt, dd.pt) <= 180, fp.gmv, 0) gmv_day0_180, -- 180天GMV
+
     if(datediff(fp.pt, dd.pt) = 0, fp.order_id, null) order_id_day0, -- 当天订单
     if(datediff(fp.pt, dd.pt) >=0 and datediff(fp.pt, dd.pt) <= 3,  fp.order_id, null) order_id_day0_3, -- 3天订单数
     if(datediff(fp.pt, dd.pt) >=0 and datediff(fp.pt, dd.pt) <= 7,  fp.order_id, null) order_id_day0_7, -- 7天订单数
     if(datediff(fp.pt, dd.pt) >=0 and datediff(fp.pt, dd.pt) <= 14, fp.order_id, null) order_id_day0_14, -- 14天订单数
-    if(datediff(fp.pt, dd.pt) >=0 and datediff(fp.pt, dd.pt) <= 28, fp.order_id, null) order_id_day0_28 -- 28天订单数
+    if(datediff(fp.pt, dd.pt) >=0 and datediff(fp.pt, dd.pt) <= 28, fp.order_id, null) order_id_day0_28, -- 28天订单数
+    if(datediff(fp.pt, dd.pt) >=0 and datediff(fp.pt, dd.pt) <= 60, fp.order_id, null) order_id_day0_60, -- 60天订单数
+    if(datediff(fp.pt, dd.pt) >=0 and datediff(fp.pt, dd.pt) <= 90, fp.order_id, null) order_id_day0_90, -- 90天订单数
+    if(datediff(fp.pt, dd.pt) >=0 and datediff(fp.pt, dd.pt) <= 180, fp.order_id, null) order_id_day0_180 -- 180天订单数
+
   from
   (
     select 
@@ -148,7 +202,7 @@ from
       to_date(activate_time) pt
     from 
       dim.dim_vova_devices 
-    where to_date(activate_time) <= '${cur_date}' and to_date(activate_time) >= date_sub('${cur_date}', 30)
+    where to_date(activate_time) <= '${cur_date}' and to_date(activate_time) >= date_sub('${cur_date}', 180)
       and platform in ('ios', 'android')
   ) dd
   left join
@@ -163,7 +217,7 @@ from
       max(to_date(pay_time)) pt
     from
       dwd.dwd_vova_fact_pay
-    where to_date(pay_time) >= date_sub('${cur_date}', 30)
+    where to_date(pay_time) >= date_sub('${cur_date}', 180)
     group by order_id,datasource
   ) fp
   on dd.datasource = fp.datasource and dd.device_id = fp.device_id
