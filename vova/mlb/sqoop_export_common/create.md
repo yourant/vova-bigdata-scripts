@@ -33,7 +33,7 @@
     "jto" : "data",
     "project_name" : "vova_mlb_export_d",  # Azkaban project name
     "flow_name" : "vova_mlb_rec_i2i_sqoop_export", # Azkaban flow name
-    "knock_alias":"Andy.Zhang,Ethan.Zheng,Ted.wan,Juntao,kaicheng,deyou.shu,ruigong,Chuiyang,Ruohai" # 推荐组对应花名
+    "knock_alias":"Andy.Zhang,Ethan.Zheng,Ted.wan,Juntao,kaicheng,dyshu,ruigong,Chuiyang,Ruohai" # 推荐组对应花名
     }
   }'
   
@@ -44,7 +44,7 @@
     "jto" : "data",
     "project_name" : "vova_mlb_export_d",  # Azkaban project name
     "flow_name" : "vova_mlb_rec_u2i_sqoop_export", # Azkaban flow name
-    "knock_alias":"Andy.Zhang,Ethan.Zheng,Ted.wan,Juntao,kaicheng,deyou.shu,ruigong,Chuiyang,Ruohai" # 推荐组对应花名
+    "knock_alias":"Andy.Zhang,Ethan.Zheng,Ted.wan,Juntao,kaicheng,dyshu,ruigong,Chuiyang,Ruohai" # 推荐组对应花名
     }
   }'
   
@@ -56,7 +56,7 @@
     "jto" : "data",
     "project_name" : "vova_mlb_export_d",  # Azkaban project name
     "flow_name" : "vova_mlb_rec_q2i_sqoop_export", # Azkaban flow name
-    "knock_alias":"Andy.Zhang,Ethan.Zheng,Ted.wan,Juntao,kaicheng,deyou.shu,ruigong,Chuiyang,Ruohai" # 推荐组对应花名
+    "knock_alias":"Andy.Zhang,Ethan.Zheng,Ted.wan,Juntao,kaicheng,dyshu,ruigong,Chuiyang,Ruohai" # 推荐组对应花名
     }
   }'
   ```
