@@ -157,11 +157,11 @@ log.geo_country,
 log.device_id
 FROM dwd.dwd_vova_log_goods_impression log
 inner join dim.dim_vova_goods dg on dg.virtual_goods_id = log.virtual_goods_id
-left join dim.dim_zq_site dzs on dzs.datasource = log.datasource
+INNER JOIN ods_vova_vtsf.ods_vova_acg_app a on a.data_domain = log.datasource
 WHERE log.pt >= date_sub('${cur_date}', 6)
   AND log.pt <= '${cur_date}'
   AND log.platform = 'mob'
-  AND dzs.datasource is null
+  
   AND log.dp = 'others'
   AND log.datasource not in ('vova', 'ac')
      ) temp
@@ -206,11 +206,11 @@ log.geo_country,
 log.device_id
 FROM dwd.dwd_vova_log_goods_click log
 inner join dim.dim_vova_goods dg on dg.virtual_goods_id = log.virtual_goods_id
-left join dim.dim_zq_site dzs on dzs.datasource = log.datasource
+INNER JOIN ods_vova_vtsf.ods_vova_acg_app a on a.data_domain = log.datasource
 WHERE log.pt >= date_sub('${cur_date}', 6)
   AND log.pt <= '${cur_date}'
   AND log.platform = 'mob'
-  AND dzs.datasource is null
+  
   AND log.dp = 'others'
   AND log.datasource not in ('vova', 'ac')
      ) temp
@@ -288,11 +288,11 @@ dg.goods_id,
 log.device_id
 FROM dwd.dwd_vova_log_goods_impression log
 inner join dim.dim_vova_goods dg on dg.virtual_goods_id = log.virtual_goods_id
-left join dim.dim_zq_site dzs on dzs.datasource = log.datasource
+INNER JOIN ods_vova_vtsf.ods_vova_acg_app a on a.data_domain = log.datasource
 WHERE log.pt >= date_sub('${cur_date}', 6)
   AND log.pt <= '${cur_date}'
   AND log.platform = 'mob'
-  AND dzs.datasource is null
+  
   AND log.dp = 'others'
   AND log.datasource not in ('vova', 'ac')
      ) temp
@@ -329,11 +329,11 @@ dg.goods_id,
 log.device_id
 FROM dwd.dwd_vova_log_goods_click log
 inner join dim.dim_vova_goods dg on dg.virtual_goods_id = log.virtual_goods_id
-left join dim.dim_zq_site dzs on dzs.datasource = log.datasource
+INNER JOIN ods_vova_vtsf.ods_vova_acg_app a on a.data_domain = log.datasource
 WHERE log.pt >= date_sub('${cur_date}', 6)
   AND log.pt <= '${cur_date}'
   AND log.platform = 'mob'
-  AND dzs.datasource is null
+  
   AND log.dp = 'others'
   AND log.datasource not in ('vova', 'ac')
      ) temp
@@ -491,11 +491,11 @@ log.geo_country,
 log.device_id
 FROM dwd.dwd_vova_log_goods_impression log
 inner join dim.dim_vova_goods dg on dg.virtual_goods_id = log.virtual_goods_id
-left join dim.dim_zq_site dzs on dzs.datasource = log.datasource
+INNER JOIN ods_vova_vtsf.ods_vova_acg_app a on a.data_domain = log.datasource
 WHERE log.pt >= date_sub('${cur_date}', 6)
   AND log.pt <= '${cur_date}'
   AND log.platform = 'mob'
-  AND dzs.datasource is null
+  
      ) temp
 group by cube (datasource, rec_page_code, goods_id, nvl(geo_country, 'NA'))
 
@@ -538,11 +538,11 @@ log.geo_country,
 log.device_id
 FROM dwd.dwd_vova_log_goods_click log
 inner join dim.dim_vova_goods dg on dg.virtual_goods_id = log.virtual_goods_id
-left join dim.dim_zq_site dzs on dzs.datasource = log.datasource
+INNER JOIN ods_vova_vtsf.ods_vova_acg_app a on a.data_domain = log.datasource
 WHERE log.pt >= date_sub('${cur_date}', 6)
   AND log.pt <= '${cur_date}'
   AND log.platform = 'mob'
-  AND dzs.datasource is null
+  
      ) temp
 group by cube (datasource, rec_page_code, goods_id, nvl(geo_country, 'NA'))
 
@@ -617,11 +617,11 @@ dg.goods_id,
 log.device_id
 FROM dwd.dwd_vova_log_goods_impression log
 inner join dim.dim_vova_goods dg on dg.virtual_goods_id = log.virtual_goods_id
-left join dim.dim_zq_site dzs on dzs.datasource = log.datasource
+INNER JOIN ods_vova_vtsf.ods_vova_acg_app a on a.data_domain = log.datasource
 WHERE log.pt >= date_sub('${cur_date}', 6)
   AND log.pt <= '${cur_date}'
   AND log.platform = 'mob'
-  AND dzs.datasource is null
+  
      ) temp
 WHERE rec_page_code != 'others'
 group by cube (datasource, goods_id, nvl(temp.region_code, 'NALL'))
@@ -656,11 +656,11 @@ dg.goods_id,
 log.device_id
 FROM dwd.dwd_vova_log_goods_click log
 inner join dim.dim_vova_goods dg on dg.virtual_goods_id = log.virtual_goods_id
-left join dim.dim_zq_site dzs on dzs.datasource = log.datasource
+INNER JOIN ods_vova_vtsf.ods_vova_acg_app a on a.data_domain = log.datasource
 WHERE log.pt >= date_sub('${cur_date}', 6)
   AND log.pt <= '${cur_date}'
   AND log.platform = 'mob'
-  AND dzs.datasource is null
+  
      ) temp
 WHERE rec_page_code != 'others'
 group by cube (datasource, goods_id, nvl(temp.region_code, 'NALL'))
