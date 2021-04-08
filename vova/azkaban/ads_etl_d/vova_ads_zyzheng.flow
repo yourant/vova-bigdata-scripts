@@ -23,6 +23,7 @@ nodes:
       - ads_zq_fn_vova_goods_export
       - ads_app_group_export
       - ads_vova_sale_goods_m
+      - ads_vova_six_mct_goods_flow_support_d
 
   - name: start_flag
     type: command
