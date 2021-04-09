@@ -145,7 +145,7 @@ select event_fingerprint,
        platform,
        collector_tstamp,
        dvce_created_tstamp,
-       derived_tstamp,
+       derived_tstamp,ods_vova_gsn_coupon_sign_goods
        collector_ts,
        dvce_created_ts,
        name_tracker,
