@@ -16,7 +16,7 @@ fi
 #dim_vova_category
 #ods_vova_brand
 sql="
-INSERT OVERWRITE TABLE ads.ads_vova_goods_sn_performance PARTITION (pt = '${cur_date}')
+INSERT OVERWRITE TABLE ads.ads_vova_goods_sn_performance_1m PARTITION (pt = '${cur_date}')
 SELECT
 /*+ REPARTITION(10) */
        final.goods_sn,
@@ -77,7 +77,7 @@ FROM (
                            FROM dwd.dwd_vova_log_goods_impression log
                                     INNER JOIN dim.dim_vova_goods dg ON log.virtual_goods_id = dg.virtual_goods_id
                                     INNER JOIN ods_vova_vtsf.ods_vova_acg_app a on a.data_domain = log.datasource
-                           WHERE log.pt >= date_sub('${cur_date}', 6)
+                           WHERE log.pt >= date_sub('${cur_date}', 29)
                              AND log.pt <= '${cur_date}'
                              
                        ) temp
@@ -105,7 +105,7 @@ FROM (
                            FROM dwd.dwd_vova_log_goods_click log
                                     INNER JOIN dim.dim_vova_goods dg ON log.virtual_goods_id = dg.virtual_goods_id
                                     INNER JOIN ods_vova_vtsf.ods_vova_acg_app a on a.data_domain = log.datasource
-                           WHERE log.pt >= date_sub('${cur_date}', 6)
+                           WHERE log.pt >= date_sub('${cur_date}', 29)
                              AND log.pt <= '${cur_date}'
                              
                        ) temp
@@ -129,7 +129,7 @@ FROM (
                                   IF(fp.from_domain LIKE '%api%', 'mob', 'web')     AS platform
                            FROM dwd.dwd_vova_fact_pay fp
                              INNER JOIN dim.dim_vova_goods dg ON fp.goods_id = dg.goods_id
-                           WHERE DATE(fp.pay_time) >= date_sub('${cur_date}', 6)
+                           WHERE DATE(fp.pay_time) >= date_sub('${cur_date}', 29)
                              AND DATE(fp.pay_time) <= '${cur_date}'
                        ) temp
                   GROUP BY CUBE (temp.goods_sn, temp.datasource, temp.platform, temp.region_code)
@@ -170,7 +170,7 @@ FROM (
                            FROM dwd.dwd_vova_log_goods_impression log
                                     INNER JOIN dim.dim_vova_goods dg ON log.virtual_goods_id = dg.virtual_goods_id
                                     INNER JOIN ods_vova_vtsf.ods_vova_acg_app a on a.data_domain = log.datasource
-                           WHERE log.pt >= date_sub('${cur_date}', 6)
+                           WHERE log.pt >= date_sub('${cur_date}', 29)
                              AND log.pt <= '${cur_date}'
                              AND log.dp = 'others'
                              AND log.datasource not in ('vova', 'ac')
@@ -200,7 +200,7 @@ FROM (
                            FROM dwd.dwd_vova_log_goods_click log
                                     INNER JOIN dim.dim_vova_goods dg ON log.virtual_goods_id = dg.virtual_goods_id
                                     INNER JOIN ods_vova_vtsf.ods_vova_acg_app a on a.data_domain = log.datasource
-                           WHERE log.pt >= date_sub('${cur_date}', 6)
+                           WHERE log.pt >= date_sub('${cur_date}', 29)
                              AND log.pt <= '${cur_date}'
                              AND log.dp = 'others'
                              AND log.datasource not in ('vova', 'ac')
@@ -226,7 +226,7 @@ FROM (
                                   IF(fp.from_domain LIKE '%api%', 'mob', 'web')     AS platform
                            FROM dwd.dwd_vova_fact_pay fp
                              INNER JOIN dim.dim_vova_goods dg ON fp.goods_id = dg.goods_id
-                           WHERE DATE(fp.pay_time) >= date_sub('${cur_date}', 6)
+                           WHERE DATE(fp.pay_time) >= date_sub('${cur_date}', 29)
                              AND DATE(fp.pay_time) <= '${cur_date}'
                              AND fp.datasource not in ('vova', 'ac')
                        ) temp
@@ -268,7 +268,7 @@ spark-sql \
 --conf "spark.dynamicAllocation.minExecutors=5" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
 --conf "spark.dynamicAllocation.maxExecutors=100" \
---conf "spark.app.name=ads_vova_goods_sn_performance" \
+--conf "spark.app.name=ads_vova_goods_sn_performance_1m" \
 --conf "spark.default.parallelism = 380" \
 --conf "spark.sql.shuffle.partitions=380" \
 --conf "spark.sql.adaptive.enabled=true" \

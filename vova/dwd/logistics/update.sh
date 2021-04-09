@@ -50,7 +50,8 @@ select /*+ REPARTITION(100) */
        ogs.collecting_time,
        ogs.shipping_time,
        ogs.shipping_abnormal_status,
-       ogs.sku_collecting_status
+       ogs.sku_collecting_status,
+       ost.shipping_tracking_number
 from ods_vova_vts.ods_vova_order_info oi
          left join ods_vova_vts.ods_vova_order_goods og on og.order_id = oi.order_id
          left join ods_vova_vts.ods_vova_order_goods_status ogs on ogs.order_goods_id = og.rec_id

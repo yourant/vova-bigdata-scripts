@@ -56,6 +56,8 @@ sqoop export \
 --username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
 --table ads_buyer_portrait_d_new \
 --m 1 \
+--update-key "user_id" \
+--update-mode allowinsert \
 --hcatalog-database ads \
 --hcatalog-table ads_vova_buyer_portrait_d \
 --hcatalog-partition-keys pt \

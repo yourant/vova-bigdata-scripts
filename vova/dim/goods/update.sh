@@ -43,7 +43,8 @@ select /*+ REPARTITION(300) */
        got.last_off_time,
        g.goods_thumb,
        g.old_goods_id,
-       nvl(r.group_id,-1) group_id
+       nvl(r.group_id,-1) group_id,
+       g.brand_level
 from ods_vova_vts.ods_vova_goods g
          inner join ods_vova_vts.ods_vova_virtual_goods vg on g.goods_id = vg.goods_id
          inner join dim.dim_vova_category c on c.cat_id = g.cat_id
