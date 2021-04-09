@@ -12,6 +12,7 @@ nodes:
       command: echo "stop job"
     dependsOn:
       - sqoop_mlb_vova_rec_m_nbi_nb_d
+      - sqoop_mlb_vova_goods_second_cat
 
   - name: start_flag
     type: command
@@ -46,6 +47,15 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_new_user_reg_rec_out_data
+      retries: 20
+      retry.backoff: 1200000
+    dependsOn:
+      - start_flag
+
+  - name: judge_mlb_vova_goods_second_cat
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_goods_second_cat
       retries: 20
       retry.backoff: 1200000
     dependsOn:
@@ -126,6 +136,16 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_mlb_vova_new_user_reg_rec_out_data
+
+# [8721]首页上线新激活用户兴趣探测策略
+  - name: sqoop_mlb_vova_goods_second_cat
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/goods_cat/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_goods_second_cat
 
 
 
