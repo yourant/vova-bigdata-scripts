@@ -21,7 +21,7 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/vova/mlb/sqoop_export_common/mlb_vova_rec_q2i.sh '${freedoms}'
-      retries: 45
+      retries: 5
       retry.backoff: 1200000
     dependsOn:
       - start_flag
