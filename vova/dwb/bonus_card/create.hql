@@ -237,3 +237,37 @@ emrfs sync s3://bigdata-offline/warehouse/dwb/dwb_vova_vouchercard_hp_paid_reten
 msck repair table dwb.dwb_vova_vouchercard_hp_paid_retention;
 select * from dwb.dwb_vova_vouchercard_hp_paid_retention limit 20;
 
+#####################################################################################*/
+[9031]省钱月卡报表增加筛选维度
+任务描述
+需求背景：
+1、之前的省钱月卡都是需要用户支付成才能拿到月卡资格的，03/29将发布的新版0组用户可通过登录注册拿到月卡资格。
+2、经确认当前当前省钱月卡报表中，表一：购卡链路转化率监控-presto 的开卡成功UV字段是根据支付成功状态来取的。
+3、为了观测登录注册开月卡的用户的相关表现，需要在省钱月卡报表中增加筛选维度。
+
+需求说明：
+1、省钱月卡报表 增加筛选维度 月卡类型：All/付费/免费
+2、表一：购卡链路转化率监控-presto 月卡类型字段选择为All时 开卡成功UV 字段取开卡成功的UV（含付费和免费）。
+3、历史数据从2021/01/01开始跑！
+
+添加筛选项的表：
+表一：购卡链路转化率监控-presto
+dwb.dwb_vova_bonus_card_conversion;
+alter table dwb.dwb_vova_bonus_card_conversion add columns(is_paid string comment '是否付费') cascade;
+
+表三：月卡用户交易数据-presto
+dwb.dwb_vova_bonus_card_pay;
+alter table dwb.dwb_vova_bonus_card_pay add columns(is_paid string comment '是否付费') cascade;
+
+表四：主页留存数据监控-presto
+dwb.dwb_vova_vouchercard_hp_paid_retention;
+alter table dwb.dwb_vova_vouchercard_hp_paid_retention add columns(is_paid string comment '是否付费') cascade;
+
+
+
+
+
+
+
+
+
