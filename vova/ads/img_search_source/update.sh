@@ -179,7 +179,7 @@ img_color,
 brand_id
 from ads.ads_vova_img_search_source_d where pt='$cur_date';
 "
-spark-sql --conf "spark.app.name=ads_vova_img_search_source_d" -e "$sql"
+spark-sql --conf "spark.app.name=ads_vova_img_search_source_d_zhangyin"  --conf "spark.dynamicAllocation.maxExecutors=100" -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1

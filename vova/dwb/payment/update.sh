@@ -118,6 +118,7 @@ WHERE log.pt >= '${cur_date}'
   AND log.pt < date_add('${cur_date}', 7)
   AND log.page_code = 'payment'
   AND log.element_name = 'payment_confirm'
+  AND log.datasource = 'vova'
 GROUP BY log.device_id
 ) log_data ON ddog.device_id = log_data.device_id
 ) pay_data

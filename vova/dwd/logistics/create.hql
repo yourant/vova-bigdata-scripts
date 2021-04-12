@@ -40,6 +40,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS dwd.dwd_vova_fact_logistics
     collecting_time          timestamp COMMENT '集运订单的商家标记发货时间',
     shipping_time            timestamp COMMENT '发货时间',
     shipping_abnormal_status bigint COMMENT '物流异常状态: 0.正常, 1.异常, 2.后台撤销, 3.申诉成功撤销, 4.已修改运单',
-    sku_collecting_status    bigint COMMENT '退货状态0未退货/无需退货1待退货/需退货2退货中/退货物流进行中3退货收货仓已签收4签收合格/退货完成'
+    sku_collecting_status    bigint COMMENT '退货状态0未退货/无需退货1待退货/需退货2退货中/退货物流进行中3退货收货仓已签收4签收合格/退货完成',
+    shipping_tracking_number string COMMENT '运单号',
 ) COMMENT '物流事实表'
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;

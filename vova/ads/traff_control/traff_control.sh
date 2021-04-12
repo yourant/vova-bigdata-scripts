@@ -11,6 +11,7 @@ echo "----day: "${day}"; traff_control----"
 spark-submit --master yarn \
 --deploy-mode client  \
 --conf spark.dynamicAllocation.maxExecutors=50 \
+--conf spark.driver.maxResultSize=2G \
 --name ads_vova_traffic_control_shudeyou  \
 --class com.vova.mct_traff.MctTraff s3://vova-mlb/REC/util/traffic_control.jar ${day} ${isUpdateDatabase}
 if [ $? -ne 0 ];then

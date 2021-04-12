@@ -1,0 +1,73 @@
+---
+config:
+  failure.emails: yzhang13@vova.com.hk
+  retries: 5
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_img_search_source_d
+      - ads_vova_image_vector_update_status_d
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: vova_image_vector_update_status_get
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=vova_image_vector_extract_data_dst --from=data --to=service --valid_hour=24
+      retries: 15
+      retry.backoff: 3600000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_img_search_source_d
+    type: command
+    config:
+      retries: 5
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/img_search_source/update.sh
+    dependsOn:
+      - vova_image_vector_update_status_get
+
+  - name: vova_image_vector_handle_get
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=vova_image_vector_extract_cv --from=cv --to=data --valid_hour=2
+      retries: 20
+      retry.backoff: 3600000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_image_vector_d
+    type: command
+    config:
+      retries: 5
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/image_vector/update.sh
+    dependsOn:
+      - vova_image_vector_handle_get
+
+  - name: ads_vova_image_vector_export_d
+    type: command
+    config:
+      retries: 5
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/image_vector/update_export.sh
+    dependsOn:
+      - ads_vova_image_vector_d
+
+  - name: ads_vova_image_vector_update_status_d
+    type: command
+    config:
+      retries: 5
+      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/image_vector/update_status.sh
+    dependsOn:
+      - ads_vova_image_vector_export_d

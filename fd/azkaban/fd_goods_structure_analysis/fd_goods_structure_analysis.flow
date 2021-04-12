@@ -1,6 +1,6 @@
 ---
 config:
-  failure.emails: htgao@i9i8.com
+  failure.emails: bob.zhu@i9i8.com
   retries: 30
   retry.backoff: 600000
 
@@ -36,6 +36,14 @@ nodes:
     dependsOn:
       - fd_goods_structure_analysis_start
 
+
+  - name: judge_ods_fd_vb_goods_project
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_goods_project
+    dependsOn:
+      - fd_goods_structure_analysis_start
+
   - name: dwb_fd_goods_structure_analysis
     type: command
     config:
@@ -45,6 +53,7 @@ nodes:
       - judge_fd_dim_goods
       - judge_ods_fd_goods_provider_department
       - judge_dwd_fd_order_goods
+      - judge_ods_fd_vb_goods_project
 
   - name: fd_goods_structure_analysis_end
     type: noop
