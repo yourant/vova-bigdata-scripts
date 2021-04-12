@@ -18,6 +18,7 @@ create table themis.mlb_vova_goods_second_cat_new(
   second_cat_id      int         NOT NULL COMMENT '二级品类id',
   update_time        datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 PRIMARY KEY (id) USING BTREE,
+KEY virtual_goods_id (virtual_goods_id) USING BTREE,
 UNIQUE KEY goods_id (goods_id) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='在架商品及二级品类id'
 ;
@@ -29,6 +30,7 @@ create table if not exists themis.mlb_vova_goods_second_cat (
   second_cat_id      int         NOT NULL COMMENT '二级品类id',
   update_time        datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 PRIMARY KEY (id) USING BTREE,
+KEY virtual_goods_id (virtual_goods_id) USING BTREE,
 UNIQUE KEY goods_id (goods_id) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='在架商品及二级品类id'
 ;

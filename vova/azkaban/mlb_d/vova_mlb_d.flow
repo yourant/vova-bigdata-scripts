@@ -16,6 +16,9 @@ nodes:
       - mlb_algo_vova_comatrix
       - mlb_algo_vova_item2vec
       - mlb_algo_vova_mix_als
+      - mlb_vova_goods_second_cat
+      - mlb_vova_algo_mct_group_d
+      - mlb_vova_country_detect_d
 
   - name: start_flag
     type: command
@@ -139,6 +142,27 @@ nodes:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dws_vova_buyer_portrait
       retries: 100
       retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_merchant
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_merchant
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_goods_impression
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_impression
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_mbrmct_mct_cd
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_mbrmct_mct_cd
     dependsOn:
       - start_flag
 
@@ -301,3 +325,33 @@ nodes:
       - judge_dwd_vova_fact_pay
       - judge_dim_vova_goods
       - judge_ads_vova_traff_control
+
+# [8721]首页上线新激活用户兴趣探测策略
+  - name: mlb_vova_goods_second_cat
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/goods_cat/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+
+  - name: mlb_vova_algo_mct_group_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/algo/ads_algo_mct_group_d.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_mbrmct_mct_cd
+      - judge_dim_vova_merchant
+
+
+  - name: mlb_vova_country_detect_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/country_detect_d/country_detect.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_goods_impression

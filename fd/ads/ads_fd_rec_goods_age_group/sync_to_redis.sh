@@ -6,7 +6,7 @@ else
   pt=$2
 fi
 
-table="fd_goods_age"
+table="fd_goods_age_group"
 key="goods_id"
 sql="select goods_id,age_group from ads.ads_fd_goods_age_group where pt = '${pt}'"
 

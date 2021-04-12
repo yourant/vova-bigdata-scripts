@@ -59,10 +59,21 @@
     "knock_alias":"Andy.Zhang,Ethan.Zheng,Ted.wan,Juntao,kaicheng,Deyou,ruigong,Chuiyang,Ruohai" # 推荐组对应花名
     }
   }'
+  
+curl -L -X POST 'http://ab81e133a11e611ebbee60ebf226a60d-1866282236.us-east-1.elb.amazonaws.com/vova/api/jobmss/upsert-job-flow' -H 'Content-Type: application/json' --data-raw '{
+  data:{
+  "jname" : "mlb_vova_k2i",
+    "jfrom" : "mlb",
+    "jto" : "data",
+    "project_name" : "vova_mlb_export_d",  # Azkaban project name
+    "flow_name" : "vova_mlb_rec_k2i_sqoop_export", # Azkaban flow name
+    "knock_alias":"Andy.Zhang,Ethan.Zheng,Ted.wan,Juntao,kaicheng,Deyou,ruigong,Chuiyang,Ruohai" # 推荐组对应花名
+    }
+  }'
   ```
-
+  
   - 推荐组同学需要发的消息
-
+  
   ```shell
   curl -L -X POST 'http://ab81e133a11e611ebbee60ebf226a60d-1866282236.us-east-1.elb.amazonaws.com/vova/api/jobmss/out' -H 'Content-Type: application/json' --data-raw '{
       "data":[
@@ -78,7 +89,7 @@
       ]
   }'
   ```
-
+  
   - 查看 Knock 消息， flow是否启动成功
 
 

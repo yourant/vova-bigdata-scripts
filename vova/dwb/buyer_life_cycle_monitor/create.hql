@@ -163,4 +163,10 @@ alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(avg_order_cnt_day0
 alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(avg_order_cnt_day0_90 double comment '90天平均订单数') cascade;
 alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(avg_order_cnt_day0_180 double comment '180天平均订单数') cascade;
 
+# 2 ###################
+当日补贴成本	当日激活用户中在当日下单的用户所用补贴之和/当天新激活用户数
+30天补贴成本	当日激活用户中在0-30天内下单的用户所用补贴之和/当天新激活用户数
+
+
+
 

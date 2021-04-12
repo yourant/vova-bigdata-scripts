@@ -117,8 +117,8 @@ select
   count(distinct order_id_day0_90) order_cnt_day0_90, -- 90天订单数
   count(distinct order_id_day0_180) order_cnt_day0_180, -- 180天订单数
 
-  round(nvl(sum(bonus_day0) / count(distinct activate_pay_device_id), 0), 4) avg_bonus_day0, -- 当日补贴成本
-  round(nvl(sum(bonus_day0_30) / count(distinct activate_pay_device_id), 0), 4) avg_bonus_day0_30, -- 30天补贴成本
+  round(nvl(sum(bonus_day0) / count(distinct device_id), 0), 4) avg_bonus_day0, -- 当日补贴成本
+  round(nvl(sum(bonus_day0_30) / count(distinct device_id), 0), 4) avg_bonus_day0_30, -- 30天补贴成本
   round(nvl(sum(gmv_day0   ) / count(distinct device_id), 0), 4) liv_day0   , -- 当天LTV
   round(nvl(sum(gmv_day0_3 ) / count(distinct device_id), 0), 4) liv_day0_3 , -- 3天LTV
   round(nvl(sum(gmv_day0_7 ) / count(distinct device_id), 0), 4) liv_day0_7 , -- 7天LTV
