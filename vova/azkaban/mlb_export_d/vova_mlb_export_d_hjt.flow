@@ -27,14 +27,32 @@ nodes:
       retries: 72
       retry.backoff: 600000
     dependsOn:
-      - judge_message_put_mlb_graph_embedding_nobrand_job_message_put
+      - judge_mlb_graph_embedding_nobrand
 
-  - name: judge_message_put_mlb_graph_embedding_nobrand_job_message_put
+#  - name: judge_message_put_mlb_graph_embedding_nobrand_job_message_put
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=data_graph_embedding_rec --from=data --to=mlb --jtype=1D --retry=0
+#      retries: 6
+#      retry.backoff: 600000
+#    dependsOn:
+#      - judge_mlb_graph_embedding_nobrand
+
+  - name: judge_mlb_graph_embedding_nobrand
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=data_graph_embedding_rec --from=data --to=mlb --jtype=1D --retry=0
-      retries: 6
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/graph_embedding_no_brand_data/update_before.sh
+      retries: 3
       retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_goods_behave
+
+  - name: judge_dws_vova_buyer_goods_behave
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dws_vova_buyer_goods_behave
+      retries: 10
+      retry.backoff: 300000
     dependsOn:
       - start_flag
 
