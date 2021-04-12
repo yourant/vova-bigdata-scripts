@@ -14,7 +14,7 @@ spark-submit \
 --driver-cores 1 \
 --driver-memory 2G \
 --conf spark.dynamicAllocation.maxExecutors=150 \
---class com.vova.model.Main s3://vova-mlb/REC/util/rec-training.jar $cur_date
+--class com.vova.model.Main s3://vova-mlb/REC/util/mct_group.jar $cur_date
 
 #如果脚本失败，则报错
 
