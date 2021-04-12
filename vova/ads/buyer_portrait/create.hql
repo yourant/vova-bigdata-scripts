@@ -52,6 +52,8 @@ CREATE external TABLE IF NOT EXISTS ads.ads_vova_buyer_push_portrait
 ) COMMENT '推送用户画像'
  PARTITIONED BY ( pt string) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
+alter table ads.ads_vova_buyer_push_portrait add columns(`gmv_stage` int comment '国家近三月客单价分层，1:小于1倍客单价，2：大于等于1倍客单价小于2倍客单价，3：大于等于2倍客单价小于等于3倍客单价，4：大于等于3倍客单价') cascade;
+
 
 
 

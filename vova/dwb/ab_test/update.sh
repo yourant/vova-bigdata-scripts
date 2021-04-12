@@ -106,7 +106,7 @@ group by cube (datasource, platform, is_brand, rec_page_code, rec_code, rec_vers
 
 insert overwrite table dwb.dwb_vova_ab_test PARTITION (pt = '${cur_date}')
 select
-/*+ REPARTITION(4) */
+/*+ REPARTITION(40) */
     '${cur_date}'                                               cur_date,
     coalesce(a.datasource,c.datasource) datasource,
     coalesce(a.platform,c.platform) platform,

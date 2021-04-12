@@ -16,6 +16,7 @@ nodes:
       - mlb_algo_vova_comatrix
       - mlb_algo_vova_item2vec
       - mlb_algo_vova_mix_als
+      - mlb_vova_goods_second_cat
 
   - name: start_flag
     type: command
@@ -301,3 +302,13 @@ nodes:
       - judge_dwd_vova_fact_pay
       - judge_dim_vova_goods
       - judge_ads_vova_traff_control
+
+# [8721]首页上线新激活用户兴趣探测策略
+  - name: mlb_vova_goods_second_cat
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/goods_cat/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods

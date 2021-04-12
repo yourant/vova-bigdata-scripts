@@ -1,8 +1,8 @@
 ---
 config:
-  failure.emails: kaicheng@vova.com.hk
   retries: 5
   retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
 
 nodes:
   - name: end_flag
@@ -10,18 +10,19 @@ nodes:
     config:
       command: echo "stop job"
     dependsOn:
-      - mlb_vova_rec_q2i
+      - mlb_goods_emb_search
 
   - name: start_flag
     type: command
     config:
       command: echo "start job"
 
-  - name: mlb_vova_rec_q2i
+
+  - name: mlb_goods_emb_search
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/mlb/sqoop_export_common/mlb_vova_rec_q2i.sh '${freedoms}'
-      retries: 5
-      retry.backoff: 1200000
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/goods_emb_search/update.sh '${freedoms}'
+      retries: 10
+      retry.backoff: 600000
     dependsOn:
       - start_flag

@@ -15,105 +15,8 @@ echo "table_suffix: ${table_suffix}"
 
 job_name="dwb_vova_bonus_card_req6571_chenkai_${cur_date}"
 
-###逻辑sql 表二筛选项与其他表不同，is_paid
+###逻辑sql
 sql="
--- 表二：优惠券发放与核销
-create table if not exists tmp.tmp_bonus_card_coupon_use_${table_suffix} as
-  select
-    fc.order_id order_id,
-    sum(dog.shipping_fee+dog.shop_price*dog.goods_number) gmv
-  from
-    dwd.dwd_vova_fact_coupon fc
-  left join
-    dim.dim_vova_coupon dc
-  on fc.datasource = dc.datasource and fc.cpn_code = dc.cpn_code
-  left join
-    dim.dim_vova_order_goods dog
-  on fc.datasource = dog.datasource and fc.cpn_code = dog.coupon_code
-  where fc.datasource = 'vova' and to_date(fc.used_time) = '${cur_date}'
-    and dc.cpn_cfg_type_id in ('470', '469', '468', '467', '466', '465', '464', '463', '461', '460', '459', '458', '457', '456', '455', '454', '453', '452', '451', '450', '449', '448', '447', '446', '445', '444', '443', '442', '441', '439')
-    and dog.email NOT REGEXP '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
-    and dog.pay_status >=1
-  group by fc.order_id
-;
-
-insert overwrite table dwb.dwb_vova_bonus_card_coupon partition(pt='${cur_date}')
-select
-/*+ REPARTITION(1) */
-  datasource,
-  region_code,
-  platform,
-  gmv_stage,
-  tmp1.cpn_cfg_type_id cpn_cfg_type_id,
-  nvl(cpn_cfg_type_name, 'NA') cpn_cfg_type_name,
-  get_cpn_cnt, -- 优惠券已领数量
-  get_cpn_user_cnt, -- 优惠券已领人数
-  get_cpn_sum, -- 优惠券发放金额
-  use_cpn_cnt, -- 优惠券使用数量
-  use_cpn_user_cnt, -- 优惠券使用人数
-  use_cpn_sum, -- 优惠券使用金额
-  nvl(cpn_order_gmv, 0) -- 优惠券带来GMV
-from
-(
-  select
-    'vova' datasource,
-    nvl(region_code, 'all') region_code,
-    nvl(platform, 'all') platform,
-    nvl(gmv_stage, 'all') gmv_stage,
-    nvl(cpn_cfg_type_id, 'all') cpn_cfg_type_id,
-    count(distinct get_cpn_id) get_cpn_cnt, -- 优惠券已领数量
-    count(distinct get_cpn_buyer_id) get_cpn_user_cnt, -- 优惠券已领人数
-    sum(get_cpn_sum) get_cpn_sum, -- 优惠券发放金额
-
-    count(distinct use_cpn_id) use_cpn_cnt, -- 优惠券使用数量
-    count(distinct use_cpn_user_id) use_cpn_user_cnt, -- 优惠券使用人数
-    sum(use_cpn_sum) use_cpn_sum, -- 优惠券使用金额
-    sum(cpn_order_gmv) cpn_order_gmv -- 优惠券带来GMV
-  from
-  (
-    select
-      nvl(db.region_code, 'NA') region_code,
-      nvl(db.platform, 'NA') platform,
-      nvl(abgs.gmv_stage, '0') gmv_stage, -- 用户等级
-      nvl(dc.cpn_cfg_type_id, '0') cpn_cfg_type_id,
-      if(to_date(give_time) ='${cur_date}', fc.cpn_id, null) get_cpn_id, -- 优惠券已领数量
-      if(to_date(give_time) ='${cur_date}', fc.buyer_id, null) get_cpn_buyer_id, -- 优惠券已领人数
-      if(to_date(give_time) ='${cur_date}' and dc.cpn_cfg_val is not null, dc.cpn_cfg_val, 0) get_cpn_sum, --     优惠券发放金额
-      if(to_date(used_time) ='${cur_date}', fc.cpn_id, null) use_cpn_id, -- 优惠券使用数量
-      if(to_date(used_time) ='${cur_date}', fc.buyer_id, null) use_cpn_user_id, -- 优惠券使用人数
-      if(to_date(used_time) ='${cur_date}' and dc.cpn_cfg_val is not null, dc.cpn_cfg_val, 0) use_cpn_sum, --     优惠券使用金额
-      tmp1.gmv cpn_order_gmv -- 优惠券带来GMV
-    from
-      dwd.dwd_vova_fact_coupon fc
-    left join
-      dim.dim_vova_coupon dc
-    on fc.datasource = dc.datasource and fc.cpn_id = dc.cpn_id
-    left join
-      dim.dim_vova_buyers db
-    on fc.datasource = db.datasource and fc.buyer_id = db.buyer_id
-    left join
-        (select * from ads.ads_vova_buyer_portrait_feature where pt='${cur_date}') abgs
-    on fc.buyer_id = abgs.buyer_id
-    left join
-      tmp.tmp_bonus_card_coupon_use_${table_suffix} tmp1
-    on fc.order_id = tmp1.order_id
-    where fc.datasource = 'vova' and (to_date(give_time) ='${cur_date}' or to_date(used_time) ='${cur_date}')
-      and dc.cpn_cfg_type_id in ('470', '469', '468', '467', '466', '465', '464', '463', '461', '460', '459', '458', '457', '456', '455', '454', '453', '452', '451', '450', '449', '448', '447', '446', '445', '444', '443', '442', '441', '439')
-      and db.email NOT REGEXP '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
-      and tmp1.order_id is not null
-  )
-  group by cube(region_code, platform, gmv_stage, cpn_cfg_type_id)
-) tmp1
-left join
-(
-  select
-    distinct cpn_cfg_type_id, cpn_cfg_type_name
-  from
-    dim.dim_vova_coupon
-) dc
-on tmp1.cpn_cfg_type_id = dc.cpn_cfg_type_id
-;
-
 -- 表一：购卡链路转化率监控
 insert overwrite table dwb.dwb_vova_bonus_card_conversion partition(pt='${cur_date}')
 select
@@ -452,7 +355,7 @@ from
     where datasource = 'vova'
       and pt in ('${cur_date}', date_sub('${cur_date}', 1), date_sub('${cur_date}', 7), date_sub('${cur_date}', 14), date_sub('${cur_date}', 28))
       and platform = 'mob'
-      and email NOT REGEXP '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
+      and email NOT REGEXP '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com' 
   ) flsv
   left join
     dim.dim_vova_devices dd
@@ -687,7 +590,7 @@ from
     where pt in ('${cur_date}', date_sub('${cur_date}', -1), date_sub('${cur_date}', 6), date_sub('${cur_date}', 13), date_sub('${cur_date}', 27)
       , date_sub('${cur_date}', 7), date_sub('${cur_date}', 14), date_sub('${cur_date}', 21))
       -- and page_code = 'vouchercard_hp_paid'
-      and email NOT REGEXP '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
+      and email NOT REGEXP '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com' 
       and datasource = 'vova'
   ) flsv_today
   on flsv.device_id = flsv_today.device_id
@@ -717,12 +620,12 @@ select
   sum(bonus_card_first_order_cnt) bonus_card_first_order_cnt,   -- 月卡用户首单订单量
   sum(bonus_card_device_cnt) bonus_card_device_cnt, -- 月卡用户支付成功UV
   sum(bonus_card_price) bonus_card_price, -- 开卡费用总和
-  sum(gmv) gmv, -- 大盘GMV
+  sum(gmv) gmv, -- 大盘GMV 
   sum(cpn_cfg_val) cpn_cfg_val, -- 月卡优惠券抵扣金额
   is_paid -- 是否付费
-from
+from 
 (
-  select
+  select 
     region_code,
     os_type,
     main_channel,
@@ -738,10 +641,10 @@ from
     0 gmv,
     0 cpn_cfg_val,
     is_paid
-  from
-    tmp.tmp_bonus_card_pay_${table_suffix}
+  from 
+    tmp.tmp_bonus_card_pay_${table_suffix}  
 union all
-  select
+  select 
     region_code,
     os_type,
     main_channel,
@@ -757,10 +660,10 @@ union all
     gmv,
     cpn_cfg_val,
     is_paid
-  from
-    tmp.tmp_bonus_card_gmv_${table_suffix}
+  from 
+    tmp.tmp_bonus_card_gmv_${table_suffix} 
 union all
-  select
+  select 
     region_code,
     os_type,
     main_channel,
@@ -776,10 +679,10 @@ union all
     0 gmv,
     0 cpn_cfg_val,
     is_paid
-  from
-    tmp.tmp_bonus_card_screen_view_${table_suffix}
+  from 
+    tmp.tmp_bonus_card_screen_view_${table_suffix} 
   where pt = '${cur_date}'
-)
+) 
 group by region_code, os_type, main_channel, is_new, gmv_stage, is_paid
 ;
 
@@ -830,7 +733,7 @@ from
     from
       ods_vova_vts.ods_vova_bonus_card
   ) tmp2
-  on flgi.buyer_id = tmp2.user_id
+  on flgi.buyer_id = tmp2.user_id 
   where flgi.datasource = 'vova'
     and flgi.pt in ('${cur_date}', date_sub('${cur_date}', 1), date_sub('${cur_date}', 7), date_sub('${cur_date}', 14), date_sub('${cur_date}', 28))
     and flgi.platform = 'mob' and page_code = 'vouchercard_hp_paid'
@@ -887,7 +790,7 @@ from
     from
       ods_vova_vts.ods_vova_bonus_card
   ) tmp2
-  on flgc.buyer_id = tmp2.user_id
+  on flgc.buyer_id = tmp2.user_id 
   where flgc.datasource = 'vova'
     and flgc.pt in ('${cur_date}', date_sub('${cur_date}', 1), date_sub('${cur_date}', 7), date_sub('${cur_date}', 14), date_sub('${cur_date}', 28))
     and flgc.platform = 'mob' and page_code = 'vouchercard_hp_paid'
@@ -944,7 +847,7 @@ from
     from
       ods_vova_vts.ods_vova_bonus_card
   ) tmp2
-  on flcc.buyer_id = tmp2.user_id
+  on flcc.buyer_id = tmp2.user_id 
     and from_unixtime(tmp2.start_time, 'yyyy-MM-dd') <= flcc.pt and from_unixtime(tmp2.end_time, 'yyyy-MM-dd') >= flcc.pt
   where flcc.datasource = 'vova'
     and flcc.pt in ('${cur_date}', date_sub('${cur_date}', 1), date_sub('${cur_date}', 7), date_sub('${cur_date}', 14), date_sub('${cur_date}', 28))
@@ -1006,7 +909,7 @@ from
     from
       ods_vova_vts.ods_vova_bonus_card
   ) tmp2
-  on foc2.buyer_id = tmp2.user_id
+  on foc2.buyer_id = tmp2.user_id 
     and from_unixtime(tmp2.start_time, 'yyyy-MM-dd') <= foc2.pt and from_unixtime(tmp2.end_time, 'yyyy-MM-dd') >= foc2.pt
   where foc2.datasource = 'vova'
     and foc2.pt in ('${cur_date}', date_sub('${cur_date}', 1), date_sub('${cur_date}', 7), date_sub('${cur_date}', 14), date_sub('${cur_date}', 28))

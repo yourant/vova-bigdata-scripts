@@ -12,7 +12,6 @@ nodes:
     dependsOn:
       - ads_vova_default_brand_cat_likes_weight
       - ads_vova_default_brand_cat_likes_weight_export
-      - ads_vova_buyer_gmv_stage_3m
 
   - name: start_flag
     type: command
@@ -64,13 +63,3 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - ads_vova_default_brand_cat_likes_weight
-
-  - name: ads_vova_buyer_gmv_stage_3m
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_portrait_v2/buyer_feature/update_gmv_stage_m.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - judge_dwd_vova_fact_pay
-      - judge_dim_vova_goods

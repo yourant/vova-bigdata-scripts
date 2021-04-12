@@ -18,6 +18,7 @@ nodes:
       - ads_vova_buyer_stat_feature
       - ads_vova_category_recommend_default
       - ads_vova_search_key_word_gender_rate
+      - ads_vova_mct_behave_3m
 
   - name: start_flag
     type: command
@@ -235,6 +236,51 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_dim_vova_merchant
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_merchant
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_order_goods
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_refund
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_refund
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ods_vova_order_shipping_tracking
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_order_shipping_tracking
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ods_vova_order_shipping_tracking_detail
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_order_shipping_tracking_detail
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
 
   - name: ads_vova_goods_knowledge_graph
     type: command
@@ -335,4 +381,21 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_dwd_vova_fact_search_word
+      - start_flag
+
+  - name: ads_vova_mct_behave_3m
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/mct_behave/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_merchant
+      - judge_dim_vova_goods
+      - judge_dim_vova_order_goods
+      - judge_dwd_vova_fact_refund
+      - judge_dwd_vova_fact_pay
+      - judge_ods_vova_order_shipping_tracking
+      - judge_ods_vova_order_shipping_tracking_detail
+      - judge_dws_vova_buyer_goods_behave
       - start_flag
