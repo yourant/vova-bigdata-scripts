@@ -1,8 +1,16 @@
 set hive.new.job.grouping.set.cardinality=128;
 insert overwrite table dwb.dwb_fd_rpt_main_process_rpt PARTITION (pt = '${pt}')
-select /*+ REPARTITION(1) */ session_table.project
+select
+     /*+ REPARTITION(1) */
+       session_table.project
      , session_table.platform_type
-     , session_table.country
+
+     , case
+       	 	when country in ('AT','BE','BG','CH','CZ','DE','DK','EE','ES','FI','FR','GB','GR','HR','HU','IE','IS'
+                             ,'IT','LT','LV','MC','MD','MT','NL','NO','PL','PT','RO','RU','SE','SK','SM','UA','VA','YU','BY','LI') then 'Europe'
+       		else country
+       end as country
+
      , session_table.is_new_user
      , session_table.ga_channel
 
