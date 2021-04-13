@@ -53,7 +53,7 @@ last_update_time as test_end_date,
 if(test_result = 1,1,0) AS is_test_scuess,
 ROW_NUMBER() OVER(PARTITION BY goods_id ORDER BY test_result, create_time desc) AS rank
 from
-ods_vova_vbd.ods_vova_test_goods_behave_inc
+ods_vova_vbd.ods_vova_test_goods_behave
 where test_status = 1
 and test_result IN (1, 2)
 ) t1
