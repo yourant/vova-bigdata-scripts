@@ -40,7 +40,7 @@ sqoop export \
 --table new_goods_predicte_result_new \
 --m 1 \
 --columns goods_id,cat_id,predicte_score,rank \
---hcatalog-database ads \
+--hcatalog-database mlb \
 --hcatalog-table mlb_vova_new_goods_predicte_result \
 --hcatalog-partition-keys pt \
 --hcatalog-partition-values ${cur_date} \
