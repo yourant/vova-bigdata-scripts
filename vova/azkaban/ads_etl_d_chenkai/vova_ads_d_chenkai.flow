@@ -11,9 +11,9 @@ nodes:
       command: echo "stop job"
     dependsOn:
       - ads_vova_mct_manage_module
-      - sqoop_ads_vova_channel_region_top
-      - sqoop_ads_vova_age_range_top
-      - sqoop_ads_vova_red_packet_gsn_goods
+      - ads_vova_channel_region_top
+      - ads_vova_age_range_top
+      - ads_vova_red_packet_gsn_goods
 
 
   - name: start_flag
@@ -191,32 +191,34 @@ nodes:
 
 
 ## export #############################################################
-  - name: sqoop_ads_vova_channel_region_top
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_channel_optimize/sqoop_export_channel_region_top.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - ads_vova_channel_region_top
+# 迁到 vova/azkaban/mlb_export_d/vova_mlb_export_d.flow
+#  - name: sqoop_ads_vova_channel_region_top
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_channel_optimize/sqoop_export_channel_region_top.sh
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - ads_vova_channel_region_top
+#
+#  - name: sqoop_ads_vova_age_range_top
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_channel_optimize/sqoop_export_age_range_top.sh
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - ads_vova_age_range_top
 
-  - name: sqoop_ads_vova_age_range_top
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_channel_optimize/sqoop_export_age_range_top.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - ads_vova_age_range_top
-
-  - name: sqoop_ads_vova_red_packet_gsn_goods
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/lower_price_goods_red_packet/sqoop_export_gsn_goods.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - ads_vova_red_packet_gsn_goods
+# 迁到 vova/azkaban/ads_export_d/vova_ads_export_bi.flow
+#  - name: sqoop_ads_vova_red_packet_gsn_goods
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/vova/ads/lower_price_goods_red_packet/sqoop_export_gsn_goods.sh
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - ads_vova_red_packet_gsn_goods
 
 # 活动会场 家居  # 统一迁移
 #  - name: ads_vova_activity_home_garden
