@@ -481,8 +481,8 @@ from
   from
   (
     select
-      dg.first_cat_id first_cat_id,
-      dg.second_cat_id second_cat_id,
+      nvl(dg.first_cat_id, 'unknown') first_cat_id,
+      nvl(dg.second_cat_id, 'unknown') second_cat_id,
       if(dg.brand_id > 0, 'Y', 'N') is_brand,
       dg.goods_sn goods_sn, -- gsn
       dg.goods_id goods_id,
@@ -540,10 +540,10 @@ left join
     from
     (
       select
-        first_cat_id,
-        second_cat_id,
+        nvl(first_cat_id, 'unknown') first_cat_id,
+        nvl(second_cat_id, 'unknown') second_cat_id,
         if(dg.brand_id > 0, 'Y', 'N') is_brand,
-        goods_sn,
+        nvl(goods_sn, 'unknown') goods_sn,
         remain_num
       from
       (
