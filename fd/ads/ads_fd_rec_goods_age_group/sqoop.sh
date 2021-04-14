@@ -16,6 +16,7 @@ sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=default \
 --connect jdbc:mysql://bd-warehouse-maxscale.gitvv.com:3313/data_report \
+-m 1\
 --username data-report \
 --password 'C27PoowhAZIU$LHeI%Gs' \
 --table goods_age_group \
