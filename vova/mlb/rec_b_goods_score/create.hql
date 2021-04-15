@@ -167,6 +167,9 @@ STORED AS textfile;
 
 ########################################################
 [9217]推荐管理平台新增--商品评分查询模块
+
+https://confluence.gitvv.com/pages/viewpage.action?pageId=21268801
+
 desc mlb.mlb_vova_rec_goods_scorebase_data_d;
 desc mlb.mlb_vova_b_goods_score_details_d;
 desc mlb.mlb_vova_b_goods_cat_score_details_d;

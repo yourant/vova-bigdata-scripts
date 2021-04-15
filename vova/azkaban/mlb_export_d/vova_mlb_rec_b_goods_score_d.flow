@@ -12,6 +12,7 @@ nodes:
     dependsOn:
       - sqoop_mlb_vova_rec_b_goods_score_d
       - sqoop_mlb_vova_rec_b_catgoods_score_d
+      - export_es_mlb_vova_rec_b_goods_score_all_d
 
   - name: start_flag
     type: command
@@ -56,3 +57,10 @@ nodes:
     dependsOn:
       - judge_mlb_vova_rec_b_goods_score_d_message_get
 
+  - name: export_es_mlb_vova_rec_b_goods_score_all_d
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/es_export/mlb_vova_rec_b_goods_score_all_d/update.sh
+      retries: 5
+    dependsOn:
+      - mlb_vova_rec_b_goods_score_all_d

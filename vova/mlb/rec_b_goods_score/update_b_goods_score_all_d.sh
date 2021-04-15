@@ -15,6 +15,11 @@ job_name="mlb_vova_rec_b_goods_score_all_d_req8229_chenkai"
 
 ###逻辑sql
 sql="
+msck repair table mlb.mlb_vova_rec_b_goods_score_d;
+msck repair table mlb.mlb_vova_rec_b_catgoods_score_d;
+msck repair table mlb.mlb_vova_rec_goods_scorebase_data_d;
+msck repair table mlb.mlb_vova_b_goods_score_details_d;
+msck repair table mlb.mlb_vova_b_goods_cat_score_details_d;
 
 insert overwrite table mlb.mlb_vova_rec_b_goods_score_all_d PARTITION (pt = '${cur_date}')
 SELECT /*+ REPARTITION(10) */
@@ -104,7 +109,7 @@ where t1.pt='${cur_date}'
 
 #如果使用spark-sql运行，则执行spark-sql -e
 spark-sql \
---executor-memory 4G --executor-cores 1 \
+--executor-memory 6G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=5" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
