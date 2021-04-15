@@ -126,5 +126,10 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_vova_high_refund_goods_gsn
 STORED AS PARQUETFILE
 ;
 
+########################################################
+
+2021-04-13 新增修改：
+邮件发送方增加：lvyao@vova.com.hk
+
 
 

@@ -101,24 +101,6 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: judge_ads_vova_goods_portrait_v2
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_portrait_v2
-      retries: 20
-      retry.backoff: 360000
-    dependsOn:
-      - start_flag
-
-  - name: judge_ads_vova_mct_profile
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_mct_profile
-      retries: 20
-      retry.backoff: 360000
-    dependsOn:
-      - start_flag
-
 #  - name: ads_vova_vova_rec_new_goods_poll_update
 #    type: command
 #    config:
