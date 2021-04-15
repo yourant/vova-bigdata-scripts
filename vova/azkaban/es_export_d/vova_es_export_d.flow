@@ -21,6 +21,7 @@ nodes:
       - export_es_ads_vova_goods_performance_2m
       - export_es_ads_vova_goods_performance_1m
       - export_es_ads_vova_goods_performance
+      - export_es_mlb_vova_rec_b_goods_score_all_d
 
   - name: start_flag
     type: command
