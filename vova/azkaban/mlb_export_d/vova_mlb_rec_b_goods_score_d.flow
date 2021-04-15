@@ -46,3 +46,13 @@ nodes:
     dependsOn:
       - judge_mlb_vova_rec_b_goods_score_d_message_get
 
+# [9217]推荐管理平台新增--商品评分查询模块(合并五张表导数到ES)
+  - name: mlb_vova_rec_b_goods_score_all_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_b_goods_score/update_b_goods_score_all_d.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_rec_b_goods_score_d_message_get
+
