@@ -13,6 +13,8 @@ nodes:
     dependsOn:
       - sqoop_mlb_vova_rec_m_nbi_nb_d
       - sqoop_mlb_vova_goods_second_cat
+      - sqoop_mlb_rec_m_catlike_d
+      - sqoop_mlb_vova_rec_m_user_cat_expand_d
 
   - name: start_flag
     type: command
@@ -185,7 +187,26 @@ nodes:
     dependsOn:
       - judge_ads_vova_age_range_top
 
+# [9166]首页新增用户类目偏好发现召回-导数 3 张表 heliu
+  - name: sqoop_mlb_rec_m_catlike_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_b_cat_tag_like_d/sqoop_rec_m_catlike_d.sh
+      retries: 20
+      retry.backoff: 1800000
+    dependsOn:
+      - start_flag  # TODO：依赖需要修改
 
+
+# [9149]列表页增加用户行为实时反馈&用户属性类目偏好-导数 2 张表 gongrui
+  - name: sqoop_mlb_vova_rec_m_user_cat_expand_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_m_user_kg_tag_d/sqoop_rec_m_user_cat_expand_d.sh
+      retries: 20
+      retry.backoff: 1800000
+    dependsOn:
+      - start_flag  # TODO：依赖需要修改
 
 
 
