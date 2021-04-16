@@ -157,7 +157,7 @@ nodes:
   - name: mlb_vova_rec_new_goods_prediction
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/mlb/new_goods/prediction/hot_prediction.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_goods/prediction/hot_prediction.sh
       retries: 20
       retry.backoff: 360000
     dependsOn:
@@ -168,7 +168,7 @@ nodes:
   - name: mlb_vova_rec_new_goods_train
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/mlb/new_goods/prediction/hot_prediction_train.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_goods/prediction/hot_prediction_train.sh
       retries: 20
       retry.backoff: 360000
     dependsOn:
@@ -186,7 +186,7 @@ nodes:
   - name: mlb_vova_rec_new_goods_result
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/mlb/new_goods/prediction/hot_prediction_result.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_goods/prediction/hot_prediction_result.sh
       retries: 20
       retry.backoff: 360000
     dependsOn:
@@ -195,7 +195,7 @@ nodes:
   - name: mlb_vova_rec_new_goods_result_export
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/mlb/new_goods/prediction/hot_prediction_export.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_goods/prediction/hot_prediction_export.sh
       retries: 20
       retry.backoff: 360000
     dependsOn:
