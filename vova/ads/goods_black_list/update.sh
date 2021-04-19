@@ -7,7 +7,8 @@ if [ ! -n "$1" ]; then
 fi
 
 sql="
-with tmp as(
+with tmp_goods as
+(
 select
 goods_id
 from
@@ -26,14 +27,15 @@ select
 goods_id
 from ads.ads_vova_goods_restrict_d
 )
+)
 insert overwrite table ads.ads_vova_goods_black_list_arc PARTITION (pt = '${pre_date}')
 select
 /*+ REPARTITION(1) */
-goods_id from tmp;
+goods_id from tmp_goods;
 insert overwrite table ads.ads_vova_goods_black_list
 select
 /*+ REPARTITION(1) */
-goods_id from tmp;
+goods_id from ads.ads_vova_goods_black_list_arc where pt='$pre_date';
 "
 spark-sql --conf "spark.app.name=ads_vova_goods_black_list_zhangyin"  --conf "spark.dynamicAllocation.maxExecutors=100" -e "$sql"
 #如果脚本失败，则报错
