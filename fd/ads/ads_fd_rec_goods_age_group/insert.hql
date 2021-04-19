@@ -2,7 +2,7 @@ WITH user_age AS (
     SELECT domain_id as duid
          , age_group as age_label
     FROM ods_fd_rar.ods_fd_user_persona
-    where age_group in (0, 1)
+    where age_group in (2, 3)
 )-- 提取用户年龄标签,去除默认值和空值
 
    , user_behavior AS (
@@ -43,8 +43,8 @@ WITH user_age AS (
 
    , goods_infer_age as (SELECT goods_id
                               , CASE
-                                    WHEN goods_age_tag >= 0.5 THEN 1
-                                    ELSE 0 END AS goods_age_group
+                                    WHEN goods_age_tag >= 2.5 THEN 3
+                                    ELSE 2 END AS goods_age_group
                          FROM goods_age) --用户行为推算出来的商品年龄段
    , goods_on_sale as (
     select goods_id

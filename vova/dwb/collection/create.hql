@@ -67,7 +67,13 @@ hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_monito
 
 hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/rpt_monitor_cmb/pt=2021-01-24  s3://bigdata-offline/warehouse/dwb/dwb_vova_monitor_cmb/pt=2021-01-24
 
+#####################################################################*/
+【数据】[9193]vova集运项目监控报表优化
+任务描述
+需求背景：vova集运项目监控报表数据和后台开发实时SQL取出的数据有差异，经排查发现是因为集运订单的确认会存在等待，耗时较长，导致算法抽数据计算时出现偏差，需要改成每天更新最新一周的数据，这样才准确。
 
+需求内容：
+vova集运项目监控报表每日更新最近一周的数据
 
 
 
