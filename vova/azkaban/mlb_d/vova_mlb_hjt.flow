@@ -166,10 +166,10 @@ nodes:
       - mlb_rec_search_words_trans
       - judge_dwd_vova_log_common_click
 
-  - name: mlb_rec_highfreq_query_job_message_in
+  - name: mlb_rec_highfreq_query_job_message_get
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/job_message_in.sh --jname=mlb_vova_higfreq_query --from=mlb --to=data
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=mlb_vova_higfreq_query --from=mlb --to=data --valid_hour=3
       retries: 72
       retry.backoff: 600000
     dependsOn:
@@ -182,4 +182,4 @@ nodes:
       retries: 72
       retry.backoff: 600000
     dependsOn:
-      - mlb_rec_highfreq_query_job_message_in
+      - mlb_rec_highfreq_query_job_message_get
