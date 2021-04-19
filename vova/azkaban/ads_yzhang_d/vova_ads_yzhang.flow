@@ -31,6 +31,8 @@ nodes:
       - ads_vova_goods_id_behave_m
       - ads_vova_goods_id_country_behave
       - ads_vova_min_price_goods_export_d
+      - ads_vova_goods_black_list
+      - ads_vova_mct_black_list
 
   - name: start_flag
     type: command
@@ -524,3 +526,21 @@ nodes:
       retries: 5
     dependsOn:
       - ads_vova_min_price_goods_d
+
+  - name: ads_vova_mct_black_list
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/mct_black_list/update.sh
+      retries: 5
+    dependsOn:
+      - judge_dim_vova_merchant
+
+  - name: ads_vova_goods_black_list
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/goods_black_list/update.sh
+      retries: 5
+    dependsOn:
+      - judge_dim_vova_merchant
+      - judge_dim_vova_goods
+      - ads_vova_goods_restrict_d
