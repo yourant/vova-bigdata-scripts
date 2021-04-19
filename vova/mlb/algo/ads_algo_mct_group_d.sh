@@ -7,6 +7,14 @@ if [ ! -n "$1" ]; then
   cur_date=$(date -d "-1 day" +%Y-%m-%d)
 fi
 ###依赖的表：dwd.dim_merchant，dwd.fact_mbrmct_mct_cd
+# spark-submit \
+# --name ads_algo_mct_group_d \
+# --deploy-mode client \
+# --master yarn \
+# --driver-cores 1 \
+# --driver-memory 2G \
+# --conf spark.dynamicAllocation.maxExecutors=150 \
+# --class com.vova.model.Main s3://vova-mlb/REC/util/mct_group.jar $cur_date
 spark-submit \
 --name ads_algo_mct_group_d \
 --deploy-mode client \
@@ -14,7 +22,7 @@ spark-submit \
 --driver-cores 1 \
 --driver-memory 2G \
 --conf spark.dynamicAllocation.maxExecutors=150 \
---class com.vova.model.Main s3://vova-mlb/REC/util/mct_group.jar $cur_date
+--class com.vova.mct_group.Main s3://vova-mlb/REC/util/mct_group.jar ${cur_date}
 
 #如果脚本失败，则报错
 
