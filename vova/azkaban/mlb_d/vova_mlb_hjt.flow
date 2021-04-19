@@ -11,6 +11,8 @@ nodes:
       command: echo "stop job"
     dependsOn:
       - mlb_vova_user_behave_link_d
+      - mlb_rec_search_words_trans
+      - mlb_vova_user_query_freqency_d
 
 
   - name: start_flag
@@ -208,3 +210,50 @@ nodes:
       - judge_dwd_vova_log_goods_impression
       - judge_dim_vova_goods
 
+  - name: mlb_rec_search_words_trans_before
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_search_words_trans/update_before.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_common_click
+
+
+  - name: mlb_rec_search_words_trans_job_message_put
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=rec_search_words_trans --from=data --to=nlp --jtype=1D --retry=0
+      retries: 30
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_rec_search_words_trans_before
+
+
+  - name: mlb_rec_search_words_trans_job_message_in
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_in.sh --jname=rec_search_words_trans_finish --from=nlp --to=data
+      retries: 72
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_rec_search_words_trans_job_message_put
+
+  - name: mlb_rec_search_words_trans
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_search_words_trans/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_rec_search_words_trans_job_message_in
+
+  - name: mlb_vova_user_query_freqency_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/vova_user_query_freqency_d/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_rec_search_words_trans
+      - judge_dwd_vova_log_common_click
