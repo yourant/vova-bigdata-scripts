@@ -3,7 +3,7 @@
 pre_date=$1
 #默认日期为昨天
 if [ ! -n "$1" ]; then
-  pre_date=$(date +%Y-%m-%d)
+  pre_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 
 echo ${pre_date}
