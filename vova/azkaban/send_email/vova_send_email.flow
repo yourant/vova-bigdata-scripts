@@ -105,14 +105,6 @@ nodes:
       - start_flag
 
 
-  - name: judge_dws_vova_buyer_portrait
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dws_vova_buyer_portrait
-      retries: 10
-      retry.backoff: 300000
-    dependsOn:
-      - start_flag
 
   - name: judge_dim_vova_region
     type: command
