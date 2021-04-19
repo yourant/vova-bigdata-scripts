@@ -203,6 +203,15 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_dwd_vova_fact_ab
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_ab
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
 #################################################################
 
   - name: dwb_vova_coupon
@@ -292,6 +301,7 @@ nodes:
       - judge_dwd_vova_fact_order_cause_v2
       - judge_dim_vova_devices
       - judge_dwd_vova_fact_pay
+      - judge_dwd_vova_fact_ab
 
 # 订单归因报表
   - name: dwb_vova_rec_report
