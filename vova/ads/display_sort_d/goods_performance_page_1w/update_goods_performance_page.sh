@@ -163,7 +163,7 @@ WHERE log.pt >= date_sub('${cur_date}', 6)
   AND log.platform = 'mob'
   
   AND log.dp = 'others'
-  AND log.datasource not in ('vova', 'ac')
+  AND log.datasource not in ('vova', 'airyclub')
      ) temp
 group by cube (datasource, rec_page_code, goods_id, nvl(geo_country, 'NA'))
 
@@ -212,7 +212,7 @@ WHERE log.pt >= date_sub('${cur_date}', 6)
   AND log.platform = 'mob'
   
   AND log.dp = 'others'
-  AND log.datasource not in ('vova', 'ac')
+  AND log.datasource not in ('vova', 'airyclub')
      ) temp
 group by cube (datasource, rec_page_code, goods_id, nvl(geo_country, 'NA'))
 
@@ -294,7 +294,7 @@ WHERE log.pt >= date_sub('${cur_date}', 6)
   AND log.platform = 'mob'
   
   AND log.dp = 'others'
-  AND log.datasource not in ('vova', 'ac')
+  AND log.datasource not in ('vova', 'airyclub')
      ) temp
 WHERE rec_page_code != 'others'
 group by cube (datasource, goods_id, nvl(temp.region_code, 'NALL'))
@@ -335,7 +335,7 @@ WHERE log.pt >= date_sub('${cur_date}', 6)
   AND log.platform = 'mob'
   
   AND log.dp = 'others'
-  AND log.datasource not in ('vova', 'ac')
+  AND log.datasource not in ('vova', 'airyclub')
      ) temp
 WHERE rec_page_code != 'others'
 group by cube (datasource, goods_id, nvl(temp.region_code, 'NALL'))

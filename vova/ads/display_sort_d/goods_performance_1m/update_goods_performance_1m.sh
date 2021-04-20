@@ -252,7 +252,7 @@ FROM (
                            WHERE log.pt >= date_sub('${cur_date}', 29)
                              AND log.pt <= '${cur_date}'
                              AND log.dp = 'others'
-                             AND log.datasource not in ('vova', 'ac')
+                             AND log.datasource not in ('vova', 'airyclub')
                              
                        ) temp
                   GROUP BY CUBE (temp.goods_id, temp.datasource, temp.platform, temp.region_code)
@@ -283,7 +283,7 @@ FROM (
                            WHERE log.pt >= date_sub('${cur_date}', 29)
                              AND log.pt <= '${cur_date}'
                              AND log.dp = 'others'
-                             AND log.datasource not in ('vova', 'ac')
+                             AND log.datasource not in ('vova', 'airyclub')
                              
                        ) temp
                   GROUP BY CUBE (temp.goods_id, temp.datasource, temp.platform, temp.region_code)
@@ -315,7 +315,7 @@ FROM (
                              AND log.pt <= '${cur_date}'
                              AND log.element_name ='pdAddToCartSuccess'
                              AND log.dp = 'others'
-                             AND log.datasource not in ('vova', 'ac')
+                             AND log.datasource not in ('vova', 'airyclub')
                              
                        ) temp
                   GROUP BY CUBE (temp.goods_id, temp.datasource, temp.platform, temp.region_code)

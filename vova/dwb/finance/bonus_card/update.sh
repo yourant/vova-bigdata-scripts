@@ -48,8 +48,8 @@ bonus_interval_use.order_cnt AS order_cnt_interval,
 bonus_interval_use.order_amount AS order_amount_interval,
 if(
 last_day('${last_month}') >= from_unixtime(bc.end_time, 'yyyy-MM-dd'),
-(datediff(from_unixtime(bc.end_time, 'yyyy-MM-dd'),trunc('2021-03-01','MM')) + 1) * bc.price / 31,
-(datediff(last_day('2021-03-01'),from_unixtime(bc.start_time, 'yyyy-MM-dd')) + 1) * bc.price / 31
+(datediff(from_unixtime(bc.end_time, 'yyyy-MM-dd'),trunc('${last_month}','MM')) + 1) * bc.price / 31,
+(datediff(last_day('${last_month}'),from_unixtime(bc.start_time, 'yyyy-MM-dd')) + 1) * bc.price / 31
 ) AS income
 
 from

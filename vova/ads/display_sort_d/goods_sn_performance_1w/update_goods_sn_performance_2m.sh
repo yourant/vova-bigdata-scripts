@@ -173,7 +173,7 @@ FROM (
                            WHERE log.pt >= date_sub('${cur_date}', 59)
                              AND log.pt <= '${cur_date}'
                              AND log.dp = 'others'
-                             AND log.datasource not in ('vova', 'ac')
+                             AND log.datasource not in ('vova', 'airyclub')
                              
                        ) temp
                   GROUP BY CUBE (temp.goods_sn, temp.datasource, temp.platform, temp.region_code)
@@ -203,7 +203,7 @@ FROM (
                            WHERE log.pt >= date_sub('${cur_date}', 59)
                              AND log.pt <= '${cur_date}'
                              AND log.dp = 'others'
-                             AND log.datasource not in ('vova', 'ac')
+                             AND log.datasource not in ('vova', 'airyclub')
                              
                        ) temp
                   GROUP BY CUBE (temp.goods_sn, temp.datasource, temp.platform, temp.region_code)
