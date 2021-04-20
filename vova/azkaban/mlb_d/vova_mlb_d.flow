@@ -19,6 +19,9 @@ nodes:
       - mlb_vova_goods_second_cat
       - mlb_vova_algo_mct_group_d
       - mlb_vova_country_detect_d
+      - mlb_vova_rec_b_g_base_d_job_message_put
+      - mlb_vova_rec_goods_scorebase_data_d_job_message_put
+      - mlb_vova_new_user_reg_rec_out_data
 
   - name: start_flag
     type: command
@@ -163,6 +166,22 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_mbrmct_mct_cd
+    dependsOn:
+      - start_flag
+
+  - name: judge_mlb_vova_user_behave_link_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_user_behave_link_d
+    dependsOn:
+      - start_flag
+
+  - name: judge_mlb_vova_rec_b_goods_score_d_message_get
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=mlb_goods_score_vova --from=mlb --to=data --valid_hour=3
+      retries: 20
+      retry.backoff: 1800000
     dependsOn:
       - start_flag
 
@@ -355,3 +374,16 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_dwd_vova_log_goods_impression
+
+# [9166]首页新增用户类目偏好发现召回 依赖的表：mlb.mlb_vova_user_behave_link_d，mlb.mlb_vova_rec_b_goods_score_d
+
+  - name: mlb_rec_m_catlike_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_b_cat_tag_like_d/update_rec_m_catlike_d.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_user_behave_link_d
+      - judge_mlb_vova_rec_b_goods_score_d_message_get
+

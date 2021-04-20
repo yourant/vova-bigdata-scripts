@@ -188,6 +188,15 @@ nodes:
       - judge_ads_vova_age_range_top
 
 # [9166]首页新增用户类目偏好发现召回-导数 3 张表 heliu
+  - name: judge_mlb_rec_m_catlike_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_rec_m_catlike_d
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
   - name: sqoop_mlb_rec_m_catlike_d
     type: command
     config:
@@ -196,6 +205,7 @@ nodes:
       retry.backoff: 1800000
     dependsOn:
       - start_flag  # TODO：依赖需要修改
+      - judge_mlb_rec_m_catlike_d
 
 
 # [9149]列表页增加用户行为实时反馈&用户属性类目偏好-导数 2 张表 gongrui
