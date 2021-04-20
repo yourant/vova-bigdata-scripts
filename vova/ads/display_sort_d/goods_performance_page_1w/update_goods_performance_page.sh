@@ -113,7 +113,7 @@ left join dwd.dwd_vova_fact_order_cause_v2 oc on og.order_goods_id = oc.order_go
 where date(og.pay_time) >= date_sub('${cur_date}', 6)
 and date(og.pay_time) <=  '${cur_date}'
 and (og.from_domain like '%api%')
-AND og.datasource not in ('vova', 'ac')
+AND og.datasource not in ('vova', 'airyclub')
 and oc.pre_page_code is not null
 ) t1
 group by cube (t1.datasource, t1.rec_page_code, t1.goods_id, t1.region_code)
@@ -253,7 +253,7 @@ where date(og.pay_time) >= date_sub('${cur_date}', 6)
 and date(og.pay_time) <=  '${cur_date}'
 and (og.from_domain like '%api%')
 and oc.pre_page_code is not null
-AND og.datasource not in ('vova', 'ac')
+AND og.datasource not in ('vova', 'airyclub')
 ) t1
 WHERE rec_page_code != 'others'
 group by cube (t1.datasource, t1.goods_id, nvl(t1.region_code, 'NALL'))
