@@ -207,8 +207,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_six_mct_goods_flow_support_h
-      retries: 20
-      retry.backoff: 120000
+      retries: 30
+      retry.backoff: 600000
     dependsOn:
       - start_flag
 
