@@ -45,14 +45,14 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: judge_mlb_vova_new_user_reg_rec_out_data
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_new_user_reg_rec_out_data
-      retries: 20
-      retry.backoff: 1200000
-    dependsOn:
-      - start_flag
+#  - name: judge_mlb_vova_new_user_reg_rec_out_data
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_new_user_reg_rec_out_data
+#      retries: 20
+#      retry.backoff: 1200000
+#    dependsOn:
+#      - start_flag
 
   - name: judge_mlb_vova_goods_second_cat
     type: command
@@ -103,41 +103,41 @@ nodes:
       - judge_mlb_vova_new_user_rec
 
 # [7832]冷启动兜底策略
-  - name: sqoop_mlb_vova_rec_m_nurecallad_d_sqoop_export
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_user_reg_rec/nurecallad_d_sqoop_export.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - judge_mlb_vova_new_user_reg_rec_out_data
-
-  - name: sqoop_mlb_vova_rec_m_nurecallad_nb_d_sqoop_export
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_user_reg_rec/nurecallad_nb_d_sqoop_export.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - judge_mlb_vova_new_user_reg_rec_out_data
-
-  - name: sqoop_mlb_vova_rec_m_nurecallreg_d_sqoop_export
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_user_reg_rec/nurecallreg_d_sqoop_export.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - judge_mlb_vova_new_user_reg_rec_out_data
-
-  - name: sqoop_mlb_vova_rec_m_nurecallreg_nb_d_sqoop_export
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_user_reg_rec/nurecallreg_nb_d_sqoop_export.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - judge_mlb_vova_new_user_reg_rec_out_data
+#  - name: sqoop_mlb_vova_rec_m_nurecallad_d_sqoop_export
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_user_reg_rec/nurecallad_d_sqoop_export.sh
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - judge_mlb_vova_new_user_reg_rec_out_data
+#
+#  - name: sqoop_mlb_vova_rec_m_nurecallad_nb_d_sqoop_export
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_user_reg_rec/nurecallad_nb_d_sqoop_export.sh
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - judge_mlb_vova_new_user_reg_rec_out_data
+#
+#  - name: sqoop_mlb_vova_rec_m_nurecallreg_d_sqoop_export
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_user_reg_rec/nurecallreg_d_sqoop_export.sh
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - judge_mlb_vova_new_user_reg_rec_out_data
+#
+#  - name: sqoop_mlb_vova_rec_m_nurecallreg_nb_d_sqoop_export
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_user_reg_rec/nurecallreg_nb_d_sqoop_export.sh
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - judge_mlb_vova_new_user_reg_rec_out_data
 
 # [8721]首页上线新激活用户兴趣探测策略
   - name: sqoop_mlb_vova_goods_second_cat
@@ -188,6 +188,15 @@ nodes:
       - judge_ads_vova_age_range_top
 
 # [9166]首页新增用户类目偏好发现召回-导数 3 张表 heliu
+  - name: judge_mlb_rec_m_catlike_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_rec_m_catlike_d
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
   - name: sqoop_mlb_rec_m_catlike_d
     type: command
     config:
@@ -196,6 +205,7 @@ nodes:
       retry.backoff: 1800000
     dependsOn:
       - start_flag  # TODO：依赖需要修改
+      - judge_mlb_rec_m_catlike_d
 
 
 # [9149]列表页增加用户行为实时反馈&用户属性类目偏好-导数 2 张表 gongrui

@@ -168,5 +168,18 @@ alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(avg_order_cnt_day0
 30天补贴成本	当日激活用户中在0-30天内下单的用户所用补贴之和/当天新激活用户数
 
 
+#############################################################################
+[9199]superset平台个报表支持app-group-5
+
+在现有的superset平台的各数据报表的APP选择栏位，1、新增加 app-group 的选择， 2、增加目前后台没有的单个app小站的选择。
+
+
+
+
+
+
+
+
+
 
 
