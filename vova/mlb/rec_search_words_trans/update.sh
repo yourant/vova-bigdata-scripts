@@ -39,6 +39,7 @@ left join tmp.tmp_vova_search_words_trans_result_800 b on a.source = b.source
 left join mlb.mlb_vova_user_query_translation_d c on a.source = c.clk_from
 where a.pt = '${cur_date}' and a.source is not null
 and c.clk_from is null
+group by nvl(b.source,a.source),nvl(b.result,a.result)
 "
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
