@@ -1,10 +1,33 @@
 #!/bin/bash
-#指定日期和引擎
-pt=$1
-#默认日期为昨天
-if [ ! -n "$1" ];then
-pt=`date -d "-1 day" +%Y-%m-%d`
+# 由 job messager 启动的任务, 会有 freedoms
+freedoms=$1
+echo "freedoms: ${freedoms}"
+
+if [ ! -n "$1" ]; then
+  echo "Error: freedoms 为必传参数！！！"
+  exit 1
 fi
+
+# 从 freedoms 拿到 table_name 和 dt
+pt=`echo $freedoms | jq '.pt' | sed $'s/\"//g'`
+if [ ! -n "${pt}" ]; then
+  echo "Error: freedoms 为必传参数！！！"
+  exit 1
+fi
+
+# 判断对应表、对应分区 是否有数据
+hive -e "msck repair table ads.ads_vova_img_enhance_result_d;"
+if [ $? -ne 0 ];then
+  echo "Failed: msck repair table ads.ads_vova_img_enhance_result_d;"
+  exit 1
+fi
+
+cnt=$(spark-sql -e "select count(*) from ads.ads_vova_img_enhance_result_d where pt ='${pt}';" |tail -1)
+if [ ${cnt} -le 0 ];then
+  echo "Error: ads.ads_vova_img_enhance_result_d, pt=${pt}, 数据条数异常 count(*)=${cnt} -le 0"
+  exit 1
+fi
+echo ${cnt}
 
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \

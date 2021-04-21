@@ -29,7 +29,7 @@ echo ${cnt}
 sql="
 drop table if exists rec_recall.mlb_rec_m_catlike_d_pre;
 drop table if exists rec_recall.mlb_rec_m_catlike_d_new;
-create table rec_recall.mlb_rec_m_catlike_d_new(
+create table if not exists rec_recall.mlb_rec_m_catlike_d_new (
 id           int(11) NOT NULL AUTO_INCREMENT COMMENT '自增主键',
 region_id       bigint        NOT NULL COMMENT '区域',
 gender          varchar(100)  NOT NULL COMMENT '性别',
@@ -41,7 +41,13 @@ second_rank     int           NOT NULL COMMENT '商品得分',
 home_rank       int           NOT NULL COMMENT '首页按cluster_key排序值',
 first_rank      int           NOT NULL COMMENT '按一级品类排序值',
 PRIMARY KEY (id) USING BTREE,
-KEY goods_id (goods_id) USING BTREE
+-- KEY region_id (region_id) USING BTREE,
+KEY regionid_firstcat (region_id, first_cat_id) USING BTREE,
+KEY regionid_secondcat (region_id, second_cat_id) USING BTREE,
+KEY goods_id (goods_id) USING BTREE,
+KEY second_rank (second_rank) USING BTREE,
+KEY first_rank (first_rank) USING BTREE,
+KEY home_rank (first_rank) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='类目偏好召回';
 
 create table if not exists rec_recall.mlb_rec_m_catlike_d (
@@ -56,7 +62,13 @@ second_rank     int           NOT NULL COMMENT '商品得分',
 home_rank       int           NOT NULL COMMENT '首页按cluster_key排序值',
 first_rank      int           NOT NULL COMMENT '按一级品类排序值',
 PRIMARY KEY (id) USING BTREE,
-KEY goods_id (goods_id) USING BTREE
+-- KEY region_id (region_id) USING BTREE,
+KEY regionid_firstcat (region_id, first_cat_id) USING BTREE,
+KEY regionid_secondcat (region_id, second_cat_id) USING BTREE,
+KEY goods_id (goods_id) USING BTREE,
+KEY second_rank (second_rank) USING BTREE,
+KEY first_rank (first_rank) USING BTREE,
+KEY home_rank (first_rank) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='类目偏好召回';
 "
 mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pv5NxDS1N007jbIISAvB7yzJg2GSbL9zF -e "${sql}"

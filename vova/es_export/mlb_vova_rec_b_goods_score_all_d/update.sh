@@ -12,7 +12,7 @@ select
 *
 from mlb.mlb_vova_rec_b_goods_score_all_d
 where pt='${pre_date}'
-" --index=mlb_vova_rec_b_goods_score_all_d
+" --index=mlb_vova_rec_b_goods_score_all_d --col_id=goods_id
 
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
