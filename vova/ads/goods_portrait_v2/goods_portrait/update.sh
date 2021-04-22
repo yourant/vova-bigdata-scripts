@@ -484,7 +484,8 @@ select
   a.goods_id,
   a.goods_name,
   a.goods_sn,
-  a.is_on_sale
+  a.is_on_sale,
+  if(e.goods_id is null and a.is_on_sale = 1,1,0) is_recommend
 from tmp_goods_portrait a
 left join tmp_goods_painting_pt b
   on a.goods_id = b.goods_id
@@ -498,6 +499,8 @@ left join tmp_goods_painting_nlrf_rate_5_8w t6
   on a.goods_id = t6.goods_id
 left join tmp_goods_painting_lrf_rate_9_12w t7
   on a.goods_id = t7.goods_id
+left join ads.ads_vova_goods_black_list e
+  on a.goods_id = e.goods_id
 ;
 "
 

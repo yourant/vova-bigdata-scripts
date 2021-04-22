@@ -83,6 +83,7 @@ alter table ads.ads_vova_goods_portrait add columns(`goods_id` int comment '商�
 alter table ads.ads_vova_goods_portrait add columns(`goods_name` string comment '商品名称') cascade;
 alter table ads.ads_vova_goods_portrait add columns(`goods_sn` string comment '商品所属sn') cascade;
 alter table ads.ads_vova_goods_portrait add columns(`is_on_sale` int comment '真实是否在售,1:已上架，0：已下架') cascade;
+alter table ads.ads_vova_goods_portrait add columns(`is_recommend` int comment '是否可推荐,1:可，0：不可') cascade;
 
 CREATE TABLE `tmp.tmp_vova_goods_key_words`(
   `goods_id` int,
