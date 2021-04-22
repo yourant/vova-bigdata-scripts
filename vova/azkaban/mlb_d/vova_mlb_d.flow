@@ -173,6 +173,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_user_behave_link_d
+      retries: 15
+      retry.backoff: 1800000
     dependsOn:
       - start_flag
 
