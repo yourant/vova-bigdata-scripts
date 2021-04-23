@@ -8,7 +8,7 @@ fi
 
 echo "${pre_date}"
 
-file_num=`s3://vova-mlb/REC/data/match/match_result/mlb_vova_rec_m_user_kg_tag_d/pt=${pre_date}/ | wc -l`
+file_num=`aws s3 ls s3://vova-mlb/REC/data/match/match_result/mlb_vova_rec_m_user_kg_tag_d/pt=${pre_date}/ | wc -l`
 if [ ${file_num} -eq 0 ]; then
   echo "还没有数据,不执行导数任务, pt=${pre_date} number of files is 0"
   exit 1
