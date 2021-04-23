@@ -292,3 +292,17 @@ spark-sql \
 if [ $? -ne 0 ];then
   exit 1
 fi
+
+spark-submit  \
+--conf spark.executor.memory=4g \
+--conf spark.dynamicAllocation.maxExecutors=60 \
+--conf spark.app.name=vova_mlb_pay_send_knock \
+--conf spark.executor.memoryOverhead=2048 \
+--class com.vova.bigdata.sparkbatch.dataprocess.dwb.PaymentRate  s3://vomkt-emr-rec/jar/vova_mlb_pay_send_knock.jar \
+${cur_date}
+
+
+#如果脚本失败，则报错
+if [ $? -ne 0 ];then
+  exit 1
+fi
