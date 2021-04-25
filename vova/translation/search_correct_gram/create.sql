@@ -12,3 +12,14 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'   -- 优先\t, 其次逗号(,),
 STORED AS parquet
 LOCATION "s3://vova-mlb/REC/data/search/correct/mlb_vova_search_correct_gram_d"
 ;
+
+
+create external table mlb.mlb_vova_search_correct_word_d
+(
+   word   string  comment '词'
+) comment '搜索词'
+PARTITIONED BY(pt string)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
+STORED AS parquet
+LOCATION "s3://vova-mlb/REC/data/search/correct/mlb_vova_search_correct_word_d"
+;
