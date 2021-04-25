@@ -203,14 +203,14 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: judge_ads_vova_six_mct_goods_flow_support_h
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_six_mct_goods_flow_support_h
-      retries: 30
-      retry.backoff: 600000
-    dependsOn:
-      - start_flag
+#  - name: judge_ads_vova_six_mct_goods_flow_support_h
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_six_mct_goods_flow_support_h
+#      retries: 60
+#      retry.backoff: 300000
+#    dependsOn:
+#      - start_flag
 
 #  -  name: ads_vova_flash_sale_coupon_goods
 #     type: command
@@ -412,5 +412,4 @@ nodes:
     dependsOn:
       - judge_dim_vova_goods
       - judge_vova_images_vector
-      - judge_ads_vova_six_mct_goods_flow_support_h
 
