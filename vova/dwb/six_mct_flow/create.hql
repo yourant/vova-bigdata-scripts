@@ -1,3 +1,7 @@
+【报表】[9191]6级商家流量报表
+创建时间及开发人员：2020/4/16,戴飞俊
+
+
 drop table dwb.dwb_vova_six_mct_flow_monitor;
 CREATE EXTERNAL TABLE IF NOT EXISTS dwb.dwb_vova_six_mct_flow_monitor
 (
