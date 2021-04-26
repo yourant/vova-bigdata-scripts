@@ -230,15 +230,15 @@ FROM
                 AND platform != 'mob'
             ) t
         ) t1
-        LEFT JOIN
+        INNER JOIN
         (
             SELECT  *
             FROM ads.ads_vova_goods_portrait
             WHERE pt = '${cur_date}'
         ) t2
-        ON t1.goods_id = t2.gs_id
+        ON t1.goods_id = t2.gs_id AND t2.is_recommend = 1
         INNER JOIN dim.dim_vova_goods dg
-        ON t1.goods_id = dg.goods_id AND dg.is_on_sale = 1 AND dg.brand_id = 0
+        ON t1.goods_id = dg.goods_id AND dg.brand_id = 0
     ) tt
 )
 WHERE rank_num <= 500
@@ -274,15 +274,13 @@ FROM
                 AND platform != 'mob'
             ) t
         ) t1
-        LEFT JOIN
+        INNER JOIN
         (
             SELECT  *
             FROM ads.ads_vova_goods_portrait
             WHERE pt = '${cur_date}'
         ) t2
-        ON t1.goods_id = t2.gs_id
-        INNER JOIN dim.dim_vova_goods dg
-        ON t1.goods_id = dg.goods_id AND dg.is_on_sale = 1
+        ON t1.goods_id = t2.gs_id AND t2.is_recommend = 1
     ) tt
     WHERE CONCAT(gender,cast(goods_id AS string)) NOT IN ('male24582618','male24504817','male11857548', 'male24684579','male11872356','male12025770','male8668083', 'male8668226','male12038124','male13719902','male39043551')
 )
