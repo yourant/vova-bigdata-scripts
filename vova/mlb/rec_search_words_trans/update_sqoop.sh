@@ -42,15 +42,12 @@ sqoop export \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
 --username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
 --table query_translation_new \
---m 2 \
---update-key "clk_from,translation_query" \
---update-mode allowinsert \
+--m 10 \
 --hcatalog-database mlb \
 --hcatalog-table mlb_vova_user_query_translation_d \
---hcatalog-partition-keys pt \
---hcatalog-partition-values ${pre_date} \
 --columns clk_from,translation_query \
 --fields-terminated-by '\t'
+
 
 
 

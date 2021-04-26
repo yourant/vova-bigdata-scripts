@@ -1,12 +1,4 @@
-create external table mlb.mlb_vova_search_correct_word_d
-(
-   word   string  comment '词'
-) comment '搜索词'
-PARTITIONED BY(pt string)
-ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS parquet
-LOCATION "s3://vova-mlb/REC/data/search/correct/mlb_vova_search_correct_word_d"
-;
+
 
 create external table mlb.mlb_vova_search_hard_correct_d
 (
@@ -17,19 +9,6 @@ stored as textfile
 LOCATION "s3://vova-mlb/REC/data/search/correct/mlb_vova_search_hard_correct_d"
 ;
 
-create table mlb.mlb_vova_search_correct_gram_d
-(
-   src_word   string  comment '前词',
-   dist_word  string  comment '后词',
-   molecular  bigint  comment '概率分子',
-   denominator bigint comment '概率分母',
-   prob       double  comment '概率'
-) comment '搜索词'
-PARTITIONED BY(pt string)
-ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'
-STORED AS parquet
-LOCATION "s3://vova-mlb/REC/data/search/correct/mlb_vova_search_correct_gram_d"
-;
 
 
 ALTER TABLE themis.mlb_vova_search_correct_word_d MODIFY word
