@@ -11,6 +11,7 @@ echo $pt_start
 spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" \
 --conf "spark.sql.adaptive.shuffle.targetPostShuffleInputSize=128000000" \
 --conf "spark.sql.adaptive.enabled=true" \
+--conf "spark.dynamicAllocation.maxExecutors=150" \
 --conf "spark.app.name=vova_mlb_search_correct_gram_d" -e "
 
 with goods_name_extract as (
@@ -35,7 +36,7 @@ with goods_name_extract as (
             from mlb.mlb_vova_user_behave_link_d
             where pt>='${pt_start}' and pt<='${pt}' and page_code='search_result' and clk_from is not null and length(clk_from)>1
             group by clk_from
-            having weight >= 1000
+            having weight >= 100
         )t
         lateral view explode(split(query, ' ')) wo as word
         group by word
@@ -48,7 +49,7 @@ with goods_name_extract as (
         on t1.word = t2.word
     )
     insert overwrite table mlb.mlb_vova_search_correct_word_d partition(pt='${pt}')
-    select /*+ REPARTITION(1) */ word from correct_word
+    select /*+ REPARTITION(1) */ word from correct_word where word not rlike '[\\u4e00-\\u9fa5]'
 ;
 
 with goods_name as (
