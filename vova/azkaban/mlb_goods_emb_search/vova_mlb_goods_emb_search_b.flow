@@ -1,0 +1,28 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - mlb_goods_emb_search
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+
+  - name: mlb_goods_emb_search
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/goods_emb_search/update_b.sh '${freedoms}'
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag

@@ -1,0 +1,55 @@
+config:
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk
+  retries: 10
+  retry.backoff: 600000
+  user.to.proxy: hadoop
+
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_goods_banner_pre
+      - ads_vova_image_banner_export
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: ads_goods_banner_pre
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_banner/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_ads_banner_image_generation
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_in.sh --jname=ads_banner_image_generation --from=cv --to=data
+      retries: 72
+      retry.backoff: 3600000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_image_banner_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_banner/export_update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_banner_image_generation
+
+
+
+
+
+
+

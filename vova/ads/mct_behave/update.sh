@@ -38,15 +38,16 @@ if(og.sku_shipping_status>=1,1,0) is_mark_deliver,
 if(og.sku_pay_status>1 and og.sku_shipping_status > 0,1,0) is_online,
 if(ostd.weight=0 or ostd.weight is null ,1,0) is_loss_weight
 from
-dim.dim_vova_merchant dm
-left join dim.dim_vova_goods dg on dg.mct_id = dm.mct_id
-left join dim.dim_vova_order_goods og on dg.goods_id = og.goods_id and datediff('${pre_date}',og.confirm_time)<90 and  datediff('${pre_date}',og.confirm_time)>=0
+dim.dim_vova_order_goods og
+left join dim.dim_vova_goods dg on dg.goods_id = og.goods_id
+left join dim.dim_vova_merchant dm on dg.mct_id = dm.mct_id
 left join dwd.dwd_vova_fact_refund dr
 on og.order_goods_id = dr.order_goods_id
 left join dwd.dwd_vova_fact_pay fp
 on og.order_goods_id = fp.order_goods_id
 left join ods_vova_vts.ods_vova_order_shipping_tracking ost on ost.order_goods_id = og.order_goods_id
 left join ods_vova_vts.ods_vova_order_shipping_tracking_detail ostd on ost.tracking_id = ostd.tracking_id
+where datediff('${pre_date}',og.confirm_time)<90 and  datediff('${pre_date}',og.confirm_time)>=0
 )
 group by mct_id,mct_name
 )
