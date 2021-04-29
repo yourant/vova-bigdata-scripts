@@ -55,8 +55,8 @@ from (select device_id,
 where su.device_id is not null
   and su.rank = 1;
 
-INSERT overwrite TABLE dim.dim_vova_devices
-SELECT /*+ REPARTITION(100) */
+with tmp_dev as (
+SELECT
        dav.datasource,
        if(dav.device_id IS NULL, ar.device_id, dav.device_id) AS device_id,
        cm.main_channel,
@@ -84,8 +84,67 @@ FROM tmp.tmp_vova_device_app_version dav
 LEFT JOIN ods_vova_vtlr.ods_vova_appsflyer_record_merge ar on dav.datasource = ar.datasource and dav.device_id = ar.device_id
 LEFT JOIN ods_vova_vtlr.ods_vova_channel_mapping cm ON cm.child_channel = ar.media_source
 LEFT JOIN tmp.tmp_vova_device_first_pay fp ON fp.device_id = dav.device_id AND fp.datasource = dav.datasource
+)
+
+INSERT overwrite TABLE dim.dim_vova_devices
+select
+/*+ REPARTITION(10) */
+t.datasource,
+t.device_id,
+cm.main_channel,
+ar.media_source as child_channel,
+t.platform,
+t.idfv,
+t.android_id,
+t.imei,
+t.advertising_id,
+t.http_referrer,
+t.campaign,
+t.os_version,
+t.region_code,
+t.app_region_code,
+t.language_code,
+t.install_time,
+t.install_app_version,
+t.current_app_version,
+t.current_buyer_id,
+t.activate_time,
+t.first_order_id,
+t.first_order_time,
+t.first_pay_time
+from tmp_dev t
+LEFT JOIN (select datasource,idfv,media_source from (select datasource,idfv,media_source,row_number() over (partition by idfv,datasource order by install_time desc) as rank from ods_vova_vtlr.ods_vova_appsflyer_record_merge) where rank =1 ) ar on t.datasource = ar.datasource and t.device_id = ar.idfv
+LEFT JOIN ods_vova_vtlr.ods_vova_channel_mapping cm ON cm.child_channel = ar.media_source
+where t.main_channel is null
+union all
+select
+ /*+ REPARTITION(60) */
+datasource,
+device_id,
+main_channel,
+child_channel,
+platform,
+idfv,
+android_id,
+imei,
+advertising_id,
+http_referrer,
+campaign,
+os_version,
+region_code,
+app_region_code,
+language_code,
+install_time,
+install_app_version,
+current_app_version,
+current_buyer_id,
+activate_time,
+first_order_id,
+first_order_time,
+first_pay_time
+from tmp_dev where main_channel is not null;
 "
-spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"  --conf "spark.app.name=dim_vova_devices"  --conf "spark.sql.output.merge=true"  --conf "spark.sql.output.coalesceNum=50" --conf "spark.dynamicAllocation.minExecutors=30" --conf "spark.dynamicAllocation.initialExecutors=60" -e "$sql"
+spark-sql --executor-memory 6G  --conf "spark.sql.parquet.writeLegacyFormat=true"  --conf "spark.app.name=dim_vova_devices"  --conf "spark.sql.output.merge=true"  --conf "spark.sql.output.coalesceNum=50" --conf "spark.dynamicAllocation.minExecutors=30" --conf "spark.dynamicAllocation.initialExecutors=60" -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1

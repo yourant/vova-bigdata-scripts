@@ -20,7 +20,7 @@ nodes:
   - name: ads_vova_img_enhance_export_d
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/img_enhance/update_export.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/img_enhance/update_export.sh '${freedoms}'
       retries: 5
       retry.backoff: 600000
     dependsOn:
