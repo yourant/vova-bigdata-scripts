@@ -269,6 +269,15 @@ nodes:
       - judge_mlb_rec_m_hotcatlike_d
 
 # [9149]列表页增加用户行为实时反馈&用户属性类目偏好-导数 2 张表 gongrui
+  - name: judge_mlb_vova_rec_m_user_cat_expand_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_rec_m_user_cat_expand_d
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
   - name: sqoop_mlb_vova_rec_m_user_cat_expand_d
     type: command
     config:
@@ -276,7 +285,8 @@ nodes:
       retries: 20
       retry.backoff: 1800000
     dependsOn:
-      - start_flag  # TODO：依赖需要修改
+      - start_flag
+      - judge_mlb_vova_rec_m_user_cat_expand_d
 
 
 

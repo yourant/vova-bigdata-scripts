@@ -26,6 +26,7 @@ nodes:
       - mlb_rec_m_taglike_d
       - mlb_rec_m_catlike_d
       - mlb_lightgcn_i2i_u2i_rec_job_message_put
+      - mlb_vova_rec_m_user_cat_expand_d
 
   - name: start_flag
     type: command
@@ -464,6 +465,17 @@ nodes:
     dependsOn:
       - mlb_lightgcn_i2i_u2i_rec
 
+# [9149]列表页增加用户行为实时反馈&用户属性类目偏好-导数
+## mlb.mlb_vova_rec_m_user_cat_expand_d 依赖的表： dws.dws_vova_buyer_goods_behave
+
+  - name: mlb_vova_rec_m_user_cat_expand_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_m_user_kg_tag_d/update_rec_m_user_cat_expand_d.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_goods_behave
 
 
 
