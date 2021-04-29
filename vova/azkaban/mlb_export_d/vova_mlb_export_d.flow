@@ -208,26 +208,6 @@ nodes:
       - start_flag
       - judge_mlb_rec_m_catlike_d
 
-## mlb_rec_m_tagcombine_d
-  - name: judge_mlb_rec_m_tagcombine_d
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_rec_m_tagcombine_d
-      retries: 10
-      retry.backoff: 300000
-    dependsOn:
-      - start_flag
-
-  - name: sqoop_mlb_rec_m_tagcombine_d
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_b_cat_tag_like_d/sqoop_rec_m_tagcombine_d.sh
-      retries: 20
-      retry.backoff: 1800000
-    dependsOn:
-      - start_flag
-      - judge_mlb_rec_m_tagcombine_d
-
 ## mlb_rec_m_taglike_d
   - name: judge_mlb_rec_m_taglike_d
     type: command
@@ -269,6 +249,7 @@ nodes:
       - judge_mlb_rec_m_hotcatlike_d
 
 # [9149]列表页增加用户行为实时反馈&用户属性类目偏好-导数 2 张表 gongrui
+## mlb_vova_rec_m_user_cat_expand_d
   - name: judge_mlb_vova_rec_m_user_cat_expand_d
     type: command
     config:
@@ -287,6 +268,4 @@ nodes:
     dependsOn:
       - start_flag
       - judge_mlb_vova_rec_m_user_cat_expand_d
-
-
 
