@@ -426,3 +426,24 @@ nodes:
     dependsOn:
       - judge_mlb_vova_user_behave_link_d
       - judge_ads_vova_goods_pre_attribute_data
+
+## mlb_rec_m_hotcatlike_d 依赖的表：mlb.mlb_vova_user_behave_link_d，mlb.mlb_vova_rec_b_goods_score_d
+
+  - name: mlb_rec_m_hotcatlike_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_b_cat_tag_like_d/update_rec_m_hotcatlike_d.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_user_behave_link_d
+      - judge_mlb_vova_rec_b_goods_score_d_message_get
+      - mlb_vova_rec_goods_scorebase_data_d_job_message_put
+
+
+
+
+
+
+
+
