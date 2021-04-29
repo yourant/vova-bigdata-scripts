@@ -188,6 +188,7 @@ nodes:
       - judge_ads_vova_age_range_top
 
 # [9166]首页新增用户类目偏好发现召回-导数 3 张表 heliu
+## mlb_rec_m_catlike_d
   - name: judge_mlb_rec_m_catlike_d
     type: command
     config:
@@ -204,11 +205,60 @@ nodes:
       retries: 20
       retry.backoff: 1800000
     dependsOn:
-      - start_flag  # TODO：依赖需要修改
+      - start_flag
       - judge_mlb_rec_m_catlike_d
 
+## mlb_rec_m_taglike_d
+  - name: judge_mlb_rec_m_taglike_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_rec_m_taglike_d
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: sqoop_mlb_rec_m_taglike_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_b_cat_tag_like_d/sqoop_rec_m_taglike_d.sh
+      retries: 20
+      retry.backoff: 1800000
+    dependsOn:
+      - start_flag
+      - judge_mlb_rec_m_taglike_d
+
+## mlb_rec_m_hotcatlike_d
+  - name: judge_mlb_rec_m_hotcatlike_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_rec_m_hotcatlike_d
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: sqoop_mlb_rec_m_hotcatlike_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_b_cat_tag_like_d/sqoop_rec_m_hotcatlike_d.sh
+      retries: 20
+      retry.backoff: 1800000
+    dependsOn:
+      - start_flag
+      - judge_mlb_rec_m_hotcatlike_d
 
 # [9149]列表页增加用户行为实时反馈&用户属性类目偏好-导数 2 张表 gongrui
+## mlb_vova_rec_m_user_cat_expand_d
+  - name: judge_mlb_vova_rec_m_user_cat_expand_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_rec_m_user_cat_expand_d
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
   - name: sqoop_mlb_vova_rec_m_user_cat_expand_d
     type: command
     config:
@@ -216,7 +266,6 @@ nodes:
       retries: 20
       retry.backoff: 1800000
     dependsOn:
-      - start_flag  # TODO：依赖需要修改
-
-
+      - start_flag
+      - judge_mlb_vova_rec_m_user_cat_expand_d
 
