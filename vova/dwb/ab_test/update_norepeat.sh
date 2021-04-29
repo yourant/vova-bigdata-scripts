@@ -32,7 +32,7 @@ select /*+ REPARTITION(100) */ a.datasource,
        a.rec_code,
        a.rec_version,
        a.device_id,
-       a.buyer_id
+       a.buyer_id,a.cnt
 from dwd.dwd_vova_ab_test_expre a
          left join
      ( select device_id,buyer_id
@@ -60,7 +60,7 @@ select /*+ REPARTITION(50) */ a.datasource,
        a.rec_code,
        a.rec_version,
        a.device_id,
-       a.buyer_id
+       a.buyer_id,a.cnt
 from dwd.dwd_vova_ab_test_clk a
          left join
      ( select device_id,buyer_id
@@ -169,7 +169,7 @@ from (
                 nvl(rec_page_code, 'all') rec_page_code,
                 nvl(rec_code, 'all')      rec_code,
                 nvl(rec_version, 'all')   rec_version,
-                count(1)                  expre_pv
+                sum(cnt)                  expre_pv
          from tmp.tmp_ab_expre_not_repeat
          group by cube (datasource, platform, os, rec_page_code, rec_code, rec_version)
      ) a
@@ -214,7 +214,7 @@ from (
            nvl(rec_page_code, 'all')           rec_page_code,
            nvl(rec_code, 'all')                rec_code,
            nvl(rec_version, 'all')             rec_version,
-           count(1)                            clk_pv,
+           sum(cnt)                            clk_pv,
            count(distinct device_id, buyer_id) clk_uv
     from tmp.tmp_ab_clk_not_repeat
     group by cube (datasource, platform, os, rec_page_code, rec_code, rec_version)
