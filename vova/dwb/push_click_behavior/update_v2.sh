@@ -506,7 +506,7 @@ from
   tmp.push_stas_${table_suffix} as ps
 where datasource = 'vova'
 union all
-select
+select /*+ REPARTITION(10) */
   'vova'                        as datasource,
   nvl(fpc.platform, 'all')      as platform,
   nvl(fpc.region_code, 'all')   as region_code,
@@ -538,7 +538,7 @@ from
 where datasource = 'vova'
 group by cube (fpc.platform, fpc.config_id, fpc.main_channel, fpc.region_code,fpc.job_rate)
 union all
-select
+select /*+ REPARTITION(10) */
   'vova'                       as datasource,
   nvl(fpc.platform, 'all')     as platform,
   nvl(fpc.region_code, 'all')  as region_code,
@@ -573,7 +573,7 @@ on fpc.device_id = gi.device_id
 where datasource = 'vova'
 group by cube (fpc.platform,  fpc.config_id, fpc.main_channel, fpc.region_code,fpc.job_rate)
 union all
-select
+select /*+ REPARTITION(10) */
   'vova'                        as datasource,
   nvl(fpc.platform, 'all')      as platform,
   nvl(fpc.region_code, 'all')   as region_code,
@@ -608,7 +608,7 @@ on fpc.device_id = gi.device_id
 where datasource = 'vova'
 group by cube (fpc.platform, fpc.config_id, fpc.main_channel, fpc.region_code,fpc.job_rate)
 union all
-select
+select /*+ REPARTITION(10) */
   'vova'                       as datasource,
   nvl(fpc.platform, 'all')     as platform,
   nvl(fpc.region_code, 'all')  as region_code,
@@ -654,7 +654,7 @@ where datasource = 'vova'
 group by cube (fpc.platform,  fpc.config_id, fpc.main_channel, fpc.region_code,fpc.job_rate)
 
 union all
-select
+select /*+ REPARTITION(10) */
   'vova'                       as datasource,
   nvl(fpc.platform, 'all')     as platform,
   nvl(fpc.region_code, 'all')  as region_code,
@@ -689,7 +689,7 @@ on fpc.device_id = cc.device_id
 where datasource = 'vova'
 group by cube (fpc.platform, fpc.config_id, fpc.main_channel, fpc.region_code,fpc.job_rate)
 union all
-select
+select /*+ REPARTITION(10) */
   'vova'                       as datasource,
   nvl(fpc.platform, 'all')     as platform,
   nvl(fpc.region_code, 'all')  as region_code,
@@ -724,7 +724,7 @@ on fpc.device_id = og.device_id
 where datasource = 'vova'
 group by cube (fpc.platform,fpc.config_id, fpc.main_channel, fpc.region_code,fpc.job_rate)
 union all
-select
+select /*+ REPARTITION(10) */
   'vova'                                                 as datasource,
   nvl(fpc.platform, 'all')                               as platform,
   nvl(fpc.region_code, 'all')                            as region_code,
@@ -836,7 +836,7 @@ from
   tmp.push_stas_${table_suffix} as ps
 where datasource in ('airyclub', 'app-group', 'nurkk', 'kulmasa', 'lupumart', 'boonlife', 'paivana')
 union all
-select
+select /*+ REPARTITION(10) */
   nvl(fpc.datasource, 'all')    as datasource,
   nvl(fpc.platform, 'all')      as platform,
   nvl(fpc.region_code, 'all')   as region_code,
@@ -868,7 +868,7 @@ from
 where datasource in ('airyclub', 'app-group', 'nurkk', 'kulmasa', 'lupumart', 'boonlife', 'paivana')
 group by cube (fpc.datasource, fpc.platform,fpc.config_id, fpc.main_channel, fpc.region_code,fpc.job_rate)
 union all
-select
+select /*+ REPARTITION(10) */
   nvl(fpc.datasource, 'all')   as datasource,
   nvl(fpc.platform, 'all')     as platform,
   nvl(fpc.region_code, 'all')  as region_code,
@@ -903,7 +903,7 @@ on fpc.device_id = gi.device_id
 where datasource in ('airyclub', 'app-group', 'nurkk', 'kulmasa', 'lupumart', 'boonlife', 'paivana')
 group by cube (fpc.datasource, fpc.platform, fpc.config_id, fpc.main_channel, fpc.region_code,fpc.job_rate)
 union all
-select
+select /*+ REPARTITION(10) */
   nvl(fpc.datasource, 'all')    as datasource,
   nvl(fpc.platform, 'all')      as platform,
   nvl(fpc.region_code, 'all')   as region_code,
@@ -938,7 +938,7 @@ on fpc.device_id = gi.device_id
 where datasource in ('airyclub', 'app-group', 'nurkk', 'kulmasa', 'lupumart', 'boonlife', 'paivana')
 group by cube (fpc.datasource, fpc.platform, fpc.config_id, fpc.main_channel, fpc.region_code,fpc.job_rate)
 union all
-select
+select /*+ REPARTITION(10) */
   nvl(fpc.datasource, 'all')   as datasource,
   nvl(fpc.platform, 'all')     as platform,
   nvl(fpc.region_code, 'all')  as region_code,
@@ -973,7 +973,7 @@ on fpc.device_id = cc.device_id
 where datasource in ('airyclub', 'app-group', 'nurkk', 'kulmasa', 'lupumart', 'boonlife', 'paivana')
 group by cube (fpc.datasource, fpc.platform,  fpc.config_id, fpc.main_channel, fpc.region_code,fpc.job_rate)
 union all
-select
+select /*+ REPARTITION(10) */
   nvl(fpc.datasource, 'all')   as datasource,
   nvl(fpc.platform, 'all')     as platform,
   nvl(fpc.region_code, 'all')  as region_code,
@@ -1008,7 +1008,7 @@ on fpc.device_id = og.device_id
 where datasource in ('airyclub', 'app-group', 'nurkk', 'kulmasa', 'lupumart', 'boonlife', 'paivana')
 group by cube (fpc.datasource, fpc.platform, fpc.config_id, fpc.main_channel, fpc.region_code,fpc.job_rate)
 union all
-select
+select /*+ REPARTITION(10) */
   nvl(fpc.datasource, 'all')                             as datasource,
   nvl(fpc.platform, 'all')                               as platform,
   nvl(fpc.region_code, 'all')                            as region_code,

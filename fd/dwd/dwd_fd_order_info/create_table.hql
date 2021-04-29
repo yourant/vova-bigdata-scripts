@@ -47,6 +47,8 @@ CREATE TABLE IF NOT EXISTS dwd.dwd_fd_order_info (
     version string COMMENT 'APP版本号',
     is_app bigint COMMENT '是否APP',
     device_type string COMMENT '设备类型',
+    device_id string COMMENT '设备id',
+    idfv string COMMENT 'ios idfv',
     os_type string COMMENT '操作系统类型',
     country_code string COMMENT '国家code',
     language_code string COMMENT '语言code',

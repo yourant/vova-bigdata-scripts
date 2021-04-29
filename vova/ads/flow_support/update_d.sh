@@ -14,7 +14,7 @@ sql="
 INSERT OVERWRITE TABLE mlb.mlb_vova_six_mct_flow_support_d PARTITION (pt = '${cur_date}')
 SELECT
 /*+ REPARTITION(1) */
-dg.goods_id,
+dvg.goods_id,
 dvg.first_cat_id,
 nvl(dvg.second_cat_id, 0) AS second_cat_id,
 dvg.brand_id,
@@ -28,10 +28,10 @@ when his.impressions >= 5000 AND sales_order < 1 THEN 1
 when his.impressions >= 2000 AND ctr < 0.014 THEN 1
 else 0 end AS is_delete
 from
-tmp.tmp_ads_vova_six_mct_flow_support_goods dg
-INNER JOIN dim.dim_vova_goods dvg on dvg.goods_id = dg.goods_id
-LEFT JOIN ods_vova_vbai.ods_vova_images_vector iv on dg.goods_id = iv.goods_id
-LEFT JOIN ads.ads_vova_six_mct_flow_support_goods_his his ON his.goods_id = dg.goods_id AND his.pt = '${cur_date}'
+ads.ads_vova_six_rank_mct six
+INNER JOIN dim.dim_vova_goods dvg on six.mct_id = dvg.mct_id AND six.first_cat_id = dvg.first_cat_id
+LEFT JOIN ods_vova_vbai.ods_vova_images_vector iv on dvg.goods_id = iv.goods_id
+LEFT JOIN ads.ads_vova_six_mct_flow_support_goods_his his ON his.goods_id = dvg.goods_id AND his.pt = '${cur_date}'
 WHERE dvg.is_on_sale = 1
 ;
 "

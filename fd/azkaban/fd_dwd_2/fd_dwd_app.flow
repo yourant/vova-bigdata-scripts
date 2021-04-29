@@ -1,0 +1,23 @@
+---
+config:
+  failure.emails: jhlu@i9i8.com
+  retries: 10
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_daily_job_start
+    type: noop
+
+  - name: judge_ods_fd_appsflyer_record
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_appsflyer_record
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: dwd_fd_app_install
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_app_install/run.sh ${azkaban.flow.start.timestamp} ${pt}
+    dependsOn:
+      - judge_ods_fd_appsflyer_record
