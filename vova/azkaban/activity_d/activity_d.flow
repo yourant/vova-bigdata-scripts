@@ -21,6 +21,8 @@ nodes:
       - ads_vova_activity_women_clothing_clearance_sale
       - ads_vova_activity_user_only
       - ads_vova_activity_new_user
+      - ads_vova_activity_health_beauty
+      - ads_vova_activity_shoes
 
   - name: start_flag
     type: command
@@ -220,6 +222,29 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_user_only/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_activity_goods_ctry_behave
+      - judge_dim_vova_goods
+
+# [9345] 母亲节活动会场新增数据源需求：
+## 医美活动
+  - name:  ads_vova_activity_health_beauty
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_health_beauty/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_activity_goods_ctry_behave
+      - judge_dim_vova_goods
+
+## 鞋子活动
+  - name:  ads_vova_activity_shoes
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_shoes/update.sh
       retries: 5
       retry.backoff: 600000
     dependsOn:

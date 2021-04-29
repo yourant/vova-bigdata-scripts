@@ -243,7 +243,30 @@ base_cat_score        double  COMMENT '一级品类基础评分',
 hot_cat_score         double  COMMENT '一级品类热度评分',
 conversion_cat_score  double  COMMENT '一级品类转化评分',
 honor_cat_score       double  COMMENT '一级品类履约评分',
-overall_cat_score     double  COMMENT '一级品类综合评分'
+overall_cat_score     double  COMMENT '一级品类综合评分',
+inter_days_score      double  COMMENT '平滑上网天数评分'
 
 ) COMMENT '商品评分汇总' PARTITIONED BY (pt STRING)
     STORED AS PARQUETFILE;
+
+###########################################
+[9380] 推荐管理平台--商品评分查询模块新增逻辑-添加指标
+https://zt.gitvv.com/index.php?m=task&f=view&taskID=34369
+1. 商品评分查询增加评分标准字段：平滑上网天数评分 = 商品7天上网率评分+平均上网天数加分值
+上网天数权重值计算逻辑：有7天上网率的商品计算平均上网天数，平均上网天数 = 7天再往前一个月的确认订单的平均上网天数
+按照平均上网天数进行加分
+若平均上网天数为1时，+4分
+若平均上网天数为2时，+3分
+若平均上网天数为3时，+2分
+若平均上网天数为4时，+1分
+若平均上网天数为5时，+0.75分
+若平均上网天数为6时，+0.5分
+若平均上网天数>7时，+0分
+
+分数加满到100为止
+alter table mlb.mlb_vova_rec_goods_scorebase_data_d add columns(`avg_inter_days_3_6w` int comment '商品平均上网天数') cascade;
+
+mlb.mlb_vova_rec_b_goods_score_all_d
+alter table mlb.mlb_vova_rec_b_goods_score_all_d add columns(`inter_days_score` double comment '平滑上网天数评分') cascade;
+
+
