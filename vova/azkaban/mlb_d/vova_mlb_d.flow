@@ -19,12 +19,13 @@ nodes:
       - mlb_vova_goods_second_cat
       - mlb_vova_algo_mct_group_d
       - mlb_vova_country_detect_d
-      - mlb_vova_rec_b_g_base_d_job_message_put
+#      - mlb_vova_rec_b_g_base_d_job_message_put
       - mlb_vova_rec_goods_scorebase_data_d_job_message_put
 #      - mlb_vova_new_user_reg_rec_out_data
       - mlb_rec_m_tagcombine_d
       - mlb_rec_m_taglike_d
       - mlb_rec_m_catlike_d
+      - mlb_lightgcn_i2i_u2i_rec_job_message_put
 
   - name: start_flag
     type: command
@@ -253,14 +254,14 @@ nodes:
     dependsOn:
       - judge_dim_vova_goods
 
-  - name: mlb_vova_rec_b_g_base_d_job_message_put
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=ads_rec_b_g_base_d --from=data --to=java_server --jtype=1D --retry=0
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - mlb_vova_rec_b_g_base_d
+#  - name: mlb_vova_rec_b_g_base_d_job_message_put 正常取数，不再发消息了
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=ads_rec_b_g_base_d --from=data --to=java_server --jtype=1D --retry=0
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - mlb_vova_rec_b_g_base_d
 
 # [7381]基于用户属性的新用户冷启动策略
   - name: mlb_vova_new_user_rec
@@ -440,8 +441,28 @@ nodes:
       - judge_mlb_vova_rec_b_goods_score_d_message_get
       - mlb_vova_rec_goods_scorebase_data_d_job_message_put
 
+# [9404]lightgcn取数调度：依赖的表：dim.dim_vova_goods, dim.dim_vova_buyers, dws.dws_vova_buyer_goods_behave, ads.ads_vova_goods_portrait
 
+  - name: mlb_lightgcn_i2i_u2i_rec
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/lightgcn_i2i_u2i_rec/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_dim_vova_buyers
+      - judge_dws_vova_buyer_goods_behave
+      - judge_ads_vova_goods_portrait
 
+  - name: mlb_lightgcn_i2i_u2i_rec_job_message_put
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=data_lightgcn_rec --from=data --to=java_server --jtype=1D --retry=0
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_lightgcn_i2i_u2i_rec
 
 
 
