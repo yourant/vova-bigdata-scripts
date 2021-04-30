@@ -2,7 +2,7 @@
 需求方及需求号: 田晔, #3542
 创建时间及开发人员：2020-03-23,廖保林
 
-todo: 需要 com.vova.monitor.MonitorMain 发告警
+不再需要 com.vova.monitor.MonitorMain 发告警
 
 drop table if exists dwb.dwb_vova_goods_gcr_gmv_report;
 CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_goods_gcr_gmv_report
@@ -65,3 +65,12 @@ hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/goods_gcr_
 hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/goods_gcr_gmv_report/pt=2021-01-23  s3://bigdata-offline/warehouse/dwb/dwb_vova_goods_gcr_gmv_report/pt=2021-01-23
 
 hadoop distcp -overwrite  hdfs://ha-nn-uri/user/hive/warehouse/rpt.db/goods_gcr_gmv_report/pt=2021-01-24  s3://bigdata-offline/warehouse/dwb/dwb_vova_goods_gcr_gmv_report/pt=2021-01-24
+
+
+# ######################################*/
+
+[9199]superset平台个报表支持app-group-5
+https://zt.gitvv.com/index.php?m=task&f=view&taskID=33853
+
+任务描述
+以下报表中增加app-group筛选项：

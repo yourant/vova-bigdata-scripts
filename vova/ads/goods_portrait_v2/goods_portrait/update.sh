@@ -342,12 +342,14 @@ tmp_goods_painting_inter_rate_3_6w as
 (select
   t1.goods_id,
   sum(t1.so_order_cnt_3_6w)/count(t1.order_goods_id) as inter_rate_3_6w,
-  (sum(t1.so_order_cnt_3_6w)+0.9*5)/(count(t1.order_goods_id)+5) as bs_inter_rate_3_6w
+  (sum(t1.so_order_cnt_3_6w)+0.9*5)/(count(t1.order_goods_id)+5) as bs_inter_rate_3_6w,
+  CEILING(sum(inter_days) / count(t1.order_goods_id)) as avg_inter_days_3_6w -- 平均上网天数
 from
 (
 select
   og.goods_id,
   og.order_goods_id,
+  datediff(fl.valid_tracking_date,fl.confirm_time) inter_days, -- 上网天数
   case when datediff(fl.valid_tracking_date,fl.confirm_time)< 7 and og.sku_pay_status>1 then 1 else 0
     end so_order_cnt_3_6w
 from dim.dim_vova_order_goods og
@@ -484,7 +486,9 @@ select
   a.goods_id,
   a.goods_name,
   a.goods_sn,
-  a.is_on_sale
+  a.is_on_sale,
+  if(e.goods_id is null and a.is_on_sale = 1,1,0) is_recommend,
+  t5.avg_inter_days_3_6w avg_inter_days_3_6w -- 平均上网天数
 from tmp_goods_portrait a
 left join tmp_goods_painting_pt b
   on a.goods_id = b.goods_id
@@ -498,6 +502,8 @@ left join tmp_goods_painting_nlrf_rate_5_8w t6
   on a.goods_id = t6.goods_id
 left join tmp_goods_painting_lrf_rate_9_12w t7
   on a.goods_id = t7.goods_id
+left join ads.ads_vova_goods_black_list e
+  on a.goods_id = e.goods_id
 ;
 "
 

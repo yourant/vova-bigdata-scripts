@@ -35,6 +35,7 @@ SELECT
   ,t2.bs_nlrf_rate_5_8w           AS bs_nlrf_rate_5_8w
   ,t2.clk_uv_15d                  AS clk_uv_15d
   ,nvl(t3.score,60)               AS mct_score
+  ,t2.avg_inter_days_3_6w         as avg_inter_days_3_6w
 FROM
 (
 	SELECT  goods_id

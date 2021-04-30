@@ -38,6 +38,8 @@ nodes:
       - ads_vova_mct_refund_cnt_w_export
       - ads_vova_mct_refund_w_export
       - ads_vova_sale_goods_m_export
+      - ads_vova_mct_behave_3m_export
+      - ads_vova_red_packet_gsn_goods_export
 
   - name: start_flag
     type: command
@@ -63,10 +65,10 @@ nodes:
       - start_flag
 
 
-  - name: judge_ads_vova_buyer_portrait_second_category_likes
+  - name: judge_ads_vova_buyer_portrait_second_category_price_range_likes
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_buyer_portrait_second_category_likes
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_buyer_portrait_second_category_price_range_likes
       retries: 10
       retry.backoff: 300000
     dependsOn:
@@ -186,6 +188,15 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_ads_vova_mct_behave_3m
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_mct_behave_3m
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
   - name: ads_vova_buyer_portrait_brand_likes_sqoop_export
     type: command
     config:
@@ -207,11 +218,11 @@ nodes:
   - name: ads_vova_buyer_portrait_second_category_likes_sqoop_export
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_portrait_v2/second_category_likes/sqoop_export.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_portrait_v2/second_category_price_range_likes/sqoop_export.sh
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - judge_ads_vova_buyer_portrait_second_category_likes
+      - judge_ads_vova_buyer_portrait_second_category_price_range_likes
 
 
   - name: ads_vova_goods_portrait_brand_price_range_likes_top20_export
@@ -577,3 +588,31 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_ads_vova_sale_goods_m
+
+  - name: ads_vova_mct_behave_3m_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/mct_behave/sqoop_export.sh
+      retries: 20
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_mct_behave_3m
+
+# [8525]商家红包替换逻辑改为gsn逻辑 红包商品对应 gsn 下的全部 goods_id  themis
+  - name: judge_ads_vova_red_packet_gsn_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_red_packet_gsn_goods
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_red_packet_gsn_goods_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/lower_price_goods_red_packet/sqoop_export_gsn_goods.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_red_packet_gsn_goods

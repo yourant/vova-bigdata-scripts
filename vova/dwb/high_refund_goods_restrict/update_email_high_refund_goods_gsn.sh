@@ -112,7 +112,7 @@ spark-submit \
 --env prod \
 -sql "select goods_sn,first_cat_name,gmv_last_day7 from dwb.dwb_vova_high_refund_goods_gsn where pt='${cur_date}'"  \
 -head "goods_sn,一级品类名称,近7日gmv"  \
--receiver "kai.cheng@vova.com.hk,Fusang@vova.com.hk,Fiona.yang@vova.com.hk" \
+-receiver "kai.cheng@vova.com.hk,Fusang@vova.com.hk,Fiona.yang@vova.com.hk,lvyao@vova.com.hk" \
 -title "屏蔽sn商品转gsn未被跟卖商品统计" \
 --type attachment \
 --fileName "屏蔽sn商品转gsn未被跟卖商品统计_${cur_date}"

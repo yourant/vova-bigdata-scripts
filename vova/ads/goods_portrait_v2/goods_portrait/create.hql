@@ -83,6 +83,7 @@ alter table ads.ads_vova_goods_portrait add columns(`goods_id` int comment '商�
 alter table ads.ads_vova_goods_portrait add columns(`goods_name` string comment '商品名称') cascade;
 alter table ads.ads_vova_goods_portrait add columns(`goods_sn` string comment '商品所属sn') cascade;
 alter table ads.ads_vova_goods_portrait add columns(`is_on_sale` int comment '真实是否在售,1:已上架，0：已下架') cascade;
+alter table ads.ads_vova_goods_portrait add columns(`is_recommend` int comment '是否可推荐,1:可，0：不可') cascade;
 
 CREATE TABLE `tmp.tmp_vova_goods_key_words`(
   `goods_id` int,
@@ -95,3 +96,11 @@ CREATE TABLE `tmp.tmp_vova_goods_key_words`(
   `model_number` string,
   `key_words` string,
   `last_update_time` string) stored as parquet;
+
+##########
+[9380] 推荐管理平台--商品评分查询模块新增逻辑-添加指标
+https://zt.gitvv.com/index.php?m=task&f=view&taskID=34369
+
+平均上网天数 = 7天再往前一个月的确认订单的平均上网天数
+alter table ads.ads_vova_goods_portrait add columns(`avg_inter_days_3_6w` int comment '商品平均上网天数') cascade;
+

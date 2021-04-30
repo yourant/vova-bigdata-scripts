@@ -9,6 +9,7 @@ spark-submit \
 --deploy-mode client \
 --master yarn  \
 --driver-memory 8G \
+--conf spark.executor.memory=8g \
 --conf spark.dynamicAllocation.maxExecutors=120 \
 --conf spark.default.parallelism=380 \
 --conf spark.sql.shuffle.partitions=380 \

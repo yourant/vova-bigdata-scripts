@@ -1,0 +1,76 @@
+create table tmp.tmp_req9063 as
+select
+nvl(first_publish_time,first_customer_buy_time)  first_publish_time,
+mct_name,
+tmp_gmv.gmv,
+tmp_cat.first_cat_id
+from
+dim.dim_vova_merchant dm
+left join tmp.tmp_req9063_gmv tmp_gmv on dm.mct_id = tmp_gmv.mct_id
+left join tmp.tmp_req9063_first_cat  tmp_cat on dm.mct_id = tmp_cat.mct_id
+where dm.mct_id>-1
+
+
+and  not exists
+(select
+1
+from
+tmp.tmp_req9063_ly t1 where dm.mct_id=t1.mct_id)
+
+
+create table tmp.tmp_req9063_3 as
+select
+cast(first_publish_time as date) first_publish_time,
+mct_name,
+nvl(gmv,0) gmv,
+vc.first_cat_name
+from
+tmp.tmp_req9063 t1
+left join dim.dim_vova_category vc
+on t1.first_cat_id = vc.first_cat_id and depth=1
+
+
+
+create table tmp.tmp_req9063_first_cat as
+select
+mct_id,
+first_cat_id
+from
+(
+select
+mct_id,
+first_cat_id,
+row_number() over(partition by mct_id order by gmv desc) rank
+from
+(
+select
+mct_id,
+first_cat_id,
+sum(shop_price*goods_number+shipping_fee) gmv
+from
+dwd.dwd_vova_fact_pay fp
+where date(fp.pay_time)<='2021-03-30' and date(fp.pay_time)>='2021-03-24'
+group by mct_id,first_cat_id
+)
+)
+where rank=1
+
+
+create table tmp.tmp_req9063_gmv as
+select
+mct_id,
+sum(shop_price*goods_number+shipping_fee) as gmv
+from
+dwd.dwd_vova_fact_pay fp
+where date(fp.pay_time)<='2021-03-30' and date(fp.pay_time)>='2021-03-24'
+group by mct_id
+
+create table tmp.tmp_req9063_ly as
+select
+distinct (fp.mct_id) mct_id
+from
+dwd.dwd_vova_fact_pay fp
+left join dwd.dwd_vova_fact_logistics  fl on fp.order_goods_id = fl.order_goods_id
+left join dwd.dwd_vova_fact_refund fr on fp.order_goods_id = fr.order_goods_id
+where
+(datediff(delivered_time,fr.create_time)>=10 or fr.create_time is null) and date(fp.pay_time)>='2020-03-31'

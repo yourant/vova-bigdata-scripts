@@ -107,7 +107,7 @@ SELECT
   tmp_ord.last_order_time,
   nvl(tmp_ord.gmv/tmp_ord.order_cnt,0) as avg_price,
   nvl(tmp_email.email_act,0) as email_act,
-  gs.gmv_stage,
+  nvl(gs.gmv_stage,0) as gmv_stage,
   nvl(bbl.is_brand,0) as is_brand
 FROM
   dim.dim_vova_buyers db

@@ -18,32 +18,47 @@ create table if not EXISTS tmp.tmp_first_cat_rank_gmv_avg_req8713_${table_suffix
 select
   first_cat_id,
   rank,
-  count(distinct mct_id) mct_cnt, -- 红包店铺数
-  sum(gmv) gmv, -- 对应一级品类等级下gmv
-  round(nvl(sum(gmv) / count(distinct mct_id), 0), 4) avg_first_cat_rank_gmv -- 该类目该等级下的所有店铺gmv均值
+  is_brand,
+  mct_cnt,
+  gmv,
+  avg_first_cat_rank_gmv
 from
 (
   select
-    fp.goods_id,
-    fp.first_cat_id,
-    fp.mct_id,
-    fp.order_id,
-    fp.order_goods_id,
-    amr.rank rank,
-    fp.shipping_fee+fp.shop_price*fp.goods_number gmv
+    nvl(first_cat_id, 'all') first_cat_id,
+    nvl(rank, 'all') rank,
+    nvl(is_brand, 'all') is_brand,
+    count(distinct mct_id) mct_cnt, -- 红包店铺数
+    sum(gmv) gmv, -- 对应一级品类等级下gmv
+    round(nvl(sum(gmv) / count(distinct mct_id), 0), 4) avg_first_cat_rank_gmv -- 该类目该等级下的所有店铺gmv均值
   from
-    dwd.dwd_vova_fact_pay fp
-  left join
   (
-    select *
+    select
+      fp.goods_id,
+      fp.first_cat_id,
+      fp.mct_id,
+      fp.order_id,
+      fp.order_goods_id,
+      amr.rank rank,
+      fp.shipping_fee+fp.shop_price*fp.goods_number gmv,
+      if(dg.brand_id > 0, 'Y', 'N') is_brand
     from
-      ads.ads_vova_mct_rank
-    where pt ='${cur_date}'
-  ) amr
-  on fp.first_cat_id = amr.first_cat_id and fp.mct_id = amr.mct_id
-  where fp.datasource = 'vova' and to_date(fp.pay_time) ='${cur_date}'
-)
-group by first_cat_id, rank
+      dwd.dwd_vova_fact_pay fp
+    left join
+    (
+      select *
+      from
+        ads.ads_vova_mct_rank
+      where pt ='${cur_date}'
+    ) amr
+    on fp.first_cat_id = amr.first_cat_id and fp.mct_id = amr.mct_id
+    left join
+      dim.dim_vova_goods dg
+    on fp.goods_id = dg.goods_id
+    where fp.datasource = 'vova' and to_date(fp.pay_time) ='${cur_date}'
+  )
+  group by cube(first_cat_id, rank, is_brand)
+) where first_cat_id != 'all' and rank != 'all'
 ;
 create table if not EXISTS tmp.tmp_mct_gmv_req8713_${table_suffix} as
 select
@@ -235,7 +250,7 @@ select /*+ REPARTITION(1) */
   t1.no_end_gsn_num no_end_gsn_num    ,  -- i_未售罄红包gsn数
   t1.end_gsn_num end_gsn_num          ,  -- i_售罄红包gsn数
   round(nvl(t1.order_gsn_num / t1.activity_gsn_num, 0), 4) turnover_rate, -- i_动销率
-  round(nvl(t1.end_gsn_num / t1.activity_gsn_num, 0), 4) sell_out_rate    -- i_售罄率
+  round(nvl(t1.used_num / t1.coupon_num, 0), 4) sell_out_rate    -- i_售罄率:已消耗红包数/已成团gsn对应的红包数
 from
 (
   select
@@ -321,7 +336,7 @@ left join
 on t1.mct_id = t3.mct_id and t1.first_cat_id = t3.first_cat_id and t1.is_brand = t3.is_brand
 left join
   tmp.tmp_first_cat_rank_gmv_avg_req8713_${table_suffix} t4
-on t1.first_cat_id = t4.first_cat_id and amr.rank = t4.rank
+on t1.first_cat_id = t4.first_cat_id and amr.rank = t4.rank and t1.is_brand = t4.is_brand
 left join
 (
   select distinct
@@ -434,9 +449,9 @@ where t3.gmv > 0
 insert overwrite table dwb.dwb_vova_red_packet_cat partition(pt='${cur_date}')
 select /*+ REPARTITION(1) */
   t1.first_cat_id,
-  regexp_replace(t2.first_cat_name,'\'','') first_cat_name,
+  regexp_replace(if(t1.first_cat_id = 'all', 'all', t2.first_cat_name),'\'','') first_cat_name,
   t1.second_cat_id,
-  t3.second_cat_name,
+  regexp_replace(if(t1.second_cat_id = 'all', 'all', t3.second_cat_name),'\'','') second_cat_name,
   t1.is_brand,
   gsn_cnt,   -- gsn总数
   applying_gsn_cnt,   -- 报名中gsn总数
@@ -446,7 +461,9 @@ select /*+ REPARTITION(1) */
   order_gsn_cnt,   -- 已出单gsn数量
   sell_out_gsn_cnt,   -- 售罄红包gsn数量
   round(nvl(order_gsn_cnt / group_gsn_cnt, 0), 4) turnover_rate, -- 动销率
-  round(nvl(sell_out_gsn_cnt / group_gsn_cnt, 0), 4) sell_out_rate
+  round(nvl(used_num / coupon_num, 0), 4) sell_out_rate, -- 售罄率
+  coupon_num, -- 已成团红包数
+  used_num -- 消耗红包数
 from
 (
   select
@@ -458,13 +475,14 @@ from
     count(distinct replenish_applying_gsn_cnt) replenish_applying_gsn_cnt,
     count(distinct activity_gsn_cnt) activity_gsn_cnt,
     count(distinct group_gsn_cnt) group_gsn_cnt,
-    count(distinct order_gsn_cnt) order_gsn_cnt
-    -- count(distinct(if(sum(coupon_num) = sum(remain_num), goods_sn, null))) sell_out_gsn_cnt
+    count(distinct order_gsn_cnt) order_gsn_cnt,
+    sum(coupon_num) coupon_num, -- 已成团的红包总数
+    sum(used_num) used_num -- 已成团的红包中消耗的红包数量
   from
   (
     select
-      dg.first_cat_id first_cat_id,
-      dg.second_cat_id second_cat_id,
+      nvl(dg.first_cat_id, 'unknown') first_cat_id,
+      nvl(dg.second_cat_id, 'unknown') second_cat_id,
       if(dg.brand_id > 0, 'Y', 'N') is_brand,
       dg.goods_sn goods_sn, -- gsn
       dg.goods_id goods_id,
@@ -472,7 +490,9 @@ from
       if(t1.gsn_status = 2, goods_sn, null) replenish_applying_gsn_cnt, -- 补充报名中gsn
       if(t1.gsn_status = 3, goods_sn, null) activity_gsn_cnt, -- 活动中gsn总数
       if(t1.gsn_status = 3 or (t1.gsn_status =4 and t1.coupon_num > t1.remain_num), goods_sn, null) group_gsn_cnt, --     成团gsn
-      if(t1.coupon_num > t1.remain_num, goods_sn, null) order_gsn_cnt -- 已出单gsn
+      if(t1.coupon_num > t1.remain_num, goods_sn, null) order_gsn_cnt, -- 已出单gsn
+      if(gsn_status = 3 or (gsn_status = 4 and coupon_num != remain_num), coupon_num, 0) coupon_num, -- 已成团的红包总数
+      if(gsn_status = 3 or (gsn_status = 4 and coupon_num != remain_num), coupon_num - remain_num, 0) used_num -- 已成团的红包中消耗的红包数量
     from
     (
       select
@@ -520,10 +540,10 @@ left join
     from
     (
       select
-        first_cat_id,
-        second_cat_id,
+        nvl(first_cat_id, 'unknown') first_cat_id,
+        nvl(second_cat_id, 'unknown') second_cat_id,
         if(dg.brand_id > 0, 'Y', 'N') is_brand,
-        goods_sn,
+        nvl(goods_sn, 'unknown') goods_sn,
         remain_num
       from
       (
@@ -553,7 +573,7 @@ left join
       on t1.goods_id = dg.goods_id
     )
     group by cube(first_cat_id, second_cat_id,  is_brand, goods_sn)
-  ) where first_cat_id != 'all' and second_cat_id != 'all' and goods_sn != 'all'
+  ) where first_cat_id != 'all' and goods_sn != 'all' -- and second_cat_id != 'all'
   group by first_cat_id, second_cat_id, is_brand
 ) t4
 on t1.first_cat_id = t4.first_cat_id and t1.second_cat_id = t4.second_cat_id and t1.is_brand = t4.is_brand
@@ -573,7 +593,7 @@ left join
     dim.dim_vova_category
 ) t3
 on t1.second_cat_id = t3.second_cat_id
-where t1.first_cat_id != 'all' and t1.second_cat_id != 'all'
+where t1.first_cat_id != 'all' -- and t1.second_cat_id != 'all'
 ;
 
 drop table if EXISTS tmp.tmp_first_cat_rank_gmv_avg_req8713_${table_suffix};

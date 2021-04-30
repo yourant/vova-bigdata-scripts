@@ -17,6 +17,16 @@ nodes:
       - mlb_algo_vova_item2vec
       - mlb_algo_vova_mix_als
       - mlb_vova_goods_second_cat
+      - mlb_vova_algo_mct_group_d
+      - mlb_vova_country_detect_d
+#      - mlb_vova_rec_b_g_base_d_job_message_put
+      - mlb_vova_rec_goods_scorebase_data_d_job_message_put
+#      - mlb_vova_new_user_reg_rec_out_data
+      - mlb_rec_m_tagcombine_d
+      - mlb_rec_m_taglike_d
+      - mlb_rec_m_catlike_d
+      - mlb_lightgcn_i2i_u2i_rec_job_message_put
+      - mlb_vova_rec_m_user_cat_expand_d
 
   - name: start_flag
     type: command
@@ -143,6 +153,54 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_dim_vova_merchant
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_merchant
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_goods_impression
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_impression
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_mbrmct_mct_cd
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_mbrmct_mct_cd
+    dependsOn:
+      - start_flag
+
+  - name: judge_mlb_vova_user_behave_link_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_user_behave_link_d
+      retries: 15
+      retry.backoff: 1800000
+    dependsOn:
+      - start_flag
+
+  - name: judge_mlb_vova_rec_b_goods_score_d_message_get
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=mlb_goods_score_vova --from=mlb --to=data --valid_hour=3
+      retries: 20
+      retry.backoff: 1800000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_goods_pre_attribute_data
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_pre_attribute_data
+      retries: 15
+      retry.backoff: 1800000
+    dependsOn:
+      - start_flag
+
 ########################
 # [8429]Me页面推荐策略调整
   - name: mlb_vova_rec_m_nbi_nb_d
@@ -197,14 +255,14 @@ nodes:
     dependsOn:
       - judge_dim_vova_goods
 
-  - name: mlb_vova_rec_b_g_base_d_job_message_put
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=ads_rec_b_g_base_d --from=data --to=java_server --jtype=1D --retry=0
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - mlb_vova_rec_b_g_base_d
+#  - name: mlb_vova_rec_b_g_base_d_job_message_put 正常取数，不再发消息了
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=ads_rec_b_g_base_d --from=data --to=java_server --jtype=1D --retry=0
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - mlb_vova_rec_b_g_base_d
 
 # [7381]基于用户属性的新用户冷启动策略
   - name: mlb_vova_new_user_rec
@@ -224,30 +282,30 @@ nodes:
       - judge_ads_vova_goods_portrait
 
 # [7832]冷启动兜底策略取数
-  - name: mlb_vova_new_user_reg_rec_get_data
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_user_reg_rec/update.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - judge_dws_vova_buyer_goods_behave
-      - judge_dim_vova_goods
-      - judge_dwd_vova_fact_comment
-      - judge_dwd_vova_fact_refund
-      - judge_dim_vova_order_goods
-      - judge_dwd_vova_fact_pay
-      - judge_dim_vova_buyers
-
-  - name: mlb_vova_new_user_reg_rec_out_data
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_user_reg_rec/out_update.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - mlb_vova_new_user_reg_rec_get_data
-      - mlb_vova_new_user_rec
+#  - name: mlb_vova_new_user_reg_rec_get_data
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_user_reg_rec/update.sh
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - judge_dws_vova_buyer_goods_behave
+#      - judge_dim_vova_goods
+#      - judge_dwd_vova_fact_comment
+#      - judge_dwd_vova_fact_refund
+#      - judge_dim_vova_order_goods
+#      - judge_dwd_vova_fact_pay
+#      - judge_dim_vova_buyers
+#
+#  - name: mlb_vova_new_user_reg_rec_out_data
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/vova/mlb/new_user_reg_rec/out_update.sh
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - mlb_vova_new_user_reg_rec_get_data
+#      - mlb_vova_new_user_rec
 
 
   - name: mlb_algo_vova_comatrix
@@ -312,3 +370,125 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_dim_vova_goods
+
+  - name: mlb_vova_algo_mct_group_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/algo/ads_algo_mct_group_d.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_mbrmct_mct_cd
+      - judge_dim_vova_merchant
+
+
+  - name: mlb_vova_country_detect_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/country_detect_d/country_detect.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_goods_impression
+
+# [9166]首页新增用户类目偏好发现召回
+## mlb_rec_m_catlike_d 依赖的表：mlb.mlb_vova_user_behave_link_d，mlb.mlb_vova_rec_b_goods_score_d
+
+  - name: mlb_rec_m_catlike_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_b_cat_tag_like_d/update_rec_m_catlike_d.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_user_behave_link_d
+      - judge_mlb_vova_rec_b_goods_score_d_message_get
+      - mlb_vova_rec_goods_scorebase_data_d_job_message_put
+
+## mlb_rec_m_tagcombine_d 依赖的表：mlb.mlb_vova_user_behave_link_d, ads.ads_vova_goods_attribute_label_data
+
+  - name: mlb_rec_m_tagcombine_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_b_cat_tag_like_d/update_rec_m_tagcombine_d.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_user_behave_link_d
+      - judge_ads_vova_goods_pre_attribute_data
+
+## mlb_rec_m_taglike_d 依赖的表：mlb.mlb_vova_user_behave_link_d，ads.ads_vova_goods_attribute_label_data
+
+  - name: mlb_rec_m_taglike_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_b_cat_tag_like_d/update_rec_m_taglike_d.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_user_behave_link_d
+      - judge_ads_vova_goods_pre_attribute_data
+
+## mlb_rec_m_hotcatlike_d 依赖的表：mlb.mlb_vova_user_behave_link_d，mlb.mlb_vova_rec_b_goods_score_d
+
+  - name: mlb_rec_m_hotcatlike_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_b_cat_tag_like_d/update_rec_m_hotcatlike_d.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_user_behave_link_d
+      - judge_mlb_vova_rec_b_goods_score_d_message_get
+      - mlb_vova_rec_goods_scorebase_data_d_job_message_put
+
+# [9404]lightgcn取数调度：依赖的表：dim.dim_vova_goods, dim.dim_vova_buyers, dws.dws_vova_buyer_goods_behave, ads.ads_vova_goods_portrait
+
+  - name: mlb_lightgcn_i2i_u2i_rec
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/lightgcn_i2i_u2i_rec/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_dim_vova_buyers
+      - judge_dws_vova_buyer_goods_behave
+      - judge_ads_vova_goods_portrait
+
+  - name: mlb_lightgcn_i2i_u2i_rec_job_message_put
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=data_lightgcn_rec --from=data --to=java_server --jtype=1D --retry=0
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_lightgcn_i2i_u2i_rec
+
+# [9149]列表页增加用户行为实时反馈&用户属性类目偏好-导数 2 张表 gongrui
+## mlb.mlb_vova_rec_m_user_cat_expand_d 依赖的表： dws.dws_vova_buyer_goods_behave
+
+  - name: mlb_vova_rec_m_user_cat_expand_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_m_user_kg_tag_d/update_rec_m_user_cat_expand_d.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_goods_behave
+
+## mlb.mlb_vova_rec_m_user_kg_tag_d 依赖的表： dws.dws_vova_buyer_goods_behave
+
+  - name: mlb_vova_rec_m_user_kg_tag_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_m_user_kg_tag_d/update_rec_m_user_kg_tag_d.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_goods_behave
+
+
+
+
+

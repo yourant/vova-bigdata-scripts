@@ -58,6 +58,13 @@ nodes:
         dependsOn:
           - fd_ods_goods_flow_start
 
+      - name: ods_fd_appsflyer_record
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCID --table_name=appsflyer_record  --partition_num=200 --mapers=50 --inc_column=id --period_type=day
+        dependsOn:
+          - fd_ods_goods_flow_start
+
       - name: ods_fd_vb_goods_test_reports_last
         type: command
         config:

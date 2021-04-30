@@ -289,6 +289,52 @@ group by mct_id
 ) t3 on t3.mct_id = dg.mct_id
 ;
 
+INSERT OVERWRITE TABLE ads.ads_vova_six_mct_flow_support_goods_behave_h PARTITION (pt = '${cur_date}')
+select
+/*+ REPARTITION(1) */
+dg.goods_id,
+nvl(his.impressions, 0) AS his_impressions,
+nvl(t1.impressions, 0) AS goods_page_impressions,
+nvl(t2.impressions, 0) AS mct_page_impressions,
+nvl(t3.impressions, 0) AS mct_impressions,
+case
+when his.impressions >= 30000 THEN 'a'
+when his.impressions >= 20000 AND gcr < 60 THEN 'g'
+when his.impressions >= 10000 AND gcr < 60 THEN 'f'
+when his.impressions >= 5000 AND sales_order < 1 THEN 'e'
+when his.impressions >= 2000 AND ctr < 0.014 THEN 'd'
+when t1.impressions >= 5000 THEN 'a'
+when t2.impressions >= 50000 THEN 'b'
+when t3.impressions >= 100000 THEN 'b'
+else 'normal' end AS block_reason
+from
+tmp.tmp_ads_vova_six_mct_flow_support_goods dg
+LEFT JOIN ads.ads_vova_six_mct_flow_support_goods_his his ON his.goods_id = dg.goods_id AND his.pt = '${cur_date}'
+LEFT JOIN (
+SELECT
+goods_id,
+max(impressions) AS impressions
+FROM
+tmp.tmp_ads_vova_six_mct_flow_support_page_goods_1d
+group by goods_id
+) t1 on t1.goods_id = dg.goods_id
+LEFT JOIN (
+SELECT
+mct_id,
+max(impressions) AS impressions
+FROM
+tmp.tmp_ads_vova_six_mct_flow_support_page_mct_1d
+group by mct_id
+) t2 on t2.mct_id = dg.mct_id
+LEFT JOIN (
+SELECT
+mct_id,
+sum(impressions) AS impressions
+FROM
+tmp.tmp_ads_vova_six_mct_flow_support_page_mct_1d
+group by mct_id
+) t3 on t3.mct_id = dg.mct_id
+;
 
 INSERT OVERWRITE TABLE ads.ads_vova_six_mct_goods_flow_support_h PARTITION (pt = '${cur_date}')
 select
