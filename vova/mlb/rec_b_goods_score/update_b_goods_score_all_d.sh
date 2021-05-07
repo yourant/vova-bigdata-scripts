@@ -23,70 +23,72 @@ msck repair table mlb.mlb_vova_b_goods_cat_score_details_d;
 
 insert overwrite table mlb.mlb_vova_rec_b_goods_score_all_d PARTITION (pt = '${cur_date}')
 SELECT /*+ REPARTITION(10) */
-    goods_id            ,
-    first_cat_id        ,
-    second_cat_id       ,
-    total_price         ,
-    mct_id              ,
-    comment_cnt_6m      ,
-    comment_good_cnt_6m ,
-    gmv_15d             ,
-    sales_vol_15d       ,
-    expre_cnt_15d       ,
-    clk_cnt_15d         ,
-    collect_cnt_15d     ,
-    add_cat_cnt_15d     ,
-    inter_rate_3_6w     ,
-    lrf_rate_9_12w      ,
-    nlrf_rate_5_8w      ,
-    bs_inter_rate_3_6w  ,
-    bs_lrf_rate_9_12w   ,
-    bs_nlrf_rate_5_8w   ,
-    clk_uv_15d          ,
-    mct_score           ,
+    t1.goods_id            ,
+    t1.first_cat_id        ,
+    t1.second_cat_id       ,
+    t1.total_price         ,
+    t1.mct_id              ,
+    t1.comment_cnt_6m      ,
+    t1.comment_good_cnt_6m ,
+    t1.gmv_15d             ,
+    t1.sales_vol_15d       ,
+    t1.expre_cnt_15d       ,
+    t1.clk_cnt_15d         ,
+    t1.collect_cnt_15d     ,
+    t1.add_cat_cnt_15d     ,
+    t1.inter_rate_3_6w     ,
+    t1.lrf_rate_9_12w      ,
+    t1.nlrf_rate_5_8w      ,
+    t1.bs_inter_rate_3_6w  ,
+    t1.bs_lrf_rate_9_12w   ,
+    t1.bs_nlrf_rate_5_8w   ,
+    t1.clk_uv_15d          ,
+    t1.mct_score           ,
 
-    price_score           ,
-    good_cm_rate_score    ,
-    good_cm_cnt_score     ,
-    good_expre_cnt_score  ,
-    good_clk_cnt_score    ,
-    good_cart_cnt_score   ,
-    good_collect_cnt_score,
-    good_sale_vol_score   ,
-    inter_rate_score      ,
-    nlrf_rate_score       ,
-    lrf_rate_score        ,
-    gcr_score             ,
-    gr_score              ,
-    ctr_score                ,
+    t1.price_score           ,
+    t1.good_cm_rate_score    ,
+    t1.good_cm_cnt_score     ,
+    t1.good_expre_cnt_score  ,
+    t1.good_clk_cnt_score    ,
+    t1.good_cart_cnt_score   ,
+    t1.good_collect_cnt_score,
+    t1.good_sale_vol_score   ,
+    t1.inter_rate_score      ,
+    t1.nlrf_rate_score       ,
+    t1.lrf_rate_score        ,
+    t1.gcr_score             ,
+    t1.gr_score              ,
+    t1.ctr_score                ,
 
-    good_cm_rate_cat_score    ,
-    good_cm_cnt_cat_score     ,
-    good_expre_cnt_cat_score  ,
-    good_clk_cnt_cat_score    ,
-    good_cart_cnt_cat_score   ,
-    good_collect_cnt_cat_score,
-    good_sale_vol_cat_score   ,
-    gcr_cat_score             ,
-    gr_cat_score              ,
-    ctr_cat_score           ,
+    t1.good_cm_rate_cat_score    ,
+    t1.good_cm_cnt_cat_score     ,
+    t1.good_expre_cnt_cat_score  ,
+    t1.good_clk_cnt_cat_score    ,
+    t1.good_cart_cnt_cat_score   ,
+    t1.good_collect_cnt_cat_score,
+    t1.good_sale_vol_cat_score   ,
+    t1.gcr_cat_score             ,
+    t1.gr_cat_score              ,
+    t1.ctr_cat_score           ,
 
-    base_score          ,
-    hot_score           ,
-    conversion_score    ,
-    honor_score         ,
-    overall_score       ,
+    t1.base_score          ,
+    t1.hot_score           ,
+    t1.conversion_score    ,
+    t1.honor_score         ,
+    t1.overall_score       ,
 
-    base_cat_score      ,
-    hot_cat_score       ,
-    conversion_cat_score,
-    honor_cat_score     ,
-    overall_cat_score   ,
-    if(inter_days_score > 100, 100, inter_days_score) inter_days_score -- 平滑上网天数评分
+    t1.base_cat_score      ,
+    t1.hot_cat_score       ,
+    t1.conversion_cat_score,
+    t1.honor_cat_score     ,
+    t1.overall_cat_score   ,
+    if(t1.inter_days_score > 100, 100, t1.inter_days_score) inter_days_score, -- 平滑上网天数评分
+    dg.first_cat_name,
+    dg.second_cat_name
 from
 (
   SELECT
-    t1.goods_id            ,
+    t1.goods_id goods_id,
     t3.first_cat_id        ,
     t3.second_cat_id       ,
     t3.total_price         ,
@@ -176,6 +178,9 @@ from
   on t1.pt = t5.pt and t1.goods_id = t5.goods_id
   where t1.pt='${cur_date}'
 ) t1
+left join
+  dim.dim_vova_goods dg
+on t1.goods_id = dg.goods_id
 ;
 "
 
@@ -187,7 +192,7 @@ spark-sql \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
 --conf "spark.app.name=${job_name}" \
 --conf "spark.sql.crossJoin.enabled=true" \
---conf "spark.default.parallelism = 300" \
+--conf "spark.default.parallelism=300" \
 --conf "spark.sql.shuffle.partitions=300" \
 --conf "spark.dynamicAllocation.maxExecutors=100" \
 --conf "spark.sql.adaptive.enabled=true" \
@@ -199,5 +204,3 @@ if [ $? -ne 0 ];then
   exit 1
 fi
 echo "${job_name} end_time:"  `date +"%Y-%m-%d %H:%M:%S" -d "8 hour"`
-
-
