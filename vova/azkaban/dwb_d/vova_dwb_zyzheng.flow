@@ -232,12 +232,12 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: judge_ads_vova_min_price_goods_h
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_min_price_goods_h
-    dependsOn:
-      - start_flag
+#  - name: judge_ads_vova_min_price_goods_h
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_min_price_goods_h
+#    dependsOn:
+#      - start_flag
 
   - name: judge_ads_vova_traff_control
     type: command
@@ -485,7 +485,6 @@ nodes:
        - judge_dwd_vova_log_goods_impression
        - judge_dwd_vova_fact_pay
        - judge_dim_vova_goods
-       - judge_ads_vova_min_price_goods_h
        - judge_ads_vova_traff_control
 
 #  -  name: dwb_vova_market
