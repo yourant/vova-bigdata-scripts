@@ -518,6 +518,7 @@ nodes:
       - judge_vova_goods_sku
       - judge_vova_rec_gid_pic_similar
       - ads_vova_traff_control
+      - ads_vova_goods_black_list
 
   - name: ads_vova_min_price_goods_export_d
     type: command
