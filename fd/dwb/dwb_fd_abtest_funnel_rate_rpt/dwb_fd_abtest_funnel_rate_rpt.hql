@@ -9,7 +9,7 @@ select   /*+ REPARTITION(1) */
     nvl(abtest_version,'all'),
     count(distinct session_id),
     count(distinct product_session_id),
-    count(distinct add_session_id),
+    count(distinct add_session_id),purchase_uv
     count(distinct checkout_session_id),
     count(distinct checkout_option_session_id),
     count(distinct purchase_session_id)
@@ -38,7 +38,9 @@ from
            nvl(country,'NALL') as country,
            nvl(app_version,'NALL') as app_version,
            substr(abtest_info, 1, instr(abtest_info, '=') - 1)  as abtest_name,
-           substr(abtest_info, instr(abtest_info, '=') + 1)   as abtest_version,
+           substr(abtest_info, instr(abtest_info, '' ||
+            '' ||
+             '=') + 1)   as abtest_version,
            session_id,
            IF(event_name in('page_view', 'screen_view') and page_code = 'product', session_id, null)   as product_session_id,
            IF(event_name = 'add', session_id, null)               as add_session_id,
