@@ -1,0 +1,145 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - mlb_vova_user_behave_link_d
+      - mlb_rec_search_correct_sqoop
+
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+
+
+
+
+  - name: judge_dim_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_dwd_vova_log_goods_click
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_click
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_goods_impression
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_impression
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+
+
+  - name: judge_dim_vova_region
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_region
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_common_click
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_common_click
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+
+  - name: judge_dim_vova_languages
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_languages
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_page_view
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_page_view
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: mlb_vova_user_behave_link_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/vova_user_behave_link_d/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_vova_user_behave_link_d_before
+
+  - name: mlb_vova_user_behave_link_d_before
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/vova_user_behave_link_d/update_before.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_languages
+      - judge_dim_vova_region
+      - judge_dwd_vova_log_goods_click
+      - judge_dwd_vova_log_page_view
+      - judge_dwd_vova_log_common_click
+      - judge_dwd_vova_log_goods_impression
+      - judge_dim_vova_goods
+
+  - name: mlb_rec_search_correct_sqoop
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_search_correct/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_rec_search_correct_gram
+
+  - name: mlb_rec_search_correct_gram
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/translation/search_correct_gram/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_goods_portrait
+      - mlb_vova_user_behave_link_d
+
+  - name: judge_ads_vova_goods_portrait
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_portrait_v2
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
