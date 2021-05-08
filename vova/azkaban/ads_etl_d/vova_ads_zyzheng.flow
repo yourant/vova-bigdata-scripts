@@ -23,6 +23,7 @@ nodes:
       - ads_zq_fn_vova_goods_export
       - ads_app_group_export
       - ads_vova_sale_goods_m
+      - ads_vova_sale_goods_3m
       - ads_vova_six_mct_goods_flow_support_d
 
   - name: start_flag
@@ -398,6 +399,15 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/vova/ads/display_sort_d/sale_goods_m/sale_goods_m_update.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_pay
+
+  - name: ads_vova_sale_goods_3m
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/display_sort_d/sale_goods_m/sale_goods_3m_update.sh
       retries: 10
       retry.backoff: 600000
     dependsOn:

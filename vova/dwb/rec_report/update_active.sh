@@ -49,7 +49,7 @@ where pt='$cur_date'  and os_type in ('ios','android')) t
 
 INSERT OVERWRITE TABLE tmp.vova_rec_report_tmp
 select /*+ REPARTITION(4) */
-    nvl(datasource, 'all')             datasource,
+    nvl(if(datasource in ('vova','airyclub'),datasource,'app-group'),'all') datasource,
     nvl(country,'all')                         country,
     nvl(os_type, 'all')                os_type,
     nvl(page_code, 'all')              page_code,
@@ -73,6 +73,41 @@ from (select datasource,
            list_type,
            activate_time,
            device_id_expre) t
+group by if(datasource in ('vova','airyclub'),datasource,'app-group'),
+         country,
+         os_type,
+         page_code,
+         element_type,
+         list_type,
+         activate_time
+with cube
+union all
+select /*+ REPARTITION(1) */
+    nvl(datasource,'all') datasource,
+    nvl(country,'all')                         country,
+    nvl(os_type, 'all')                os_type,
+    nvl(page_code, 'all')              page_code,
+    nvl(element_type, 'all')           element_type,
+    nvl(list_type, 'all')              list_type,
+    nvl(activate_time, 'all')          activate_time,
+    count(distinct device_id_expre) as page_uv
+from (select datasource,
+             if(country in ('FR', 'DE', 'IT', 'ES', 'GB', 'US', 'PL', 'BE', 'RN', 'CH', 'TW'), country, 'others') country,
+             os_type,
+             page_code,
+             element_type,
+             list_type,
+             activate_time,
+             device_id_expre
+      from tmp.fact_impressions_5883_page_uv where datasource not in ('vova','airyclub')
+      group by datasource,
+           if(country in ('FR', 'DE', 'IT', 'ES', 'GB', 'US', 'PL', 'BE', 'RN', 'CH', 'TW'), country, 'others'),
+           os_type,
+           page_code,
+           element_type,
+           list_type,
+           activate_time,
+           device_id_expre) t
 group by datasource,
          country,
          os_type,
@@ -81,6 +116,7 @@ group by datasource,
          list_type,
          activate_time
 with cube
+having datasource != 'all'
 ;
 
 INSERT OVERWRITE TABLE  tmp.vova_rec_report
@@ -108,6 +144,28 @@ nvl(t6.page_uv,0) page_uv
 from
 (
 select
+nvl(if(datasource in ('vova','airyclub'),datasource,'app-group'),'all') datasource,
+nvl(if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),'all') country,
+nvl(os_type,'all') os_type,
+nvl(page_code,'all') page_code,
+nvl(element_type,'all') element_type,
+nvl(list_type,'all') list_type,
+nvl(activate_time,'all') activate_time,
+sum(expres * cnt) as expres,
+sum(clks * cnt) as clks,
+count(distinct device_id_clk) as clk_uv,
+count(distinct device_id_expre) as expre_uv
+from dwd.dwd_vova_rec_report_clk_expre  where pt = '$cur_date'
+group by
+if(datasource in ('vova','airyclub'),datasource,'app-group'),
+if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),
+os_type,
+page_code,element_type,
+list_type,
+activate_time
+with cube
+union all
+select
 nvl(datasource,'all') datasource,
 nvl(if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),'all') country,
 nvl(os_type,'all') os_type,
@@ -115,11 +173,11 @@ nvl(page_code,'all') page_code,
 nvl(element_type,'all') element_type,
 nvl(list_type,'all') list_type,
 nvl(activate_time,'all') activate_time,
-sum(expres) as expres,
-sum(clks) as clks,
+sum(expres * cnt) as expres,
+sum(clks * cnt) as clks,
 count(distinct device_id_clk) as clk_uv,
 count(distinct device_id_expre) as expre_uv
-from dwd.dwd_vova_rec_report_clk_expre  where pt = '$cur_date'
+from dwd.dwd_vova_rec_report_clk_expre  where pt = '$cur_date' and datasource not in ('vova','airyclub')
 group by
 datasource,
 if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),
@@ -128,11 +186,12 @@ page_code,element_type,
 list_type,
 activate_time
 with cube
+having datasource != 'all'
 ) t1
 left join
 (
 select
-nvl(datasource,'all') datasource,
+nvl(if(datasource in ('vova','airyclub'),datasource,'app-group'),'all') datasource,
 nvl(if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),'all') country,
 nvl(os_type,'all') os_type,
 nvl(page_code,'all') page_code,
@@ -143,6 +202,26 @@ count(distinct device_id)  as cart_uv
 from
 dwd.dwd_vova_rec_report_cart_cause  where pt = '$cur_date'
 group by
+if(datasource in ('vova','airyclub'),datasource,'app-group'),
+if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),
+os_type,
+page_code,element_type,
+list_type,
+activate_time
+with cube
+union all
+select
+nvl(datasource,'all') datasource,
+nvl(if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),'all') country,
+nvl(os_type,'all') os_type,
+nvl(page_code,'all') page_code,
+nvl(element_type,'all') element_type,
+nvl(list_type,'all') list_type,
+nvl(activate_time,'all') activate_time,
+count(distinct device_id)  as cart_uv
+from
+dwd.dwd_vova_rec_report_cart_cause  where pt = '$cur_date' and datasource not in ('vova','airyclub')
+group by
 datasource,
 if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),
 os_type,
@@ -150,11 +229,12 @@ page_code,element_type,
 list_type,
 activate_time
 with cube
+having datasource != 'all'
 ) t2 on t1.datasource = t2.datasource and t1.country =t2.country and t1.os_type = t2.os_type and t1.page_code = t2.page_code and t1.list_type =t2.list_type and t1.activate_time =t2.activate_time and t1.element_type = t2.element_type
 left join
 (
 select
-nvl(datasource,'all') datasource,
+nvl(if(datasource in ('vova','airyclub'),datasource,'app-group'),'all') datasource,
 nvl(if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),'all') country,
 nvl(os_type,'all') os_type,
 nvl(page_code,'all') page_code,
@@ -165,6 +245,26 @@ count(order_goods_id)  as order_number
 from
 dwd.dwd_vova_rec_report_order_cause  where pt = '$cur_date'
 group by
+if(datasource in ('vova','airyclub'),datasource,'app-group'),
+if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),
+os_type,
+page_code,element_type,
+list_type,
+activate_time
+with cube
+union all
+select
+nvl(datasource,'all') datasource,
+nvl(if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),'all') country,
+nvl(os_type,'all') os_type,
+nvl(page_code,'all') page_code,
+nvl(element_type,'all') element_type,
+nvl(list_type,'all') list_type,
+nvl(activate_time,'all') activate_time,
+count(order_goods_id)  as order_number
+from
+dwd.dwd_vova_rec_report_order_cause  where pt = '$cur_date' and datasource not in ('vova','airyclub')
+group by
 datasource,
 if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),
 os_type,
@@ -172,11 +272,12 @@ page_code,element_type,
 list_type,
 activate_time
 with cube
+having datasource != 'all'
 ) t3 on t1.datasource = t3.datasource and t1.country =t3.country and t1.os_type = t3.os_type and t1.page_code = t3.page_code and t1.list_type = t3.list_type and t1.activate_time =t3.activate_time and t1.element_type = t3.element_type
 left join
 (
 select
-nvl(datasource,'all') datasource,
+nvl(if(datasource in ('vova','airyclub'),datasource,'app-group'),'all') datasource,
 nvl(if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),'all') country,
 nvl(os_type,'all') os_type,
 nvl(page_code,'all') page_code,
@@ -190,6 +291,29 @@ sum(goods_number) as payed_gds_num
 from
 dwd.dwd_vova_rec_report_pay_cause where pt = '$cur_date'
 group by
+if(datasource in ('vova','airyclub'),datasource,'app-group'),
+if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),
+os_type,
+page_code,element_type,
+list_type,
+activate_time
+with cube
+union all
+select
+nvl(datasource,'all') datasource,
+nvl(if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),'all') country,
+nvl(os_type,'all') os_type,
+nvl(page_code,'all') page_code,
+nvl(element_type,'all') element_type,
+nvl(list_type,'all') list_type,
+nvl(activate_time,'all') activate_time,
+count(order_goods_id)  as payed_number,
+count(distinct buyer_id) as payed_uv,
+sum(gmv) as gmv,
+sum(goods_number) as payed_gds_num
+from
+dwd.dwd_vova_rec_report_pay_cause where pt = '$cur_date'  and datasource not in ('vova','airyclub')
+group by
 datasource,
 if(country in ('FR','DE','IT','ES','GB','US','PL','BE','RN','CH','TW'),country,'others'),
 os_type,
@@ -197,6 +321,7 @@ page_code,element_type,
 list_type,
 activate_time
 with cube
+having datasource != 'all'
 ) t4 on t1.datasource = t4.datasource and t1.country =t4.country and t1.os_type = t4.os_type and t1.page_code = t4.page_code and t1.list_type = t4.list_type and t1.activate_time =t4.activate_time and t1.element_type = t4.element_type
 left join
     (

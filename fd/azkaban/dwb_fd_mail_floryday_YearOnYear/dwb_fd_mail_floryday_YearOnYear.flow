@@ -1,0 +1,36 @@
+---
+config:
+failure.emails: bob.zhu@i9i8.com
+retries: 30
+retry.backoff: 600000
+
+nodes:
+- name: dwb_fd_mail_floryday_YearOnYear_start
+type: noop
+
+- name: judge_dwd_fd_order_info
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_info
+dependsOn:
+- dwb_fd_mail_floryday_YearOnYear_start
+
+- name: judge_ods_fd_snowplow_view_event
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_snowplow_view_event_hour
+dependsOn:
+- dwb_fd_mail_floryday_YearOnYear_start
+
+- name: dwb_fd_mail_floryday_YearOnYear
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_mail_floryday_YearOnYear/run.sh
+dependsOn:
+- judge_dwd_fd_order_info
+- judge_ods_fd_snowplow_view_event
+
+- name: dwb_fd_mail_floryday_YearOnYear_end
+type: noop
+dependsOn:
+- dwb_fd_mail_floryday_YearOnYear
