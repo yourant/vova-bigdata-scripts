@@ -11,7 +11,7 @@ nodes:
     config:
       command: echo "stop job"
     dependsOn:
-      - mlb_graph_embedding_nobrand
+      - mlb_graph_embedding_nobrand_job_message_put
       - sqoop_mlb_vova_rec_m_order_nb_d
 
   - name: start_flag
@@ -87,7 +87,14 @@ nodes:
       - judge_dws_vova_buyer_goods_behave
       - judge_dim_vova_goods
 
-
+  - name: mlb_graph_embedding_nobrand_job_message_put
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=data_graph_embedding_rec --from=data --to=mlb --jtype=1D --retry=0
+      retries: 6
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_graph_embedding_nobrand
 
   - name: judge_message_get_mlb_vova_rec_m_order_nb_d_job_message
     type: command

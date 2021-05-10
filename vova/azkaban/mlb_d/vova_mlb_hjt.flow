@@ -15,6 +15,7 @@ nodes:
       - mlb_rec_highfreq_query
       - mlb_search_expansion_a_d
       - mlb_data_me_u2i_rec_job_message_put
+      - mlb_search_spell_check
 
 
   - name: start_flag
@@ -166,3 +167,12 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - mlb_data_me_u2i_rec
+
+  - name: mlb_search_spell_check
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/search_spell_check/update.sh
+      retries: 72
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
