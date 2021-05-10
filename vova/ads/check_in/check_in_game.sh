@@ -9,7 +9,7 @@ echo "cur_date:'${cur_date}'"
 
 sql="
 --签到页UV+积分游戏UV+抽奖游戏页UV+运动奖励页UV
-insert overwritee table tmp.tmp_check_in_game_uv
+insert overwrite table tmp.tmp_check_in_game_uv
 select activate_range,
        region_code,
        gmv_stage,
