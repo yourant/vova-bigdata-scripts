@@ -1,0 +1,35 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: yzhang13@vova.com.hk,juntao.han@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - dwb_vova_collection_link_monitor
+
+
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+
+############################################################
+# 报表
+# vova集运项目监控报表字段knock报警
+  - name: dwb_vova_collection_link_monitor
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/collection_link/update_monitor.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
