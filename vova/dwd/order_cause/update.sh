@@ -80,7 +80,8 @@ from (select og.datasource,
                   where pt >= '$pre_month'
                     and pt <= '$cur_date'
                     and os_type in('ios','android')
-                    and page_code not in ('my_order','my_favorites','recently_View','recently_view')
+                    and page_code not in ('recently_View','recently_view')
+                    and !(page_code ='my_order' and list_type ='/order_detail') and !(page_code ='my_favorites' and list_type ='/favorites')
               ) t0
          where t0.row_num = 1
      ) t2
@@ -151,7 +152,8 @@ from (select datasource,
                   from dwd.dwd_vova_log_goods_impression
                   where pt = '$cur_date'
                    and os_type in('ios','android')
-                    and page_code not in ('my_order','my_favorites','recently_View','recently_view')
+                    and page_code not in ('recently_View','recently_view')
+                    and !(page_code ='my_order' and list_type ='/order_detail') and !(page_code ='my_favorites' and list_type ='/favorites')
               ) t0
          where t0.row_num = 1
      ) t2
@@ -214,7 +216,7 @@ from tmp.tmp_vova_fact_order_cause_v2_expre_cause
 ) t where order_goods_id is not null;
 "
 #如果使用spark-sql运行，则执行spark-sql -e
-spark-sql  --conf "spark.app.name=dwd_vova_fact_order_cause_v2" -e "$sql"
+spark-sql  --conf "spark.app.name=dwd_vova_fact_order_cause_v2"  --conf "spark.dynamicAllocation.maxExecutors=200"  -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1

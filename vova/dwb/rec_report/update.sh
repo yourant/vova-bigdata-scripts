@@ -34,17 +34,38 @@ t1.is_brand,t1.brand_status
 from
 (
 select
+nvl(if(datasource in ('vova','airyclub'),datasource,'app-group'),'all') datasource,
+nvl(country,'all') country,
+nvl(os_type,'all') os_type,
+nvl(rec_page_code,'all') rec_page_code,
+nvl(is_brand,'all') is_brand,
+nvl(brand_status,'all') brand_status,
+sum(expres * cnt) as expres,
+sum(clks * cnt) as clks,
+count(distinct device_id_clk) as clk_uv,
+count(distinct device_id_expre) as expre_uv
+from dwd.dwd_vova_rec_report_clk_expre where pt = '$cur_date'
+group by
+if(datasource in ('vova','airyclub'),datasource,'app-group'),
+country,
+os_type,
+rec_page_code,
+is_brand,
+brand_status
+with cube
+union all
+select
 nvl(datasource,'all') datasource,
 nvl(country,'all') country,
 nvl(os_type,'all') os_type,
 nvl(rec_page_code,'all') rec_page_code,
 nvl(is_brand,'all') is_brand,
 nvl(brand_status,'all') brand_status,
-sum(expres) as expres,
-sum(clks) as clks,
+sum(expres * cnt) as expres,
+sum(clks * cnt) as clks,
 count(distinct device_id_clk) as clk_uv,
 count(distinct device_id_expre) as expre_uv
-from dwd.dwd_vova_rec_report_clk_expre where pt = '$cur_date'
+from dwd.dwd_vova_rec_report_clk_expre where pt = '$cur_date' and datasource not in ('vova','airyclub')
 group by
 datasource,
 country,
@@ -53,11 +74,12 @@ rec_page_code,
 is_brand,
 brand_status
 with cube
+having datasource != 'all'
 ) t1
 left join
 (
 select
-nvl(datasource,'all') datasource,
+nvl(if(datasource in ('vova','airyclub'),datasource,'app-group'),'all') datasource,
 nvl(country,'all') country,
 nvl(os_type,'all') os_type,
 nvl(rec_page_code,'all') rec_page_code,
@@ -67,6 +89,25 @@ count(distinct device_id)  as cart_uv
 from
 dwd.dwd_vova_rec_report_cart_cause where pt = '$cur_date'
 group by
+if(datasource in ('vova','airyclub'),datasource,'app-group'),
+country,
+os_type,
+rec_page_code,
+is_brand,
+brand_status
+with cube
+union all
+select
+nvl(datasource,'all') datasource,
+nvl(country,'all') country,
+nvl(os_type,'all') os_type,
+nvl(rec_page_code,'all') rec_page_code,
+nvl(is_brand,'all') is_brand,
+nvl(brand_status,'all') brand_status,
+count(distinct device_id)  as cart_uv
+from
+dwd.dwd_vova_rec_report_cart_cause where pt = '$cur_date' and datasource not in ('vova','airyclub')
+group by
 datasource,
 country,
 os_type,
@@ -74,11 +115,12 @@ rec_page_code,
 is_brand,
 brand_status
 with cube
+having datasource != 'all'
 ) t2 on t1.datasource = t2.datasource and t1.country =t2.country and t1.os_type = t2.os_type and t1.rec_page_code = t2.rec_page_code  and t1.is_brand = t2.is_brand and t1.brand_status = t2.brand_status
 left join
 (
 select
-nvl(datasource,'all') datasource,
+nvl(if(datasource in ('vova','airyclub'),datasource,'app-group'),'all') datasource,
 nvl(country,'all') country,
 nvl(os_type,'all') os_type,
 nvl(rec_page_code,'all') rec_page_code,
@@ -88,17 +130,36 @@ count(order_goods_id)  as order_number
 from
 dwd.dwd_vova_rec_report_order_cause where pt = '$cur_date'
 group by
+if(datasource in ('vova','airyclub'),datasource,'app-group'),
+country,
+os_type,
+rec_page_code,
+is_brand,brand_status
+with cube
+union all
+select
+nvl(datasource,'all') datasource,
+nvl(country,'all') country,
+nvl(os_type,'all') os_type,
+nvl(rec_page_code,'all') rec_page_code,
+nvl(is_brand,'all') is_brand,
+nvl(brand_status,'all') brand_status,
+count(order_goods_id)  as order_number
+from
+dwd.dwd_vova_rec_report_order_cause where pt = '$cur_date' and datasource not in ('vova','airyclub')
+group by
 datasource,
 country,
 os_type,
 rec_page_code,
 is_brand,brand_status
 with cube
+having datasource != 'all'
 ) t3 on t1.datasource = t3.datasource and t1.country =t3.country and t1.os_type = t3.os_type and t1.rec_page_code = t3.rec_page_code  and t1.is_brand = t3.is_brand and t1.brand_status = t3.brand_status
 left join
 (
 select
-nvl(datasource,'all') datasource,
+nvl(if(datasource in ('vova','airyclub'),datasource,'app-group'),'all') datasource,
 nvl(country,'all') country,
 nvl(os_type,'all') os_type,
 nvl(rec_page_code,'all') rec_page_code,
@@ -110,12 +171,33 @@ sum(gmv) as gmv
 from
 dwd.dwd_vova_rec_report_pay_cause where pt = '$cur_date'
 group by
+if(datasource in ('vova','airyclub'),datasource,'app-group'),
+country,
+os_type,
+rec_page_code,
+is_brand,brand_status
+with cube
+union all
+select
+nvl(datasource,'all') datasource,
+nvl(country,'all') country,
+nvl(os_type,'all') os_type,
+nvl(rec_page_code,'all') rec_page_code,
+nvl(is_brand,'all') is_brand,
+nvl(brand_status,'all') brand_status,
+count(order_goods_id)  as payed_number,
+count(distinct buyer_id) as payed_uv,
+sum(gmv) as gmv
+from
+dwd.dwd_vova_rec_report_pay_cause where pt = '$cur_date' and datasource not in ('vova','airyclub')
+group by
 datasource,
 country,
 os_type,
 rec_page_code,
 is_brand,brand_status
 with cube
+having datasource != 'all'
 ) t4 on t1.datasource = t4.datasource and t1.country =t4.country and t1.os_type = t4.os_type and t1.rec_page_code = t4.rec_page_code and t1.is_brand = t4.is_brand and t1.brand_status = t4.brand_status
 left join
 (
@@ -159,6 +241,28 @@ t1.brand_status
 from
 (
 select
+nvl(if(datasource in ('vova','airyclub'),datasource,'app-group'),'all') datasource,
+nvl(country,'all') country,
+nvl(os_type,'all') os_type,
+nvl(page_code,'all') page_code,
+nvl(list_type,'all') list_type,
+nvl(is_brand,'all') is_brand,
+nvl(brand_status,'all') brand_status,
+sum(expres * cnt) as expres,
+sum(clks * cnt) as clks,
+count(distinct device_id_clk) as clk_uv,
+count(distinct device_id_expre) as expre_uv
+from dwd.dwd_vova_rec_report_clk_expre  where pt = '$cur_date'
+group by
+if(datasource in ('vova','airyclub'),datasource,'app-group'),
+country,
+os_type,
+page_code,
+list_type,
+is_brand,brand_status
+with cube
+union all
+select
 nvl(datasource,'all') datasource,
 nvl(country,'all') country,
 nvl(os_type,'all') os_type,
@@ -166,11 +270,11 @@ nvl(page_code,'all') page_code,
 nvl(list_type,'all') list_type,
 nvl(is_brand,'all') is_brand,
 nvl(brand_status,'all') brand_status,
-sum(expres) as expres,
-sum(clks) as clks,
+sum(expres * cnt) as expres,
+sum(clks * cnt) as clks,
 count(distinct device_id_clk) as clk_uv,
 count(distinct device_id_expre) as expre_uv
-from dwd.dwd_vova_rec_report_clk_expre  where pt = '$cur_date'
+from dwd.dwd_vova_rec_report_clk_expre  where pt = '$cur_date' and datasource not in ('vova','airyclub')
 group by
 datasource,
 country,
@@ -179,11 +283,12 @@ page_code,
 list_type,
 is_brand,brand_status
 with cube
+having datasource != 'all'
 ) t1
 left join
 (
 select
-nvl(datasource,'all') datasource,
+nvl(if(datasource in ('vova','airyclub'),datasource,'app-group'),'all') datasource,
 nvl(country,'all') country,
 nvl(os_type,'all') os_type,
 nvl(page_code,'all') page_code,
@@ -194,6 +299,26 @@ count(distinct device_id)  as cart_uv
 from
 dwd.dwd_vova_rec_report_cart_cause  where pt = '$cur_date'
 group by
+if(datasource in ('vova','airyclub'),datasource,'app-group'),
+country,
+os_type,
+page_code,
+list_type,
+is_brand,brand_status
+with cube
+union all
+select
+nvl(datasource,'all') datasource,
+nvl(country,'all') country,
+nvl(os_type,'all') os_type,
+nvl(page_code,'all') page_code,
+nvl(list_type,'all') list_type,
+nvl(is_brand,'all') is_brand,
+nvl(brand_status,'all') brand_status,
+count(distinct device_id)  as cart_uv
+from
+dwd.dwd_vova_rec_report_cart_cause  where pt = '$cur_date'  and datasource not in ('vova','airyclub')
+group by
 datasource,
 country,
 os_type,
@@ -201,12 +326,13 @@ page_code,
 list_type,
 is_brand,brand_status
 with cube
+having datasource != 'all'
 ) t2 on t1.datasource = t2.datasource and t1.country =t2.country and t1.os_type = t2.os_type and t1.page_code = t2.page_code and t1.list_type =t2.list_type
 AND t1.is_brand = t2.is_brand and t1.brand_status = t2.brand_status
 left join
 (
 select
-nvl(datasource,'all') datasource,
+nvl(if(datasource in ('vova','airyclub'),datasource,'app-group'),'all') datasource,
 nvl(country,'all') country,
 nvl(os_type,'all') os_type,
 nvl(page_code,'all') page_code,
@@ -217,6 +343,26 @@ count(order_goods_id)  as order_number
 from
 dwd.dwd_vova_rec_report_order_cause where pt = '$cur_date'
 group by
+if(datasource in ('vova','airyclub'),datasource,'app-group'),
+country,
+os_type,
+page_code,
+list_type,
+is_brand,brand_status
+with cube
+union all
+select
+nvl(datasource,'all') datasource,
+nvl(country,'all') country,
+nvl(os_type,'all') os_type,
+nvl(page_code,'all') page_code,
+nvl(list_type,'all') list_type,
+nvl(is_brand,'all') is_brand,
+nvl(brand_status,'all') brand_status,
+count(order_goods_id)  as order_number
+from
+dwd.dwd_vova_rec_report_order_cause where pt = '$cur_date' and datasource not in ('vova','airyclub')
+group by
 datasource,
 country,
 os_type,
@@ -224,12 +370,13 @@ page_code,
 list_type,
 is_brand,brand_status
 with cube
+having datasource != 'all'
 ) t3 on t1.datasource = t3.datasource and t1.country =t3.country and t1.os_type = t3.os_type and t1.page_code = t3.page_code and t1.list_type = t3.list_type
 AND t1.is_brand = t3.is_brand  and t1.brand_status = t3.brand_status
 left join
 (
 select
-nvl(datasource,'all') datasource,
+nvl(if(datasource in ('vova','airyclub'),datasource,'app-group'),'all') datasource,
 nvl(country,'all') country,
 nvl(os_type,'all') os_type,
 nvl(page_code,'all') page_code,
@@ -243,6 +390,29 @@ sum(goods_number) as payed_gds_num
 from
 dwd.dwd_vova_rec_report_pay_cause where pt = '$cur_date'
 group by
+if(datasource in ('vova','airyclub'),datasource,'app-group'),
+country,
+os_type,
+page_code,
+list_type,
+is_brand,brand_status
+with cube
+union all
+select
+nvl(datasource,'all') datasource,
+nvl(country,'all') country,
+nvl(os_type,'all') os_type,
+nvl(page_code,'all') page_code,
+nvl(list_type,'all') list_type,
+nvl(is_brand,'all') is_brand,
+nvl(brand_status,'all') brand_status,
+count(order_goods_id)  as payed_number,
+count(distinct buyer_id) as payed_uv,
+sum(gmv) as gmv,
+sum(goods_number) as payed_gds_num
+from
+dwd.dwd_vova_rec_report_pay_cause where pt = '$cur_date' and datasource not in ('vova','airyclub')
+group by
 datasource,
 country,
 os_type,
@@ -250,6 +420,7 @@ page_code,
 list_type,
 is_brand,brand_status
 with cube
+having datasource != 'all'
 ) t4 on t1.datasource = t4.datasource and t1.country =t4.country and t1.os_type = t4.os_type and t1.page_code = t4.page_code and t1.list_type = t4.list_type
 AND t1.is_brand = t4.is_brand  and t1.brand_status = t4.brand_status
 ;
@@ -335,11 +506,3 @@ spark-sql \
 if [ $? -ne 0 ];then
   exit 1
 fi
-
-
-
-
-
-
-
-

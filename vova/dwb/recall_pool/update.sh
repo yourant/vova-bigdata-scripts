@@ -7,11 +7,25 @@ cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 
 
-spark-sql   --conf "spark.app.name=dwb_vova_recall_pool_v2" --conf "spark.sql.autoBroadcastJoinThreshold=-1"  --conf "spark.sql.crossJoin.enabled=true"  --conf "spark.dynamicAllocation.maxExecutors=120"  -e "
-
-drop table if exists tmp.tmp_vova_recall_pool_v2_tmp;
-CREATE TABLE IF NOT EXISTS tmp.tmp_vova_recall_pool_v2_tmp as
-select
+spark-sql   --conf "spark.sql.autoBroadcastJoinThreshold=31457280"  \
+--executor-memory 8G --executor-cores 1 \
+--conf "spark.sql.parquet.writeLegacyFormat=true"  \
+--conf "spark.dynamicAllocation.minExecutors=5" \
+--conf "spark.dynamicAllocation.initialExecutors=20" \
+--conf "spark.dynamicAllocation.maxExecutors=120" \
+--conf "spark.app.name=dwb_vova_recall_pool_v2" \
+--conf "spark.default.parallelism = 380" \
+--conf "spark.sql.shuffle.partitions=380" \
+--conf "spark.sql.adaptive.enabled=true" \
+--conf "spark.sql.adaptive.join.enabled=true" \
+--conf "spark.shuffle.sort.bypassMergeThreshold=10000" \
+--conf "spark.sql.inMemoryColumnarStorage.compressed=true" \
+--conf "spark.sql.inMemoryColumnarStorage.partitionPruning=true" \
+--conf "spark.sql.inMemoryColumnarStorage.batchSize=100000" \
+--conf "spark.network.timeout=300" \
+-e "
+INSERT OVERWRITE TABLE tmp.tmp_vova_recall_pool_v2_tmp
+select /*+ REPARTITION(1) */
 a.datasource1,
 a.rec_page_code1,
 a.rp_name1,
@@ -31,13 +45,13 @@ from (
                 nvl(is_single, 'all')     is_single1,
                 nvl(rec_code, 'all')      rec_code1,
                 nvl(rec_version, 'all')   rec_version1,
-                count(1)                  expre_pv
+                sum(cnt)                  expre_pv
          from (select datasource,
                       rec_page_code,
                       rec_code,
                       explode(split(concat(rp_name, ',all'), ',')) rp_name,
                       is_single,
-                      rec_version
+                      rec_version,cnt
                from dwd.dwd_vova_ab_test_expre
                where pt = '${cur_date}') tmp
          group by cube (datasource, rec_page_code, rp_name, is_single, rec_code, rec_version)
@@ -81,13 +95,13 @@ left join (
                 nvl(is_single, 'all')     is_single1,
                 nvl(rec_code, 'all')      rec_code1,
                 nvl(rec_version, 'all')   rec_version1,
-                count(1)                  clk_pv
+                sum(cnt)                  clk_pv
          from (select datasource,
                       rec_page_code,
                       rec_code,
                       explode(split(concat(rp_name, ',all'), ',')) rp_name,
                       is_single,
-                      rec_version
+                      rec_version,cnt
                from dwd.dwd_vova_ab_test_clk
                where pt = '${cur_date}') tmp
          group by cube (datasource, rec_page_code, rp_name, is_single, rec_code, rec_version)
@@ -165,3 +179,4 @@ and tmp.is_single1 = tmp2.is_single1
 if [ $? -ne 0 ]; then
   exit 1
 fi
+

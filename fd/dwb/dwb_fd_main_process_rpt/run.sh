@@ -28,7 +28,8 @@ shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_main_process_rpt"
 
 spark-sql \
   --conf "spark.app.name=main_process_gaohaitao" \
-  --conf "spark.dynamicAllocation.maxExecutors=60" \
+  --conf "spark.dynamicAllocation.maxExecutors=120" \
+  --conf "spark.executor.memory=5g" \
   -d pt=$pt \
   -d pt3=$pt3 \
   -d pt11=$pt11 \

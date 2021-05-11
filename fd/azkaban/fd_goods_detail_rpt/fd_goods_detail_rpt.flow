@@ -36,4 +36,5 @@ nodes:
   - name: dwb_fd_goods_detail_end
     type: noop
     dependsOn:
+
       - dwb_fd_goods_detail
