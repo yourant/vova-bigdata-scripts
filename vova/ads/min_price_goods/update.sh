@@ -97,6 +97,13 @@ if [ $? -ne 0 ];then
   exit 1
 fi
 
+cnt=$(mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "select count(id) from themis.ads_min_price_goods_h_new;" |tail -1)
+echo ${cnt}
+if [ ${cnt} -le 0 ];then
+  echo "Error: count(*)=${cnt} -le 0"
+  exit 1
+fi
+
 echo "----------开始rename-------"
 mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
 rename table themis.ads_min_price_goods_h to themis.ads_min_price_goods_h_pre,themis.ads_min_price_goods_h_new to themis.ads_min_price_goods_h;
