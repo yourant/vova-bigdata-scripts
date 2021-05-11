@@ -353,7 +353,12 @@ AND t1.datasource = 'all'
 
 
 INSERT OVERWRITE TABLE ads.ads_vova_goods_performance_page PARTITION (pt = '${cur_date}')
+
 select
+t1.*,
+nvl(t2.overall_score,0) as overall_score
+from
+(select
 /*+ REPARTITION(10) */
 t1.datasource,
 t1.rec_page_code,
@@ -708,7 +713,8 @@ third_cat_name,
 fourth_cat_id,
 fourth_cat_name
 FROM
-tmp.tmp_ads_vova_goods_performance_page_group
+tmp.tmp_ads_vova_goods_performance_page_group) t1
+left join mlb.mlb_vova_rec_b_goods_score_d t2 on t1.goods_id = t2.goods_id and t2.pt='${cur_date}'
 
 ;
 "
