@@ -1,5 +1,5 @@
 #!/bin/bash
-reg='\\&|\\"|\\/|\\^|#|\\\n|\\\t|\\\r|\\|,|，|`|\\;|!|\\[|\\]|\\+|\\*|\\?|:|。|《|》|\\<|\\>|_|\\{|\\}\\~|\\@|\\¥|=|、|%|\\$'
+reg='\\&|\\"|\\/|\\^|#|\\\n|\\\t|\\\r|\\|,|,|，|`|\\;|!|\\[|\\]|\\+|\\*|\\?|:|。|《|》|\\<|\\>|_|\\{|\\}\\~|\\@|\\¥|=|、|%|\\$'
 sql="
 insert into table ads.ads_vova_goods_pre_attribute_data
 select a.goods_id,a.attr_key,a.attr_value,7 as cat_attr_id,a.second_cat_id from (

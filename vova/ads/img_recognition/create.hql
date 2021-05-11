@@ -18,3 +18,4 @@ CREATE external TABLE IF NOT EXISTS ads.ads_vova_brand_img_recognition_d
     img_url                   string COMMENT '图片链接'
 ) COMMENT 'brand图像识别'
 PARTITIONED BY ( pt string) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE location 's3://vova-computer-vision/project/vova-brand-recognition/test_datasets/vova_image_check/input/';
+

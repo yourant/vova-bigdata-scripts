@@ -1,0 +1,56 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_bod_goods_rank_data
+      - ads_vova_rec_m_user_kg_tag_d
+
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: judge_mlb_rec_m_tagcombine_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_rec_m_tagcombine_d
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_mlb_vova_rec_m_user_kg_tag_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_rec_m_user_kg_tag_d
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_bod_goods_rank_data
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/knowledge_graph/goods_rank.sh
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+      - judge_mlb_vova_rec_m_user_kg_tag_d
+
+  - name: ads_vova_rec_m_user_kg_tag_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/knowledge_graph/tagcombine.sh
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+      - judge_mlb_rec_m_tagcombine_d
