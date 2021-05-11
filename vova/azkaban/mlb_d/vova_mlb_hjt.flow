@@ -206,3 +206,12 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - mlb_high_freq_search_recall
+
+  - name: mlb_ebr_search_recall_job_message_put
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=ebr_search_recall --from=data --to=mlb --jtype=1D --retry=0
+      retries: 30
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_high_freq_search_recall
