@@ -312,8 +312,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_min_price_goods_h
-      retries: 5
-      retry.backoff: 600000
+      retries: 25
+      retry.backoff: 900000
     dependsOn:
       - start_flag
 

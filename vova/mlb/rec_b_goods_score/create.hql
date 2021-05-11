@@ -269,4 +269,6 @@ alter table mlb.mlb_vova_rec_goods_scorebase_data_d add columns(`avg_inter_days_
 mlb.mlb_vova_rec_b_goods_score_all_d
 alter table mlb.mlb_vova_rec_b_goods_score_all_d add columns(`inter_days_score` double comment '平滑上网天数评分') cascade;
 
+alter table mlb.mlb_vova_rec_b_goods_score_all_d add columns(`first_cat_name` string comment '一级品类名称') cascade;
+alter table mlb.mlb_vova_rec_b_goods_score_all_d add columns(`second_cat_name` string comment '二级品类名称') cascade;
 
