@@ -4,8 +4,8 @@ if [ ! -n "$1" ];then
    pt=`date -d "-1 day" +%Y-%m-%d`
 fi
 
-db_username="bdwriter"
-db_password="Dd7LvXRPDP4iIJ7FfT8e"
+db_username="dwwriter"
+db_password="wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx"
 
 echo "import to mysql database"
 

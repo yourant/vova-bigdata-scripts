@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS \`themis\`.\`${prefix}_${suffix}\` (
   KEY \`ux_words\` (\`words\`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 row_format=dynamic;
 "
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx -e "${sql}"
 
 if [ $? -ne 0 ];then
   exit 1
@@ -49,7 +49,7 @@ sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dsqoop.export.records.per.statement=1000 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
---username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
+--username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \
 --m 1 \
 --table ${prefix}_${suffix}_new \
 --hcatalog-database mlb \
@@ -65,7 +65,7 @@ fi
 rename_sql="rename table themis.${prefix}_${suffix} to themis.${prefix}_${suffix}_pre,themis.${prefix}_${suffix}_new to themis.${prefix}_${suffix};"
 echo $rename_sql
 echo "----------开始rename-------"
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx <<EOF
 $rename_sql
 EOF
 echo "-------rename结束--------"

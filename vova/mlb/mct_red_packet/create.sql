@@ -9,7 +9,7 @@ https://zt.gitvv.com/index.php?m=my&f=task&type=assignedTo
 [6662]降价商品模块新增红包逻辑
 [7164]红包商品曝光量问题过少取数排查
 
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx
 use themis;
 
 select * from ads_lower_price_goods_red_packet where is_invalid = 0 and is_delete = 0 and red_packet_cnt > 0 limit 20;
