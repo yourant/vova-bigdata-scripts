@@ -27,7 +27,8 @@ goods_id string,
 is_brand string,
 goods_sn string,
 is_self string,
-is_test string
+is_test string,
+create_time string
 ) COMMENT 'dwb_vova_web_main_goods'
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
@@ -151,7 +152,8 @@ t.goods_id,
 t.is_brand,
 t.goods_sn,
 t.is_self,
-if(t1.goods_id is not null,'Y','N') is_test
+if(t1.goods_id is not null,'Y','N') is_test,
+t1.create_time
 from
 (
 select
@@ -282,7 +284,20 @@ goods_id,
 is_brand,
 goods_sn,
 is_self
-) t left join (select goods_id from ods_vova_vbd.ods_vova_test_goods_behave group by goods_id) t1 on t.goods_id = t1.goods_id;
+) t left join
+(
+select
+goods_id,
+create_time
+from
+(
+select
+goods_id,
+create_time,
+row_number() over(partition by goods_id order by create_time) rank
+from ods_vova_vbd.ods_vova_test_goods_behave
+) t where rank =1
+) t1 on t.goods_id = t1.goods_id;
 
 
 
@@ -351,17 +366,3 @@ and to_date(t1.min_re_mct_first_pay_time)>='2021-01-01' and to_date(t1.min_re_mc
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-"

@@ -23,7 +23,7 @@ CREATE TABLE `ads.ads_vova_buyer_portrait_feature`(
   `first_order_time` timestamp COMMENT 'i_首单时间',
   `order_cnt` int COMMENT 'i_购买订单数',
   `last_order_time` timestamp COMMENT 'i_最后一单时间',
-  `avg_price` decimal(13,2) COMMENT 'i_笔单价',
+  `avg_price` decimal(13,2) COMMENT 'i_',
   `email_act` int COMMENT 'i_邮箱活跃度',
   `gmv_stage` int COMMENT 'd_gmv分层级别',
   `is_brand` int COMMENT 'd_是否brand爱好者'

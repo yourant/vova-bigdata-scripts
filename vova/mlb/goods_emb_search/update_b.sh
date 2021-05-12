@@ -27,7 +27,7 @@ fi
 if [ ! -n "$table_name" ]; then
   exit 1
 fi
-select_sql="select  tab_name from  als_images.mlb_vova_goods_emb_relation where link_model='mlb_vova_search_goods_emb' and use_online=0 limit 1"
+select_sql="select  tab_name from  als_images.mlb_vova_goods_emb_relation where  link_model='mlb_vova_search_goods_emb_b' and use_online=0 limit 1"
 db_data=`mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${select_sql}"`
 suffix=`echo ${db_data: -1}`
 
@@ -38,17 +38,17 @@ fi
 tables=(${table_name//,/ })
 for var in "${tables[@]}"
 do
-  if [[ "$var" =~ ^mlb_vova_search_goods_emb.* ]]
+  if [[ "$var" =~ ^mlb_vova_search_goods_emb_b.* ]]
   then
-    echo "sh /mnt/vova-bigdata-scripts/vova/mlb/goods_emb_search/sqoop_export_goods_emb.sh ${var} ${dt}  ${suffix}"
-    sh /mnt/vova-bigdata-scripts/vova/mlb/goods_emb_search/sqoop_export_goods_emb.sh "${var}" "${dt}"  "${suffix}"
+    echo "sh /mnt/vova-bigdata-scripts/vova/mlb/goods_emb_search/sqoop_export_goods_emb_b.sh ${var} ${dt}  ${suffix}"
+    sh /mnt/vova-bigdata-scripts/vova/mlb/goods_emb_search/sqoop_export_goods_emb_b.sh "${var}" "${dt}"  "${suffix}"
     if [ $? -ne 0 ];then
        exit 1
     fi
-  elif [[ "$var" =~ ^mlb_vova_recall_words_search.* ]]
+  elif [[ "$var" =~ ^mlb_vova_recall_words_search_b.* ]]
   then
-    echo "sh /mnt/vova-bigdata-scripts/vova/mlb/goods_emb_search/sqoop_export_recall_words_search.sh ${var} ${dt}  ${suffix}"
-    sh /mnt/vova-bigdata-scripts/vova/mlb/goods_emb_search/sqoop_export_recall_words_search.sh "${var}" "${dt}"  "${suffix}"
+    echo "sh /mnt/vova-bigdata-scripts/vova/mlb/goods_emb_search/sqoop_export_recall_words_search_b.sh ${var} ${dt}  ${suffix}"
+    sh /mnt/vova-bigdata-scripts/vova/mlb/goods_emb_search/sqoop_export_recall_words_search_b.sh "${var}" "${dt}"  "${suffix}"
     if [ $? -ne 0 ];then
        exit 1
     fi
@@ -59,7 +59,7 @@ if [ $? -ne 0 ];then
   exit 1
 fi
 
-sh /mnt/vova-bigdata-scripts/vova/mlb/goods_emb_search/send_msg.sh  "${suffix}"
+sh /mnt/vova-bigdata-scripts/vova/mlb/goods_emb_search/send_msg_b.sh  "${suffix}"
 
 if [ $? -ne 0 ];then
   exit 1
