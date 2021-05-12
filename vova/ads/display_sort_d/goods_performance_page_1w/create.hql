@@ -35,6 +35,8 @@ CREATE EXTERNAL TABLE IF NOT EXISTS ads.ads_vova_goods_performance_page
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
 
+
+
 alter table ads.ads_vova_goods_performance_page
 
 alter table ads.ads_vova_goods_performance_page ADD COLUMNS (
