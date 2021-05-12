@@ -16,7 +16,8 @@ nodes:
       - mlb_search_expansion_a_d
       - mlb_data_me_u2i_rec_job_message_put
       - mlb_search_spell_check
-      - mlb_high_freq_search_recall
+      - mlb_high_freq_search_recall_job_message_put
+      - mlb_ebr_search_recall_job_message_put
 
 
   - name: start_flag
