@@ -77,7 +77,6 @@ fi
 
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
--Dsqoop.export.records.per.statement=10000 \
 -Dmapreduce.map.memory.mb=8192 \
 -Dmapreduce.reduce.memory.mb=8192 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
@@ -95,6 +94,13 @@ sqoop export \
 
 if [ $? -ne 0 ];then
   echo "ads_min_price_goods_h sqoop error"
+  exit 1
+fi
+
+cnt=$(mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "select count(id) from themis.ads_min_price_goods_h_new;" |tail -1)
+echo ${cnt}
+if [ ${cnt} -le 0 ];then
+  echo "Error: count(*)=${cnt} -le 0"
   exit 1
 fi
 

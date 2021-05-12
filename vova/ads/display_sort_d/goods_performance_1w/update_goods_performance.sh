@@ -17,7 +17,11 @@ fi
 
 sql="
 INSERT OVERWRITE TABLE ads.ads_vova_goods_performance PARTITION (pt = '${cur_date}')
-SELECT
+select
+t1.*,
+nvl(t2.overall_score,0) as overall_score
+from
+(SELECT
 /*+ REPARTITION(10) */
        final.goods_id,
        dg.goods_sn,
@@ -351,7 +355,9 @@ FROM (
         left join dim.dim_vova_category c on dg.cat_id = c.cat_id
 WHERE (final.clicks > 0 OR final.sales_order > 0)
 AND final.region_code in ('all', 'FR', 'DE', 'IT', 'ES', 'GB', 'TW')
-AND final.datasource = 'all'
+AND final.datasource = 'all') t1
+left join mlb.mlb_vova_rec_b_goods_score_d t2 on t1.goods_id = t2.goods_id and t2.pt='${cur_date}'
+
 ;
 
 "

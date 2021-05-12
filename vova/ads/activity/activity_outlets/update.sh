@@ -9,170 +9,132 @@ sql="
 -- req5703
 WITH ads_vova_activity_outlets_tmp_gooods AS (
 SELECT
-    cb.goods_id,
-    cb.first_cat_id,
-    cb.second_cat_id,
-    cb.region_id,
-    cb.expre_cnt,
-    cb.clk_cnt,
-    cb.ord_cnt,
-    cb.gmv,
-    cb.expre_uv,
-    cb.click_uv,
-    cb.sales_vol,
-    cb.is_brand
+  cb.goods_id,
+  cb.first_cat_id,
+  cb.second_cat_id,
+  cb.region_id,
+  cb.expre_cnt,
+  cb.clk_cnt,
+  cb.ord_cnt,
+  cb.gmv,
+  cb.expre_uv,
+  cb.click_uv,
+  cb.sales_vol,
+  cb.is_brand
 FROM
-    dwd.dwd_vova_activity_goods_ctry_behave cb
-WHERE
-    cb.pt='${pre_date}'
-    AND cb.expre_cnt >= 500
-    AND cb.expre_cnt <= 200000
-    AND cb.clk_cnt/cb.expre_cnt>0.02
-    AND cb.ord_cnt/cb.click_uv >0.03
-    AND cb.region_id IN ( 0, 3858, 4003, 4017, 4056, 4143 )),
+  dwd.dwd_vova_activity_goods_ctry_behave cb
+WHERE cb.pt='${pre_date}'
+  AND cb.expre_cnt >= 500
+  AND cb.expre_cnt <= 200000
+  AND cb.clk_cnt/cb.expre_cnt>0.02
+  AND cb.ord_cnt/cb.click_uv >0.03
+  AND cb.region_id IN (0, 3858, 4003, 4017, 4056, 4143)),
 
 tmp_brand (
 SELECT
-    2 AS event_type,
-    region_id,
-    first_cat_id,
-    second_cat_id,
-    goods_id,
-    ord_cnt / expre_cnt AS cr
+  3 AS event_type,
+  region_id,
+  first_cat_id,
+  second_cat_id,
+  goods_id,
+  ord_cnt / expre_cnt AS cr
 FROM
-    ads_vova_activity_outlets_tmp_gooods
-WHERE
-    is_brand = 1
-    AND ( ( region_id = 4003 AND gmv >= 50 ) OR ( region_id != 4003 AND gmv >= 20 ) )
-    AND (
-    ( first_cat_id = 5777 AND gmv / click_uv * clk_cnt / expre_cnt * 10000 >= 200 )
-    OR ( first_cat_id != 5777 AND gmv / click_uv * clk_cnt / expre_cnt * 10000 >= 120 )
-    )
-    ),
-    tmp_no_brand (
-SELECT
-    4 AS event_type,
-    region_id,
-    first_cat_id,
-    second_cat_id,
-    goods_id,
-    ord_cnt / expre_cnt AS cr
-FROM
-    ads_vova_activity_outlets_tmp_gooods
-WHERE
-    is_brand = 0
-    AND ( ( region_id = 4003 AND gmv >= 20 ) OR ( region_id != 4003 AND gmv >= 10 ) )
-    AND (
-    ( first_cat_id = 5777 AND gmv / click_uv * clk_cnt / expre_cnt * 10000 >= 150 )
-    OR ( first_cat_id != 5777 AND gmv / click_uv * clk_cnt / expre_cnt * 10000 >= 60 )
-    )
-    ),
-    tmp_second_cat (
-SELECT
-    5 AS event_type,
-    region_id,
-    first_cat_id,
-    second_cat_id,
-    goods_id,
-    ord_cnt / expre_cnt AS cr
-FROM
-    ads_vova_activity_outlets_tmp_gooods
-WHERE
-    is_brand = 1
-    AND gmv >= 20
-    AND (
-    ( first_cat_id = 5777 AND gmv / click_uv * clk_cnt / expre_cnt * 10000 >= 200 )
-    OR ( first_cat_id != 5777 AND gmv / click_uv * clk_cnt / expre_cnt * 10000 >= 120 )
-    )
-    )
+  ads_vova_activity_outlets_tmp_gooods
+WHERE is_brand = 1
+  AND ((region_id = 4003 AND gmv >= 50) OR (region_id != 4003 AND gmv >= 20))
+  AND (
+    (first_cat_id = 5777 AND gmv / click_uv * clk_cnt / expre_cnt * 10000 >= 200)
+    OR (first_cat_id != 5777 AND gmv / click_uv * clk_cnt / expre_cnt * 10000 >= 120)
+  )
+),
 
-INSERT overwrite TABLE ads.ads_vova_activity_outlets  partition (pt='${pre_date}')
+tmp_no_brand (
 SELECT
-    'outlets' as biz_type,
-    event_type,
-    region_id,
-    first_cat_id,
-    second_cat_id,
-    goods_id,
-    rank
+  3 AS event_type,
+  region_id,
+  first_cat_id,
+  second_cat_id,
+  goods_id,
+  ord_cnt / expre_cnt AS cr
 FROM
-    (
+  ads_vova_activity_outlets_tmp_gooods
+WHERE is_brand = 0
+  AND ((region_id = 4003 AND gmv >= 20) OR (region_id != 4003 AND gmv >= 10))
+  AND (
+    (first_cat_id = 5777 AND gmv / click_uv * clk_cnt / expre_cnt * 10000 >= 150)
+    OR (first_cat_id != 5777 AND gmv / click_uv * clk_cnt / expre_cnt * 10000 >= 60)
+  )
+)
+
+INSERT overwrite TABLE ads.ads_vova_activity_outlets_v2 partition (pt='${pre_date}')
 SELECT
+  goods_id,
+  region_id,
+  'outlets' as biz_type,
+  event_type rp_type,
+  first_cat_id,
+  nvl(second_cat_id, 0) second_cat_id,
+  rank
+FROM
+(
+  SELECT
     tmp3.event_type,
     tmp3.region_id,
     tmp3.first_cat_id,
     tmp3.second_cat_id,
     tmp3.goods_id,
-    row_number ( ) over ( PARTITION BY tmp3.event_type, tmp3.region_id ORDER BY tmp3.cr DESC ) rank
-FROM
+    row_number() over (PARTITION BY tmp3.event_type, tmp3.region_id ORDER BY tmp3.cr DESC) rank
+  FROM
+  (
+    SELECT
+      tmp1.event_type,
+      tmp1.region_id,
+      tmp1.first_cat_id,
+      tmp1.second_cat_id,
+      nvl(tmp2.min_price_goods_id, tmp1.goods_id) AS goods_id,
+      tmp1.cr,
+      row_number() over(PARTITION BY tmp1.event_type, tmp1.region_id, nvl(tmp2.min_price_goods_id, tmp1.goods_id) ORDER BY tmp1.cr DESC) grank
+    FROM
     (
-SELECT
-    tmp1.event_type,
-    tmp1.region_id,
-    tmp1.first_cat_id,
-    tmp1.second_cat_id,
-    nvl ( tmp2.min_price_goods_id, tmp1.goods_id ) AS goods_id,
-    tmp1.cr,
-    row_number ( ) over (
-    PARTITION BY tmp1.event_type,
-    tmp1.region_id,
-    nvl ( tmp2.min_price_goods_id, tmp1.goods_id )
-ORDER BY
-    tmp1.cr DESC
-    ) grank
-FROM
-    (
-SELECT
-    event_type,
-    region_id,
-    first_cat_id,
-    second_cat_id,
-    goods_id,
-    cr
-FROM
-    tmp_brand
-
-UNION ALL
-SELECT
-    event_type,
-    region_id,
-    first_cat_id,
-    second_cat_id,
-    goods_id,
-    cr
-FROM
-    tmp_no_brand
-
-UNION ALL
-SELECT
-    event_type,
-    region_id,
-    first_cat_id,
-    second_cat_id,
-    goods_id,
-    cr
-FROM
-    tmp_second_cat
+      SELECT
+        event_type,
+        region_id,
+        first_cat_id,
+        second_cat_id,
+        goods_id,
+        cr
+      FROM
+        tmp_brand
+      UNION ALL
+      SELECT
+        event_type,
+        region_id,
+        first_cat_id,
+        second_cat_id,
+        goods_id,
+        cr
+      FROM
+        tmp_no_brand
     ) tmp1
-    LEFT JOIN (
-SELECT
-    mpg.goods_id,
-    mpg.min_price_goods_id,
-    dg.second_cat_id
-FROM
-    ads.ads_vova_min_price_goods_d mpg
-    LEFT JOIN dim.dim_vova_goods dg ON mpg.min_price_goods_id = dg.goods_id
-WHERE
-    pt = '${pre_date}'
-    AND strategy = 'c'
-    ) tmp2 ON tmp1.goods_id = tmp2.goods_id
-    AND tmp1.second_cat_id = tmp2.second_cat_id
-    ) tmp3
-WHERE
-    grank = 1
-    )
-WHERE
-    rank <= 1000
+    LEFT JOIN
+    (
+      SELECT
+        mpg.goods_id,
+        mpg.min_price_goods_id,
+        dg.second_cat_id
+      FROM
+        ads.ads_vova_min_price_goods_d mpg
+      LEFT JOIN
+        dim.dim_vova_goods dg
+      ON mpg.min_price_goods_id = dg.goods_id
+      WHERE pt = '${pre_date}'
+        AND strategy = 'c'
+    ) tmp2
+    ON tmp1.goods_id = tmp2.goods_id AND tmp1.second_cat_id = tmp2.second_cat_id
+  ) tmp3
+  WHERE grank = 1
+)
+WHERE rank <= 2000
 "
 
 #如果使用spark-sql运行，则执行spark-sql -e
