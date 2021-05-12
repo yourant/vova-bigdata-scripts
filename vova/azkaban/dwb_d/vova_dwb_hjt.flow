@@ -647,7 +647,7 @@ nodes:
   - name: dwb_vova_abnormal_low_price_goods
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/dwb/search_rate_monitor/update.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/abnormal_low_price_goods/update.sh
       retries: 3
       retry.backoff: 600000
       job.priority: 10

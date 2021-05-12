@@ -14,7 +14,7 @@ create table if not exists dwb.dwb_fd_goods_structure_analysis
     goods_sale_10          BIGINT COMMENT '日销10件商品数',
     sale_good_goods		   BIGINT COMMENT '畅销的商品数',
     goods_sale_2		   BIGINT COMMENT '日销2件商品数',
-    goods_sale_0          BIGINT COMMENT '日销0-2件商品数'
+    goods_sale_0           BIGINT COMMENT '日销0-2件商品数'
 ) comment "商品结构分析表"
     partitioned by (`pt` string)
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'

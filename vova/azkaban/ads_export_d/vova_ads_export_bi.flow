@@ -39,6 +39,9 @@ nodes:
       - ads_vova_mct_refund_w_export
       - ads_vova_sale_goods_m_export
       - ads_vova_mct_behave_3m_export
+      - ads_vova_red_packet_gsn_goods_export
+      - ads_vova_buyer_portrait_category_likes_exp_export
+      - ads_vova_buyer_portrait_second_category_likes_exp_export
 
   - name: start_flag
     type: command
@@ -386,7 +389,7 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_ads_vova_country_hot_words
-
+      
 
   - name: judge_ads_vova_goods_d
     type: command
@@ -423,7 +426,7 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_ads_vova_mct_d
-
+      
   - name: judge_ads_vova_search_sort_d
     type: command
     config:
@@ -460,7 +463,7 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_ads_vova_goods_sn_cut_price
-
+      
 
   - name: judge_ads_vova_gsn_reduce_valid_goods
     type: command
@@ -511,7 +514,7 @@ nodes:
   - name: judge_ads_vova_goods_id_behave_m
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_id_country_behave
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_id_behave_m
       retries: 20
       retry.backoff: 120000
     dependsOn:
@@ -596,3 +599,52 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_ads_vova_mct_behave_3m
+
+# [8525]商家红包替换逻辑改为gsn逻辑 红包商品对应 gsn 下的全部 goods_id  themis
+  - name: judge_ads_vova_red_packet_gsn_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_red_packet_gsn_goods
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_red_packet_gsn_goods_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/lower_price_goods_red_packet/sqoop_export_gsn_goods.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_red_packet_gsn_goods
+
+
+
+  - name: ads_vova_buyer_portrait_category_likes_exp_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_portrait_v2/category_likes/sqoop_likes_weight_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_buyer_portrait_category_likes
+
+  - name: judge_ads_vova_buyer_portrait_second_category_likes
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_buyer_portrait_second_category_likes
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+  - name: ads_vova_buyer_portrait_second_category_likes_exp_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_portrait_v2/second_category_likes/sqoop_likes_weight_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_buyer_portrait_second_category_likes

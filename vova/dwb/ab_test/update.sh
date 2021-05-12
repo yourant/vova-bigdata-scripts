@@ -33,7 +33,7 @@ select /*+ REPARTITION(100) */ nvl(a.datasource, 'all')    datasource,
     nvl(a.rec_code, 'all')      rec_code,
     nvl(a.rec_version, 'all')   rec_version,
     nvl(if(a.rp_name like '%47%','Y','N'), 'all')   brand_status,
-    count(1)                  expre_pv
+    sum(cnt)                  expre_pv
 from dwd.dwd_vova_ab_test_expre a
 where pt = '${cur_date}'
 group by cube (a.datasource, a.platform, a.is_brand, a.rec_page_code, a.rec_code, a.rec_version,if(a.rp_name like '%47%','Y','N'))
@@ -146,7 +146,7 @@ from tmp.tmp_ab_expre_pv a
                    nvl(e.rec_code, 'all')                rec_code,
                    nvl(e.rec_version, 'all')             rec_version,
                    nvl(if(e.rp_name like '%47%','Y','N'), 'all')             brand_status,
-                   count(1)                            clk_pv
+                   sum(cnt)                            clk_pv
             from dwd.dwd_vova_ab_test_clk e
             where pt = '${cur_date}'
             group by cube (e.datasource, e.platform, e.is_brand, e.rec_page_code, e.rec_code, e.rec_version,if(e.rp_name like '%47%','Y','N'))

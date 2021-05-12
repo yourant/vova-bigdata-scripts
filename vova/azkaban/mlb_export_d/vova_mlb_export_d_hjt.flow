@@ -11,7 +11,7 @@ nodes:
     config:
       command: echo "stop job"
     dependsOn:
-      - sqoop_mlb_vova_graph_embedding_no_brand_data
+      - mlb_graph_embedding_nobrand_job_message_put
       - sqoop_mlb_vova_rec_m_order_nb_d
 
   - name: start_flag
@@ -20,23 +20,81 @@ nodes:
       command: echo "start job"
 
 ## judge #############
-  - name: judge_message_get_mlb_graph_embedding_nobrand_job_message
+#  - name: judge_message_get_mlb_graph_embedding_nobrand_job_message
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=mlb_graph_embedding_rec --from=mlb --to=data
+#      retries: 72
+#      retry.backoff: 600000
+#    dependsOn:
+#      - judge_mlb_graph_embedding_nobrand
+
+#  - name: judge_message_put_mlb_graph_embedding_nobrand_job_message_put
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=data_graph_embedding_rec --from=data --to=mlb --jtype=1D --retry=0
+#      retries: 6
+#      retry.backoff: 600000
+#    dependsOn:
+#      - judge_mlb_graph_embedding_nobrand
+
+  - name: judge_dwd_vova_log_goods_click
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=mlb_graph_embedding_rec --from=mlb --to=data
-      retries: 72
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_goods_click
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_goods_portrait_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_portrait_v2
+      retries: 10
       retry.backoff: 600000
     dependsOn:
-      - judge_message_put_mlb_graph_embedding_nobrand_job_message_put
+      - start_flag
 
-  - name: judge_message_put_mlb_graph_embedding_nobrand_job_message_put
+  - name: judge_dws_vova_buyer_goods_behave
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dws_vova_buyer_goods_behave
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: mlb_graph_embedding_nobrand
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/graph_embedding_no_brand_data/update_before.sh
+      retries: 3
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_goods_behave
+      - judge_dwd_vova_log_goods_click
+      - judge_ads_vova_goods_portrait_v2
+      - judge_dws_vova_buyer_goods_behave
+      - judge_dim_vova_goods
+
+  - name: mlb_graph_embedding_nobrand_job_message_put
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=data_graph_embedding_rec --from=data --to=mlb --jtype=1D --retry=0
       retries: 6
       retry.backoff: 600000
     dependsOn:
-      - start_flag
+      - mlb_graph_embedding_nobrand
 
   - name: judge_message_get_mlb_vova_rec_m_order_nb_d_job_message
     type: command
@@ -47,14 +105,14 @@ nodes:
     dependsOn:
       - start_flag
 ## sqoop #############
-  - name: sqoop_mlb_vova_graph_embedding_no_brand_data
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/mlb/graph_embedding_no_brand_data/update.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - judge_message_get_mlb_graph_embedding_nobrand_job_message
+#  - name: sqoop_mlb_vova_graph_embedding_no_brand_data
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/vova/mlb/graph_embedding_no_brand_data/update.sh
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - judge_message_get_mlb_graph_embedding_nobrand_job_message
 
   - name: sqoop_mlb_vova_rec_m_order_nb_d
     type: command

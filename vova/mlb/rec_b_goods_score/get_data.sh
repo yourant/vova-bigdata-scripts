@@ -35,6 +35,7 @@ SELECT
   ,t2.bs_nlrf_rate_5_8w           AS bs_nlrf_rate_5_8w
   ,t2.clk_uv_15d                  AS clk_uv_15d
   ,nvl(t3.score,60)               AS mct_score
+  ,t2.avg_inter_days_3_6w         as avg_inter_days_3_6w
 FROM
 (
 	SELECT  goods_id
@@ -49,14 +50,14 @@ LEFT JOIN
 (
 	SELECT *
 	FROM ads.ads_vova_goods_portrait
-	WHERE to_date(pt) = date_sub('${cur_date}', 1)
+	WHERE to_date(pt) = '${cur_date}'
 ) t2
 ON t1.goods_id = t2.gs_id
 LEFT JOIN
 (
 	SELECT  *
 	FROM ads.ads_vova_mct_rank
-	WHERE to_date(pt) = date_sub('${cur_date}', 1)
+	WHERE to_date(pt) = '${cur_date}'
 ) t3
 ON t1.mct_id = t3.mct_id AND t1.first_cat_id = t3.first_cat_id
 ;

@@ -76,10 +76,26 @@ CREATE TABLE IF NOT EXISTS dwb.dwb_vova_red_packet_cat (
   order_gsn_cnt               bigint   COMMENT '已出单gsn数量',
   sell_out_gsn_cnt            bigint   COMMENT '售罄红包gsn数量',
   turnover_rate               double   COMMENT '动销率',
-  sell_out_rate               double   COMMENT '售罄率'
+  sell_out_rate               double   COMMENT '售罄率',
+
 ) COMMENT '红包商品报表-类目' PARTITIONED BY (pt STRING)
 STORED AS PARQUETFILE
 ;
+
+######################################################
+【报表修改】[9012]红包商品报表--逻辑修改
+需求内容：
+
+1. 报表名称：红包商品报表
+2. 修改逻辑：
+  1）售罄率改为“红包售罄率”，算法改为：已消耗红包数/已成团gsn对应的红包数
+  2）【原始数据-类目】，二级类目名称增加all
+  3）【原始数据-店铺】，所属类目当前等级的gmv均值，按照N/Y/ALL分别计算gmv
+
+
+
+
+
 
 
 

@@ -25,3 +25,25 @@ CREATE EXTERNAL TABLE dwb.dwb_vova_recall_pool_v2
 alter table dwb.dwb_vova_recall_pool_v2 ADD COLUMNS (
 order_cnt STRING COMMENT '订单数'
 ) CASCADE;
+
+
+
+
+drop table if exists tmp.tmp_vova_recall_pool_v2_tmp;
+CREATE TABLE tmp.tmp_vova_recall_pool_v2_tmp
+(
+    datasource1    string,
+    rec_page_code1 string,
+    rp_name1       string,
+    is_single1     string,
+    rec_code1      string,
+    rec_version1   string,
+    expre_pv       bigint,
+    clk_pv         bigint,
+    expre_uv       bigint,
+    pay_uv         bigint,
+    gmv            double,
+    order_cnt      bigint
+)
+    COMMENT 'tmp召回监控报表'
+    STORED AS PARQUETFILE;

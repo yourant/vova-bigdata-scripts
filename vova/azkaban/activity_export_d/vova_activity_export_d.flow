@@ -21,6 +21,8 @@ nodes:
       - ads_vova_activity_women_clothing_clearance_sale_export
       - ads_vova_activity_new_user_export
       - ads_vova_activity_user_only_export
+      - ads_vova_activity_health_beauty_export
+      - ads_vova_activity_shoes_export
 
   - name: start_flag
     type: command
@@ -240,4 +242,45 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_ads_vova_activity_user_only
+      - start_flag
+
+# [9345] 母亲节活动会场新增数据源需求：
+## 医美活动
+  - name: judge_ads_vova_activity_health_beauty
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_health_beauty
+      retries: 20
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name:  ads_vova_activity_health_beauty_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_health_beauty/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_activity_health_beauty
+      - start_flag
+
+## 鞋子活动
+  - name: judge_ads_vova_activity_shoes
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_shoes
+      retries: 20
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name:  ads_vova_activity_shoes_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_shoes/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_activity_shoes
       - start_flag

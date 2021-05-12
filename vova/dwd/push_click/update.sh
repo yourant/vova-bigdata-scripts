@@ -50,7 +50,8 @@ from ods_vova_vtp.ods_vova_app_event_log_message_push vaelmp
                              inner join ods_vova_vtp.ods_vova_app_push_tag vapt on vut.tag_id = vapt.id
                     group by vut.user_id) as ug on ug.buyer_id = vaelmp.uid
 union all
-select 'airyclub'                          as datasource,
+select /*+ REPARTITION(10) */
+       nvl(vaelmp.project, 'airyclub')                          as datasource,
        vaelmp.uid                                             as buyer_id,
        nvl(regexp_extract(ug.user_tag, 'R_([0-9])', 0), 'NA') as r_tag,
        nvl(regexp_extract(ug.user_tag, 'F_([0-9])', 0), 'NA') as f_tag,

@@ -1,0 +1,63 @@
+---
+# 依赖营销广告数据，所以把同步数据放在这个任务里面一天跑两次
+config:
+  retries: 10
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_daily_job_start
+    type: noop
+
+  - name: judge_dwd_fd_app_install
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_app_install
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: judge_dwd_fd_order_info
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_info
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: ads_ga_channel_daily_flat_report
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=INIT --table_name=ads_ga_channel_daily_flat_report  --partition_num=1 --period_type=day
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: ads_ga_channel_daily_gmv_flat_report
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=INIT --table_name=ads_ga_channel_daily_gmv_flat_report  --partition_num=1 --period_type=day
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: temp_device_order_date_cohort
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=INIT --table_name=temp_device_order_date_cohort  --partition_num=1 --period_type=day --split_id=install_date
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: dwb_fd_ads_gmv
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_ads_gmv/run.sh ${azkaban.flow.start.timestamp} ${pt}
+    dependsOn:
+      - judge_dwd_fd_app_install
+      - judge_dwd_fd_order_info
+
+  - name: dwb_fd_ads_cost
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_ads_cost/run.sh ${azkaban.flow.start.timestamp} ${pt}
+    dependsOn:
+      - judge_dwd_fd_app_install
+      - judge_dwd_fd_order_info
+      - ads_ga_channel_daily_flat_report
+      - ads_ga_channel_daily_gmv_flat_report
+      - temp_device_order_date_cohort

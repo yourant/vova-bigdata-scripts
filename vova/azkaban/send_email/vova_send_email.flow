@@ -10,7 +10,7 @@ nodes:
     config:
       command: echo "stop job"
     dependsOn:
-      - vova_send_email_new_active_user
+#      - vova_send_email_new_active_user
 #      - vova_send_email_shopping_guide_robot
       - vova_send_email_merchant_swipe_monitor
       - vova_send_email_customer_satisfaction
@@ -105,14 +105,6 @@ nodes:
       - start_flag
 
 
-  - name: judge_dws_vova_buyer_portrait
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dws_vova_buyer_portrait
-      retries: 10
-      retry.backoff: 300000
-    dependsOn:
-      - start_flag
 
   - name: judge_dim_vova_region
     type: command
@@ -233,17 +225,17 @@ nodes:
 
 
 #新激活用户
-  - name: vova_send_email_new_active_user
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/send_email/new_activate_user/update.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - judge_dwd_vova_log_screen_view
-      - judge_dim_vova_coupon
-      - judge_dim_vova_devices
-      - judge_dwd_vova_fact_pay
+#  - name: vova_send_email_new_active_user
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/vova/send_email/new_activate_user/update.sh
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - judge_dwd_vova_log_screen_view
+#      - judge_dim_vova_coupon
+#      - judge_dim_vova_devices
+#      - judge_dwd_vova_fact_pay
 
 #智能导购机器人
 #  - name: vova_send_email_shopping_guide_robot

@@ -11,7 +11,6 @@ nodes:
       command: echo "stop job"
     dependsOn:
       - dwb_vova_coupon
-      - dwb_vova_main_process
       #- dwb_vova_rec_report
       - dwb_vova_airyclub_ads_brief
       - dwb_vova_goods_cat
@@ -69,15 +68,6 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: judge_dwd_vova_log_screen_view
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_screen_view
-      retries: 10
-      retry.backoff: 300000
-    dependsOn:
-      - start_flag
-
   - name: judge_dwd_vova_log_common_click
     type: command
     config:
@@ -87,32 +77,6 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: judge_dwd_vova_log_order_process
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_order_process
-      retries: 10
-      retry.backoff: 300000
-    dependsOn:
-      - start_flag
-
-  - name: judge_dwd_vova_fact_buyer_device_releation
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_buyer_device_releation
-      retries: 10
-      retry.backoff: 300000
-    dependsOn:
-      - start_flag
-
-  - name: judge_dwd_vova_fact_activity_order_goods
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_activity_order_goods
-      retries: 10
-      retry.backoff: 300000
-    dependsOn:
-      - start_flag
 
   - name: judge_dwd_vova_log_goods_click
     type: command
@@ -203,6 +167,15 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_dwd_vova_fact_ab
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_ab
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
 #################################################################
 
   - name: dwb_vova_coupon
@@ -216,22 +189,6 @@ nodes:
       - judge_dim_vova_coupon
       - judge_dwd_vova_fact_pay
 
-
-  - name: dwb_vova_main_process
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/dwb/main_process/update.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - judge_dim_vova_devices
-      - judge_dim_vova_order_goods
-      - judge_dwd_vova_fact_pay
-      - judge_dwd_vova_log_screen_view
-      - judge_dwd_vova_log_common_click
-      - judge_dwd_vova_log_order_process
-      - judge_dwd_vova_fact_buyer_device_releation
-      - judge_dwd_vova_fact_activity_order_goods
 
   #- name: dwb_vova_rec_report
   #  type: command
@@ -292,6 +249,7 @@ nodes:
       - judge_dwd_vova_fact_order_cause_v2
       - judge_dim_vova_devices
       - judge_dwd_vova_fact_pay
+      - judge_dwd_vova_fact_ab
 
 # 订单归因报表
   - name: dwb_vova_rec_report

@@ -75,3 +75,17 @@ CREATE TABLE IF NOT EXISTS themis.ads_vova_six_mct_goods_flow_support_h
     UNIQUE KEY goods_id (goods_id, page_code)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='ads_vova_six_mct_goods_flow_support_h'
 ;
+
+DROP TABLE ads.ads_vova_six_mct_flow_support_goods_behave_h;
+CREATE EXTERNAL TABLE IF NOT EXISTS ads.ads_vova_six_mct_flow_support_goods_behave_h
+(
+    goods_id               bigint,
+    his_impressions        bigint,
+    goods_page_impressions bigint,
+    mct_page_impressions   bigint,
+    mct_impressions        bigint,
+    block_reason           string
+) COMMENT 'ads_vova_six_mct_flow_support_goods_behave_h' PARTITIONED BY (pt STRING)
+    ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
+
+
