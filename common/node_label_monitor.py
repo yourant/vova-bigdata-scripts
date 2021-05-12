@@ -2,7 +2,7 @@
 import os
 import requests
 
-knockUrl = "https://eventhub.gitvv.com/api/v1/notifications/knock?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InZ2ZXZlbnRodWIiLCJwYXNzd29yZCI6InBlNG9vbTdPanVyPWVlL2c4dyIsImp0aSI6Im1pY2ZtcFVqYUM4bUlRT3kiLCJpc3MiOiJ2dkV2ZW50SHViIn0.xWIiN25VqH7ppJ8A_nZ2KbkeSybr3PTzDy0-SEzWLbE"
+knockUrl = "https://eventhub.gitvv.com/api/v1/notifications/knock?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InZ2ZXZlbnRodWIiLCJwYXNzd29yZCI6InBlNG9vbTdPanVyPWVlL2c4dyIsImp0aSI6IjlXckxwODVhUWxMMzFVT1IiLCJpc3MiOiJ2dkV2ZW50SHViIn0.7aeUY8TBr69NV6P9r6tdm1NZoPVEx-XY6wYfzvHuQZU"
 knockUser = '["andy.zhang"]'
 headers = {"accept": "application/json"}
 def knock():

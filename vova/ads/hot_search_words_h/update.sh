@@ -71,7 +71,7 @@ sql="
 drop table if exists themis.hot_search_word_new;
 drop table if exists themis.hot_search_word_pre;
 "
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx -e "${sql}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1
@@ -109,7 +109,7 @@ CREATE TABLE IF NOT EXISTS themis.hot_search_word (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='热搜词汇表';
 "
 
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx -e "${sql}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1
@@ -118,7 +118,7 @@ fi
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis?useUnicode=true\&characterEncoding=utf-8 \
---username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
+--username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \
 --table hot_search_word_new \
 --m 1 \
 --columns app_from,language_id,gender,is_shield,hot_word,search_counts \
@@ -135,7 +135,7 @@ fi
 #rename table themis.hot_search_word to themis.hot_search_word_pre;
 #rename table themis.hot_search_word_new to themis.hot_search_word;
 echo "----------开始rename-------"
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx <<EOF
 rename table themis.hot_search_word to themis.hot_search_word_pre,themis.hot_search_word_new to themis.hot_search_word;
 EOF
 echo "-------rename结束--------"
