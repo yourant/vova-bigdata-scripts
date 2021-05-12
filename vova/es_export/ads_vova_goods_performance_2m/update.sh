@@ -7,7 +7,7 @@ pre_date=`date -d "-1 day" +%Y-%m-%d`
 echo "$pre_date"
 fi
 
-sh /mnt/vova-bigdata-scripts/vova/es_export/export2ES.sh --sql="select * from ads.ads_vova_goods_performance_2m where pt='${pre_date}'" --index=ads_goods_performance_2m
+sh /mnt/vova-bigdata-scripts/vova/es_export/export2ES.sh --sql="select * from ads.ads_vova_goods_performance_2m where pt='${pre_date}'" --index=ads_goods_performance_2m --col_id=goods_id,datasource,platform,region_code
 
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then

@@ -78,7 +78,8 @@ from (
                   from dwd.dwd_vova_log_goods_click
                   where pt = '$cur_date'
                   and os_type in('ios','android')
-                  and page_code not in ('my_order','my_favorites','recently_View','recently_view')
+                  and page_code not in ('recently_View','recently_view')
+                  and !(page_code ='my_order' and list_type ='/order_detail') and !(page_code ='my_favorites' and list_type ='/favorites')
                   union all
                   select datasource,
                          dvce_created_tstamp,
@@ -197,7 +198,8 @@ from (
                   from dwd.dwd_vova_log_goods_impression
                   where pt = '$cur_date'
                   and os_type in('ios','android')
-                  and page_code not in ('my_order','my_favorites','recently_View','recently_view')
+                  and page_code not in ('recently_View','recently_view')
+                  and !(page_code ='my_order' and list_type ='/order_detail') and !(page_code ='my_favorites' and list_type ='/favorites')
               ) t1
      ) t2
 where t2.event_name = 'common_click';
@@ -247,7 +249,7 @@ select /*+ REPARTITION(2) */
 from tmp.tmp_vova_fact_cart_cause_v2_expre_cause;
 "
 #如果使用spark-sql运行，则执行spark-sql -e
-spark-sql --conf "spark.app.name=dwd_vova_cart_cause_v2" -e "$sql"
+spark-sql --conf "spark.app.name=dwd_vova_cart_cause_v2" --conf "spark.dynamicAllocation.maxExecutors=150" -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1

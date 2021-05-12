@@ -10,9 +10,9 @@ fi
 sh /mnt/vova-bigdata-scripts/vova/es_export/export2ES.sh \
 --sql="select * from ads.ads_vova_gsn_top1000 where pt='${pre_date}'" \
 --index=ads_gsn_top1000 \
---id "${pre_date}" \
---mode append
-
+--id="${pre_date}" \
+--mode=append \
+--col_id=ctry,rec_page_code,gs_id
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1
