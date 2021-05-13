@@ -23,6 +23,8 @@ nodes:
       - ads_vova_activity_new_user
       - ads_vova_activity_health_beauty
       - ads_vova_activity_shoes
+      - ads_vova_activity_outlets_v2
+      - ads_vova_activity_daily_selection_v2
 
   - name: start_flag
     type: command
@@ -250,3 +252,28 @@ nodes:
     dependsOn:
       - judge_dwd_vova_activity_goods_ctry_behave
       - judge_dim_vova_goods
+
+# 会场逻辑统一&outlets规则调整，: 原表有其他地方用还要继续更新
+## outlets 活动统一表结构
+  - name: ads_vova_activity_outlets_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_outlets/update_v2.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_activity_goods_ctry_behave
+      - judge_dim_vova_goods
+      - judge_ads_vova_min_price_goods_d
+
+## daily_selection 活动统一表结构
+  - name:  ads_vova_activity_daily_selection_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_daily_selection/update_v2.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_activity_goods_ctry_behave
+      - judge_dim_vova_goods
+

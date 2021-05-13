@@ -23,6 +23,8 @@ nodes:
       - ads_vova_activity_user_only_export
       - ads_vova_activity_health_beauty_export
       - ads_vova_activity_shoes_export
+      - ads_vova_activity_outlets_v2_export
+      - ads_vova_activity_daily_selection_v2_export
 
   - name: start_flag
     type: command
@@ -283,4 +285,45 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_ads_vova_activity_shoes
+      - start_flag
+
+# 会场逻辑统一&outlets规则调整，: 原表有其他地方用还要继续更新
+## outlets 活动统一表结构
+  - name: judge_ads_vova_activity_outlets_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_outlets_v2
+      retries: 20
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name:  ads_vova_activity_outlets_v2_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_outlets/sqoop_export_v2.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_activity_outlets_v2
+      - start_flag
+
+## daily_selection 活动统一表结构
+  - name: judge_ads_vova_activity_daily_selection_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_daily_selection_v2
+      retries: 20
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name:  ads_vova_activity_daily_selection_v2_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_daily_selection/sqoop_export_v2.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_activity_daily_selection_v2
       - start_flag
