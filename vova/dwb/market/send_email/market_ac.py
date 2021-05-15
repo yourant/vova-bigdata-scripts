@@ -4,9 +4,20 @@
 import MySQLdb
 import sys
 
+print("Python version: ", sys.version)
+
+import configparser
+import os
+
+
+config_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + '/conf/config.ini'
+config = configparser.ConfigParser()
+config.read(config_dir)
+print(config_dir)
+
 # 打开数据库连接
-db = MySQLdb.connect(host="db-logistics-w.gitvv.com", user="vvreport4vv",
-                     passwd="nTTPdJhVp!DGv5VX4z33Fw@tHLmIG8oS", db="themis_logistics_report")
+db = MySQLdb.connect(host=config.get("db_themis_logistics_report", "host"), user=config.get("db_themis_logistics_report", "username"),
+                     passwd=config.get("db_themis_logistics_report", "password"), db=config.get("db_themis_logistics_report", "database"))
 
 # 使用cursor()方法获取操作游标
 cursor = db.cursor()
@@ -224,10 +235,10 @@ class SendEmail:
         #RECIPIENT_2 = ['qi.zhong@gmail.com', 'ychen@i9i8.com', 'mxu2@i9i8.com', 'fchen1@i9i8.com', 'jchu@i9i8.com', 'txu@i9i8.com', 'jyji@vova.com.hk','zysong1@vova.com.hk', 'fjzhang@i9i8.com']
         RECIPIENT_2 = ['zyzheng@i9i8.com']
         RECIPIENT_1 = ",".join(RECIPIENT_2)
-        USERNAME_SMTP = "AKIA3TUGTP557OGE6WXZ"  # 带有邮件权限的 IAM 帐号
-        PASSWORD_SMTP = "BMcrPXE0Ea9QtSvFCgYjArq5Q/M294T471o3CK9rPPXv"  # 带有邮件权限的 IAM 密码
-        HOST = "email-smtp.us-east-1.amazonaws.com"
-        PORT = 587
+        USERNAME_SMTP = config.get("aws_email_service", "username")
+        PASSWORD_SMTP = config.get("aws_email_service", "password")
+        HOST = config.get("aws_email_service", "host")
+        PORT = config.get("aws_email_service", "port")
         SUBJECT = 'Airyclub APP 大盘及渠道报表'
 
         BODY_HTML = html

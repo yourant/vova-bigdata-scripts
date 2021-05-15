@@ -23,7 +23,7 @@ if [ $? -ne 0 ];then
 fi
 
 
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx <<EOF
 drop table if exists themis.mlb_vova_search_expansion_a_d_new;
 drop table if exists themis.mlb_vova_search_expansion_a_d_pre;
 CREATE TABLE themis.mlb_vova_search_expansion_a_d_new
@@ -43,7 +43,7 @@ sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.map.memory.mb=8192 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
---username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
+--username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \
 --table mlb_vova_search_expansion_a_d_new \
 --m 4 \
 --hcatalog-database mlb \
@@ -60,7 +60,7 @@ if [ $? -ne 0 ];then
   exit 1
 fi
 
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx <<EOF
 rename table themis.mlb_vova_search_expansion_a_d to themis.mlb_vova_search_expansion_a_d_pre;
 rename table themis.mlb_vova_search_expansion_a_d_new to themis.mlb_vova_search_expansion_a_d;
 EOF
