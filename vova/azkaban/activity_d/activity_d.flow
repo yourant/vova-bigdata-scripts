@@ -25,6 +25,7 @@ nodes:
       - ads_vova_activity_shoes
       - ads_vova_activity_outlets_v2
       - ads_vova_activity_daily_selection_v2
+      - ads_vova_activity_no_brand_goods_pool
 
   - name: start_flag
     type: command
@@ -106,6 +107,14 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_mlb_vova_rec_b_goods_score_d_message_get
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=mlb_goods_score_vova --from=mlb --to=data --valid_hour=3
+      retries: 20
+      retry.backoff: 1800000
+    dependsOn:
+      - start_flag
 
   - name:  ads_vova_activity_ac_brand
     type: command
@@ -277,3 +286,12 @@ nodes:
       - judge_dwd_vova_activity_goods_ctry_behave
       - judge_dim_vova_goods
 
+  - name: ads_vova_activity_no_brand_goods_pool
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_no_brand_goods_pool/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_activity_goods_ctry_behave
+      - judge_mlb_vova_rec_b_goods_score_d_message_get
