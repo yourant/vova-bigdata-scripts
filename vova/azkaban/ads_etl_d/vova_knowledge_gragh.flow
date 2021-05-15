@@ -11,7 +11,7 @@ nodes:
       command: echo "stop job"
     dependsOn:
       - ads_vova_bod_goods_rank_data
-      - ads_vova_rec_m_user_kg_tag_d
+      - ads_vova_rec_m_tagcombine_d
 
 
   - name: start_flag
@@ -45,8 +45,9 @@ nodes:
       retry.backoff: 300000
     dependsOn:
       - judge_mlb_vova_rec_m_user_kg_tag_d
+      - judge_mlb_rec_m_tagcombine_d
 
-  - name: ads_vova_rec_m_user_kg_tag_d
+  - name: ads_vova_rec_m_tagcombine_d
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/vova/ads/knowledge_graph/tagcombine.sh
