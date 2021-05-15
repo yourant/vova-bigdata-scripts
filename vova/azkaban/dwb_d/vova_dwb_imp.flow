@@ -181,7 +181,7 @@ nodes:
   - name: dwb_vova_coupon
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/dwb/coupon/update.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/coupon/update_new_op.sh
       retries: 5
       retry.backoff: 600000
     dependsOn:
