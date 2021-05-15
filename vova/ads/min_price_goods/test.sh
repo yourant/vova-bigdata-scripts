@@ -33,7 +33,7 @@ sqoop export \
 -Dmapreduce.job.queuename=important \
 -Dsqoop.export.records.per.statement=10000 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
---username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
+--username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \
 --table ads_min_price_goods_test \
 --update-key "goods_id,strategy" \
 --m 1 \

@@ -36,7 +36,7 @@ if [ $? -ne 0 ];then
   exit 1
 fi
 
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx <<EOF
 drop table if exists themis.rec_highfreq_query_mapping_d_new;
 drop table if exists themis.rec_highfreq_query_mapping_d_pre;
 CREATE TABLE themis.rec_highfreq_query_mapping_d_new
@@ -50,7 +50,7 @@ EOF
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
---username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
+--username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \
 --table rec_highfreq_query_mapping_d_new \
 --m 1 \
 --hcatalog-database mlb \
@@ -64,7 +64,7 @@ if [ $? -ne 0 ];then
   exit 1
 fi
 
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx <<EOF
 rename table themis.rec_highfreq_query_mapping_d to themis.rec_highfreq_query_mapping_d_pre;
 rename table themis.rec_highfreq_query_mapping_d_new to themis.rec_highfreq_query_mapping_d;
 EOF
@@ -77,7 +77,7 @@ fi
 
 
 
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx <<EOF
 drop table if exists themis.rec_highfreq_query_match_d_new;
 drop table if exists themis.rec_highfreq_query_match_d_pre;
 CREATE TABLE themis.rec_highfreq_query_match_d_new
@@ -91,7 +91,7 @@ EOF
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
---username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
+--username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \
 --table rec_highfreq_query_match_d_new \
 --m 1 \
 --hcatalog-database mlb \
@@ -105,7 +105,7 @@ if [ $? -ne 0 ];then
   exit 1
 fi
 
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx <<EOF
 rename table themis.rec_highfreq_query_match_d to themis.rec_highfreq_query_match_d_pre;
 rename table themis.rec_highfreq_query_match_d_new to themis.rec_highfreq_query_match_d;
 EOF

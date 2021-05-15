@@ -10,7 +10,7 @@ create external table if  not exists  ads.ads_vova_activity_outlets (
 ) COMMENT 'outlets活动数据' PARTITIONED BY (pt STRING)
      STORED AS PARQUETFILE;
 
-// 统一表结构
+// 统一表结构 V2
 create table if  not exists ads.ads_vova_activity_outlets_v2 (
 goods_id                  bigint COMMENT 'i_商品ID',
 region_id                 int    COMMENT 'i_国家id',
