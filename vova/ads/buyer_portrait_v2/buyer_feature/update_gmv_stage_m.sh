@@ -19,8 +19,8 @@ SELECT
 FROM
     dwd.dwd_vova_fact_pay fp
 WHERE
-    date( pay_time ) >= '${pre_3month_firstday}'
-    AND date( pay_time ) < '${month_firstday}'
+    date( pay_time ) > date_sub('${cur_date}',90)
+    AND date( pay_time ) <= '${cur_date}'
 GROUP BY
     fp.buyer_id
 ),

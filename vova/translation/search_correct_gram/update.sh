@@ -50,6 +50,7 @@ with goods_name_extract as (
     )
     insert overwrite table mlb.mlb_vova_search_correct_word_d partition(pt='${pt}')
     select /*+ REPARTITION(1) */ word from correct_word where word not rlike '[\\u4e00-\\u9fa5]'
+    union select /*+ REPARTITION(1) */ word from mlb.mlb_vova_search_manual_word
 ;
 
 with goods_name as (

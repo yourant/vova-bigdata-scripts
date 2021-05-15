@@ -32,7 +32,7 @@ CREATE TABLE  if not exists \`themis\`.\`user_brand_cat_likes_weight\`  (
   UNIQUE INDEX \`uk_user_id\`(\`user_id\`) USING BTREE COMMENT '一个用户最多一行偏好记录'
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 "
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx -e "${sql}"
 
 if [ $? -ne 0 ];then
   exit 1
@@ -43,7 +43,7 @@ sqoop export \
 -Dmapreduce.map.memory.mb=8192 \
 -Dsqoop.export.records.per.statement=3000 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
---username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
+--username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \
 --m 1 \
 --table user_brand_cat_likes_weight_now \
 --hcatalog-database ads \
@@ -56,7 +56,7 @@ if [ $? -ne 0 ];then
 fi
 
 echo "----------开始rename-------"
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx <<EOF
 rename table themis.user_brand_cat_likes_weight to themis.user_brand_cat_likes_weight_pre,themis.user_brand_cat_likes_weight_now to themis.user_brand_cat_likes_weight;
 EOF
 echo "-------rename结束--------"

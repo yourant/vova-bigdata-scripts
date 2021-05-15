@@ -27,6 +27,7 @@ nodes:
       - mlb_rec_m_catlike_d
       - mlb_lightgcn_i2i_u2i_rec_job_message_put
       - mlb_vova_rec_m_user_cat_expand_d
+      - mlb_vova_six_mct_get_data
 
   - name: start_flag
     type: command
@@ -489,6 +490,35 @@ nodes:
       - judge_dws_vova_buyer_goods_behave
 
 
+  - name: judge_vova_images_vector
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_images_vector
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_six_mct_goods_flow_support_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_six_mct_goods_flow_support_d
+      retries: 20
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: mlb_vova_six_mct_get_data
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/six_mct/six_mct_get_data.sh
+      retries: 20
+      retry.backoff: 600000
+    dependsOn:
+      - judge_vova_images_vector
+      - judge_dim_vova_goods
+      - judge_mlb_vova_user_behave_link_d
+      - judge_ads_vova_six_mct_goods_flow_support_d
 
 
 

@@ -8,83 +8,80 @@ fi
 sql="
 WITH tmp_all AS (
 SELECT
-  cb.goods_id,
-  cb.region_id,
-  cb.expre_cnt,
-  cb.clk_cnt,
-  cb.ord_cnt,
-  cb.first_cat_id,
-  nvl(cb.second_cat_id, 0) second_cat_id,
-  cb.gmv,
-  cb.click_uv
+    cb.goods_id,
+    cb.region_id,
+    cb.expre_cnt,
+    cb.clk_cnt,
+    cb.ord_cnt,
+    cb.first_cat_id,
+    cb.gmv,
+    cb.click_uv
 FROM
-  dwd.dwd_vova_activity_goods_ctry_behave cb
-WHERE cb.pt = '${pre_date}'
-  AND cb.is_brand = 0
-  AND cb.region_id != 0
-  AND expre_cnt >= 500
-  AND expre_cnt <= 200000
-  AND clk_cnt / expre_cnt >= 0.02
-),
-
+    dwd.dwd_vova_activity_goods_ctry_behave cb
+WHERE
+    cb.pt = '${pre_date}'
+    AND cb.is_brand = 0
+    AND cb.region_id != 0
+    AND expre_cnt >= 500
+    AND expre_cnt <= 200000
+    AND clk_cnt / expre_cnt >= 0.02
+    ),
 -- 非brand非女装
-tmp_no_brand_no_women_clothes (
+    tmp_no_brand_no_women_clothes (
 SELECT
   4 AS event_type,
-  tmp_all.region_id,
-  first_cat_id,
-  second_cat_id,
-  tmp_all.goods_id,
-  row_number() over (PARTITION BY tmp_all.region_id ORDER BY tmp_all.ord_cnt / tmp_all.expre_cnt) rk
+    tmp_all.region_id,
+    first_cat_id,
+    tmp_all.goods_id,
+    row_number ( ) over ( PARTITION BY tmp_all.region_id ORDER BY tmp_all.ord_cnt / tmp_all.expre_cnt ) rk
 FROM
-  tmp_all
-WHERE first_cat_id != 194
-  AND tmp_all.ord_cnt/tmp_all.click_uv >= 0.04
-),
-
+    tmp_all
+WHERE
+    first_cat_id != 194
+    AND tmp_all.ord_cnt/tmp_all.click_uv >= 0.04
+    ),
 --非 brand女装
 tmp_no_brand_women_clothes (
 SELECT
-  57 AS event_type,
-  tmp_all.region_id,
-  tmp_all.first_cat_id,
-  tmp_all.second_cat_id,
-  tmp_all.goods_id,
-  row_number() over (PARTITION BY tmp_all.region_id ORDER BY tmp_all.ord_cnt / tmp_all.expre_cnt) rk
+    57 AS event_type,
+    tmp_all.region_id,
+    tmp_all.first_cat_id,
+    tmp_all.goods_id,
+    row_number ( ) over ( PARTITION BY tmp_all.region_id ORDER BY tmp_all.ord_cnt / tmp_all.expre_cnt ) rk
 FROM
-  tmp_all
-WHERE first_cat_id = 194
-  AND (
-    (tmp_all.region_id in (4003,4017,4056) AND tmp_all.ord_cnt/tmp_all.click_uv >= 0.04)
-    OR (tmp_all.region_id IN (4143, 3858) AND tmp_all.ord_cnt/tmp_all.click_uv >= 0.03)
-    OR tmp_all.region_id NOT IN (4003, 4056, 4017, 4143, 3858)
-  )
-)
+    tmp_all
+WHERE
+    first_cat_id = 194
+    AND (
+    ( tmp_all.region_id in (4003,4017,4056) AND tmp_all.ord_cnt/tmp_all.click_uv >= 0.04 )
+    OR ( tmp_all.region_id IN ( 4143, 3858 ) AND tmp_all.ord_cnt/tmp_all.click_uv >= 0.03 )
+    OR tmp_all.region_id NOT IN ( 4003, 4056, 4017, 4143, 3858 )
+    )
+    )
 
-INSERT overwrite TABLE ads.ads_vova_activity_daily_selection_v2 partition (pt='${pre_date}')
+INSERT overwrite TABLE ads.ads_vova_activity_daily_selection partition (pt='${pre_date}')
 SELECT
-  goods_id,
-  region_id,
-  'daily-selection' as biz_type,
-  3 rp_type,
-  first_cat_id,
-  second_cat_id,
-  rk
+    'daily-selection' as biz_type,
+    event_type,
+    region_id,
+    first_cat_id,
+    goods_id,
+    rk
 FROM
-  tmp_no_brand_women_clothes
+    tmp_no_brand_women_clothes
 
 UNION ALL
 SELECT
-  goods_id,
-  region_id,
-  'daily-selection' as biz_type,
-  3 rp_type,
-  first_cat_id,
-  second_cat_id,
-  rk
+    'daily-selection' as biz_type,
+    event_type,
+    region_id,
+    first_cat_id,
+    goods_id,
+    rk
 FROM
-  tmp_no_brand_no_women_clothes
+    tmp_no_brand_no_women_clothes
 ;
+
 "
 
 #如果使用spark-sql运行，则执行spark-sql -e

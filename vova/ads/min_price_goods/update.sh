@@ -32,7 +32,7 @@ sql="
 drop table if exists themis.ads_min_price_goods_h_new;
 drop table if exists themis.ads_min_price_goods_h_pre;
 "
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx -e "${sql}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS themis.ads_min_price_goods_h (
   KEY group_number (group_number)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 "
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx -e "${sql}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1
@@ -80,7 +80,7 @@ sqoop export \
 -Dmapreduce.map.memory.mb=8192 \
 -Dmapreduce.reduce.memory.mb=8192 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
---username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
+--username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \
 --table ads_min_price_goods_h_new \
 --update-key "goods_id,strategy" \
 --m 1 \
@@ -97,8 +97,15 @@ if [ $? -ne 0 ];then
   exit 1
 fi
 
+cnt=$(mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx -e "select count(id) from themis.ads_min_price_goods_h_new;" |tail -1)
+echo ${cnt}
+if [ ${cnt} -le 0 ];then
+  echo "Error: count(*)=${cnt} -le 0"
+  exit 1
+fi
+
 echo "----------开始rename-------"
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx <<EOF
 rename table themis.ads_min_price_goods_h to themis.ads_min_price_goods_h_pre,themis.ads_min_price_goods_h_new to themis.ads_min_price_goods_h;
 EOF
 echo "-------rename结束--------"

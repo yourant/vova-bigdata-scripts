@@ -1,0 +1,133 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_goods_pre_attribute_data
+
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+
+  - name: judge_goods_attribute_watch
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_attribute/update.sh s3://vova-chatbot/kg/all_data/watches dwd.dwd_vova_goods_attribute_watch 2
+      retries: 5
+      retry.backoff: 6000
+    dependsOn:
+      - start_flag
+
+  - name: judge_goods_attribute_household
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_attribute/update.sh s3://vova-chatbot/kg/all_data/home dwd.dwd_vova_goods_attribute_household 3
+      retries: 5
+      retry.backoff: 6000
+    dependsOn:
+      - start_flag
+
+  - name: judge_goods_attribute_underwear
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_attribute/update.sh s3://vova-chatbot/kg/all_data/underwear dwd.dwd_vova_goods_attribute_underwear 4
+      retries: 5
+      retry.backoff: 6000
+    dependsOn:
+      - start_flag
+
+  - name: judge_goods_attribute_mobile
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_attribute/update.sh s3://vova-chatbot/kg/all_data/mobile dwd.dwd_vova_goods_attribute_mobile 5
+      retries: 5
+      retry.backoff: 6000
+    dependsOn:
+      - start_flag
+
+  - name: judge_goods_attribute_shoe
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_attribute/update.sh s3://vova-chatbot/kg/all_data/shoes dwd.dwd_vova_goods_attribute_shoe 6
+      retries: 5
+      retry.backoff: 6000
+    dependsOn:
+      - start_flag
+
+  - name: judge_goods_attribute_bag
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_attribute/update.sh s3://vova-chatbot/kg/all_data/bags dwd.dwd_vova_goods_attribute_bag 7
+      retries: 5
+      retry.backoff: 6000
+    dependsOn:
+      - start_flag
+
+  - name: judge_goods_attribute_electronics
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_attribute/update.sh s3://vova-chatbot/kg/all_data/electronics dwd.dwd_vova_goods_attribute_electronics 8
+      retries: 5
+      retry.backoff: 6000
+    dependsOn:
+      - start_flag
+
+  - name: judge_goods_attribute_womencloth
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_attribute/update.sh s3://vova-chatbot/kg/all_data/women_clothes dwd.dwd_vova_goods_attribute_womencloth 9
+      retries: 5
+      retry.backoff: 6000
+    dependsOn:
+      - start_flag
+
+  - name: judge_goods_attribute_mancloth
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_attribute/update.sh s3://vova-chatbot/kg/all_data/men_clothes dwd.dwd_vova_goods_attribute_mancloth 10
+      retries: 5
+      retry.backoff: 6000
+    dependsOn:
+      - start_flag
+
+
+#################################################################
+
+  - name: ads_vova_goods_pre_attribute_data_stage
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_attribute/update2.sh
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+      - judge_goods_attribute_watch
+      - judge_goods_attribute_household
+      - judge_goods_attribute_underwear
+      - judge_goods_attribute_mobile
+      - judge_goods_attribute_shoe
+      - judge_goods_attribute_bag
+      - judge_goods_attribute_electronics
+      - judge_goods_attribute_womencloth
+      - judge_goods_attribute_mancloth
+
+  - name: ads_vova_goods_pre_attribute_data
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_attribute/update3.sh
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+      - ads_vova_goods_pre_attribute_data_stage
+
+
+
