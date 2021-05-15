@@ -34,6 +34,10 @@ CREATE EXTERNAL TABLE IF NOT EXISTS ads.ads_vova_goods_performance
 ) COMMENT 'ads_vova_goods_performance' PARTITIONED BY (pt STRING)
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
+alter table ads.ads_vova_goods_performance ADD COLUMNS (
+overall_score double COMMENT '综合评分'
+) CASCADE;
+
 DROP TABLE ads.ads_vova_site_goods_from_vova;
 CREATE EXTERNAL TABLE IF NOT EXISTS ads.ads_vova_site_goods_from_vova
 (

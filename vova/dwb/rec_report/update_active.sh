@@ -323,15 +323,33 @@ activate_time
 with cube
 having datasource != 'all'
 ) t4 on t1.datasource = t4.datasource and t1.country =t4.country and t1.os_type = t4.os_type and t1.page_code = t4.page_code and t1.list_type = t4.list_type and t1.activate_time =t4.activate_time and t1.element_type = t4.element_type
+
 left join
-    (
-       select
-        sum(fp.shop_price * fp.goods_number + fp.shipping_fee) as total_gmv
-        from dwd.dwd_vova_fact_pay fp
-        inner join dim.dim_vova_order_goods ddog on ddog.order_goods_id = fp.order_goods_id
-        where to_date(fp.pay_time)='${cur_date}' and (fp.from_domain like '%api.vova%' or fp.from_domain like '%api.airyclub%') and fp.platform in ('ios','android')
-        and (ddog.order_tag not like '%luckystar_activity_id%' or ddog.order_tag is null)
-        ) t5 on 1 = 1
+(
+select
+nvl(if(datasource in ('vova','airyclub'),datasource,'app-group'),'all') datasource,
+nvl(activate_time,'all') activate_time,
+sum(gmv) as total_gmv
+from
+dwd.dwd_vova_rec_report_pay_cause where pt = '$cur_date'
+group by
+if(datasource in ('vova','airyclub'),datasource,'app-group'),
+activate_time
+with cube
+union all
+select
+nvl(datasource,'all') datasource,
+nvl(activate_time,'all') activate_time,
+sum(gmv) as total_gmv
+from
+dwd.dwd_vova_rec_report_pay_cause where pt = '$cur_date'  and datasource not in ('vova','airyclub')
+group by
+datasource,
+activate_time
+with cube
+having datasource != 'all'
+) t5 on t1.datasource = t5.datasource  and t1.activate_time =t5.activate_time
+
 left join tmp.vova_rec_report_tmp t6 on t1.datasource = t6.datasource and t1.country =t6.country and t1.os_type = t6.os_type and t1.page_code = t6.page_code and t1.activate_time =t6.activate_time and t1.element_type = t6.element_type and t1.list_type = t6.list_type
 
 ;
