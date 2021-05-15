@@ -6,7 +6,7 @@ cur_date=$1
 #默认日期为一年前的月的第一天
 if [ ! -n "$1" ];then
 # cur_date=`date -d "-1 day" +%Y-%m-%d`  '${cur_date}'
-cur_date=`date +"%Y-%m-01" -d "-13 month"`
+cur_date=`date +"%Y-%m-01" -d "-24 month"`
 fi
 
 echo "cur_date: $cur_date"
@@ -14,37 +14,6 @@ job_name="dwb_vova_user_month_cohort_req_chenkai_${cur_date}"
 
 ###逻辑sql
 sql="
-
-drop table if exists tmp.tmp_order_cnt;
-create table tmp.tmp_order_cnt as
-select
-/*+ REPARTITION(2) */
-    device_id,
-    datasource,
-    -- region_code,
-    -- platform,
-    start_month,
-    nvl(sum(pre_direct_cnt), 0) pre_direct_cnt,
-    count(*) order_cnt
-from
-    (select order_goods_id,
-            device_id,
-            datasource,
-            -- region_code,
-            -- platform,
-            trunc(pay_time,'MM') start_month
-     from dwd.dwd_vova_fact_pay
-     where pay_time >= '${cur_date}') tmp_fp
-        left JOIN
-    (select order_goods_id,
-            case when combine_type=2 then 1
-                 else 0 end pre_direct_cnt
-     from ods_vova_vts.ods_vova_collection_order_goods) vcog
-    on tmp_fp.order_goods_id = vcog.order_goods_id
-group by device_id,datasource,
-         -- region_code,platform,
-         start_month
-;
 
 set hive.exec.dynamic.partition=true;
 set hive.exec.dynamic.partition.mode=nonstrict;
@@ -68,6 +37,18 @@ SELECT /*+ REPARTITION(1) */
   count(DISTINCT final.next_10)  AS next_10_num,
   count(DISTINCT final.next_11)  AS next_11_num,
   count(DISTINCT final.next_12)  AS next_12_num,
+  count(DISTINCT final.next_13)  AS next_13_num,
+  count(DISTINCT final.next_14)  AS next_14_num,
+  count(DISTINCT final.next_15)  AS next_15_num,
+  count(DISTINCT final.next_16)  AS next_16_num,
+  count(DISTINCT final.next_17)  AS next_17_num,
+  count(DISTINCT final.next_18)  AS next_18_num,
+  count(DISTINCT final.next_19)  AS next_19_num,
+  count(DISTINCT final.next_20)  AS next_20_num,
+  count(DISTINCT final.next_21)  AS next_21_num,
+  count(DISTINCT final.next_22)  AS next_22_num,
+  count(DISTINCT final.next_23)  AS next_23_num,
+  count(DISTINCT final.next_24)  AS next_24_num,
   nvl(final.is_new, 'all') AS buyer_type,
   nvl(final.start_month, 'all') AS pt
 FROM
@@ -86,6 +67,18 @@ FROM
     if(months_between(start_up2.start_month, start_up1.start_month) = 10, start_up1.device_id, NULL) AS next_10,
     if(months_between(start_up2.start_month, start_up1.start_month) = 11, start_up1.device_id, NULL) AS next_11,
     if(months_between(start_up2.start_month, start_up1.start_month) = 12, start_up1.device_id, NULL) AS next_12,
+    if(months_between(start_up2.start_month, start_up1.start_month) = 13, start_up1.device_id, NULL) AS next_13,
+    if(months_between(start_up2.start_month, start_up1.start_month) = 14, start_up1.device_id, NULL) AS next_14,
+    if(months_between(start_up2.start_month, start_up1.start_month) = 15, start_up1.device_id, NULL) AS next_15,
+    if(months_between(start_up2.start_month, start_up1.start_month) = 16, start_up1.device_id, NULL) AS next_16,
+    if(months_between(start_up2.start_month, start_up1.start_month) = 17, start_up1.device_id, NULL) AS next_17,
+    if(months_between(start_up2.start_month, start_up1.start_month) = 18, start_up1.device_id, NULL) AS next_18,
+    if(months_between(start_up2.start_month, start_up1.start_month) = 19, start_up1.device_id, NULL) AS next_19,
+    if(months_between(start_up2.start_month, start_up1.start_month) = 20, start_up1.device_id, NULL) AS next_20,
+    if(months_between(start_up2.start_month, start_up1.start_month) = 21, start_up1.device_id, NULL) AS next_21,
+    if(months_between(start_up2.start_month, start_up1.start_month) = 22, start_up1.device_id, NULL) AS next_22,
+    if(months_between(start_up2.start_month, start_up1.start_month) = 23, start_up1.device_id, NULL) AS next_23,
+    if(months_between(start_up2.start_month, start_up1.start_month) = 24, start_up1.device_id, NULL) AS next_24,
     start_up1.start_month,
     nvl(start_up1.region_code, 'NALL')  AS region_code,
     nvl(start_up1.platform, 'NA')     AS platform,
@@ -122,7 +115,7 @@ FROM
   AND start_up1.region_code = start_up2.region_code
   AND start_up1.platform = start_up2.platform
   AND start_up2.start_month >= start_up1.start_month
-  AND months_between(start_up2.start_month, start_up1.start_month) <= 12
+  AND months_between(start_up2.start_month, start_up1.start_month) <= 24
   LEFT JOIN
   (
     SELECT
