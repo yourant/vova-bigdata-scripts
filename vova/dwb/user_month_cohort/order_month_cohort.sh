@@ -6,7 +6,7 @@ cur_date=$1
 #默认日期为一年前的月的第一天
 if [ ! -n "$1" ];then
 # cur_date=`date -d "-1 day" +%Y-%m-%d`  '${cur_date}'
-cur_date=`date +"%Y-%m-01" -d "-13 month"`
+cur_date=`date +"%Y-%m-01" -d "-24 month"`
 fi
 
 echo "cur_date: $cur_date"
@@ -16,38 +16,6 @@ job_name="dwb_vova_new_user_month_cohort_req_chenkai_${cur_date}"
 
 #首次支付用户月度留存
 sql="
-
-drop table if exists tmp.tmp_order_goods_cnt;
-create table tmp.tmp_order_goods_cnt as
-select
-/*+ REPARTITION(2) */
-    device_id,
-    datasource,
-    -- region_code,
-    -- platform,
-    start_month,
-    nvl(sum(pre_direct_cnt), 0) pre_direct_cnt,
-    count(*) order_cnt
-from
-    (select order_goods_id,
-            device_id,
-            datasource,
-            -- region_code,
-            -- platform,
-            trunc(pay_time,'MM') start_month
-     from dwd.dwd_vova_fact_pay
-     where pay_time >= '${cur_date}') tmp_fp
-        left JOIN
-    (select order_goods_id,
-            case when combine_type=2 then 1
-                 else 0 end pre_direct_cnt
-     from ods_vova_vts.ods_vova_collection_order_goods) vcog
-    on tmp_fp.order_goods_id = vcog.order_goods_id
-group by device_id,datasource,
-         -- region_code,platform,
-         start_month
-;
-
 
 set hive.exec.dynamic.partition=true;
 set hive.exec.dynamic.partition.mode=nonstrict;
@@ -70,6 +38,18 @@ SELECT /*+ REPARTITION(1) */
   count(DISTINCT final.next_10)     AS next_10_num,
   count(DISTINCT final.next_11)     AS next_11_num,
   count(DISTINCT final.next_12)     AS next_12_num,
+  count(DISTINCT final.next_13)     AS next_13_num,
+  count(DISTINCT final.next_14)     AS next_14_num,
+  count(DISTINCT final.next_15)     AS next_15_num,
+  count(DISTINCT final.next_16)     AS next_16_num,
+  count(DISTINCT final.next_17)     AS next_17_num,
+  count(DISTINCT final.next_18)     AS next_18_num,
+  count(DISTINCT final.next_19)     AS next_19_num,
+  count(DISTINCT final.next_20)     AS next_20_num,
+  count(DISTINCT final.next_21)     AS next_21_num,
+  count(DISTINCT final.next_22)     AS next_22_num,
+  count(DISTINCT final.next_23)     AS next_23_num,
+  count(DISTINCT final.next_24)     AS next_24_num,
   nvl(final.is_new, 'all')      AS buyer_type, -- 用户是否当月新激活
   nvl(final.first_pay_month, 'all') AS pt
 FROM (
@@ -86,6 +66,18 @@ FROM (
     if(months_between(temp2.start_month, temp_devices.first_pay_month) = 10, temp_devices.device_id, NULL) AS next_10,
     if(months_between(temp2.start_month, temp_devices.first_pay_month) = 11, temp_devices.device_id, NULL) AS next_11,
     if(months_between(temp2.start_month, temp_devices.first_pay_month) = 12, temp_devices.device_id, NULL) AS next_12,
+    if(months_between(temp2.start_month, temp_devices.first_pay_month) = 13, temp_devices.device_id, NULL) AS next_13,
+    if(months_between(temp2.start_month, temp_devices.first_pay_month) = 14, temp_devices.device_id, NULL) AS next_14,
+    if(months_between(temp2.start_month, temp_devices.first_pay_month) = 15, temp_devices.device_id, NULL) AS next_15,
+    if(months_between(temp2.start_month, temp_devices.first_pay_month) = 16, temp_devices.device_id, NULL) AS next_16,
+    if(months_between(temp2.start_month, temp_devices.first_pay_month) = 17, temp_devices.device_id, NULL) AS next_17,
+    if(months_between(temp2.start_month, temp_devices.first_pay_month) = 18, temp_devices.device_id, NULL) AS next_18,
+    if(months_between(temp2.start_month, temp_devices.first_pay_month) = 19, temp_devices.device_id, NULL) AS next_19,
+    if(months_between(temp2.start_month, temp_devices.first_pay_month) = 20, temp_devices.device_id, NULL) AS next_20,
+    if(months_between(temp2.start_month, temp_devices.first_pay_month) = 21, temp_devices.device_id, NULL) AS next_21,
+    if(months_between(temp2.start_month, temp_devices.first_pay_month) = 22, temp_devices.device_id, NULL) AS next_22,
+    if(months_between(temp2.start_month, temp_devices.first_pay_month) = 23, temp_devices.device_id, NULL) AS next_23,
+    if(months_between(temp2.start_month, temp_devices.first_pay_month) = 24, temp_devices.device_id, NULL) AS next_24,
     temp_devices.first_pay_month,
     temp_devices.region_code,
     temp_devices.platform,
@@ -125,44 +117,13 @@ FROM (
   ON temp_devices.device_id = temp2.device_id
     AND temp2.datasource = temp_devices.datasource
     AND temp2.start_month >= temp_devices.first_pay_month
-    AND months_between(temp2.start_month, temp_devices.first_pay_month) <= 12
+    AND months_between(temp2.start_month, temp_devices.first_pay_month) <= 24
 ) final
 GROUP BY CUBE(final.first_pay_month, final.platform, final.region_code, final.datasource, final.is_new)
-HAVING pay_month != 'all';
-"
+HAVING pay_month != 'all'
+;
 
-#如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
-spark-sql \
---executor-memory 8G --executor-cores 1 \
---conf "spark.sql.parquet.writeLegacyFormat=true"  \
---conf "spark.dynamicAllocation.minExecutors=5" \
---conf "spark.dynamicAllocation.initialExecutors=20" \
---conf "spark.dynamicAllocation.maxExecutors=150" \
---conf "spark.app.name=${job_name}" \
---conf "spark.default.parallelism = 380" \
---conf "spark.sql.shuffle.partitions=380" \
---conf "spark.sql.adaptive.enabled=true" \
---conf "spark.sql.adaptive.join.enabled=true" \
---conf "spark.shuffle.sort.bypassMergeThreshold=10000" \
---conf "spark.sql.inMemoryColumnarStorage.compressed=true" \
---conf "spark.sql.inMemoryColumnarStorage.partitionPruning=true" \
---conf "spark.sql.inMemoryColumnarStorage.batchSize=100000" \
---conf "spark.network.timeout=300" \
--e "$sql"
-#如果脚本失败，则报错
-if [ $? -ne 0 ];then
-  exit 1
-fi
 
-echo "order_month_start_up_cohort is ok, end_time:"  `date +"%Y-%m-%d %H:%M:%S" -d "8 hour"`
-
-job_name="dwb_vova_user_month_repurchase_cohort_req_chenkai_${cur_date}"
-
-#用户复购月度留存
-sql="
-set hive.exec.dynamic.partition=true;
-set hive.exec.dynamic.partition.mode=nonstrict;
--- insert overwrite table dwb.dwb_vova_order_month_cohort PARTITION (pt)
 insert overwrite table dwb.dwb_vova_order_month_cohort PARTITION (pt)
 SELECT /*+ REPARTITION(1) */
   nvl(final.pay_month, 'all')   AS pay_month,
@@ -179,6 +140,18 @@ SELECT /*+ REPARTITION(1) */
   count(DISTINCT final.next_10) AS next_10_num,
   count(DISTINCT final.next_11) AS next_11_num,
   count(DISTINCT final.next_12) AS next_12_num,
+  count(DISTINCT final.next_13) AS next_13_num,
+  count(DISTINCT final.next_14) AS next_14_num,
+  count(DISTINCT final.next_15) AS next_15_num,
+  count(DISTINCT final.next_16) AS next_16_num,
+  count(DISTINCT final.next_17) AS next_17_num,
+  count(DISTINCT final.next_18) AS next_18_num,
+  count(DISTINCT final.next_19) AS next_19_num,
+  count(DISTINCT final.next_20) AS next_20_num,
+  count(DISTINCT final.next_21) AS next_21_num,
+  count(DISTINCT final.next_22) AS next_22_num,
+  count(DISTINCT final.next_23) AS next_23_num,
+  count(DISTINCT final.next_24) AS next_24_num,
   nvl(final.is_new_user, 'all') AS is_new_user,
   nvl(final.region_code, 'all') AS region_code,
   nvl(final.platform, 'all')    AS platform,
@@ -201,6 +174,18 @@ FROM
     if(months_between(temp2.pay_month, temp1.pay_month) = 10, temp1.device_id, NULL) AS next_10,
     if(months_between(temp2.pay_month, temp1.pay_month) = 11, temp1.device_id, NULL) AS next_11,
     if(months_between(temp2.pay_month, temp1.pay_month) = 12, temp1.device_id, NULL) AS next_12,
+    if(months_between(temp2.pay_month, temp1.pay_month) = 13, temp1.device_id, NULL) AS next_13,
+    if(months_between(temp2.pay_month, temp1.pay_month) = 14, temp1.device_id, NULL) AS next_14,
+    if(months_between(temp2.pay_month, temp1.pay_month) = 15, temp1.device_id, NULL) AS next_15,
+    if(months_between(temp2.pay_month, temp1.pay_month) = 16, temp1.device_id, NULL) AS next_16,
+    if(months_between(temp2.pay_month, temp1.pay_month) = 17, temp1.device_id, NULL) AS next_17,
+    if(months_between(temp2.pay_month, temp1.pay_month) = 18, temp1.device_id, NULL) AS next_18,
+    if(months_between(temp2.pay_month, temp1.pay_month) = 19, temp1.device_id, NULL) AS next_19,
+    if(months_between(temp2.pay_month, temp1.pay_month) = 20, temp1.device_id, NULL) AS next_20,
+    if(months_between(temp2.pay_month, temp1.pay_month) = 21, temp1.device_id, NULL) AS next_21,
+    if(months_between(temp2.pay_month, temp1.pay_month) = 22, temp1.device_id, NULL) AS next_22,
+    if(months_between(temp2.pay_month, temp1.pay_month) = 23, temp1.device_id, NULL) AS next_23,
+    if(months_between(temp2.pay_month, temp1.pay_month) = 24, temp1.device_id, NULL) AS next_24,
     temp1.pay_month,
     temp1.region_code,
     temp1.platform,
@@ -250,12 +235,13 @@ FROM
     AND temp2.platform = temp1.platform
     AND temp2.datasource = temp1.datasource
     AND temp2.pay_month >= temp1.pay_month
-    AND months_between(temp2.pay_month, temp1.pay_month) <= 12
+    AND months_between(temp2.pay_month, temp1.pay_month) <= 24
 ) final
 GROUP BY CUBE (final.pay_month, final.is_new_user, final.platform, final.region_code, final.datasource, final.is_new)
 HAVING pay_month != 'all'
 ;
 "
+
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
 spark-sql \
 --executor-memory 8G --executor-cores 1 \
@@ -279,5 +265,5 @@ if [ $? -ne 0 ];then
   exit 1
 fi
 
-echo "end_time:"  `date +"%Y-%m-%d %H:%M:%S" -d "8 hour"`
+echo "order_month_start_up_cohort is ok, end_time:"  `date +"%Y-%m-%d %H:%M:%S" -d "8 hour"`
 
