@@ -46,11 +46,12 @@ bonus_interval_use.bonus AS bonus_interval,
 bonus_interval_issue.valid_amount AS valid_amount_interval,
 bonus_interval_use.order_cnt AS order_cnt_interval,
 bonus_interval_use.order_amount AS order_amount_interval,
-if(
-last_day('${last_month}') >= from_unixtime(bc.end_time, 'yyyy-MM-dd'),
-(datediff(from_unixtime(bc.end_time, 'yyyy-MM-dd'),trunc('${last_month}','MM')) + 1) * bc.price / 31,
-(datediff(last_day('${last_month}'),from_unixtime(bc.start_time, 'yyyy-MM-dd')) + 1) * bc.price / 31
-) AS income
+0 AS income
+-- if(
+-- last_day('${last_month}') >= from_unixtime(bc.end_time, 'yyyy-MM-dd'),
+-- (datediff(from_unixtime(bc.end_time, 'yyyy-MM-dd'),trunc('${last_month}','MM')) + 1) * bc.price / 31,
+-- (datediff(last_day('${last_month}'),from_unixtime(bc.start_time, 'yyyy-MM-dd')) + 1) * bc.price / 31
+-- ) AS income
 
 from
 ods_vova_vts.ods_vova_bonus_card bc
@@ -70,7 +71,7 @@ WHERE dc.cpn_cfg_type_id in
 ('470', '469', '468', '467', '466', '465', '464', '463', '461',
 '460', '459', '458', '457', '456', '455', '454', '453', '452',
 '451', '450', '449', '448', '447', '446', '445', '444', '443',
-'442', '441', '439')
+'442', '441', '439', '487', '659')
 AND trunc(dc.cpn_create_time, 'MM') = '${last_month}'
 AND unix_timestamp(dc.cpn_create_time) >= bc.start_time
 AND unix_timestamp(dc.cpn_create_time) <= bc.end_time
@@ -91,7 +92,7 @@ WHERE dc.cpn_cfg_type_id in
 ('470', '469', '468', '467', '466', '465', '464', '463', '461',
 '460', '459', '458', '457', '456', '455', '454', '453', '452',
 '451', '450', '449', '448', '447', '446', '445', '444', '443',
-'442', '441', '439')
+'442', '441', '439', '487', '659')
 AND trunc(oi.pay_time, 'MM') = '${last_month}'
 AND unix_timestamp(dc.cpn_create_time) >= bc.start_time
 AND unix_timestamp(dc.cpn_create_time) <= bc.end_time
@@ -114,7 +115,7 @@ WHERE dc.cpn_cfg_type_id in
 ('470', '469', '468', '467', '466', '465', '464', '463', '461',
 '460', '459', '458', '457', '456', '455', '454', '453', '452',
 '451', '450', '449', '448', '447', '446', '445', '444', '443',
-'442', '441', '439')
+'442', '441', '439', '487', '659')
 AND unix_timestamp(dc.cpn_create_time) >= bc.start_time
 AND unix_timestamp(dc.cpn_create_time) <= bc.end_time
 AND trunc(dc.cpn_create_time, 'MM') <= '${last_month}'
@@ -135,7 +136,7 @@ WHERE dc.cpn_cfg_type_id in
 ('470', '469', '468', '467', '466', '465', '464', '463', '461',
 '460', '459', '458', '457', '456', '455', '454', '453', '452',
 '451', '450', '449', '448', '447', '446', '445', '444', '443',
-'442', '441', '439')
+'442', '441', '439', '487', '659')
 AND unix_timestamp(dc.cpn_create_time) >= bc.start_time
 AND unix_timestamp(dc.cpn_create_time) <= bc.end_time
 AND trunc(oi.pay_time, 'MM') <= '${last_month}'
