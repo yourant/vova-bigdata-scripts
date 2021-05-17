@@ -8,8 +8,7 @@ fi
 echo "$pt"
 
 sql="
-drop table if exists tmp.tmp_vova_fact_cart_cause_h_glk_cause;
-create table tmp.tmp_vova_fact_cart_cause_h_glk_cause  STORED AS PARQUETFILE as
+insert overwrite table tmp.tmp_vova_fact_cart_cause_h_glk_cause
 select /*+ REPARTITION(5) */
        datasource,
        event_name,
@@ -157,8 +156,7 @@ from (
               ) t1) t2
 where t2.event_name = 'common_click';
 
-drop table if exists tmp.tmp_vova_fact_cart_cause_h_expre_cause;
-create table tmp.tmp_vova_fact_cart_cause_h_expre_cause  STORED AS PARQUETFILE as
+insert overwrite table tmp.tmp_vova_fact_cart_cause_h_expre_cause
 select /*+ REPARTITION(10) */
        datasource,
        event_name,
