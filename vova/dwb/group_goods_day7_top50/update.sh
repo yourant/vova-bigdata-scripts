@@ -64,7 +64,7 @@ with tmp1 (
             group_number,
             goods_id
           from
-            ads.ads_vova_min_price_goods_h
+            ads.ads_vova_min_price_goods_d
           where pt = '${cur_date}'
         ) ampgh
         on ampgh.goods_id = dg.goods_id
