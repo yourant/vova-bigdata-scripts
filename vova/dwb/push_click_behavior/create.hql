@@ -18,7 +18,7 @@ CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_push_click_behavior_v2
     is_new               string,
     config_id            string,
     main_channel         string,
-    push_click_uv        bigint,
+    push_click_uv        bigint COMMENT '推送点击数',
     impressions          bigint,
     impressions_uv       bigint,
     impressions_pd       bigint,
@@ -85,9 +85,7 @@ https://zt.gitvv.com/index.php?m=task&f=view&taskID=33853
 以下报表中增加app-group筛选项：
 
 消息中心-推送报表
-商品数据统计报表
-退款率报表
-用户生命周期监控报表
+
 app-group的历史数据从2月1日开始回跑
 
 需求描述
