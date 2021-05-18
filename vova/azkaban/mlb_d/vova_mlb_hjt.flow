@@ -18,6 +18,7 @@ nodes:
       - mlb_search_spell_check
       - mlb_high_freq_search_recall_job_message_put
       - mlb_ebr_search_recall_job_message_put
+      - mlb_als_rec_training
 
 
   - name: start_flag
@@ -104,7 +105,8 @@ nodes:
       retries: 72
       retry.backoff: 600000
     dependsOn:
-      - start_flag
+      - mlb_ebr_search_recall_job_message_put
+      - mlb_high_freq_search_recall_job_message_put
 
   - name: mlb_rec_highfreq_query
     type: command
@@ -216,3 +218,21 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - mlb_high_freq_search_recall
+
+  - name: judge_dwd_vova_log_page_view
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_page_view
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: mlb_als_rec_training
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/als_rec_training/update.sh
+      retries: 30
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_page_view
