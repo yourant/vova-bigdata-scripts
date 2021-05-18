@@ -38,6 +38,7 @@ FROM (
      ) t1
          inner JOIN ods_vova_vts.ods_vova_order_info oi ON oi.order_id = t1.order_id
          LEFT JOIN dim.dim_vova_coupon dc ON dc.cpn_code = oi.coupon_code
+         where date (dc.cpn_create_time) = '${cur_date}'
 ),
 tmp_use_num_30 as (
 select '${cur_date}'               AS event_date,
@@ -247,6 +248,7 @@ FROM (
              INNER JOIN ods_vova_vts.ods_vova_order_info oi ON oi.order_id = t1.order_id
              LEFT JOIN dim.dim_vova_coupon dc ON dc.cpn_code = oi.coupon_code
              WHERE oi.coupon_code != ''
+             and  date (dc.cpn_create_time) = '${cur_date}'
              GROUP BY CUBE (t1.pay_date, nvl(t1.region_code, 'NA'), nvl(t1.datasource, 'NA'), nvl(dc.cpn_cfg_type_id, '-1'), nvl(dc.currency, 'NA'))
              HAVING event_date != 'all' AND cpn_cfg_type_id != 'all' AND currency != 'all'
              UNION ALL
