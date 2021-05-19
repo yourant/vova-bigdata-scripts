@@ -42,7 +42,7 @@ INSERT OVERWRITE TABLE tmp.vova_ab_expre_tmp_h
                     os_type                     platform,
                     app_version                 os,
                     case
-                        when page_code = 'homepage' and list_type = '/popular' then 'rec_best_selling'
+                        when page_code in ('homepage','dynamic_activity_template') and list_type in ('/popular','/dynamic_activity') then 'rec_best_selling'
                         when page_code in ('homepage', 'product_list') and list_type = '/product_list_newarrival'
                             then 'rec_new_arrival'
                         when page_code in ('homepage', 'product_list') and
@@ -100,7 +100,7 @@ platform,
 rec_page_code,
 rec_code,
 rec_version,
-device_id_expre
+device_id_expre,count(1) cnt
 from tmp.vova_ab_expre_tmp_h
 group by
 datasource,
@@ -125,8 +125,8 @@ group by cube (datasource,hour,platform,rec_page_code,rec_code,rec_version)
 INSERT OVERWRITE TABLE tmp.vova_ab_expre_tmp_pv_h
 select /*+ REPARTITION(5) */
 nvl(datasource,'all') datasource,nvl(hour,'all') hour,nvl(platform,'all') platform,nvl(rec_page_code,'all') rec_page_code,nvl(rec_code,'all') rec_code,nvl(rec_version,'all') rec_version,
-count(device_id_expre) expre_pv
-from tmp.vova_ab_expre_tmp_h
+sum(cnt) expre_pv
+from tmp.vova_ab_expre_tmp_distinct_h
 group by cube (datasource,hour,platform,rec_page_code,rec_code,rec_version)
 ;
 
@@ -146,7 +146,7 @@ INSERT OVERWRITE TABLE tmp.vova_ab_clk_tmp_h
                     os_type                     platform,
                     app_version                 os,
                     case
-                        when page_code = 'homepage' and list_type = '/popular' then 'rec_best_selling'
+                        when page_code in ('homepage','dynamic_activity_template') and list_type in ('/popular','/dynamic_activity') then 'rec_best_selling'
                         when page_code in ('homepage', 'product_list') and list_type = '/product_list_newarrival'
                             then 'rec_new_arrival'
                         when page_code in ('homepage', 'product_list') and
@@ -194,6 +194,26 @@ INSERT OVERWRITE TABLE tmp.vova_ab_clk_tmp_h
 ;
 
 
+INSERT OVERWRITE TABLE tmp.vova_ab_clk_tmp_distinct_h
+select /*+ REPARTITION(20) */
+datasource,
+hour,
+platform,
+rec_page_code,
+rec_code,
+rec_version,
+device_id_clk,count(1) cnt
+from tmp.vova_ab_clk_tmp_h
+group by
+datasource,
+hour,
+platform,
+rec_page_code,
+rec_code,
+rec_version,
+device_id_clk
+;
+
 INSERT OVERWRITE TABLE tmp.vova_ab_clk_tmp_uv_h
 select /*+ REPARTITION(1) */ nvl(datasource, 'all')        datasource,
        nvl(hour, 'all')              hour,
@@ -202,31 +222,15 @@ select /*+ REPARTITION(1) */ nvl(datasource, 'all')        datasource,
        nvl(rec_code, 'all')          rec_code,
        nvl(rec_version, 'all')       rec_version,
        count(distinct device_id_clk) clk_uv
-from (
-         select datasource,
-                hour,
-                platform,
-                rec_page_code,
-                rec_code,
-                rec_version,
-                device_id_clk
-         from tmp.vova_ab_clk_tmp_h
-         group by datasource,
-                  hour,
-                  platform,
-                  rec_page_code,
-                  rec_code,
-                  rec_version,
-                  device_id_clk
-     ) tmp
+from tmp.vova_ab_clk_tmp_distinct_h tmp
 group by cube (datasource, hour, platform, rec_page_code, rec_code, rec_version)
 ;
 
 INSERT OVERWRITE TABLE tmp.vova_ab_clk_tmp_pv_h
 select /*+ REPARTITION(1) */
 nvl(datasource,'all') datasource,nvl(hour,'all') hour,nvl(platform,'all') platform,nvl(rec_page_code,'all') rec_page_code,nvl(rec_code,'all') rec_code,nvl(rec_version,'all') rec_version,
-count(device_id_clk) clk_pv
-from tmp.vova_ab_clk_tmp_h
+sum(cnt) clk_pv
+from tmp.vova_ab_clk_tmp_distinct_h
 group by cube (datasource,hour,platform,rec_page_code,rec_code,rec_version)
 ;
 
@@ -255,7 +259,7 @@ from (
                     nvl(hour(from_unixtime(a.collector_tstamp / 1000,'yyyy-MM-dd HH:mm:ss')), 'NALL')       hour,
                     nvl(b.platform, 'NALL')         platform,
                     case
-                        when pre_page_code = 'homepage' and pre_list_type = '/popular' then 'rec_best_selling'
+                        when pre_page_code in ('homepage','dynamic_activity_template') and pre_list_type in ('/popular','/dynamic_activity') then 'rec_best_selling'
                         when pre_page_code in ('homepage', 'product_list') and
                              pre_list_type = '/product_list_newarrival' then 'rec_new_arrival'
                         when pre_page_code in ('homepage', 'product_list') and
@@ -335,7 +339,7 @@ from (
                     nvl(b.platform, 'NALL')         platform,
                     nvl(hour(c.order_time), 'NALL')       hour,
                     case
-                        when pre_page_code = 'homepage' and pre_list_type = '/popular' then 'rec_best_selling'
+                        when pre_page_code in ('homepage','dynamic_activity_template') and pre_list_type in ('/popular','/dynamic_activity') then 'rec_best_selling'
                         when pre_page_code in ('homepage', 'product_list') and
                              pre_list_type = '/product_list_newarrival' then 'rec_new_arrival'
                         when pre_page_code in ('homepage', 'product_list') and
