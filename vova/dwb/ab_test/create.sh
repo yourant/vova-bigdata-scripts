@@ -107,3 +107,19 @@ CREATE EXTERNAL TABLE dwb.dwb_vova_ab_test_norepeat
 alter table dwb.dwb_vova_ab_test_norepeat ADD COLUMNS (
 order_cnt STRING COMMENT '订单数'
 ) CASCADE;
+
+
+DROP TABLE IF EXISTS tmp.vova_ab_clk_tmp_distinct_h;
+CREATE EXTERNAL TABLE tmp.vova_ab_clk_tmp_distinct_h
+(
+    datasource    STRING,
+    hour          string,
+    platform      string,
+    rec_page_code string,
+    rec_code      string,
+    rec_version   string,
+    device_id_clk string,
+    cnt           bigint
+
+)
+    STORED AS PARQUETFILE;
