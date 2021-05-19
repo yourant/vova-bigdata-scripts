@@ -13,19 +13,18 @@ set hive.exec.dynamici.partition=true;
 set hive.exec.dynamic.partition.mode=nonstrict;
 
 with tmp_use_num as (
-select
-    t1.datasource,
-    t1.region_code,
-    t1.pay_date,
-    dc.cpn_cfg_type,
-    dc.cpn_cfg_type_id,
-    dc.currency,
-    oi.order_id,
-    oi.bonus,
-    oi.user_id,
-    oi.goods_amount,
-    oi.shipping_fee,
-    oi.coupon_code
+select t1.datasource,
+       t1.region_code,
+       t1.pay_date,
+       dc.cpn_cfg_type,
+       dc.cpn_cfg_type_id,
+       dc.currency,
+       oi.order_id,
+       oi.bonus,
+       oi.user_id,
+       oi.goods_amount,
+       oi.shipping_fee,
+       oi.coupon_code
 FROM (
          SELECT first (fp.datasource) AS datasource,
              first (fp.region_code) AS region_code,
@@ -33,12 +32,42 @@ FROM (
              date (fp.pay_time) AS pay_date
          FROM dwd.dwd_vova_fact_pay fp
          WHERE date (fp.pay_time) >= '${cur_date}'
-           and date (fp.pay_time) <= date_add('${cur_date}', 31)
+           and date (fp.pay_time) <= date_add('${cur_date}'
+             , 31)
          GROUP BY fp.order_id, date (fp.pay_time)
      ) t1
          inner JOIN ods_vova_vts.ods_vova_order_info oi ON oi.order_id = t1.order_id
          LEFT JOIN dim.dim_vova_coupon dc ON dc.cpn_code = oi.coupon_code
-         where date (dc.cpn_create_time) = '${cur_date}'
+where date (dc.cpn_create_time) = '${cur_date}'
+UNION ALL
+select 'app_group' as datasource,
+       t1.region_code,
+       t1.pay_date,
+       dc.cpn_cfg_type,
+       dc.cpn_cfg_type_id,
+       dc.currency,
+       oi.order_id,
+       oi.bonus,
+       oi.user_id,
+       oi.goods_amount,
+       oi.shipping_fee,
+       oi.coupon_code
+FROM (
+         SELECT first (fp.datasource) AS datasource,
+             first (fp.region_code) AS region_code,
+             fp.order_id,
+             date (fp.pay_time) AS pay_date
+         FROM dwd.dwd_vova_fact_pay fp
+         WHERE date (fp.pay_time) >= '${cur_date}'
+           and date (fp.pay_time) <= date_add('${cur_date}'
+             , 31)
+         GROUP BY fp.order_id, date (fp.pay_time)
+     ) t1
+         INNER JOIN ods_vova_vts.ods_vova_order_info oi ON oi.order_id = t1.order_id
+         LEFT JOIN dim.dim_vova_coupon dc ON dc.cpn_code = oi.coupon_code
+         INNER JOIN ods_vova_vtsf.ods_vova_acg_app app ON lower(t1.datasource) = lower(app.app_name) and
+                                                          lower(app.app_name) != 'vova' and lower(app.app_name) != 'airyclub'
+where date (dc.cpn_create_time) = '${cur_date}'
 ),
 tmp_use_num_30 as (
 select '${cur_date}'               AS event_date,
@@ -146,26 +175,26 @@ HAVING cpn_cfg_type_id != 'all' AND currency != 'all'
 )
 
 insert overwrite table dwb.dwb_vova_coupon PARTITION (pt)
-SELECT  /*+ REPARTITION(10) */
-       result.event_date,
-       result.datasource,
-       result.region_code,
-       result.cpn_cfg_type,
-       result.cpn_cfg_type_id,
-       occt.config_type_name,
-       result.currency,
-       result.give_num,
-       result.give_amount,
-       result.give_user,
-       result.use_num,
-       result.use_amount,
-       result.use_user,
-       result.gmv,
-       result.use_num_3,
-       result.use_num_7,
-       result.use_num_15,
-       result.use_num_30,
-       result.event_date AS pt
+SELECT /*+ REPARTITION(10) */
+    result.event_date,
+    result.datasource,
+    result.region_code,
+    result.cpn_cfg_type,
+    result.cpn_cfg_type_id,
+    occt.config_type_name,
+    result.currency,
+    result.give_num,
+    result.give_amount,
+    result.give_user,
+    result.use_num,
+    result.use_amount,
+    result.use_user,
+    result.gmv,
+    result.use_num_3,
+    result.use_num_7,
+    result.use_num_15,
+    result.use_num_30,
+    result.event_date AS pt
 FROM (
          SELECT temp1.event_date,
                 temp1.datasource,
@@ -219,9 +248,77 @@ FROM (
              GROUP BY CUBE (final.cpn_create_date, final.cpn_cfg_type_id, final.region_code, final.datasource, final.currency)
              HAVING event_date != 'all' AND cpn_cfg_type_id != 'all' AND currency != 'all'
              UNION ALL
+             SELECT nvl(final.cpn_create_date, 'all') AS event_date,
+             nvl(final.region_code, 'all') AS region_code,
+             'app_group' AS datasource,
+             first (final.cpn_cfg_type) AS cpn_cfg_type,
+             nvl(final.cpn_cfg_type_id, 'all') AS cpn_cfg_type_id,
+             nvl(final.currency, 'all') AS currency,
+             count (cpn_id) AS give_num,
+             sum (cpn_cfg_val) AS give_amount,
+             count (DISTINCT buyer_id) AS give_user,
+             0 AS use_num,
+             0 AS use_amount,
+             0 AS use_user,
+             0 AS gmv,
+             0 AS use_num_3,
+             0 AS use_num_7,
+             0 AS use_num_15,
+             0 AS use_num_30
+             FROM (
+             SELECT date(dc.cpn_create_time) AS cpn_create_date,
+             nvl(dc.cpn_cfg_type_id, '-1') AS cpn_cfg_type_id,
+             dc.cpn_cfg_type,
+             nvl(byr.region_code, 'NA') AS region_code,
+             'app_group' AS datasource,
+             nvl(dc.currency, 'NA') AS currency,
+             dc.cpn_id,
+             nvl(dc.cpn_cfg_val, 0) AS cpn_cfg_val,
+             nvl(dc.buyer_id, 0) AS buyer_id
+             FROM dim.dim_vova_coupon dc
+             INNER JOIN dim.dim_vova_buyers byr ON byr.buyer_id = dc.buyer_id
+             INNER JOIN ods_vova_vtsf.ods_vova_acg_app app ON lower (byr.datasource) = lower (app.app_name) and lower (app.app_name) != 'vova' and lower (app.app_name) != 'airyclub'
+             WHERE date(dc.cpn_create_time) = '${cur_date}'
+             ) final
+             GROUP BY CUBE (final.cpn_create_date, final.cpn_cfg_type_id, final.region_code, final.currency)
+             HAVING event_date != 'all' AND cpn_cfg_type_id != 'all' AND currency != 'all'
+             UNION ALL
              SELECT nvl(t1.pay_date, 'all') AS event_date,
              nvl(nvl(t1.region_code, 'NA'), 'all') AS region_code,
              nvl(nvl(t1.datasource, 'NA'), 'all') AS datasource,
+             first (dc.cpn_cfg_type) AS cpn_cfg_type,
+             nvl(nvl(dc.cpn_cfg_type_id, '-1'), 'all') AS cpn_cfg_type_id,
+             nvl(nvl(dc.currency, 'NA'), 'all') AS currency,
+             0 AS give_num,
+             0 AS give_amount,
+             0 AS give_user,
+             COUNT (DISTINCT oi.order_id) AS use_num,
+             sum (oi.bonus) AS use_amount,
+             COUNT (DISTINCT oi.user_id) AS use_user,
+             sum (oi.goods_amount + oi.shipping_fee) AS gmv,
+             0 AS use_num_3,
+             0 AS use_num_7,
+             0 AS use_num_15,
+             0 AS use_num_30
+             FROM (
+             SELECT first (fp.datasource) AS datasource,
+             first (fp.region_code) AS region_code,
+             fp.order_id,
+             date (fp.pay_time) AS pay_date
+             FROM dwd.dwd_vova_fact_pay fp
+             WHERE date(fp.pay_time) = '${cur_date}'
+             GROUP BY fp.order_id, date(fp.pay_time)
+             ) t1
+             INNER JOIN ods_vova_vts.ods_vova_order_info oi ON oi.order_id = t1.order_id
+             LEFT JOIN dim.dim_vova_coupon dc ON dc.cpn_code = oi.coupon_code
+             WHERE oi.coupon_code != ''
+             and date (dc.cpn_create_time) = '${cur_date}'
+             GROUP BY CUBE (t1.pay_date, nvl(t1.region_code, 'NA'), nvl(t1.datasource, 'NA'), nvl(dc.cpn_cfg_type_id, '-1'), nvl(dc.currency, 'NA'))
+             HAVING event_date != 'all' AND cpn_cfg_type_id != 'all' AND currency != 'all'
+             UNION ALL
+             SELECT nvl(t1.pay_date, 'all') AS event_date,
+             nvl(nvl(t1.region_code, 'NA'), 'all') AS region_code,
+             'app_group' AS datasource,
              first (dc.cpn_cfg_type) AS cpn_cfg_type,
              nvl(nvl(dc.cpn_cfg_type_id, '-1'), 'all') AS cpn_cfg_type_id,
              nvl(nvl(dc.currency, 'NA'), 'all') AS currency,
@@ -247,9 +344,10 @@ FROM (
              ) t1
              INNER JOIN ods_vova_vts.ods_vova_order_info oi ON oi.order_id = t1.order_id
              LEFT JOIN dim.dim_vova_coupon dc ON dc.cpn_code = oi.coupon_code
+             INNER JOIN ods_vova_vtsf.ods_vova_acg_app app ON lower (t1.datasource) = lower (app.app_name) and lower (app.app_name) != 'vova' and lower (app.app_name) != 'airyclub'
              WHERE oi.coupon_code != ''
-             and  date (dc.cpn_create_time) = '${cur_date}'
-             GROUP BY CUBE (t1.pay_date, nvl(t1.region_code, 'NA'), nvl(t1.datasource, 'NA'), nvl(dc.cpn_cfg_type_id, '-1'), nvl(dc.currency, 'NA'))
+             and date (dc.cpn_create_time) = '${cur_date}'
+             GROUP BY CUBE (t1.pay_date, nvl(t1.region_code, 'NA'), nvl(dc.cpn_cfg_type_id, '-1'), nvl(dc.currency, 'NA'))
              HAVING event_date != 'all' AND cpn_cfg_type_id != 'all' AND currency != 'all'
              UNION ALL
              select * from tmp_use_num_3
