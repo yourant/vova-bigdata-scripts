@@ -12,7 +12,7 @@ sqoop export \
 -Dmapreduce.map.memory.mb=8192 \
 -Dmapreduce.reduce.memory.mb=8192 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
---username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
+--username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \
 --m 1 \
 --table dim_goods \
 --update-key "goods_id" \

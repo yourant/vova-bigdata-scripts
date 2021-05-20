@@ -41,7 +41,7 @@ sqoop export \
   -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
   -Dmapreduce.job.queuename=default \
   --connect jdbc:mysql://vovadb.cei8p8whxxwd.us-east-1.rds.amazonaws.com:3306/themis?rewriteBatchedStatements=true \
-  --username dbg20191029 --password lz5KtWHH8tIgGEYU5hYUbPGpkufmsfup \
+  --username dbg20200517 --password oghi3Cait3aixeGei<gh= \
   --m 1 \
   --table rpt_goods_id_1d \
   --update-key goods_id \

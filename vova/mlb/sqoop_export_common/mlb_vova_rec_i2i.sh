@@ -64,7 +64,7 @@ create table if not exists rec_recall.${table_name} (
   UNIQUE KEY goods_id (goods_id) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='i2i 召回结果表';
 "
-mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pv5NxDS1N007jbIISAvB7yzJg2GSbL9zF -e "${sql}"
+mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwrecallwriter -pTsLdpZumzovrAvttIqnePCJhIVxZZ7bd -e "${sql}"
 
 if [ $? -ne 0 ];then
   exit 1
@@ -76,7 +76,7 @@ sqoop export \
 -Dmapreduce.map.memory.mb=8096 \
 -Dsqoop.export.records.per.statement=500 \
 --connect jdbc:mysql://rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/rec_recall \
---username bimaster --password v5NxDS1N007jbIISAvB7yzJg2GSbL9zF \
+--username dwrecallwriter --password TsLdpZumzovrAvttIqnePCJhIVxZZ7bd \
 --m 1 \
 --table ${table_name}_new \
 --hcatalog-database mlb \
@@ -94,7 +94,7 @@ fi
 # rename mysql table
 
 echo "----------开始rename-------"
-mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pv5NxDS1N007jbIISAvB7yzJg2GSbL9zF <<EOF
+mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwrecallwriter -pTsLdpZumzovrAvttIqnePCJhIVxZZ7bd <<EOF
 rename table rec_recall.${table_name} to rec_recall.${table_name}_pre,rec_recall.${table_name}_new to rec_recall.${table_name};
 EOF
 echo "-------rename结束--------"

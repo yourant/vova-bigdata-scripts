@@ -10,7 +10,7 @@ sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=important \
 --connect jdbc:mysql://db-logistics-w.gitvv.com:3306/themis_logistics_report \
---username vvreport4vv --password nTTPdJhVp!DGv5VX4z33Fw@tHLmIG8oS \
+--username vvreport20210517 --password thuy*at1OhG1eiyoh8she \
 --table rpt_main_process \
 --update-key "event_date,datasource,country,os_type,main_channel,is_new,is_brand" \
 --update-mode allowinsert \

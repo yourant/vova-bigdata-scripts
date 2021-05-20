@@ -31,7 +31,7 @@ sqoop export \
 -Dmapreduce.map.memory.mb=8096 \
 -Dsqoop.export.records.per.statement=1000 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/als_images?disableMariaDbDriver \
---username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
+--username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \
 --m 5 \
 --table ads_vova_goods_white_bg_img_res_a \
 --hcatalog-database ads \

@@ -58,7 +58,7 @@ create table if not exists rec_recall.ads_best_sale_goods_banner (
     UNIQUE KEY ux_goods_id (goods_id, languages_id) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='女装类目图谱热销商品banner';
 "
-mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pv5NxDS1N007jbIISAvB7yzJg2GSbL9zF -e "${sql}"
+mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwrecallwriter -pTsLdpZumzovrAvttIqnePCJhIVxZZ7bd -e "${sql}"
 if [ $? -ne 0 ];then
   exit 1
 fi
@@ -68,7 +68,7 @@ sqoop export \
 -Dmapreduce.job.queuename=important \
 -Dsqoop.export.records.per.statement=1000 \
 --connect jdbc:mysql://rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/rec_recall \
---username bimaster --password v5NxDS1N007jbIISAvB7yzJg2GSbL9zF \
+--username dwrecallwriter --password TsLdpZumzovrAvttIqnePCJhIVxZZ7bd \
 --m 1 \
 --table ads_best_sale_goods_banner_new \
 --hcatalog-database tmp \
@@ -81,7 +81,7 @@ if [ $? -ne 0 ];then
 fi
 
 echo "----------开始rename-------"
-mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pv5NxDS1N007jbIISAvB7yzJg2GSbL9zF <<EOF
+mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwrecallwriter -pTsLdpZumzovrAvttIqnePCJhIVxZZ7bd <<EOF
 rename table rec_recall.ads_best_sale_goods_banner to rec_recall.ads_best_sale_goods_banner_pre,rec_recall.ads_best_sale_goods_banner_new to rec_recall.ads_best_sale_goods_banner;
 EOF
 echo "-------rename结束--------"

@@ -91,7 +91,7 @@ nodes:
   - name: send_vova_market
     type: command
     config:
-      command: python /mnt/vova-bigdata-scripts/vova/dwb/market/send_email/market.py
+      command: python3 /mnt/vova-bigdata-scripts/vova/dwb/market/send_email/market.py
     dependsOn:
       - dwb_vova_market_process_export
       - dwb_vova_market_cb_export
@@ -99,7 +99,7 @@ nodes:
   - name: send_ac_market
     type: command
     config:
-      command: python /mnt/vova-bigdata-scripts/vova/dwb/market/send_email/market_ac.py
+      command: python3 /mnt/vova-bigdata-scripts/vova/dwb/market/send_email/market_ac.py
     dependsOn:
       - dwb_vova_market_process_export
       - dwb_vova_market_web_dau_export

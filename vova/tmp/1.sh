@@ -100,7 +100,7 @@ derived_ts,
 derived_ts ts,
 'click' event_name,
 null order_id
-from dwd.dwd_fd_session_channel where pt>='2021-04-01'
+from dwd.dwd_fd_session_channel where pt>='2021-04-12'
 union all
 select
 null ga_channel,
@@ -115,7 +115,7 @@ null derived_ts,
 from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss') ts,
 'order' event_name,
 order_id
-from dwd.dwd_fd_order_info where order_time>=1619827200
+from dwd.dwd_fd_order_info where from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss')>='2021-05-12 00:00:00'
 ) t
-) t where event_name='order'
+) t where event_name='order';
 "

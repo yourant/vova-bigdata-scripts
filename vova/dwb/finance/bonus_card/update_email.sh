@@ -27,8 +27,7 @@ issue_amount_interval,
 bonus_interval,
 valid_amount_interval,
 order_cnt_interval,
-order_amount_interval,
-income
+order_amount_interval
 from
 dwb.dwb_vova_finance_bonus_card
 where pt = '${last_month}'
@@ -53,8 +52,7 @@ head="
 累计抵扣金额(USD),
 累计未使用金额,
 累计转化的订单量,
-累计转化的订单金额(USD),
-收入
+累计转化的订单金额(USD)
 ;
 "
 

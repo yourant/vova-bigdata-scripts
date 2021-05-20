@@ -23,6 +23,6 @@ spark-submit \
 --env prod \
 --sql "select goods_id,web_order_rate,web_order_rate_ratio,expre_efficiency,expre_efficiency_ratio,new_user_rate,new_user_rate_ratio,new_user_order_rate,new_user_order_ratio from dwb.dwb_vova_conversion_monitor where pt='${cur_date}' " \
 --url "http://vvfeature.vova.com.hk/api/v1/abnormal/high-refund-goods" \
---secretKey  "59b566a101b86dbec5066db10b76202b" \
+--secretKey  "69b562h101b7kdbac2066ls10b26d02b" \
 --batchSize 3000 \
 --id vovaOrderMonitorTest
