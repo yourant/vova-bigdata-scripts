@@ -28,7 +28,7 @@ if [ $? -ne 0 ];then
   exit 1
 fi
 
-mysql -h als-robot-db.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -ujuntaohanwrite -p'h5TaV049mbQxu8dVXBi9hrcpbMvLei3K' <<EOF
+mysql -h als-robot-db.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -udwrobotwriter -p'8KJKgQm74wafNjGhUBL7k6HnRPkShxwv' <<EOF
 drop table if exists als_robot.ads_user_brand_prefences_new;
 drop table if exists als_robot.ads_user_brand_prefences_pre;
 
@@ -45,7 +45,7 @@ EOF
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 --connect jdbc:mysql://als-robot-db.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/als_robot \
---username juntaohanwrite --password h5TaV049mbQxu8dVXBi9hrcpbMvLei3K \
+--username dwrobotwriter --password 8KJKgQm74wafNjGhUBL7k6HnRPkShxwv \
 --table ads_user_brand_prefences_new \
 --m 1 \
 --hcatalog-database ads \
@@ -59,7 +59,7 @@ if [ $? -ne 0 ];then
   exit 1
 fi
 
-mysql -h als-robot-db.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -ujuntaohanwrite -p'h5TaV049mbQxu8dVXBi9hrcpbMvLei3K' <<EOF
+mysql -h als-robot-db.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -udwrobotwriter -p'8KJKgQm74wafNjGhUBL7k6HnRPkShxwv' <<EOF
 rename table als_robot.ads_user_brand_prefences to als_robot.ads_user_brand_prefences_pre;
 rename table als_robot.ads_user_brand_prefences_new to als_robot.ads_user_brand_prefences;
 EOF

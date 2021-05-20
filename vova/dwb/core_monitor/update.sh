@@ -444,7 +444,7 @@ sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=default \
 --connect jdbc:mariadb:aurora://db-logistics-w.gitvv.com:3306/themis_logistics_report \
---username vvreport4vv --password 'nTTPdJhVp!DGv5VX4z33Fw@tHLmIG8oS' \
+--username vvreport20210517 --password thuy*at1OhG1eiyoh8she \
 --connection-manager org.apache.sqoop.manager.MySQLManager \
 --table rpt_core_monitor_v2 \
 --update-key "event_date,datasource,hour,os_type,region_group,app_version" \

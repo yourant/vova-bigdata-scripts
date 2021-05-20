@@ -20,7 +20,7 @@ sqoop export \
 -Dmapreduce.job.queuename=default \
 -Dsqoop.export.records.per.statement=1000 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/als_images \
---username bimaster --password sYG2Ri3yIDu2NPki \
+--username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \
 --update-key "vector_id" \
 --m 1 \
 --table ads_image_vector_v3 \
