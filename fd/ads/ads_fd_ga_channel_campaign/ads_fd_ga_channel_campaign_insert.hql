@@ -1,55 +1,4 @@
-sql="
-
-drop table tmp.tmp_fd_ga_channel_campaign;
-CREATE EXTERNAL TABLE IF NOT EXISTS tmp.tmp_fd_ga_channel_campaign
-(
-    order_id     bigint COMMENT 'd_date',
-    domain_userid string COMMENT 'd_date',
-    pre_event_time string COMMENT 'd_date',
-    pre_ga_channel string COMMENT 'd_date',
-    pre_mkt_source string COMMENT 'd_date',
-    pre_campaign_name string COMMENT 'd_date',
-    pre_campaign_id string COMMENT 'd_date',
-    pre_adgroup_id string COMMENT 'd_date',
-    pre_mkt_medium string COMMENT 'd_date',
-    pre_mkt_term string COMMENT 'd_date'
-) COMMENT 'tmp_fd_ga_channel_campaign'
-    ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
-
-CREATE TABLE IF NOT EXISTS tmp_fd_ga_channel_campaign (
-  order_id int(11) NOT NULL,
-  domain_userid varchar(64) NOT NULL DEFAULT '0' comment '商品id',
-  pre_event_time varchar(128) NOT NULL DEFAULT '',
-  pre_ga_channel varchar(128) NOT NULL DEFAULT '0' comment '列表点击',
-  pre_mkt_source varchar(128) NOT NULL DEFAULT '0' comment '列表点击',
-  pre_campaign_name varchar(128) NOT NULL DEFAULT '0' comment '列表点击',
-  pre_campaign_id varchar(128) NOT NULL DEFAULT '0' comment '列表点击',
-  pre_adgroup_id varchar(128) NOT NULL DEFAULT '0' comment '列表点击',
-  pre_mkt_medium varchar(128) NOT NULL DEFAULT '0' comment '列表点击',
-  pre_mkt_term varchar(128) NOT NULL DEFAULT '0' comment '列表点击',
-  PRIMARY KEY (order_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
-
-sqoop export \
--Dorg.apache.sqoop.export.text.dump_data_on_error=true \
--Dmapreduce.job.queuename=default \
--Dsqoop.export.records.per.statement=1000 \
---connect jdbc:mysql://bd-warehouse-maxscale.gitvv.com:3311/artemis \
---username market --password MyF4k2y9jJSv \
---m 1 \
---table tmp_fd_ga_channel_campaign \
---hcatalog-database tmp \
---hcatalog-table tmp_fd_ga_channel_campaign \
---fields-terminated-by '\001'
-
-
-
-
-
-
-insert overwrite table tmp.tmp_fd_ga_channel_campaign
+insert overwrite table ads.ads_fd_ga_channel_campaign partition (pt='${pt}')
 select
 /*+ REPARTITION(1) */
 order_id,
@@ -100,7 +49,7 @@ derived_ts,
 derived_ts ts,
 'click' event_name,
 null order_id
-from dwd.dwd_fd_session_channel where pt>='2021-04-12'
+from dwd.dwd_fd_session_channel where pt>='${pre_month}'
 union all
 select
 null ga_channel,
@@ -115,7 +64,6 @@ null derived_ts,
 from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss') ts,
 'order' event_name,
 order_id
-from dwd.dwd_fd_order_info where from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss')>='2021-05-12 00:00:00'
+from dwd.dwd_fd_order_info where to_date(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss'))>='${pre_two_pt}'
 ) t
 ) t where event_name='order';
-"

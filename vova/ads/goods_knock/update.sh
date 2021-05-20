@@ -12,7 +12,7 @@ spark-submit --master yarn \
 --conf "spark.dynamicAllocation.maxExecutors=50" \
 --conf "spark.app.name=vova_brand_knock_zhangyin" \
 s3://vomkt-emr-rec/jar/vova-bigdata/vova-bigdata-sparkbatch/vova-bigdata-sparkbatch-1.0-SNAPSHOT.jar  \
---env product --pt $pt --knocks 'andy.zhang,Buyue,Qiezi,Xushun'
+--env product --pt $pt --knocks 'andy.zhang,Buyue,Qiezi'
 
 if [ $? -ne 0 ];then
   exit 1

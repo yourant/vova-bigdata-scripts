@@ -11,7 +11,7 @@ sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dsqoop.export.records.per.statement=500 \
 --connect jdbc:mariadb:aurora://db-logistics-w.gitvv.com:3306/themis_logistics_report \
---username vvreport4vv --password nTTPdJhVp!DGv5VX4z33Fw@tHLmIG8oS \
+--username vvreport20210517 --password thuy*at1OhG1eiyoh8she \
 --connection-manager org.apache.sqoop.manager.MySQLManager \
 --table dwb_vova_market_process \
 --update-key event_date,datasource,region_code \

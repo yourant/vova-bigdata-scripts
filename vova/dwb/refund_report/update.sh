@@ -1270,7 +1270,7 @@ echo "${job_name} end_time:"  `date +"%Y-%m-%d %H:%M:%S" -d "8 hour"`
 # -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 # -Dmapreduce.job.queuename=default \
 # --connect jdbc:mariadb:aurora://db-logistics-w.gitvv.com:3306/themis_logistics_report \
-# --username vvreport4vv --password nTTPdJhVp!DGv5VX4z33Fw@tHLmIG8oS --connection-manager org.apache.sqoop.manager.MySQLManager \
+# --username vvreport20210517 --password thuy*at1OhG1eiyoh8she --connection-manager org.apache.sqoop.manager.MySQLManager \
 # --table rpt_refund_report \
 # --update-key "action_date,platform,region_code,threshold,is_first_refund,over_delivery_days,datasource,storage_type,is_new_activate,shipping_status_note,activity" \
 # --update-mode allowinsert \

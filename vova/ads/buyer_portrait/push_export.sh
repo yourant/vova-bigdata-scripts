@@ -10,7 +10,7 @@ sql="
 drop table if exists themis_logistics_report.user_push_portrait_new;
 drop table if exists themis_logistics_report.user_push_portrait_pre;
 "
-mysql -h db-logistics-w.gitvv.com -u vvreport4vv -pnTTPdJhVp\!DGv5VX4z33Fw@tHLmIG8oS -e "${sql}"
+mysql -h db-logistics-w.gitvv.com -u vvreport20210517 -pthuy*at1OhG1eiyoh8she -e "${sql}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS themis_logistics_report.user_push_portrait (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='推送用户画像';
 "
 
-mysql -h db-logistics-w.gitvv.com -u vvreport4vv -pnTTPdJhVp\!DGv5VX4z33Fw@tHLmIG8oS -e "${sql}"
+mysql -h db-logistics-w.gitvv.com -u vvreport20210517 -pthuy*at1OhG1eiyoh8she -e "${sql}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1
@@ -103,7 +103,7 @@ sqoop export \
 -Dmapreduce.reduce.memory.mb=8192 \
 -Dsqoop.export.records.per.statement=1000 \
 --connect jdbc:mariadb:aurora://db-logistics-w.gitvv.com:3306/themis_logistics_report \
---username vvreport4vv --password 'nTTPdJhVp!DGv5VX4z33Fw@tHLmIG8oS' \
+--username vvreport20210517 --password thuy*at1OhG1eiyoh8she \
 --connection-manager org.apache.sqoop.manager.MySQLManager \
 --table user_push_portrait_new \
 --m 20 \
@@ -118,7 +118,7 @@ if [ $? -ne 0 ];then
   exit 1
 fi
 
-mysql -h db-logistics-w.gitvv.com -u vvreport4vv -pnTTPdJhVp\!DGv5VX4z33Fw@tHLmIG8oS <<EOF
+mysql -h db-logistics-w.gitvv.com -u vvreport20210517 -pthuy*at1OhG1eiyoh8she <<EOF
 rename table themis_logistics_report.user_push_portrait to themis_logistics_report.user_push_portrait_pre,themis_logistics_report.user_push_portrait_new to themis_logistics_report.user_push_portrait;
 EOF
 

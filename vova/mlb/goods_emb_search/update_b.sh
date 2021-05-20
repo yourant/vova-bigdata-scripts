@@ -28,7 +28,7 @@ if [ ! -n "$table_name" ]; then
   exit 1
 fi
 select_sql="select  tab_name from  als_images.mlb_vova_goods_emb_relation where  link_model='mlb_vova_search_goods_emb_b' and use_online=0 limit 1"
-db_data=`mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${select_sql}"`
+db_data=`mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx -e "${select_sql}"`
 suffix=`echo ${db_data: -1}`
 
 if [ ! -n "$suffix" ]; then
