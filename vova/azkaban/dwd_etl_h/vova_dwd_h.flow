@@ -12,6 +12,9 @@ nodes:
     dependsOn:
       - vova_fact_cart_cause_h
       - vova_fact_order_cause_h
+      - vova_fact_order_cause_h
+      - dwd_vova_fact_pay_h
+
   - name: start_flag
     type: command
     config:
@@ -27,6 +30,18 @@ nodes:
       - judge_vova_fact_log_v2_h
 
   - name: vova_fact_order_cause_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwd/order_cause_h/update.sh
+      retries: 10
+      retry.backoff: 120000
+    dependsOn:
+      - judge_vova_order_info_h
+      - judge_vova_order_goods_h
+      - judge_vova_order_relation_h
+      - judge_vova_order_goods_status_h
+
+  - name: dwd_vova_fact_pay_h
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/vova/dwd/order_cause_h/update.sh
@@ -79,6 +94,15 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_v2_h
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_order_goods_status_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_order_goods_status_h
       retries: 20
       retry.backoff: 120000
     dependsOn:

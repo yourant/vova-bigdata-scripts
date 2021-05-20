@@ -59,7 +59,7 @@ CREATE TABLE if not exists \`themis\`.\`ads_goods_portrait_now\` (
   \`is_on_sale\` int(2) DEFAULT NULL COMMENT 'i_真实是否在售',
   \`is_recommend\` int(2) DEFAULT NULL COMMENT 'i_是否可推荐',
   PRIMARY KEY (\`id\`) USING BTREE,
-  KEY \`idx_gs_id\` (\`gs_id\`),
+  UNIQUE KEY \`idx_gs_id\` (\`gs_id\`),
   KEY \`idx_second_cat_id\` (\`second_cat_id\`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商品画像表';
 
@@ -113,7 +113,7 @@ CREATE TABLE if not exists \`themis\`.\`ads_goods_portrait\` (
   \`is_on_sale\` int(2) DEFAULT NULL COMMENT 'i_真实是否在售',
   \`is_recommend\` int(2) DEFAULT NULL COMMENT 'i_是否可推荐',
   PRIMARY KEY (\`id\`) USING BTREE,
-  KEY \`idx_gs_id\` (\`gs_id\`),
+  UNIQUE KEY \`idx_gs_id\` (\`gs_id\`),
   KEY \`idx_second_cat_id\` (\`second_cat_id\`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商品画像表';
 "

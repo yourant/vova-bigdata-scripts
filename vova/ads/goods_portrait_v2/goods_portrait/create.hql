@@ -85,6 +85,9 @@ alter table ads.ads_vova_goods_portrait add columns(`goods_sn` string comment '�
 alter table ads.ads_vova_goods_portrait add columns(`is_on_sale` int comment '真实是否在售,1:已上架，0：已下架') cascade;
 alter table ads.ads_vova_goods_portrait add columns(`is_recommend` int comment '是否可推荐,1:可，0：不可') cascade;
 
+
+alter table ads.ads_vova_goods_portrait change column `goods_id` bigint comment '商品ID' cascade;
+
 CREATE TABLE `tmp.tmp_vova_goods_key_words`(
   `goods_id` int,
   `goods_name` string,
