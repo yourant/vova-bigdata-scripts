@@ -969,7 +969,7 @@ sqoop export \
 -Dsqoop.export.statements.per.transaction=1 \
 -Dmapreduce.job.queuename=default \
 --connect jdbc:mariadb:aurora://db-logistics-w.gitvv.com:3306/themis_logistics_report?rewriteBatchedStatements=true \
---username vvreport4vv --password nTTPdJhVp!DGv5VX4z33Fw@tHLmIG8oS --connection-manager org.apache.sqoop.manager.MySQLManager \
+--username vvreport20210517 --password thuy*at1OhG1eiyoh8she --connection-manager org.apache.sqoop.manager.MySQLManager \
 --table rpt_user_cohort \
 --update-key "event_date,datasource,region_code,main_channel,is_new_user,is_new_activate" \
 --update-mode allowinsert \

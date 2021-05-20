@@ -91,7 +91,7 @@ fi
 
 
 
-mysql -h rec-backend.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pkkooxGjFy7Vgu21x <<EOF
+mysql -h rec-backend.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwbackendwriter -pRap11rJQZE3ATA18GZHAbySsNZVIvjnE <<EOF
 drop table if exists backend.abnormal_low_price_goods_new;
 drop table if exists backend.abnormal_low_price_goods_pre;
 
@@ -118,7 +118,7 @@ EOF
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 --connect jdbc:mysql://rec-backend.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/backend \
---username bimaster --password kkooxGjFy7Vgu21x \
+--username dwbackendwriter --password Rap11rJQZE3ATA18GZHAbySsNZVIvjnE \
 --table abnormal_low_price_goods_new \
 --m 1 \
 --hcatalog-database dwb \
@@ -132,7 +132,7 @@ if [ $? -ne 0 ];then
   exit 1
 fi
 
-mysql -h rec-backend.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pkkooxGjFy7Vgu21x <<EOF
+mysql -h rec-backend.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwbackendwriter -pRap11rJQZE3ATA18GZHAbySsNZVIvjnE <<EOF
 rename table backend.abnormal_low_price_goods to backend.abnormal_low_price_goods_pre;
 rename table backend.abnormal_low_price_goods_new to backend.abnormal_low_price_goods;
 EOF
