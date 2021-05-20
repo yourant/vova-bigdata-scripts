@@ -55,7 +55,7 @@ PRIMARY KEY (id) USING BTREE,
 KEY region_id (region_id) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='类目偏好召回';
 "
-mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pv5NxDS1N007jbIISAvB7yzJg2GSbL9zF -e "${sql}"
+mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwrecallwriter -pTsLdpZumzovrAvttIqnePCJhIVxZZ7bd -e "${sql}"
 
 if [ $? -ne 0 ];then
   exit 1
@@ -66,7 +66,7 @@ sqoop export \
 -Dmapreduce.map.memory.mb=8096 \
 -Dsqoop.export.records.per.statement=500 \
 --connect jdbc:mysql://rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/rec_recall \
---username bimaster --password v5NxDS1N007jbIISAvB7yzJg2GSbL9zF \
+--username dwrecallwriter --password TsLdpZumzovrAvttIqnePCJhIVxZZ7bd \
 --m 1 \
 --table mlb_rec_m_hotcatlike_d_new \
 --hcatalog-database mlb \
@@ -82,7 +82,7 @@ if [ $? -ne 0 ];then
 fi
 
 echo "----------开始rename-------"
-mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pv5NxDS1N007jbIISAvB7yzJg2GSbL9zF <<EOF
+mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwrecallwriter -pTsLdpZumzovrAvttIqnePCJhIVxZZ7bd <<EOF
 rename table rec_recall.mlb_rec_m_hotcatlike_d to rec_recall.mlb_rec_m_hotcatlike_d_pre,rec_recall.mlb_rec_m_hotcatlike_d_new to rec_recall.mlb_rec_m_hotcatlike_d;
 EOF
 echo "-------rename结束--------"

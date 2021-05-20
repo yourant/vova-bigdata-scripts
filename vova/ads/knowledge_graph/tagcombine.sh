@@ -6,7 +6,7 @@ if [ ! -n "$1" ]; then
                   cur_date=$(date -d "-1 day" +%Y-%m-%d)
 fi
 
-mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pv5NxDS1N007jbIISAvB7yzJg2GSbL9zF -e "
+mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwrecallwriter -pTsLdpZumzovrAvttIqnePCJhIVxZZ7bd -e "
 drop table if exists rec_recall.ads_vova_rec_m_tagcombine_d_bak;
 CREATE TABLE IF NOT EXISTS rec_recall.ads_vova_rec_m_tagcombine_d_bak (
 id int(11) NOT NULL AUTO_INCREMENT,
@@ -67,7 +67,7 @@ sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dsqoop.export.records.per.statement=1000 \
 --connect jdbc:mysql://rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/rec_recall \
---username bimaster --password v5NxDS1N007jbIISAvB7yzJg2GSbL9zF \
+--username dwrecallwriter --password TsLdpZumzovrAvttIqnePCJhIVxZZ7bd \
 --m 1 \
 --table ads_vova_rec_m_tagcombine_d_bak \
 --hcatalog-database ads \
@@ -82,7 +82,7 @@ if [ $? -ne 0 ];then
 exit 1
 fi
 
-mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pv5NxDS1N007jbIISAvB7yzJg2GSbL9zF -e "
+mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwrecallwriter -pTsLdpZumzovrAvttIqnePCJhIVxZZ7bd -e "
 RENAME table rec_recall.ads_vova_rec_m_tagcombine_d to rec_recall.ads_vova_rec_m_tagcombine_d_tmp;
 RENAME table rec_recall.ads_vova_rec_m_tagcombine_d_bak to rec_recall.ads_vova_rec_m_tagcombine_d;
 RENAME table rec_recall.ads_vova_rec_m_tagcombine_d_tmp to rec_recall.ads_vova_rec_m_tagcombine_d_bak;

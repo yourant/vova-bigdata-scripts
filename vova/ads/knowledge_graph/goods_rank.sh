@@ -6,7 +6,7 @@ if [ ! -n "$1" ]; then
           cur_date=$(date -d "-1 day" +%Y-%m-%d)
 fi
 
-mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pv5NxDS1N007jbIISAvB7yzJg2GSbL9zF -e "
+mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwrecallwriter -pTsLdpZumzovrAvttIqnePCJhIVxZZ7bd -e "
 DROP TABLE IF EXISTS rec_recall.ads_vova_rec_m_user_kg_tag_d_bak;
 CREATE TABLE IF NOT EXISTS rec_recall.ads_vova_rec_m_user_kg_tag_d_bak (
 id int(11) NOT NULL AUTO_INCREMENT,
@@ -29,7 +29,7 @@ sqoop export \
 -Dmapreduce.map.memory.mb=8192 \
 -Dmapreduce.reduce.memory.mb=8192 \
 --connect jdbc:mysql://rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/rec_recall \
---username bimaster --password v5NxDS1N007jbIISAvB7yzJg2GSbL9zF \
+--username dwrecallwriter --password TsLdpZumzovrAvttIqnePCJhIVxZZ7bd \
 --m 1 \
 --table ads_vova_rec_m_user_kg_tag_d_bak \
 --hcatalog-database mlb \
@@ -42,7 +42,7 @@ sqoop export \
 if [ $? -ne 0 ];then
 exit 1
 fi
-mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pv5NxDS1N007jbIISAvB7yzJg2GSbL9zF -e "
+mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwrecallwriter -pTsLdpZumzovrAvttIqnePCJhIVxZZ7bd -e "
 RENAME table rec_recall.ads_vova_rec_m_user_kg_tag_d to rec_recall.ads_vova_rec_m_user_kg_tag_d_tmp;
 RENAME table rec_recall.ads_vova_rec_m_user_kg_tag_d_bak to rec_recall.ads_vova_rec_m_user_kg_tag_d;
 RENAME table rec_recall.ads_vova_rec_m_user_kg_tag_d_tmp to rec_recall.ads_vova_rec_m_user_kg_tag_d_bak;
@@ -90,7 +90,7 @@ if [ $? -ne 0 ];then
 exit 1
 fi
 
-mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pv5NxDS1N007jbIISAvB7yzJg2GSbL9zF -e "
+mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwrecallwriter -pTsLdpZumzovrAvttIqnePCJhIVxZZ7bd -e "
 DROP TABLE IF EXISTS rec_recall.ads_vova_bod_goods_rank_data_bak;
 CREATE TABLE IF NOT EXISTS rec_recall.ads_vova_bod_goods_rank_data_bak (
 id int(11) NOT NULL AUTO_INCREMENT,
@@ -114,7 +114,7 @@ sqoop export \
 -Dmapreduce.map.memory.mb=8192 \
 -Dmapreduce.reduce.memory.mb=8192 \
 --connect jdbc:mysql://rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/rec_recall \
---username bimaster --password v5NxDS1N007jbIISAvB7yzJg2GSbL9zF \
+--username dwrecallwriter --password TsLdpZumzovrAvttIqnePCJhIVxZZ7bd \
 --m 1 \
 --table ads_vova_bod_goods_rank_data_bak \
 --hcatalog-database ads \
@@ -129,7 +129,7 @@ if [ $? -ne 0 ];then
 exit 1
 fi
 
-mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pv5NxDS1N007jbIISAvB7yzJg2GSbL9zF -e "
+mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwrecallwriter -pTsLdpZumzovrAvttIqnePCJhIVxZZ7bd -e "
 RENAME table rec_recall.ads_vova_bod_goods_rank_data to rec_recall.ads_vova_bod_goods_rank_data_tmp;
 RENAME table rec_recall.ads_vova_bod_goods_rank_data_bak to rec_recall.ads_vova_bod_goods_rank_data;
 RENAME table rec_recall.ads_vova_bod_goods_rank_data_tmp to rec_recall.ads_vova_bod_goods_rank_data_bak;
