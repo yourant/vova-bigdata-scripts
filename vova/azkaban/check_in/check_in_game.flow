@@ -1,0 +1,109 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: huachen@vova.com.hk,yzhang13@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_check_in_retention
+      - ads_vova_check_in_game
+      - ads_vova_check_in_sign
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: judge_dwd_vova_log_screen_view
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_screen_view
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_devices
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_devices
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_buyer_portrait_feature
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_buyer_portrait_feature
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_common_click
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_common_click
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_buyers
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_buyers
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_ods_vova_user_check_in_log
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_user_check_in_log
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_check_in_retention
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/check_in/check_in_retention/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_screen_view
+      - judge_dim_vova_devices
+      - judge_ads_vova_buyer_portrait_feature
+
+
+
+  - name: ads_vova_check_in_game
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/check_in/check_in_game/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_screen_view
+      - judge_dim_vova_devices
+      - judge_ads_vova_buyer_portrait_feature
+      - judge_dwd_vova_log_common_click
+
+  - name: ads_vova_check_in_sign
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/check_in/check_in_sign/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ods_vova_user_check_in_log
+      - judge_dim_vova_buyers
+      - judge_ads_vova_buyer_portrait_feature
