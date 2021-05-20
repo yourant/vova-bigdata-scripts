@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS themis_logistics_report.ads_vova_rfm90_tag(
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT COMMENT='用户推送rfm标签';
 "
 
-mysql -h db-logistics-w.gitvv.com -u vvreport4vv -pnTTPdJhVp\!DGv5VX4z33Fw@tHLmIG8oS -e "${sql}"
+mysql -h db-logistics-w.gitvv.com -u vvreport20210517 -pthuy*at1OhG1eiyoh8she -e "${sql}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1
@@ -44,7 +44,7 @@ sqoop export \
 -Dmapreduce.reduce.memory.mb=8192 \
 -Dsqoop.export.records.per.statement=100 \
 --connect 'jdbc:mysql://db-logistics-w.gitvv.com:3306/themis_logistics_report?disableMariaDbDriver' \
---username vvreport4vv --password 'nTTPdJhVp!DGv5VX4z33Fw@tHLmIG8oS' \
+--username vvreport20210517 --password thuy*at1OhG1eiyoh8she \
 --table ads_vova_rfm90_tag_new \
 --m 20 \
 --hcatalog-database ads \
@@ -59,7 +59,7 @@ if [ $? -ne 0 ];then
   exit 1
 fi
 
-mysql -h db-logistics-w.gitvv.com -u vvreport4vv -pnTTPdJhVp\!DGv5VX4z33Fw@tHLmIG8oS <<EOF
+mysql -h db-logistics-w.gitvv.com -u vvreport20210517 -pthuy*at1OhG1eiyoh8she <<EOF
 rename table themis_logistics_report.ads_vova_rfm90_tag to themis_logistics_report.ads_vova_rfm90_tag_pre,themis_logistics_report.ads_vova_rfm90_tag_new to themis_logistics_report.ads_vova_rfm90_tag;
 EOF
 

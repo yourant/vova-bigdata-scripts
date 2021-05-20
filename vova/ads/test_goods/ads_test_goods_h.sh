@@ -36,7 +36,7 @@ sqoop export \
 -Dsqoop.export.records.per.statement=100 \
 -Dsqoop.export.statements.per.transaction=1 \
 --connect jdbc:mysql://rec-backend.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com/backend?characterEncoding=utf-8 \
---username bimaster --password kkooxGjFy7Vgu21x \
+--username dwbackendwriter --password Rap11rJQZE3ATA18GZHAbySsNZVIvjnE \
 -m 1 \
 --table test_goods_behave \
 --update-key "datasource,goods_id,platform,region_codes" \

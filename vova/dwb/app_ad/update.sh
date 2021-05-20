@@ -418,7 +418,7 @@ and cost.event_date = cost2.event_date
 and cost.region_code = cost2.region_code
 and cost2.platform = 'all'
 and cost2.ga_channel = 'all'
-WHERE cost.event_date >= '2021-02-01'
+WHERE cost.event_date >= '2020-01-01'
 AND cost.event_date != 'all'
 
 UNION ALL
@@ -530,7 +530,7 @@ from
 ods_yx_cy.ods_yx_ads_ga_channel_daily_flat_report
 where cost> 0
 ) cost_ga_channel ON cost_ga_channel.ga_channel = cost2.ga_channel
-WHERE cost2.event_date >= '2021-02-01'
+WHERE cost2.event_date >= '2020-01-01'
 AND cost2.event_date != 'all'
 AND cost2.platform = 'all'
 group by
@@ -540,7 +540,7 @@ cost2.region_code
 ) t2 on base.event_date = t2.event_date
 AND base.datasource = t2.datasource
 AND base.region_code = t2.region_code
-WHERE base.event_date >= '2021-02-01'
+WHERE base.event_date >= '2020-01-01'
 AND base.event_date != 'all'
 ;
 

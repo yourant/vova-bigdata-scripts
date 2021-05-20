@@ -86,7 +86,7 @@ sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=default \
 --connect jdbc:mysql://rec-backend.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com/backend \
---username bimaster --password kkooxGjFy7Vgu21x \
+--username dwbackendwriter --password Rap11rJQZE3ATA18GZHAbySsNZVIvjnE \
 --table test_cat_gcr_1w \
 --update-key "second_cat_id,geo_country" \
 --update-mode allowinsert \

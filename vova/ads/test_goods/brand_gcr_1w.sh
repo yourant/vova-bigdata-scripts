@@ -147,7 +147,7 @@ sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=default \
 --connect jdbc:mysql://rec-backend.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com/backend \
---username bimaster --password kkooxGjFy7Vgu21x \
+--username dwbackendwriter --password Rap11rJQZE3ATA18GZHAbySsNZVIvjnE \
 --table ads_test_cat_gcr_1w \
 --update-key "first_cat_id,is_brand,second_cat_id,geo_country" \
 --update-mode allowinsert \
