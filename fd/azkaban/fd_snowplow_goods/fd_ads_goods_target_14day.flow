@@ -1,0 +1,28 @@
+---
+config:
+  failure.emails: longgu@vova.com.hk
+  retries: 10
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_daily_job_start
+    type: noop
+
+  - name: ads_fd_goods_target_14day
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_target_14day/run.sh
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: ads_fd_goods_target_14day_sqoop
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_target_14day/sqoop.sh
+    dependsOn:
+      - ads_fd_goods_target_14day
+
+  - name: fd_daily_job_end
+    type: noop
+    dependsOn:
+      - ads_fd_goods_target_14day_sqoop
