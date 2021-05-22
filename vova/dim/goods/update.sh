@@ -32,6 +32,8 @@ select /*+ REPARTITION(300) */
        c.second_cat_name,
        c.three_cat_id,
        c.three_cat_name as third_cat_name,
+       c.four_cat_id  as fourth_cat_id,
+       c.four_cat_name as fourth_cat_name,
        g.merchant_id    as mct_id,
        m.store_name as mct_name,
        g.shop_price,

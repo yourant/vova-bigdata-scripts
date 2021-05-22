@@ -29,6 +29,8 @@ CREATE TABLE `ads.ads_vova_buyer_portrait_feature`(
   `is_brand` int COMMENT 'd_是否brand爱好者'
 )  COMMENT '用户画像子品类偏好统计表' PARTITIONED BY (pt string)
      STORED AS PARQUETFILE;
+alter table ads.ads_vova_buyer_portrait_feature add columns(`sub_new_buyers` int comment '1.首单在七日内次新人用户，0.其它') cascade;
+
 
 
 CREATE TABLE ods_vova_vtp.ods_vova_newsletter_send_email_his(
