@@ -36,6 +36,7 @@ nodes:
       - dwb_vova_buyer_life_cycle_monitor
       - dwb_vova_red_packet_report
       - dwb_vova_active_user_form_m
+      - dwb_vova_royalty_norm
 
   - name: start_flag
     type: command
@@ -370,6 +371,16 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_category
+    dependsOn:
+      - start_flag
+
+# ods_vova_vbts.ods_vova_rec_gid_pic_similar
+  - name: judge_vova_rec_gid_pic_similar
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_rec_gid_pic_similar
+      retries: 5
+      retry.backoff: 600000
     dependsOn:
       - start_flag
 
@@ -747,6 +758,29 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - dwb_vova_active_user_form_d
+
+# [9531]招商提成商品数据
+  - name: dwb_vova_royalty_norm
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/attract_investment_royalty/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_pay
+      - judge_vova_rec_gid_pic_similar
+      - judge_dim_vova_category
+      - judge_dim_vova_goods
+      - judge_dim_vova_merchant
+
+
+
+
+
+
+
+
+
 
 
 
