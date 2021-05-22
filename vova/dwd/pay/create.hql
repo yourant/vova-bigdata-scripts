@@ -80,8 +80,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS dwd.dwd_vova_fact_pay_h
     mct_shipping_fee decimal(10, 4) comment '给商家展示的运费',
     region_id        bigint comment '交易的国家ID',
     region_code      string comment '交易的国家CODE'
-) COMMENT '订单商品事实表'
-    ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
+) COMMENT '订单商品事实小时分区表' STORED AS PARQUETFILE;
 
 
 

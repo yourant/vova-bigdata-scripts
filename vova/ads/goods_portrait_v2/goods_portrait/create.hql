@@ -88,6 +88,9 @@ alter table ads.ads_vova_goods_portrait add columns(`is_recommend` int comment '
 
 alter table ads.ads_vova_goods_portrait change column `goods_id` bigint comment '商品ID' cascade;
 
+alter table ads.ads_vova_goods_portrait add columns(`third_cat_id` int comment '三级品类') cascade;
+alter table ads.ads_vova_goods_portrait add columns(`fourth_cat_id` int comment '四级品类') cascade;
+
 CREATE TABLE `tmp.tmp_vova_goods_key_words`(
   `goods_id` int,
   `goods_name` string,

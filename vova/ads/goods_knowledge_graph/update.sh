@@ -21,7 +21,7 @@ dg.is_delete
 from ads.ads_vova_goods_portrait gp
 inner join ods_vova_vts.ods_vova_goods dg
 on gp.gs_id = dg.goods_id
-where date(cast(dg.add_time as timestamp)) = '${pre_date}'
+where date(cast(dg.add_time as timestamp)) = '${pre_date}' and gp.pt = '${pre_date}'
 ;
 "
 
