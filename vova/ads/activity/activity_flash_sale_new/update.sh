@@ -226,6 +226,7 @@ where rank<=30
 
 INSERT overwrite TABLE ads.ads_vova_activity_flash_sale_new partition (pt='${pt}')
 select
+/*+ REPARTITION(1) */
 goods_id,
 region_id,
 biz_type,
