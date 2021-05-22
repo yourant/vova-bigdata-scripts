@@ -14,6 +14,7 @@ nodes:
       - ads_vova_channel_region_top
       - ads_vova_age_range_top
       - ads_vova_red_packet_gsn_goods
+      - ads_vova_royalty_threshold_detail_d_job_message_put
 
 
   - name: start_flag
@@ -131,6 +132,15 @@ nodes:
 #    dependsOn:
 #      - start_flag
 
+# ods_vova_vbts.ods_vova_rec_gid_pic_similar
+  - name: judge_vova_rec_gid_pic_similar
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_rec_gid_pic_similar
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
 
 ## job #############################################################
 
@@ -188,6 +198,27 @@ nodes:
     dependsOn:
       - judge_dim_vova_goods
       - judge_ods_vova_gsn_coupon_sign_goods_h
+
+# [9531]招商提成商品数据 报表需求 需要有算法同学计算一个提成阈值;
+## 取数
+  - name: ads_vova_royalty_threshold_detail_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/royalty_threshold/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_pay
+      - judge_vova_rec_gid_pic_similar
+
+  - name: ads_vova_royalty_threshold_detail_d_job_message_put
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=ads_vova_royalty_threshold_detail_d --from=data --to=java_server --jtype=1D --retry=0
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - ads_vova_royalty_threshold_detail_d
 
 
 ## export #############################################################
