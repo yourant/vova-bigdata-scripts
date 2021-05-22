@@ -23,6 +23,8 @@ CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_vova_goods
     second_cat_name  string COMMENT '商品二级类目',
     third_cat_id     BIGINT COMMENT '商品三级类目',
     third_cat_name   string COMMENT '商品三级类目',
+    fourth_cat_id    BIGINT COMMENT '商品四级类目',
+    fourth_cat_name  string COMMENT '商品四级类目',
     mct_id           BIGINT COMMENT '商品所属商家',
     mct_name           string COMMENT '商品所属商家',
     shop_price       DECIMAL(14, 4) comment '商品价格',

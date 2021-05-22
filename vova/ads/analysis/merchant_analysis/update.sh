@@ -6,33 +6,39 @@ if [ ! -n "$1" ]; then
   pre_date=$(date -d "-1 day" +%Y-%m-%d)
 fi
 sql="
-insert overwrite table ads.ads_vova_goods_knowledge_graph partition(pt='${pre_date}')
+insert overwrite table ads.ads_vova_merchant_analysis partition(pt='${pre_date}')
 select
-/*+ repartition(1) */
-gs_id as goods_id,
-dg.goods_name,
-dg.goods_desc,
-dg.goods_sn,
-gp.first_cat_id,
-gp.second_cat_id,
-dg.brand_id,
-dg.is_on_sale,
-dg.is_delete
-from ads.ads_vova_goods_portrait gp
-inner join ods_vova_vts.ods_vova_goods dg
-on gp.gs_id = dg.goods_id
-where date(cast(dg.add_time as timestamp)) = '${pre_date}' and gp.pt = '${pre_date}'
-;
+ga.datasource,
+ga.device_id,
+ga.goods_id,
+ga.page_code,
+ga.list_type,
+ga.clk_cnt,
+ga.expre_cnt,
+ga.sales_vol,
+ga.gmv,
+ga.is_brand,
+ga.first_cat_name,
+ga.first_cat_id,
+ga.second_cat_name,
+ga.second_cat_id,
+ga.mct_id,
+ga.mct_name,
+mr.rank as mct_rank
+from
+ads.ads_vova_goods_analysis ga
+left join ads.ads_vova_mct_rank mr
+on ga.first_cat_id=mr.first_cat_id and ga.mct_id=mr.mct_id and mr.pt='${pre_date}'
+where ga.pt='${pre_date}';
 "
-
 
 #如果使用spark-sql运行，则执行spark-sql -e
 spark-sql \
---executor-memory 15G --executor-cores 1 \
+--executor-memory 4G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=5" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
---conf "spark.app.name=ads_vova_goods_knowledge_graph" \
+--conf "spark.app.name=ads_vova_merchant_analysis" \
 --conf "spark.sql.crossJoin.enabled=true" \
 --conf "spark.default.parallelism = 300" \
 --conf "spark.sql.shuffle.partitions=300" \
