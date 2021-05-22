@@ -23,7 +23,7 @@ count(distinct(t2.buyer_id)) as old_user_cnt,
 from
 dwd.dwd_vova_fact_pay_h fp
 left join (select buyer_id from dwd.dwd_vova_fact_pay_h where date(pay_time) < '${cur_date}' group by buyer_id) t2 on fp.buyer_id = t2.buyer_id
-where date(fp.pay_time) = '${cur_date}'
+where date(fp.pay_time) = '${cur_date}' and hour(fp.pay_time) < ${pre_hour}
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
 spark-sql \
