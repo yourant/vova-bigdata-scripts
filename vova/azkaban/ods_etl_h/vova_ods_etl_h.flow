@@ -35,6 +35,7 @@ nodes:
           - vova_order_info_h
           - vova_order_relation_h
           - vova_order_goods_h
+          - vova_order_goods_status_h
 
 
       - name: vova_order_info_h
@@ -61,6 +62,15 @@ nodes:
           retries: 10
           retry.backoff: 120000
           command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_goods --inc_column=rec_id --etl_type=INCID --period_type=hour --partition_num=700
+        dependsOn:
+          - trd_start
+
+      - name: vova_order_goods_status_h
+        type: command
+        config:
+          retries: 10
+          retry.backoff: 120000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=order_goods_status --inc_column=last_update_time --etl_type=INCTIME --period_type=hour --partition_num=25
         dependsOn:
           - trd_start
 

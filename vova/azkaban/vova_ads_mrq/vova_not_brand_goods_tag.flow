@@ -1,0 +1,85 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_not_brand_goods_tag_export
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: judge_ads_vova_mct_profile
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_mct_profile
+      retries: 20
+      retry.backoff: 360000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_comment
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_comment
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_goods_imp_detail
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_imp_detail
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_logistics
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_logistics
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwb_vova_red_packet_report
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwb_vova_red_packet_report
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_not_brand_goods_tag
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/not_brand_goods_tag/update.sh
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+      - judge_ads_vova_mct_profile
+      - judge_dwd_vova_fact_comment
+      - judge_ads_vova_goods_imp_detail
+      - judge_dwd_vova_fact_logistics
+      - judge_dwb_vova_red_packet_report
+
+  - name: ads_vova_not_brand_goods_tag_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/not_brand_goods_tag/sqoop_export.sh
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+      - ads_vova_not_brand_goods_tag

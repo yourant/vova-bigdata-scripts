@@ -11,8 +11,7 @@ pre_pt=`date -d "1 day ago ${pt}" +%Y-%m-%d`
 echo "$pre_month"
 
 sql="
-drop table if exists tmp.tmp_vova_fact_order_cause_order_goods_h;
-create table tmp.tmp_vova_fact_order_cause_order_goods_h  STORED AS PARQUETFILE as
+insert overwrite table  tmp.tmp_vova_fact_order_cause_order_goods_h
 select
 /*+ REPARTITION(1) */
 oi.project_name  AS datasource,
@@ -36,8 +35,7 @@ left join ods_vova_vts.ods_vova_order_relation_h ore on ore.order_id = oi.order_
 where oi.email not regexp '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
 and to_date(oi.order_time) = '$pt';
 
-drop table if exists tmp.tmp_fact_order_cause_h_glk_cause_h;
-create table tmp.tmp_fact_order_cause_h_glk_cause_h  STORED AS PARQUETFILE as
+insert overwrite table  tmp.tmp_fact_order_cause_h_glk_cause_h
 select /*+ REPARTITION(10) */
        t1.datasource,
        t1.goods_id,
@@ -159,8 +157,7 @@ from (select datasource,
          where t0.row_num = 1
      ) t2
      on t1.device_id = t2.device_id and t1.virtual_goods_id = t2.virtual_goods_id and t1.datasource = t2.datasource;
-drop table if exists tmp.tmp_fact_order_cause_h_expre_cause_h;
-create table tmp.tmp_fact_order_cause_h_expre_cause_h  STORED AS PARQUETFILE as
+insert overwrite table  tmp.tmp_fact_order_cause_h_expre_cause_h
 select /*+ REPARTITION(10) */
        t1.datasource,
        t1.goods_id,
