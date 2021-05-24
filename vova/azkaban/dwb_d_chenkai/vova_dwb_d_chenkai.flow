@@ -760,6 +760,16 @@ nodes:
       - dwb_vova_active_user_form_d
 
 # [9531]招商提成商品数据
+## 阈值计算任务
+  - name: judge_ads_vova_royalty_threshold_d_message_get
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=ads_vova_royalty_threshold_d --from=mlb --to=data --valid_hour=5
+      retries: 5
+      retry.backoff: 1800000
+    dependsOn:
+      - start_flag
+
   - name: dwb_vova_royalty_norm
     type: command
     config:
@@ -772,7 +782,7 @@ nodes:
       - judge_dim_vova_category
       - judge_dim_vova_goods
       - judge_dim_vova_merchant
-
+      - judge_ads_vova_royalty_threshold_d_message_get
 
 
 
