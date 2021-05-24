@@ -7,8 +7,8 @@ create
     STORED AS PARQUETFILE
 ;
 
-drop table if exists ads.ads_vova_activity_green_house;
-create table if  not exists ads.ads_vova_activity_green_house (
+drop table if exists ads.ads_vova_activity_green_health;
+create table if  not exists ads.ads_vova_activity_green_health (
 goods_id                  bigint COMMENT 'i_商品ID',
 region_id                 int    COMMENT 'i_国家id',
 biz_type                  STRING COMMENT 'i_biz type',
