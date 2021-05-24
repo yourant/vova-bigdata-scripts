@@ -22,78 +22,25 @@ job_name="dwb_vova_royalty_norm_req9531_chenkai_${cur_date}"
 
 ###逻辑sql
 sql="
-create table if not exists tmp.tmp_vova_first_cat_group_gmv_${table_suffix} as
-select /*+ REPARTITION(1) */
-  first_cat_id,
-  group_id,
-  gmv,
-  next_group,
-  next_gmv,
-  if(next_gmv > 0, round((gmv-next_gmv)/3, 4), 0) avg_diff, -- 商品组 gmv 与之后三个商品组 gmv 的差值的均值
-  round(stddev(gmv) over(partition by first_cat_id), 4) gmv_stddev -- 一级品类的标准差
-from
-(
-  select
-    first_cat_id,
-    group_id,
-    gmv,
-    lead(group_id, 3, 0) over(partition by first_cat_id order by gmv desc) next_group, -- 之后第三个分组
-    lead(gmv, 3, 0) over(partition by first_cat_id order by gmv desc) next_gmv -- 之后第三个分组的gmv
-  from
-  (
-    select
-      fp.first_cat_id,
-      rgps.group_id,
-      sum(fp.shop_price * fp.goods_number + fp.shipping_fee) gmv
-    from
-      dwd.dwd_vova_fact_pay fp
-    left join
-      ods_vova_vbts.ods_vova_rec_gid_pic_similar rgps
-    on fp.goods_id = rgps.goods_id
-    where from_unixtime(to_unix_timestamp(fp.pay_time), 'yyyy-MM') = substr('${cur_month}',0,7)
-    group by fp.first_cat_id, rgps.group_id
-  ) t1
-) t1
-;
+msck repair table ads.ads_vova_royalty_threshold_d;
 
 insert overwrite table dwb.dwb_vova_royalty_norm partition(pt='${cur_month}')
 select /*+ REPARTITION(1) */
-  t1.first_cat_id,
-  regexp_replace(t2.first_cat_name, '\'', ' ') first_cat_name,
-  t1.month_sale_threshold,
-  t1.gmv_stddev,
-  t1.group_id,
-  t1.gmv,
-  t1.next_group,
-  t1.next_gmv,
-  t1.avg_diff,
-  t1.diff_stddev
+  art.first_cat_id        ,
+  regexp_replace(dc.first_cat_name, '\'', ' ') first_cat_name,
+  art.month_sale_threshold,
+  art.rank_threshold
 from
-(
-  select
-    first_cat_id   first_cat_id,
-    gmv            month_sale_threshold,
-    gmv_stddev     gmv_stddev,
-    group_id       group_id,
-    gmv            gmv,
-    next_group     next_group,
-    next_gmv       next_gmv,
-    avg_diff       avg_diff,
-    avg_diff - gmv_stddev diff_stddev,
-    row_number() over(partition by first_cat_id order by gmv desc) rank -- 三个差值的均值 减 标准差后第一个小于0的值
-  from
-    tmp.tmp_vova_first_cat_group_gmv_${table_suffix}
-  where avg_diff - gmv_stddev <= 0
-) t1
+  ads.ads_vova_royalty_threshold_d art
 left join
 (
   select distinct
     first_cat_id, first_cat_name
   from
-    dim.dim_vova_category dc
-) t2
-on t1.first_cat_id = t2.first_cat_id
-where t1.rank = 1
+    dim.dim_vova_category
+) dc
+on art.first_cat_id = dc.first_cat_id
+where art.pt ='${cur_date}'
 ;
 
 create table if not exists tmp.tmp_vova_goods_reach_norm_detail_${table_suffix} as
@@ -104,11 +51,12 @@ create table if not exists tmp.tmp_vova_goods_reach_norm_detail_${table_suffix} 
     t3.group_id,
     dg.mct_id,
     dm.spsor_name,
-    t4.group_id mct_group_id
+    t4.group_id mct_group_id,
+    t1.month_sale_threshold month_sale_threshold
   from
     dwb.dwb_vova_royalty_norm t1 -- 阈值
   left join
-    tmp.tmp_vova_first_cat_group_gmv_${table_suffix} t2
+    ads.ads_vova_royalty_threshold_detail_d t2
   on t1.first_cat_id = t2.first_cat_id
   left join
     ods_vova_vbts.ods_vova_rec_gid_pic_similar t3
@@ -126,6 +74,53 @@ create table if not exists tmp.tmp_vova_goods_reach_norm_detail_${table_suffix} 
     and dg.brand_id = 0 -- 非brand商品
     and to_date(dm.first_publish_time) >= date_sub('${cur_date}', 90) -- ID对应的店铺为近3个月的新激活店铺（店铺首次上架商品的时间）
     and to_date(dm.first_publish_time) <= '${cur_date}'
+;
+
+create table if not exists tmp.tmp_vova_goods_threshold_days_${table_suffix} as
+select /*+ REPARTITION(1) */
+  goods_id,
+  first_cat_id,
+  count(distinct threshold_pt) threshold_days
+from
+(
+  select
+    t1.goods_id,
+    t1.first_cat_id,
+    t1.pt,
+    if(t1.gmv >= t2.day_sale_threshold, t1.pt, null) threshold_pt
+  from
+  (
+    select
+      t1.goods_id,
+      fp.first_cat_id,
+      to_date(fp.pay_time) pt,
+      sum(fp.shop_price * fp.goods_number + fp.shipping_fee) gmv -- 商品日gmv
+    from
+    (
+      select
+        distinct goods_id
+      from
+        tmp.tmp_vova_goods_reach_norm_detail_${table_suffix}
+    ) t1
+    left join
+      dwd.dwd_vova_fact_pay fp
+    on t1.goods_id = fp.goods_id
+    where from_unixtime(to_unix_timestamp(fp.pay_time), 'yyyy-MM') = substr('${cur_date}',0,7)
+      and fp.datasource = 'vova'
+    group by t1.goods_id, fp.first_cat_id, to_date(fp.pay_time)
+  ) t1
+  left join
+  (
+    select
+      first_cat_id,
+      (month_sale_threshold / cast(substr('${cur_date}',9,10) as int)) day_sale_threshold
+    from
+      dwb.dwb_vova_royalty_norm
+    where pt ='${cur_month}'
+  ) t2
+  on t1.first_cat_id = t2.first_cat_id
+) t1
+group by first_cat_id, goods_id
 ;
 
 -- 店铺近3个月与其他店铺无关联
@@ -185,6 +180,9 @@ left join
   tmp.tmp_vova_rela_mct_${table_suffix} t2
 on t1.mct_id = t2.mct_id
 left join
+  tmp.tmp_vova_goods_threshold_days_${table_suffix} t4
+on t1.goods_id = t4.goods_id
+left join
 (
   select
   *
@@ -195,6 +193,7 @@ left join
 on t1.group_id = t3.group_id
 where t2.mct_id is not null and t2.vaild_group_cnt = 0 -- 店铺近3个月与其他店铺无关联（取关联店铺的创建时间）
   and t3.group_id is null -- 去掉本月之前已经添加过的有效商品组
+  and t4.threshold_days >= 7
 ;
 
 insert overwrite table dwb.dwb_vova_goods_group_inc partition(pt='${cur_month}')
@@ -221,8 +220,8 @@ where pt ='${cur_month}'
 group by first_cat_id, first_cat_name, spsor_name
 ;
 
-drop table if exists tmp.tmp_vova_first_cat_group_gmv_${table_suffix};
 drop table if exists tmp.tmp_vova_goods_reach_norm_detail_${table_suffix};
+drop table if exists tmp.tmp_vova_goods_threshold_days_${table_suffix};
 drop table if exists tmp.tmp_vova_rela_mct_${table_suffix};
 "
 #如果使用spark-sql运行，则执行spark-sql -e
