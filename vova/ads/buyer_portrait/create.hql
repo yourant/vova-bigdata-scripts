@@ -22,6 +22,9 @@ CREATE external TABLE IF NOT EXISTS ads.ads_vova_buyer_portrait_d
   PRIMARY KEY (user_id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='用户画像';
 
+
+alter table ads.ads_vova_buyer_portrait_d add columns(`sub_new_buyers` int comment '1.首单在七日内次新人用户，0.其它');
+
 drop table ads.ads_vova_buyer_push_portrait;
 CREATE external TABLE IF NOT EXISTS ads.ads_vova_buyer_push_portrait
 (

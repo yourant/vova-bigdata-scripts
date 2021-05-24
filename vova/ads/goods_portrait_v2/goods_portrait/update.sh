@@ -63,7 +63,9 @@ with tmp_goods_portrait as
   gkw.key_words,
   nvl(tmp_ord.ord_cnt_1w,0) as ord_cnt_1w,
   nvl(tmp_ord.ord_cnt_15d,0) as ord_cnt_15d,
-  nvl(tmp_ord.ord_cnt_1m,0) as ord_cnt_1m
+  nvl(tmp_ord.ord_cnt_1m,0) as ord_cnt_1m,
+  dg.third_cat_id,
+  dg.fourth_cat_id
 FROM
 dim.dim_vova_goods dg
 left  JOIN
@@ -489,7 +491,9 @@ select
   a.goods_sn,
   a.is_on_sale,
   if(e.goods_id is null and a.is_on_sale = 1,1,0) is_recommend,
-  t5.avg_inter_days_3_6w avg_inter_days_3_6w -- 平均上网天数
+  t5.avg_inter_days_3_6w avg_inter_days_3_6w, -- 平均上网天数
+  third_cat_id,
+  fourth_cat_id
 from tmp_goods_portrait a
 left join tmp_goods_painting_pt b
   on a.goods_id = b.goods_id
