@@ -43,8 +43,28 @@ from
     gi.virtual_goods_id as vir_gs_id,
     count(*) as expre_cnt
   from
-    dwd.dwd_vova_log_goods_impression_arc gi
-  where gi.pt = '${cur_date}' and platform ='mob'
+    -- dwd.dwd_vova_log_goods_impression_arc
+  (
+    select
+      buyer_id,
+      virtual_goods_id,
+      platform
+    from
+      dwd.dwd_vova_log_goods_impression_arc
+    WHERE (pt='${cur_date}'and date(collector_ts)='${cur_date}') or (pt=date_sub('${cur_date}',1) and hour ='23' and date(collector_ts)='${cur_date}') or (pt=date_add('${cur_date}',1) and hour ='00' and date(collector_ts)='${cur_date}')
+      and datasource = 'vova'
+    union all 
+    select
+      buyer_id,
+      cast(element_id as bigint) virtual_goods_id,
+      platform
+    from
+      dwd.dwd_vova_log_impressions_arc
+    WHERE ((pt='${cur_date}'and date(collector_ts)='${cur_date}' ) or (pt=date_sub('${cur_date}',1) and hour ='23' and date(collector_ts)='${cur_date}') or (pt=date_add('${cur_date}',1) and hour ='00' and date(collector_ts)='${cur_date}')) and event_type='goods'
+      and datasource = 'vova'
+    
+  ) gi
+  where platform ='mob'
   group by gi.buyer_id,gi.virtual_goods_id
 ) tmp_expre
 left join
@@ -56,8 +76,24 @@ left join
     count(*) as clk_cnt,
     count(*) as clk_valid_cnt
   from
-    dwd.dwd_vova_log_goods_click_arc gc
-  where gc.pt = '${cur_date}'
+  -- dwd.dwd_vova_log_goods_click_arc
+  (
+    select
+      buyer_id,
+      virtual_goods_id
+    FROM
+      dwd.dwd_vova_log_goods_click_arc
+    WHERE pt='${cur_date}'
+      and datasource = 'vova'
+    union all
+    select
+      buyer_id,
+      cast(element_id as bigint) virtual_goods_id
+    FROM
+      dwd.dwd_vova_log_click_arc
+    WHERE ((pt='${cur_date}'and date(collector_ts)='${cur_date}') or (pt=date_sub('${cur_date}',1) and hour ='23' and date(collector_ts)='${cur_date}') or (pt=date_add('${cur_date}',1) and hour ='00' and date(collector_ts)='${cur_date}')) and event_type='goods'
+      and datasource = 'vova'
+  ) gc
   group by gc.buyer_id,gc.virtual_goods_id
 ) tmp_clk
 on tmp_clk.buyer_id = tmp_expre.buyer_id and tmp_clk.vir_gs_id = tmp_expre.vir_gs_id
@@ -68,12 +104,43 @@ left join
     cc.buyer_id,
     cast(cc.element_id as bigint) as vir_gs_id,
     count(*) as clk_cnt,
-    count(*) as clk_valid_cnt,
     sum(if(cc.element_name ='pdAddToWishlistClick',1,0)) as collect_cnt,
     sum(if(cc.element_name ='pdAddToCartSuccess',1,0)) as add_cat_cnt
   from
-    dwd.dwd_vova_log_common_click_arc cc
-  where cc.pt = '${cur_date}' and platform ='mob'
+  -- dwd.dwd_vova_log_common_click_arc
+  (
+    SELECT
+      platform,
+      buyer_id,
+      element_name,
+      element_id,
+      datasource
+    FROM dwd.dwd_vova_log_common_click_arc
+    WHERE (pt='${cur_date}'and date(collector_ts)='${cur_date}' ) or (pt=date_sub('${cur_date}',1) and hour ='23' and date(collector_ts)='${cur_date}') or (pt=date_add('${cur_date}',1) and hour ='00' and date(collector_ts)='${cur_date}')
+      and datasource = 'vova'
+    union all
+    SELECT
+      platform,
+      buyer_id,
+      element_name,
+      element_id,
+      datasource
+    FROM dwd.dwd_vova_log_click_arc
+    WHERE (pt='${cur_date}'and date(collector_ts)='${cur_date}' ) or (pt=date_sub('${cur_date}',1) and hour ='23' and date(collector_ts)='${cur_date}') or (pt=date_add('${cur_date}',1) and hour ='00' and date(collector_ts)='${cur_date}') and event_type='normal'
+      and datasource = 'vova'
+    union all
+    SELECT
+      platform,
+      buyer_id,
+      element_name,
+      element_id,
+      datasource
+    FROM dwd.dwd_vova_log_data_arc
+    WHERE (pt='${cur_date}'and date(collector_ts)='${cur_date}' ) or (pt=date_sub('${cur_date}',1) and hour ='23' and date(collector_ts)='${cur_date}') or (pt=date_add('${cur_date}',1) and hour ='00' and date(collector_ts)='${cur_date}') and element_name='pdAddToCartSuccess'
+      and datasource = 'vova'
+    
+  ) cc
+  where platform ='mob'
   group by cc.buyer_id,cc.element_id
 ) tmp_add_cat
 on tmp_expre.buyer_id = tmp_add_cat.buyer_id and tmp_expre.vir_gs_id = tmp_add_cat.vir_gs_id
