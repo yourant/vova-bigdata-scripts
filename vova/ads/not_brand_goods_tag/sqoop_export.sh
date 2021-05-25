@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS \`themis\`.\`ads_vova_not_brand_goods_tag_data_new\` 
   \`goods_id\` int(11) NOT NULL COMMENT '商品id',
   \`tag_id\` int(4) NOT NULL COMMENT '标签id',
   \`weight\` int(4) NOT NULL COMMENT '权重',
+  \`update_time\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (\`id\`) USING BTREE,
   KEY \`goods_id\` (\`goods_id\`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='非brand商品标签表';
@@ -25,6 +26,7 @@ CREATE TABLE IF NOT EXISTS \`themis\`.\`ads_vova_not_brand_goods_tag_data\` (
   \`goods_id\` int(11) NOT NULL COMMENT '商品id',
   \`tag_id\` int(4) NOT NULL COMMENT '标签id',
   \`weight\` int(4) NOT NULL COMMENT '权重',
+  \`update_time\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (\`id\`) USING BTREE,
   KEY \`goods_id\` (\`goods_id\`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='非brand商品标签表';
