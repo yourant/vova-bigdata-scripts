@@ -74,10 +74,12 @@ create table dwb.dwb_vova_goods_reach_norm_detail
 PARTITIONED BY(pt string) STORED AS PARQUETFILE
 ;
 
+drop table dwb.dwb_vova_goods_group_inc;
 create table dwb.dwb_vova_goods_group_inc
 (
     first_cat_id          bigint        COMMENT '一级品类ID',
-    group_id              bigint        COMMENT '原始商品组号'
+    group_id              bigint        COMMENT '原始商品组号',
+    goods_id              bigint        COMMENT '原始商品ID'
 ) COMMENT '招商提成报表-商品达标明细-已计算过的商品组(每月增量)'
 PARTITIONED BY(pt string) STORED AS PARQUETFILE
 ;
