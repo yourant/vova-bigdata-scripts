@@ -37,7 +37,7 @@ select /*+ REPARTITION(5) */
   nvl(tmp_clk.clk_cnt, 0),
   nvl(tmp_add_cat.collect_cnt, 0),
   nvl(tmp_add_cat.add_cat_cnt, 0),
-  tmp_click_order.ord_cnt ord_cnt
+  nvl(tmp_click_order.ord_cnt, 0) ord_cnt
 from
 (
   select
