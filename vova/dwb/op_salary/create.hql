@@ -2,7 +2,7 @@ drop table if exists dwb.dwb_vova_op_salary_thd;
 CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_op_salary_thd
 (
     first_cat_name        string        COMMENT '一级品类名称',
-    sale_threshold_d      string        COMMENT '日销额阈值'
+    sale_threshold_d      decimal(10,4)        COMMENT '日销额阈值'
 ) COMMENT '运营提成报表-提成标准'
 PARTITIONED BY ( pt string) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
@@ -11,6 +11,7 @@ drop table if exists dwb.dwb_vova_op_salary_goods_ok;
 CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_op_salary_goods_ok
 (
     first_cat_name        string        COMMENT '一级品类名称',
+    group_id              bigint        COMMENT '分组id',
     goods_id              bigint        COMMENT '有效商品id',
     is_self               string        COMMENT '是否为自营店铺',
     op                    string        COMMENT '运营',
