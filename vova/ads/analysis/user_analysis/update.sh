@@ -6,33 +6,35 @@ if [ ! -n "$1" ]; then
   pre_date=$(date -d "-1 day" +%Y-%m-%d)
 fi
 sql="
-insert overwrite table ads.ads_vova_goods_knowledge_graph partition(pt='${pre_date}')
+set hive.exec.dynamic.partition.mode=nonstrict;
+insert overwrite table  ads.ads_vova_user_analysis partition(pt)
 select
-/*+ repartition(1) */
-gs_id as goods_id,
-dg.goods_name,
-dg.goods_desc,
-dg.goods_sn,
-gp.first_cat_id,
-gp.second_cat_id,
-dg.brand_id,
-dg.is_on_sale,
-dg.is_delete
-from ads.ads_vova_goods_portrait gp
-inner join ods_vova_vts.ods_vova_goods dg
-on gp.gs_id = dg.goods_id
-where date(cast(dg.add_time as timestamp)) = '${pre_date}' and gp.pt = '${pre_date}'
+/*+ REPARTITION(1) */
+fp.order_id,
+fp.order_goods_id,
+fp.buyer_id,
+fp.device_id,
+fp.goods_number,
+fp.shop_price,
+fp.shipping_fee,
+pf.reg_gender as gender,
+pf.reg_age_group as user_age_group,
+pf.reg_channel as main_channel,
+date(pay_time) pt
+from
+dwd.dwd_vova_fact_pay fp
+left join ads.ads_vova_buyer_portrait_feature pf on fp.buyer_id= pf.buyer_id and pf.pt='${pre_date}'
+where date(fp.pay_time)>date_sub('${pre_date}',15)
 ;
 "
 
-
 #如果使用spark-sql运行，则执行spark-sql -e
 spark-sql \
---executor-memory 15G --executor-cores 1 \
+--executor-memory 4G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=5" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
---conf "spark.app.name=ads_vova_goods_knowledge_graph" \
+--conf "spark.app.name=ads_vova_user_analysis" \
 --conf "spark.sql.crossJoin.enabled=true" \
 --conf "spark.default.parallelism = 300" \
 --conf "spark.sql.shuffle.partitions=300" \

@@ -108,7 +108,8 @@ SELECT
   nvl(tmp_ord.gmv/tmp_ord.order_cnt,0) as avg_price,
   nvl(tmp_email.email_act,0) as email_act,
   nvl(gs.gmv_stage,0) as gmv_stage,
-  nvl(bbl.is_brand,0) as is_brand
+  nvl(bbl.is_brand,0) as is_brand,
+  if(datediff('$pre_date',db.first_order_time)>=0 and datediff('$pre_date',db.first_order_time)<7,1,0) as sub_new_buyers
 FROM
   dim.dim_vova_buyers db
   LEFT JOIN dim.dim_vova_devices dd ON dd.device_id = db.current_device_id
@@ -392,11 +393,11 @@ on db.buyer_id = bbl.buyer_id
 
 #如果使用spark-sql运行，则执行spark-sql -e
 spark-sql \
---executor-memory 8G --executor-cores 1 \
+--executor-memory 12G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=5" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
---conf "spark.dynamicAllocation.maxExecutors=100" \
+--conf "spark.dynamicAllocation.maxExecutors=150" \
 --conf "spark.app.name=ads_buyer_portrait_feature" \
 --conf "spark.default.parallelism = 380" \
 --conf "spark.sql.shuffle.partitions=380" \

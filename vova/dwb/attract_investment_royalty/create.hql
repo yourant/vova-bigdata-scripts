@@ -47,20 +47,17 @@ dashboard名：招商提成商品数据
 计算提成商品数时，需要按月排除之前提成过的有效商品所在的商品组（需记录每个月被提成过的商品所在的原始商品组号）
 同一商品组仅提成一次,goods_id 提成也只能提一次,只要加入测试集的商品,在任何月份跑出都计提提成
 
+文档：
+https://confluence.gitvv.com/pages/viewpage.action?pageId=21276399
 
 -- 提成标准
 create table dwb.dwb_vova_royalty_norm
 (
-    first_cat_id          bigint        COMMENT '一级品类ID',
-    first_cat_name        string        COMMENT '一级品类名称',
-    month_sale_threshold  string        COMMENT '月销额阈值',
-    gmv_stddev            decimal(14,4) COMMENT '一级品类标准差',
-    group_id              bigint        COMMENT '阈值商品组',
-    gmv                   decimal(14,4) COMMENT '阈值商品组当月gmv',
-    next_group            bigint        COMMENT '阈值商品组之后第三组',
-    next_gmv              decimal(14,4) COMMENT '阈值商品组之后第三组当月gmv',
-    avg_diff              decimal(14,4) COMMENT '阈值商品组与之后三组当月gmv差值的平均值',
-    diff_stddev           decimal(14,4) COMMENT '标准差值'
+    first_cat_id         bigint        COMMENT '一级品类ID',
+    first_cat_name       string        COMMENT '一级品类名称',
+    month_sale_threshold decimal(14,4) COMMENT '月销额阈值',
+    rank_threshold       decimal(14,4) COMMENT '商品序数阈值'
+
 ) COMMENT '招商提成报表-提成标准'
 PARTITIONED BY ( pt string) STORED AS PARQUETFILE
 ;
@@ -77,10 +74,12 @@ create table dwb.dwb_vova_goods_reach_norm_detail
 PARTITIONED BY(pt string) STORED AS PARQUETFILE
 ;
 
+drop table dwb.dwb_vova_goods_group_inc;
 create table dwb.dwb_vova_goods_group_inc
 (
     first_cat_id          bigint        COMMENT '一级品类ID',
-    group_id              bigint        COMMENT '原始商品组号'
+    group_id              bigint        COMMENT '原始商品组号',
+    goods_id              bigint        COMMENT '原始商品ID'
 ) COMMENT '招商提成报表-商品达标明细-已计算过的商品组(每月增量)'
 PARTITIONED BY(pt string) STORED AS PARQUETFILE
 ;

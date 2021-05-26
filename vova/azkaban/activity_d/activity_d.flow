@@ -26,6 +26,7 @@ nodes:
       - ads_vova_activity_outlets_v2
       - ads_vova_activity_daily_selection_v2
       - ads_vova_activity_no_brand_goods_pool
+      - ads_vova_activity_green_health
 
   - name: start_flag
     type: command
@@ -261,6 +262,15 @@ nodes:
     dependsOn:
       - judge_dwd_vova_activity_goods_ctry_behave
       - judge_dim_vova_goods
+
+  - name:  ads_vova_activity_green_health
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_green_health/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_activity_goods_ctry_behave
 
 # 会场逻辑统一&outlets规则调整，: 原表有其他地方用还要继续更新
 ## outlets 活动统一表结构
