@@ -1,0 +1,54 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk,zyzheng@i9i8.com
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - dwb_fd_user_cohort
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: judge_dwd_fd_session_channel
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_session_channel
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+#  - name: judge_ods_fd_snowplow_all_event
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_snowplow_all_event
+#      retries: 30
+#      retry.backoff: 300000
+#    dependsOn:
+#      - start_flag
+
+  -  name: dwb_fd_domain_channel
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_user_cohort/update_domain_channel.sh
+       retries: 30
+       retry.backoff: 600000
+     dependsOn:
+       - judge_dwd_fd_session_channel
+
+  -  name: dwb_fd_user_cohort
+     type: command
+     config:
+       command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_user_cohort/update_his.sh
+       retries: 30
+       retry.backoff: 600000
+     dependsOn:
+       - dwb_fd_domain_channel
