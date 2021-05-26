@@ -21,35 +21,35 @@ if [ $? -ne 0 ];then
 fi
 
 sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_user_cohort/update.sh ${date_pre1}
-echo "${cur_date}"
+echo "${date_pre1}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
 fi
 
 sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_user_cohort/update.sh ${date_pre3}
-echo "${cur_date}"
+echo "${date_pre3}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
 fi
 
 sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_user_cohort/update.sh ${date_pre7}
-echo "${cur_date}"
+echo "${date_pre7}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
 fi
 
 sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_user_cohort/update.sh ${date_pre15}
-echo "${cur_date}"
+echo "${date_pre15}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
 fi
 
 sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_user_cohort/update.sh ${date_pre30}
-echo "${cur_date}"
+echo "${date_pre30}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
