@@ -28,6 +28,7 @@ is_order	是否下单
 
 # 每小时执行一次， 只计算当天的打点数据，不需要分区
 ## FIXME: dim.dim_vova_goods 不是每小时更新
+drop table dws.dws_vova_buyer_goods_behave_h;
 create table dws.dws_vova_buyer_goods_behave_h (
   buyer_id            bigint    COMMENT 'd_用户id',
   goods_id            bigint    COMMENT 'd_商品id',
@@ -44,6 +45,7 @@ create table dws.dws_vova_buyer_goods_behave_h (
   ord_cnt             bigint      COMMENT 'i_购买次数' -- 打点中获取
 
 ) COMMENT '当天用户商品行为(每小时更新)'
-     STORED AS PARQUETFILE;
+PARTITIONED BY (pt string)
+STORED AS PARQUETFILE;
 
 hadoop fs -du -h -s s3://bigdata-offline/warehouse/dws/dws_vova_buyer_goods_behave_h/

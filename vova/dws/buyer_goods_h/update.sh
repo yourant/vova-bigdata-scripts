@@ -1,19 +1,19 @@
 #!/bin/bash
 echo "start_time:"  `date +"%Y-%m-%d %H:%M:%S" -d "8 hour"`
 
-cur_hour=`date +%H`
-if [ ${cur_hour} -eq 00 ]; then
-  echo "0 点不执行！"
-  exit 0
-fi
-echo "cur_hour: ${cur_hour}"
+# cur_hour=`date +%H`
+# if [ ${cur_hour} -eq 00 ]; then
+#   echo "0 点不执行！"
+#   exit 0
+# fi
+# echo "cur_hour: ${cur_hour}"
 
 #指定日期和引擎
 cur_date=$1
 # 每小时执行一次，每次执行当天全部时间
 #默认日期为今天
 if [ ! -n "$1" ];then
-cur_date=`date +%Y-%m-%d`
+cur_date=`date -d "-1 hour" +%Y-%m-%d`
 fi
 
 echo "cur_date: ${cur_date}"
@@ -22,8 +22,10 @@ job_name="dws_vova_buyer_goods_behave_h_req9592_gongrui_chenkai"
 
 ###逻辑sql
 sql="
-insert overwrite table dws.dws_vova_buyer_goods_behave_h
-select /*+ REPARTITION(1) */
+ALTER TABLE dws.dws_vova_buyer_goods_behave_h DROP if exists partition(pt = '$(date -d "${cur_date:0:10} -32day" +%Y-%m-%d)');
+
+insert overwrite table dws.dws_vova_buyer_goods_behave_h partition(pt='${cur_date}')
+select /*+ REPARTITION(5) */
   tmp_expre.buyer_id,
   dg.goods_id as gs_id,
   dg.cat_id,
@@ -35,7 +37,7 @@ select /*+ REPARTITION(1) */
   nvl(tmp_clk.clk_cnt, 0),
   nvl(tmp_add_cat.collect_cnt, 0),
   nvl(tmp_add_cat.add_cat_cnt, 0),
-  0 ord_cnt
+  tmp_click_order.ord_cnt ord_cnt
 from
 (
   select
@@ -144,6 +146,41 @@ left join
   group by cc.buyer_id,cc.element_id
 ) tmp_add_cat
 on tmp_expre.buyer_id = tmp_add_cat.buyer_id and tmp_expre.vir_gs_id = tmp_add_cat.vir_gs_id
+left join
+  -- 下单点击
+(
+  select
+    buyer_id,
+    virtual_goods_id,
+    count(*) ord_cnt
+  from
+  (
+    select
+      buyer_id,
+      page_code,
+      element_name,
+      element_id,
+      lv.col3 virtual_goods_id
+    from
+    (
+      select
+        buyer_id,
+        page_code,
+        element_name,
+        element_id,
+        get_json_object(extra, '$.goods_id') virtual_goods_id_list
+      from
+        dwd.dwd_vova_log_click_arc
+      where pt='${cur_date}'
+        and page_code = 'checkout_new'
+        and element_name = 'checkout_place_order'
+        and event_type='normal'
+    ) t1
+    lateral view explode(split(virtual_goods_id_list, ',')) lv as col3
+  )
+  group by buyer_id, virtual_goods_id
+) tmp_click_order
+on tmp_expre.buyer_id = tmp_click_order.buyer_id and tmp_expre.vir_gs_id = tmp_click_order.virtual_goods_id
 inner join
   dim.dim_vova_goods dg
 on tmp_expre.vir_gs_id = dg.virtual_goods_id
