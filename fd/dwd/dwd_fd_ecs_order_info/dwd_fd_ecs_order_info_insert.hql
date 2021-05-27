@@ -17,7 +17,7 @@ ecs_order_info_with_currency as (
    from (
             select eoi.*,
                    nvl(ucc.currency_conversion_rate, 1.0)                                                     as usd_currency_conversion_rate,
-                   rank() OVER (PARTITION BY eoi.order_id ORDER BY ucc.currency_conversion_shanghai_ts DESC)  AS currency_rn
+                   ROW_NUMBER() OVER (PARTITION BY eoi.order_id ORDER BY ucc.currency_conversion_shanghai_ts DESC)  AS currency_rn
             from ods_fd_ecshop.ods_fd_ecs_order_info eoi
             left join usd_currency_conversion ucc on eoi.currency = ucc.to_currency_code AND eoi.order_time >= ucc.currency_conversion_shanghai_ts
         ) order_info_currency
@@ -32,7 +32,7 @@ romeo_goods_purchase_with_currency as (
             select gpp.goods_id,
                    gpp.price,
                    nvl(ucc.currency_conversion_rate, 1.0)                                                     as currency_conversion_rate,
-                   rank() OVER (PARTITION BY gpp.goods_id ORDER BY ucc.currency_conversion_shanghai_ts DESC) AS currency_rn
+                   ROW_NUMBER() OVER (PARTITION BY gpp.goods_id ORDER BY ucc.currency_conversion_shanghai_ts DESC) AS currency_rn
             from ods_fd_romeo.ods_fd_goods_purchase_price gpp
             left join usd_currency_conversion ucc on ucc.to_currency_code = 'RMB' and gpp.ctime >= ucc.currency_conversion_shanghai_ts
         ) goods_purchase_currency
