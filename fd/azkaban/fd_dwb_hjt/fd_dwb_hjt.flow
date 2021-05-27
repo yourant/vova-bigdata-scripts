@@ -1,0 +1,108 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ad_dwb_income_email
+
+
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+
+##任务
+
+#ad利润报表
+  - name: ad_dwb_income_email
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwd_fd_ad_income/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ods_fd_ecs_order_info
+      - judge_ods_currency_conversion
+      - judge_ods_ecs_order_attribute
+      - judge_ods_ecs_return_apply
+      - judge_ods_ecs_fly_fish_logistics_order
+      - judge_ods_fd_ecs_goods
+      - judge_ods_inventory_item
+      - judge_dwd_fd_ecs_order_info
+      - judge_ads_adgroup_daily_flat_report
+
+
+##依赖
+  - name: judge_ods_fd_ecs_order_info
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_ecs_order_info
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_ods_currency_conversion
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_currency_conversion
+    dependsOn:
+      - start_flag
+
+  - name: judge_ods_ecs_order_attribute
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_ecs_order_attribute
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_ods_ecs_return_apply
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_ecs_return_apply
+    dependsOn:
+      - start_flag
+
+  - name: judge_ods_ecs_fly_fish_logistics_order
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_ecs_fly_fish_logistics_order
+    dependsOn:
+      - start_flag
+
+  - name: judge_ods_fd_ecs_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_ecs_goods
+    dependsOn:
+      - start_flag
+
+  - name: judge_ods_inventory_item
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_inventory_item
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_fd_ecs_order_info
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_ecs_order_info
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_adgroup_daily_flat_report
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_ecs_order_info/check_ads.sh ${pt}
+    dependsOn:
+      - start_flag
