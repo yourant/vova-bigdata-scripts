@@ -31,7 +31,10 @@ DROP TABLE  mlb.mlb_vova_goods_second_cat;
 create table mlb.mlb_vova_goods_second_cat (
   virtual_goods_id  int  COMMENT '商品虚拟id',
   goods_id          int  COMMENT '商品id',
-  second_cat_id     int  COMMENT '二级品类id'
+  second_cat_id     int  COMMENT '二级品类id',
+  cat_id            int  COMMENT '品类id',
+  group_id          int  COMMENT '商品组id',
+  brand_id          int  comment '品牌ID'
 ) COMMENT '在架商品及二级品类id' PARTITIONED BY (pt STRING)
 STORED AS PARQUETFILE;
 ;
@@ -41,15 +44,45 @@ hadoop fs -du -s -h s3://bigdata-offline/warehouse/mlb/mlb_vova_goods_second_cat
 select max(virtual_goods_id),max(goods_id),max(second_cat_id) from  dim.dim_vova_goods;
 # 61135477	59684530	6025
 
-create table rec_recall.mlb_vova_goods_second_cat(
+create table themis.mlb_vova_goods_second_cat(
   id                 int(11)     NOT NULL AUTO_INCREMENT COMMENT '自增主键',
   virtual_goods_id   int         NOT NULL COMMENT '商品虚拟id',
   goods_id           int         NOT NULL COMMENT '商品id',
   second_cat_id      int         NOT NULL COMMENT '二级品类id',
+  cat_id             int         NOT NULL COMMENT '品类id',
+  group_id           int         NOT NULL COMMENT '商品组id',
+  brand_id           int         NOT NULL COMMENT '品牌ID',
   update_time        datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 PRIMARY KEY (id) USING BTREE,
 UNIQUE KEY goods_id (goods_id) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='在架商品及二级品类id';
+
+
+#########################
+[9558]推荐过滤用户负反馈
+https://zt.gitvv.com/index.php?m=task&f=view&taskID=35131
+在mlb.mlb_vova_goods_second_cat 中添加两个字段:
+cat_id
+group_id
+brand_id
+
+alter table mlb.mlb_vova_goods_second_cat add columns(`cat_id`   int comment '品类ID') cascade;
+alter table mlb.mlb_vova_goods_second_cat add columns(`group_id` int comment '商品组ID') cascade;
+alter table mlb.mlb_vova_goods_second_cat add columns(`brand_id` int comment '品牌ID') cascade;
+
+// 商品分组
+desc ods_vova_vbts.ods_vova_rec_gid_pic_similar;
+  id          bigint
+  goods_id    bigint
+  group_id    bigint
+  update_time timestamp
+
+
+
+
+
+
+
 
 
 
