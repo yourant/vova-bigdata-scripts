@@ -46,6 +46,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_ecs_order_info
+      retries: 5
+      retry.backoff: 600000
     dependsOn:
       - start_flag
 
@@ -54,6 +56,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_currency_conversion
+      retries: 5
+      retry.backoff: 600000
     dependsOn:
       - start_flag
 
@@ -61,6 +65,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_ecs_order_attribute
+      retries: 5
+      retry.backoff: 600000
     dependsOn:
       - start_flag
 
@@ -69,6 +75,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_ecs_return_apply
+      retries: 5
+      retry.backoff: 600000
     dependsOn:
       - start_flag
 
@@ -76,6 +84,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_ecs_fly_fish_logistics_order
+      retries: 5
+      retry.backoff: 600000
     dependsOn:
       - start_flag
 
@@ -83,6 +93,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_ecs_goods
+      retries: 5
+      retry.backoff: 600000
     dependsOn:
       - start_flag
 
@@ -90,6 +102,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_inventory_item
+      retries: 5
+      retry.backoff: 600000
     dependsOn:
       - start_flag
 
@@ -97,6 +111,8 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_ecs_order_info
+      retries: 5
+      retry.backoff: 600000
     dependsOn:
       - start_flag
 
@@ -104,5 +120,7 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_ecs_order_info/check_ads.sh ${pt}
+      retries: 5
+      retry.backoff: 600000
     dependsOn:
       - start_flag
