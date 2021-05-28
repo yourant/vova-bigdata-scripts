@@ -55,11 +55,22 @@ left join
   where pt < '${cur_date}'
 ) t_arc
 on t_arc.goods_id = t1.goods_id and t_arc.img_id = vgg.img_id
+left join
+(
+  select
+    distinct
+    goods_id
+  from
+    ads.ads_vova_image_brand_d
+  where pt < '${cur_date}' and brand_id != -1
+) t_res
+on t1.goods_id = t_res.goods_id
 where dg.brand_id = 0 and dg.is_on_sale = 1
   and vgg.img_id is not null
   and vgg.img_url != ''
   and vgg.is_delete = 0
   and t_arc.goods_id is null and t_arc.img_id is null
+  and t_res.goods_id is null
 ;
 "
 #如果使用spark-sql运行，则执行spark-sql -e
