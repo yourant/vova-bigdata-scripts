@@ -460,6 +460,7 @@ nodes:
           - vova_vteos_attributes_value_languages
           - vova_vteos_category_attributes
           - vova_vteos_goods_attributes
+          - vova_backend_test_goods_behave
 
 #商品域数据抽取
       - name: warehouse_shipping_order
@@ -734,6 +735,14 @@ nodes:
         dependsOn:
           - themis_goods_start
 
+      - name: vova_backend_test_goods_behave
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vbd --table_name=test_goods_behave --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
+          retries: 4
+          retry.backoff: 600000
+        dependsOn:
+          - themis_goods_start
 
 # flow: 物流域数据抽取
   - name: themis_lgtcs_flow

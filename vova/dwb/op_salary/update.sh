@@ -14,6 +14,7 @@ echo "cur_date: ${cur_date}"
 echo "cur_month: ${cur_month}"
 
 sql="
+msck repair table ads.ads_vova_royalty_threshold_d;
 insert overwrite table dwb.dwb_vova_op_salary_thd PARTITION (pt = '${cur_month}')
 select
 /*+ REPARTITION(1) */
