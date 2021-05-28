@@ -52,7 +52,7 @@ create table if not exists tmp.tmp_vova_goods_reach_norm_detail_${table_suffix} 
     dg.goods_id,
     t3.group_id,
     dg.mct_id,
-    dm.spsor_name,
+    t5.spsor_name,
     t4.group_id mct_group_id,
     t1.month_sale_threshold month_sale_threshold
   from
@@ -72,6 +72,36 @@ create table if not exists tmp.tmp_vova_goods_reach_norm_detail_${table_suffix} 
   inner join
     ods_vova_vtr.ods_vova_risk_merchant_relation_extra t4
   on dg.mct_id = t4.merchant_id
+  left join
+  (
+    SELECT
+      ms.merchant_id,
+      s.nick spsor_name
+    from
+    (
+      select
+        merchant_id,
+        min(merchant_sponsor_id) merchant_sponsor_id
+      from
+        ods_vova_vts.ods_vova_merchant_sponsor
+      where to_date(create_time) <= '2021-04-07'
+      group by merchant_id
+    ) temp
+    inner join
+      ods_vova_vts.ods_vova_merchant_sponsor ms
+    on ms.merchant_sponsor_id = temp.merchant_sponsor_id and ms.merchant_id = temp.merchant_id
+    JOIN
+      ods_vova_vts.ods_vova_sponsor s
+    ON s.sponsor_id = ms.sponsor_id
+    union all
+    SELECT
+      merchant_id,
+      register_sponsor spsor_name
+    from
+      ods_vova_vts.ods_vova_merchant_extra ovme
+    where ovme.register_sponsor is not null and to_date(create_time) > '2021-04-07'
+  ) t5
+  on dg.mct_id = t5.merchant_id
   where t2.gmv >= t1.month_sale_threshold -- 大于阈值的商品组
     and dg.brand_id = 0 -- 非brand商品
     and to_date(dm.first_publish_time) >= date_sub('${cur_date}', 90) -- ID对应的店铺为近3个月的新激活店铺（店铺首次上架商品的时间）

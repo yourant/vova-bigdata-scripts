@@ -96,9 +96,25 @@ create table dwb.dwb_vova_commission
 PARTITIONED BY(pt string) STORED AS PARQUETFILE
 ;
 
+############
+ods_vova_vts.ods_vova_merchant_sponsor
+ods_vova_vts.ods_vova_sponsor
+ods_vova_vts.ods_vova_merchant_extra
 
+店铺绑定招商
 
+## 老版数据:
+select
+    merchant_id,
+    min(merchant_sponsor_id) merchant_sponsor_id
+from
+    ods_vova_vts.ods_vova_merchant_sponsor
+where to_date(create_time) <= '2021-04-07'
+group by merchant_id
+;
 
+## 新版数据:
+ods_vova_merchant_extra 从 2021-04-07 开始更新数据, 之后的数据可以直接取 ods_vova_merchant_extra.register_sponsor
 
 
 
