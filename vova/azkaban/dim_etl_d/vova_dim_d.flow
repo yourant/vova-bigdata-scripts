@@ -22,6 +22,7 @@ nodes:
       - dim_trigram_nuwa_pdd_category
       - dim_vova_supply_goods
       - dim_vova_goods
+      - dim_vova_virtual_six_mct_goods
 
 
   - name: start_flag
@@ -510,3 +511,24 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - start_flag
+
+
+  - name: judge_vova_backend_test_goods_behave
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_backend_test_goods_behave
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+  - name: dim_vova_virtual_six_mct_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dim/virtual_six_mct_goods/update.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_vova_backend_test_goods_behave
+      - dim_vova_goods
