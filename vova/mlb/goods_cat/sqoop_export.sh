@@ -16,6 +16,9 @@ create table themis.mlb_vova_goods_second_cat_new(
   virtual_goods_id   int         NOT NULL COMMENT '商品虚拟id',
   goods_id           int         NOT NULL COMMENT '商品id',
   second_cat_id      int         NOT NULL COMMENT '二级品类id',
+  cat_id             int         NOT NULL COMMENT '品类id',
+  group_id           int         NOT NULL COMMENT '商品组id',
+  brand_id           int         NOT NULL COMMENT '品牌ID',
   update_time        datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 PRIMARY KEY (id) USING BTREE,
 KEY virtual_goods_id (virtual_goods_id) USING BTREE,
@@ -28,6 +31,9 @@ create table if not exists themis.mlb_vova_goods_second_cat (
   virtual_goods_id   int         NOT NULL COMMENT '商品虚拟id',
   goods_id           int         NOT NULL COMMENT '商品id',
   second_cat_id      int         NOT NULL COMMENT '二级品类id',
+  cat_id             int         NOT NULL COMMENT '品类id',
+  group_id           int         NOT NULL COMMENT '商品组id',
+  brand_id           int         NOT NULL COMMENT '品牌ID',
   update_time        datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 PRIMARY KEY (id) USING BTREE,
 KEY virtual_goods_id (virtual_goods_id) USING BTREE,
@@ -51,7 +57,7 @@ sqoop export \
 --table mlb_vova_goods_second_cat_new \
 --hcatalog-database mlb \
 --hcatalog-table mlb_vova_goods_second_cat \
---columns virtual_goods_id,goods_id,second_cat_id \
+--columns virtual_goods_id,goods_id,second_cat_id,cat_id,group_id,brand_id \
 --hcatalog-partition-keys pt \
 --hcatalog-partition-values ${pre_date} \
 --fields-terminated-by '\001'
