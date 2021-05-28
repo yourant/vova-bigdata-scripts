@@ -2,7 +2,7 @@
 config:
   retries: 4
   retry.backoff: 600000
-  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk,huachen@vova.com.hk
 
 nodes:
   - name: end_flag
@@ -12,8 +12,6 @@ nodes:
       - themis_goods_flow
       - themis_lgtcs_flow
       - themis_mbrmct_flow
-
-
 
   - name: start_flag
     type: noop
@@ -72,6 +70,7 @@ nodes:
           - vova_fisher_order_ship
           - tmsexpo_logistics_order_tracking
           - tmsexpo_logistics_order_warehouse
+
 
 # 交易域数据抽取
       - name: vova_fisher_order_info_product
@@ -455,6 +454,13 @@ nodes:
           - vova_style_name
           - vova_route
           - front_storage_stock
+          - vova_vteos_attributes_name
+          - vova_vteos_attributes_name_languages
+          - vova_vteos_attributes_value
+          - vova_vteos_attributes_value_languages
+          - vova_vteos_category_attributes
+          - vova_vteos_goods_attributes
+          - vova_backend_test_goods_behave
 
 #商品域数据抽取
       - name: warehouse_shipping_order
@@ -628,6 +634,61 @@ nodes:
         dependsOn:
           - themis_goods_start
 
+
+      - name: vova_vteos_attributes_name
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vteos --table_name=attributes_name --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=1
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_vteos_attributes_name_languages
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vteos --table_name=attributes_name_languages --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=1
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_vteos_attributes_value
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vteos --table_name=attributes_value --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=1
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_vteos_attributes_value_languages
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vteos --table_name=attributes_value_languages --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=1
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_vteos_category_attributes
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vteos --table_name=category_attributes --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=1
+        dependsOn:
+          - themis_goods_start
+
+      - name: vova_vteos_goods_attributes
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vteos --table_name=goods_attributes --inc_column=last_update_time --etl_type=INCTIME --period_type=day --partition_num=10
+        dependsOn:
+          - themis_goods_start
+
 # goods_gallery: themis (vts) 迁到 themis_eos (vteos)
       - name: vova_goods_gallery
         type: command
@@ -674,6 +735,14 @@ nodes:
         dependsOn:
           - themis_goods_start
 
+      - name: vova_backend_test_goods_behave
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vbd --table_name=test_goods_behave --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
+          retries: 4
+          retry.backoff: 600000
+        dependsOn:
+          - themis_goods_start
 
 # flow: 物流域数据抽取
   - name: themis_lgtcs_flow
@@ -770,6 +839,8 @@ nodes:
           - vova_merchant_assessment_score
           - vova_merchant_assessment_score_log
           - vova_bonus_card
+          - vova_risk_merchant_relation_extra
+
 
 #会员和店铺域数据抽取
       - name: vova_merchant_register_coupon
@@ -967,5 +1038,14 @@ nodes:
           retries: 4
           retry.backoff: 600000
           command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=bonus_card --etl_type=ALL  --mapers=3 --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_risk_merchant_relation_extra
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vtr --table_name=risk_merchant_relation_extra --inc_column=last_update_time --etl_type=INCTIME  --mapers=3 --period_type=day --partition_num=3
         dependsOn:
           - themis_mbrmct_start
