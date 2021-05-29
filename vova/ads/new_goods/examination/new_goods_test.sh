@@ -20,7 +20,7 @@ original_name,
 datasource,
 platform,
 device_id,
-collector_tstamp,
+collector_ts AS collector_tstamp,
 pt
 from
 (
@@ -30,7 +30,7 @@ dg.goods_id,
 log.datasource,
 log.platform,
 log.device_id,
-log.collector_tstamp,
+log.collector_ts,
 log.pt
 FROM dwd.dwd_vova_log_impressions_arc log
          INNER JOIN dim.dim_vova_goods dg ON log.element_id = dg.virtual_goods_id
@@ -48,7 +48,7 @@ dg.goods_id,
 log.datasource,
 log.platform,
 log.device_id,
-log.collector_tstamp,
+log.collector_ts,
 log.pt
 FROM dwd.dwd_vova_log_click_arc log
          INNER JOIN dim.dim_vova_goods dg ON log.element_id = dg.virtual_goods_id
@@ -66,7 +66,7 @@ dg.goods_id,
 log.datasource,
 log.platform,
 log.device_id,
-log.collector_tstamp,
+log.collector_ts,
 log.pt
 FROM dwd.dwd_vova_log_data_arc log
          INNER JOIN dim.dim_vova_goods dg ON log.element_id = dg.virtual_goods_id
