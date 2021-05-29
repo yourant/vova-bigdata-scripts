@@ -19,7 +19,25 @@ fi
 sql="
 DROP TABLE IF EXISTS tmp.tmp_ads_vova_six_mct_flow_support_goods;
 CREATE TABLE tmp.tmp_ads_vova_six_mct_flow_support_goods
-SELECT /*+ REPARTITION(1) */
+select
+/*+ REPARTITION(1) */
+goods_id,
+virtual_goods_id,
+first_cat_id,
+mct_id,
+mct_name
+from
+(
+select
+goods_id,
+virtual_goods_id,
+first_cat_id,
+mct_id,
+mct_name,
+row_number() over(partition by goods_id order by mct_id desc) rank
+from
+(
+SELECT
     dg.goods_id,
     dg.virtual_goods_id,
     dg.first_cat_id,
@@ -36,7 +54,16 @@ FROM ads.ads_vova_six_rank_mct six
                   INNER JOIN ods_vova_vts.ods_vova_virtual_goods_h vg ON vg.goods_id = g.goods_id
                   INNER JOIN dim.dim_vova_category dc ON dc.cat_id = g.cat_id
      ) dg ON dg.first_cat_id = six.first_cat_id AND dg.mct_id = six.mct_id
-;
+union all
+select
+goods_id,
+virtual_goods_id,
+first_cat_id,
+mct_id,
+mct_name
+from dim.dim_vova_virtual_six_mct_goods
+) t
+) t where rank =1;
 
 set hive.exec.dynamic.partition=true;
 set hive.exec.dynamic.partition.mode=nonstrict;
