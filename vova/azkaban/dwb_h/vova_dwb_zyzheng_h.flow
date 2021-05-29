@@ -12,6 +12,7 @@ nodes:
     dependsOn:
       - dwb_vova_web_examination_export_h
       - ads_vova_six_mct_goods_flow_support_h_export
+      - ads_vova_new_goods_examination_h_export
 
   - name: start_flag
     type: command
@@ -81,11 +82,20 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_dim_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
   - name: dwb_vova_web_examination_h
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/vova/ads/web_examination/examination_update.sh
-      retries: 30
+      retries: 10
       retry.backoff: 300000
     dependsOn:
       - judge_vova_fact_log_v2_h
@@ -96,7 +106,7 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/vova/ads/web_examination/examination_export.sh
-      retries: 30
+      retries: 10
       retry.backoff: 300000
     dependsOn:
       - dwb_vova_web_examination_h
@@ -105,7 +115,7 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/vova/ads/flow_support/update_h.sh
-      retries: 30
+      retries: 10
       retry.backoff: 300000
     dependsOn:
       - judge_vova_fact_log_v2_h
@@ -120,7 +130,28 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/vova/ads/flow_support/bi_export.sh
-      retries: 30
+      retries: 10
       retry.backoff: 300000
     dependsOn:
       - ads_vova_six_mct_goods_flow_support_h
+
+  - name: ads_vova_new_goods_examination_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/new_goods/examination/new_goods_test.sh
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - judge_vova_fact_log_v2_h
+      - judge_vova_order_info_h
+      - judge_vova_order_goods_h
+      - judge_dim_vova_goods
+
+  - name: ads_vova_new_goods_examination_h_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/new_goods/examination/new_goods_test_export.sh
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - ads_vova_new_goods_examination_h

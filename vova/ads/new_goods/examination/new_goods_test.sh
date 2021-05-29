@@ -9,6 +9,8 @@ cur_date2=`date -d "+1 day ${cur_date}" +%Y-%m-%d`
 echo "$cur_date"
 echo "$cur_date2"
 
+#dependence
+#dim_vova_goods
 sql="
 set hive.exec.dynamic.partition=true;
 set hive.exec.dynamic.partition.mode=nonstrict;
