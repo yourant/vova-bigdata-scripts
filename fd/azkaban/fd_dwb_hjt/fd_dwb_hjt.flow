@@ -38,7 +38,7 @@ nodes:
       - judge_ods_fd_ecs_goods
       - judge_ods_inventory_item
       - judge_dwd_fd_ecs_order_info
-      - judge_ads_adgroup_daily_flat_report
+      - judge_adgroup_daily_flat_report
 
 
 ##依赖
@@ -116,10 +116,10 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: judge_ads_adgroup_daily_flat_report
+  - name: judge_adgroup_daily_flat_report
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_ecs_order_info/check_ads.sh ${pt}
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh judge_ads_adgroup_daily_flat_report
       retries: 5
       retry.backoff: 600000
     dependsOn:
