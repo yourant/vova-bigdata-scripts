@@ -11,7 +11,7 @@ drop table if exists backend.vova_goods_examination_new;
 drop table if exists backend.vova_goods_examination_pre;
 "
 
-mysql -h rec-backend.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pkkooxGjFy7Vgu21x -e "${sql}"
+mysql -h rec-backend.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwbackendwriter -pRap11rJQZE3ATA18GZHAbySsNZVIvjnE -e "${sql}"
 
 sql="
 CREATE TABLE backend.vova_goods_examination_new
@@ -46,13 +46,13 @@ CREATE TABLE backend.vova_goods_examination_new
   DEFAULT CHARSET = utf8mb4 ;
 "
 
-mysql -h rec-backend.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pkkooxGjFy7Vgu21x -e "${sql}"
+mysql -h rec-backend.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwbackendwriter -pRap11rJQZE3ATA18GZHAbySsNZVIvjnE -e "${sql}"
 
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dsqoop.export.records.per.statement=1000 \
 --connect jdbc:mysql://rec-backend.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com/backend?rewriteBatchedStatements=true \
---username bimaster --password kkooxGjFy7Vgu21x \
+--username dwbackendwriter --password Rap11rJQZE3ATA18GZHAbySsNZVIvjnE \
 --table vova_goods_examination_new \
 --m 1 \
 --columns goods_id,cat_id,impressions,ctr,gmv_cr,goods_score,gmv_cr_1w,impressions_1w,test_goods_status,test_goods_status_comment,test_goods_result_status,test_goods_result_comment,add_test_time,status_change_time,goods_source_image,goods_source_basic,goods_source_text,gcr,gcr_1w,first_cat_id,second_cat_id  \
@@ -70,7 +70,7 @@ if [ $? -ne 0 ];then
   exit 1
 fi
 
-mysql -h rec-backend.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pkkooxGjFy7Vgu21x <<EOF
+mysql -h rec-backend.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwbackendwriter -pRap11rJQZE3ATA18GZHAbySsNZVIvjnE <<EOF
 rename table backend.vova_goods_examination to backend.vova_goods_examination_pre,
              backend.vova_goods_examination_new to backend.vova_goods_examination;
 EOF
@@ -80,7 +80,7 @@ if [ $? -ne 0 ];then
   exit 1
 fi
 
-sh /mnt/vova-bd-scripts/ods/job_message_put.sh --jname=vova_new_goods_examination --from=data --to=java_server --jtype=1H --retry=0
+sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=vova_new_goods_examination --from=data --to=java_server --jtype=1H --retry=0
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1

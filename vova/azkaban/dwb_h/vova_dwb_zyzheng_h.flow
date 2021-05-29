@@ -151,7 +151,7 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/vova/ads/new_goods/examination/new_goods_test_export.sh
-      retries: 30
+      retries: 10
       retry.backoff: 300000
     dependsOn:
       - ads_vova_new_goods_examination_h
