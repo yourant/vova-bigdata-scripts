@@ -238,30 +238,6 @@ when page_code ='product_detail' and list_type ='/detail_also_like' then 'produc
 else concat(page_code, '_new') end
 ;
 
-DROP TABLE IF EXISTS tmp.tmp_ads_vova_six_mct_flow_support_page_mct_1d;
-CREATE TABLE tmp.tmp_ads_vova_six_mct_flow_support_page_mct_1d
-select
-/*+ REPARTITION(1) */
-dg.mct_id,
-case
-when page_code in ('homepage','product_list') and  list_type in ('/product_list_popular','/product_list') then 'product_list'
-when page_code ='product_detail' and list_type ='/detail_also_like' then 'product_detail'
-else concat(page_code, '_new') end as page_code,
-count(*) AS impressions
-from
-ads.ads_vova_six_mct_flow_support_collector_data log
-INNER JOIN tmp.tmp_ads_vova_six_mct_flow_support_goods dg ON log.goods_id = dg.goods_id
-where log.pt = '${cur_date}'
-AND log.original_name = 'goods_impression'
-AND log.recall_pool_name LIKE '%59%'
-group by dg.mct_id,
-case
-when page_code in ('homepage','product_list') and  list_type in ('/product_list_popular','/product_list') then 'product_list'
-when page_code ='product_detail' and list_type ='/detail_also_like' then 'product_detail'
-else concat(page_code, '_new') end
-;
-
-
 INSERT OVERWRITE TABLE ads.ads_vova_six_mct_flow_support_goods_page_process PARTITION (pt = '${cur_date}')
 select
 /*+ REPARTITION(1) */
@@ -269,8 +245,8 @@ dg.goods_id,
 page_code_list.page_code,
 nvl(his.impressions, 0) AS his_impressions,
 nvl(t1.impressions, 0) AS t1_impressions,
-nvl(t2.impressions, 0) AS t2_impressions,
-nvl(t3.impressions, 0) AS t3_impressions,
+0 AS t2_impressions,
+0 AS t3_impressions,
 case
 when his.impressions >= 30000 THEN 1
 when his.impressions >= 20000 AND gcr < 60 THEN 1
@@ -278,8 +254,6 @@ when his.impressions >= 10000 AND gcr < 60 THEN 1
 when his.impressions >= 5000 AND sales_order < 1 THEN 1
 when his.impressions >= 2000 AND ctr < 0.014 THEN 1
 when t1.impressions >= 5000 THEN 1
-when t2.impressions >= 50000 THEN 1
-when t3.impressions >= 100000 THEN 1
 else 0 end AS is_delete
 from
 tmp.tmp_ads_vova_six_mct_flow_support_goods dg
@@ -298,22 +272,6 @@ impressions
 FROM
 tmp.tmp_ads_vova_six_mct_flow_support_page_goods_1d
 ) t1 on t1.goods_id = dg.goods_id AND t1.page_code = page_code_list.page_code
-LEFT JOIN (
-SELECT
-mct_id,
-page_code,
-impressions
-FROM
-tmp.tmp_ads_vova_six_mct_flow_support_page_mct_1d
-) t2 on t2.mct_id = dg.mct_id AND t2.page_code = page_code_list.page_code
-LEFT JOIN (
-SELECT
-mct_id,
-sum(impressions) AS impressions
-FROM
-tmp.tmp_ads_vova_six_mct_flow_support_page_mct_1d
-group by mct_id
-) t3 on t3.mct_id = dg.mct_id
 ;
 
 INSERT OVERWRITE TABLE ads.ads_vova_six_mct_flow_support_goods_behave_h PARTITION (pt = '${cur_date}')
@@ -322,8 +280,8 @@ select
 dg.goods_id,
 nvl(his.impressions, 0) AS his_impressions,
 nvl(t1.impressions, 0) AS goods_page_impressions,
-nvl(t2.impressions, 0) AS mct_page_impressions,
-nvl(t3.impressions, 0) AS mct_impressions,
+0 AS mct_page_impressions,
+0 AS mct_impressions,
 case
 when his.impressions >= 30000 THEN 'a'
 when his.impressions >= 20000 AND gcr < 60 THEN 'g'
@@ -331,8 +289,6 @@ when his.impressions >= 10000 AND gcr < 60 THEN 'f'
 when his.impressions >= 5000 AND sales_order < 1 THEN 'e'
 when his.impressions >= 2000 AND ctr < 0.014 THEN 'd'
 when t1.impressions >= 5000 THEN 'a'
-when t2.impressions >= 50000 THEN 'b'
-when t3.impressions >= 100000 THEN 'b'
 else 'normal' end AS block_reason
 from
 tmp.tmp_ads_vova_six_mct_flow_support_goods dg
@@ -345,22 +301,6 @@ FROM
 tmp.tmp_ads_vova_six_mct_flow_support_page_goods_1d
 group by goods_id
 ) t1 on t1.goods_id = dg.goods_id
-LEFT JOIN (
-SELECT
-mct_id,
-max(impressions) AS impressions
-FROM
-tmp.tmp_ads_vova_six_mct_flow_support_page_mct_1d
-group by mct_id
-) t2 on t2.mct_id = dg.mct_id
-LEFT JOIN (
-SELECT
-mct_id,
-sum(impressions) AS impressions
-FROM
-tmp.tmp_ads_vova_six_mct_flow_support_page_mct_1d
-group by mct_id
-) t3 on t3.mct_id = dg.mct_id
 ;
 
 INSERT OVERWRITE TABLE ads.ads_vova_six_mct_goods_flow_support_h PARTITION (pt = '${cur_date}')
