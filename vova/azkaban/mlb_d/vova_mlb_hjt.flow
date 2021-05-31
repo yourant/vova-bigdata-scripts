@@ -13,7 +13,6 @@ nodes:
       - mlb_rec_search_words_trans_sqoop
       - mlb_vova_user_query_freqency_d
       - mlb_rec_highfreq_query
-      - mlb_search_expansion_a_d
       - mlb_data_me_u2i_rec_job_message_put
       - mlb_search_spell_check
       - mlb_high_freq_search_recall_job_message_put
@@ -117,23 +116,6 @@ nodes:
     dependsOn:
       - mlb_rec_highfreq_query_job_message_get
 
-  - name: mlb_search_expansion_a_d_job_message_get
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=mlb_vova_search_expansion_d --from=mlb --to=data --valid_hour=3
-      retries: 72
-      retry.backoff: 600000
-    dependsOn:
-      - start_flag
-
-  - name: mlb_search_expansion_a_d
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/translation/search_expansion_a_d/update_sqoop.sh
-      retries: 72
-      retry.backoff: 600000
-    dependsOn:
-      - mlb_search_expansion_a_d_job_message_get
 
   - name: judge_dws_vova_buyer_goods_behave
     type: command
