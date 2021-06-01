@@ -103,7 +103,7 @@ data:{
     }
 }'
 
-
+sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=ads_vova_image_brand_d --from=data --to=java_server --jtype=1D --retry=0
 
 
 

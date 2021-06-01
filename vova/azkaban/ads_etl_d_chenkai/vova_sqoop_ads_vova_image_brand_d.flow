@@ -11,6 +11,7 @@ nodes:
       command: echo "stop job"
     dependsOn:
       - sqoop_ads_vova_image_brand_d
+      - ads_vova_image_brand_d_message_put
 
   - name: start_flag
     type: command
@@ -40,4 +41,12 @@ nodes:
     dependsOn:
       - judge_message_get_ads_vova_no_brand_goods_img
 
-
+## 导数完成后再发消息
+  - name: ads_vova_image_brand_d_message_put
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=ads_vova_image_brand_d --from=data --to=java_server --jtype=1D --retry=0
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - sqoop_ads_vova_image_brand_d
