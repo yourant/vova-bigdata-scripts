@@ -1,3 +1,25 @@
+CREATE EXTERNAL TABLE IF NOT EXISTS tmp.tmp_dwb_fd_ad_cost_gmv
+(
+    event_date      date COMMENT 'event_date',
+    project_name      string COMMENT 'datasource',
+    ga_channel      string COMMENT 'ga_channel',
+    country_code     string COMMENT 'region_code',
+    platform_type        string COMMENT 'platform',
+    tot_cost        decimal(20, 2) COMMENT '当天广告花费',
+    tot_gmv         decimal(20, 2) COMMENT 'gmv'
+) COMMENT 'dwb_fd_ads_cost' STORED AS PARQUETFILE;
+
+
+CREATE EXTERNAL TABLE IF NOT EXISTS tmp.tmp_dwb_fd_ad_est
+(
+    event_date      date COMMENT 'event_date',
+    project_name      string COMMENT 'datasource',
+    ga_channel      string COMMENT 'ga_channel',
+    country_code     string COMMENT 'region_code',
+    platform_type        string COMMENT 'platform',
+    est_gmv_7d        decimal(20, 2) COMMENT '预估广告花费'
+) COMMENT 'dwb_fd_ads_cost' STORED AS PARQUETFILE;
+
 CREATE EXTERNAL TABLE IF NOT EXISTS tmp.dwb_fd_ads_cost
 (
     event_date      date COMMENT 'event_date',
