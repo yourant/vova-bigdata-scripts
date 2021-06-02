@@ -39,14 +39,14 @@ nodes:
       - start_flag
 
 #### ads.ads_vova_image_matting
-  - name: judge_ads_goods_banner_pre
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_goods_banner_pre
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - start_flag
+#  - name: judge_ads_goods_banner_pre
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_goods_banner_pre
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - start_flag
 
 #### mlb.mlb_vova_highfreq_query_match_d; mlb.mlb_vova_highfreq_query_mapping_d
   - name: judge_mlb_rec_highfreq_query
@@ -62,7 +62,7 @@ nodes:
   - name: judge_mlb_vova_rec_b_goods_score_d_message_get
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=mlb_goods_score_vova --from=mlb --to=data --valid_hour=3
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=mlb_goods_score_vova --from=mlb --to=data --valid_hour=6
       retries: 45
       retry.backoff: 1200000
     dependsOn:
@@ -90,7 +90,7 @@ nodes:
     dependsOn:
       - judge_dim_vova_goods
       - judge_ads_vova_goods_knowledge_graph
-      - judge_ads_goods_banner_pre
+#      - judge_ads_goods_banner_pre
       - judge_mlb_rec_highfreq_query
       - judge_mlb_vova_rec_b_goods_score_d_message_get
       - judge_message_get_ads_vova_home_info_banner
