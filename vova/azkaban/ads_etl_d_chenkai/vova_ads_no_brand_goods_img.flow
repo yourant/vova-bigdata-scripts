@@ -59,7 +59,7 @@ nodes:
   - name: judge_message_get_ads_vova_brand_pcv
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/job_message_get_last.sh --jname=jname=ads_vova_brand_pcv --from=cv --to=data
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get_last.sh --jname=ads_vova_brand_pcv --from=cv --to=data
       retries: 10
       retry.backoff: 1200000
     dependsOn:

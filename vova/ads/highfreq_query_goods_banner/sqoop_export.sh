@@ -5,13 +5,13 @@ pre_date=$1
 #默认日期为昨天
 if [ ! -n "$1" ]; then
   pre_date=$(date -d "-1 day" +%Y-%m-%d)
-fi
+
 echo ${pre_date}
 
 uri="ab81e133a11e611ebbee60ebf226a60d-1866282236.us-east-1.elb.amazonaws.com"
 dataRow='{
   "data":{
-    "jname":"ads_vova_brand_pcv",
+    "jname":"ads_vova_home_info_banner_pcv",
     "from":"cv",
     "to":"data",
     "valid_hour":1
@@ -34,59 +34,41 @@ else
   pre_date=${pt}
 fi
 
+fi
+
 echo "pre_date: ${pre_date}"
 
-file_num=`aws s3 ls s3://vova-computer-vision/product_data/vova_image_brand/dst_data/pt=${pre_date}/ | wc -l`
+file_num=`aws s3 ls s3://vova-computer-vision/product_data/vova_home_info_banner/dst_data/pt=${pre_date}/ | wc -l`
 if [ ${file_num} -eq 0 ]; then
   echo "Error: pt=${pre_date} file num = 0"
   exit 1
 fi
 echo "pt=${pre_date} file num: ${file_num}"
 
-hive -e "msck repair table ads.ads_vova_image_brand_d;"
+hive -e "msck repair table ads.ads_vova_home_info_banner;"
 if [ $? -ne 0 ];then
   exit 1
 fi
 
-cnt=$(spark-sql -e "select count(*) from ads.ads_vova_image_brand_d where pt ='${pre_date}';" |tail -1)
+cnt=$(spark-sql -e "select count(*) from ads.ads_vova_home_info_banner where pt ='${pre_date}';" |tail -1)
 if [ ${cnt} -le 0 ];then
   echo "Error: count(*)=${cnt} -le 0"
   exit 1
 fi
 echo "pt ='${pre_date}' cnt: ${cnt}"
 
-spark-sql \
---conf "spark.app.name=ads_vova_image_brand_d_export_chenkai" \
--e "
-insert overwrite table ads.ads_vova_image_brand_d_export
-select /*+ REPARTITION(1) */
-distinct
-  goods_id ,
-  brand_id ,
-  is_update
-from
-  ads.ads_vova_image_brand_d
-where pt='${pre_date}' and brand_id != -1
-;
-"
-
-if [ $? -ne 0 ];then
-  exit 1
-fi
-
 # mysql 建表
 sql="
-create table if not exists als_images.ads_vova_image_brand_d (
-  id                    bigint(20)  NOT NULL AUTO_INCREMENT COMMENT '自增主键',
-  goods_id              bigint(11)  NOT NULL COMMENT '商品id',
-  brand_id              bigint(11)  NOT NULL COMMENT '品牌id',
-  is_update             int(1)      DEFAULT 0 COMMENT '是否更新，默认0',
-
+create table if not exists als_images.ads_vova_home_info_banner (
+  id                    bigint(20)   NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+  goods_id              bigint(11)   NOT NULL COMMENT '商品id',
+  banner_url            varchar(200) NOT NULL COMMENT '品牌id',
+  language_id           bigint(11)   NOT NULL COMMENT '语言id',
+  bod_id                bigint(11)   NOT NULL COMMENT '榜单id',
   update_time           datetime    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (id) USING BTREE,
-  UNIQUE KEY goods_id (goods_id) USING BTREE,
-  KEY update_time (update_time) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='brand图像识别接入后台打标'
+  KEY goods_id (goods_id) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='搜索词会场个性化banner图像提取'
 ;
 "
 # mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx
@@ -103,13 +85,13 @@ sqoop export \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/als_images \
 --username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \
 --m 1 \
---table ads_vova_image_brand_d \
+--table ads_vova_home_info_banner \
 --hcatalog-database ads \
---hcatalog-table ads_vova_image_brand_d_export \
---columns goods_id,brand_id,is_update \
+--hcatalog-table ads_vova_home_info_banner \
+--columns goods_id,banner_url,language_id,bod_id \
 --update-key goods_id \
 --update-mode allowinsert \
---fields-terminated-by '\t'
+--fields-terminated-by ','
 
 if [ $? -ne 0 ];then
   exit 1
