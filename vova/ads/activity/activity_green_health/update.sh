@@ -22,7 +22,8 @@ from tmp.ttt_ysj
 )
 
 insert overwrite table ads.ads_vova_activity_green_health partition(pt='${cur_date}')
-select *
+select /*+ REPARTITION(1) */
+*
 from (
 select
 goods_id,
