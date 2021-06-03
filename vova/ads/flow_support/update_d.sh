@@ -28,8 +28,15 @@ when his.impressions >= 5000 AND sales_order < 1 THEN 1
 when his.impressions >= 2000 AND ctr < 0.014 THEN 1
 else 0 end AS is_delete
 from
-ads.ads_vova_six_rank_mct six
-INNER JOIN dim.dim_vova_goods dvg on six.mct_id = dvg.mct_id AND six.first_cat_id = dvg.first_cat_id
+(
+select
+distinct
+if(dvg.goods_id is not null,dvg.goods_id,vg.goods_id) goods_id
+from ads.ads_vova_six_rank_mct six
+left JOIN dim.dim_vova_goods dvg on six.mct_id = dvg.mct_id AND six.first_cat_id = dvg.first_cat_id
+left JOIN dim.dim_vova_virtual_six_mct_goods vg on six.mct_id = vg.mct_id AND six.first_cat_id = vg.first_cat_id
+) six
+INNER JOIN dim.dim_vova_goods dvg on six.goods_id = dvg.goods_id
 LEFT JOIN ods_vova_vbai.ods_vova_images_vector iv on dvg.goods_id = iv.goods_id
 LEFT JOIN ads.ads_vova_six_mct_flow_support_goods_his his ON his.goods_id = dvg.goods_id AND his.pt = '${cur_date}'
 WHERE dvg.is_on_sale = 1

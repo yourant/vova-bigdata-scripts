@@ -11,9 +11,9 @@ nodes:
       command: echo "stop job"
     dependsOn:
       - mlb_vova_rec_new_goods_training
+      - ads_vova_rec_new_goods_pre
 #      - mlb_vova_rec_new_goods_result_export
 #      - mlb_vova_rec_new_goods_training_rec_base
-#      - judge_mlb_vova_rec_new_goods_training_others
 
   - name: start_flag
     type: command
@@ -109,7 +109,7 @@ nodes:
 #      retry.backoff: 360000
 #    dependsOn:
 #      - mlb_vova_rec_new_goods_training_rec_base
-#      - judge_mlb_vova_rec_new_goods_training_others
+#      - judge_mlb_vova_rec_new_goods
 
   - name: mlb_vova_rec_new_goods_training
     type: command
@@ -136,14 +136,23 @@ nodes:
 #    dependsOn:
 #      - mlb_vova_rec_new_goods_training
 #
-#  - name: judge_mlb_vova_rec_new_goods_training_others
-#    type: command
-#    config:
-#      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=mlb_new_goods_rec --from=mlb --to=data
-#      retries: 50
-#      retry.backoff: 360000
-#    dependsOn:
-#      - mlb_vova_rec_new_goods_training
+  - name: judge_mlb_vova_rec_new_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=mlb_new_goods_rec --from=mlb --to=data
+      retries: 30
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_vova_rec_new_goods_training
+
+  - name: ads_vova_rec_new_goods_pre
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/new_goods/examination/new_goods_test_pre.sh
+      retries: 30
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_rec_new_goods
 
 #  - name: ods_vova_backend_test_goods_behave
 #    type: command

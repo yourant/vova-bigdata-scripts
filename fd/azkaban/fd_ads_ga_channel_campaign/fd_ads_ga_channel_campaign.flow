@@ -17,17 +17,31 @@ nodes:
     config:
       command: echo "start job"
 
-  - name: judge_dwd_fd_session_channel
+  - name: campaign_adgroup_mapping_h
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_session_channel
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=INIT --table_name=campaign_adgroup_mapping --partition_num=1 --period_type=hour --split_id=is_rem
     dependsOn:
       - start_flag
 
-  - name: judge_dwd_fd_order_info
+  - name: ods_fd_vb_user_duid_h
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_info
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vb --etl_type=INCTIME --inc_column=last_update_time --table_name=user_duid  --partition_num=10 --period_type=hour
+    dependsOn:
+      - start_flag
+
+  - name: dwd_fd_session_channel_arc
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_session_channel_arc/run.sh
+    dependsOn:
+      - start_flag
+
+  - name: judge_ods_fd_order_info_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_order_info_h
     dependsOn:
       - start_flag
 
@@ -38,8 +52,10 @@ nodes:
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - judge_dwd_fd_order_info
-      - judge_dwd_fd_session_channel
+      - judge_ods_fd_order_info_h
+      - ods_fd_vb_user_duid_h
+      - dwd_fd_session_channel_arc
+      - campaign_adgroup_mapping_h
 
   - name: fd_ads_ga_channel_campaign_export
     type: command

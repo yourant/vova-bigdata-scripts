@@ -840,7 +840,7 @@ nodes:
           - vova_merchant_assessment_score_log
           - vova_bonus_card
           - vova_risk_merchant_relation_extra
-
+          - vova_merchant_extra
 
 #会员和店铺域数据抽取
       - name: vova_merchant_register_coupon
@@ -876,6 +876,16 @@ nodes:
           retries: 4
           retry.backoff: 600000
           command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mbrmct_start
+
+## ods_vova_vts.ods_vova_merchant_extra 店铺注册招商,表中数据从20210407开始更新
+      - name: vova_merchant_extra
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant_extra --etl_type=ALL --period_type=day --partition_num=3
         dependsOn:
           - themis_mbrmct_start
 

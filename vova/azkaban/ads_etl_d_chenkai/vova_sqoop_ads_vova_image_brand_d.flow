@@ -1,0 +1,52 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - sqoop_ads_vova_image_brand_d
+      - ads_vova_image_brand_d_message_put
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+## judge ############################################
+
+# 获取算法任务完成消息
+  - name: judge_message_get_ads_vova_no_brand_goods_img
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=ads_vova_brand_pcv --from=cv --to=data --valid_hour=1
+      retries: 30
+      retry.backoff: 1200000
+    dependsOn:
+      - start_flag
+
+## sqoop ############################################
+
+  - name: sqoop_ads_vova_image_brand_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/image_brand/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_message_get_ads_vova_no_brand_goods_img
+
+## 导数完成后再发消息
+  - name: ads_vova_image_brand_d_message_put
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=ads_vova_image_brand_d --from=data --to=java_server --jtype=1D --retry=0
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - sqoop_ads_vova_image_brand_d

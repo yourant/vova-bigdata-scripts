@@ -17,13 +17,19 @@ job_name="mlb_vova_goods_second_cat_req8721_chenkai_${cur_date}"
 
 ###逻辑sql
 sql="
+ALTER TABLE mlb.mlb_vova_goods_second_cat DROP if exists partition(pt = '$(date -d "${cur_date:0:10} -5day" +%Y-%m-%d)');
+
 insert overwrite table mlb.mlb_vova_goods_second_cat partition(pt='${cur_date}')
-select /*+ REPARTITION(1) */
-  virtual_goods_id, goods_id, second_cat_id
+select /*+ REPARTITION(5) */
+  virtual_goods_id,
+  goods_id,
+  nvl(second_cat_id, 0) second_cat_id,
+  nvl(cat_id, 0) cat_id,
+  group_id,
+  nvl(brand_id, -1) brand_id
 from
   dim.dim_vova_goods
 where is_on_sale = 1
-  and second_cat_id is not null
 ;
 "
 
