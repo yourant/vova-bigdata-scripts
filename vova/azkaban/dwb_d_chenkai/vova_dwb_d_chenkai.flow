@@ -848,7 +848,7 @@ nodes:
       - judge_dim_vova_devices
       - judge_dwd_vova_fact_pay
       - judge_vova_collection_order_goods
-      - dwb_vova_user_month_cohort_24
+      - dwb_vova_user_month_cohort_21
 
   - name: dwb_vova_user_month_cohort_19
     type: command
@@ -887,7 +887,7 @@ nodes:
       - judge_dim_vova_devices
       - judge_dwd_vova_fact_pay
       - judge_vova_collection_order_goods
-      - dwb_vova_user_month_cohort_20
+      - dwb_vova_user_month_cohort_19
 
   - name: dwb_vova_user_month_cohort_16
     type: command
@@ -900,7 +900,7 @@ nodes:
       - judge_dim_vova_devices
       - judge_dwd_vova_fact_pay
       - judge_vova_collection_order_goods
-      - dwb_vova_user_month_cohort_20
+      - dwb_vova_user_month_cohort_19
 
   - name: dwb_vova_user_month_cohort_15
     type: command
@@ -939,7 +939,7 @@ nodes:
       - judge_dim_vova_devices
       - judge_dwd_vova_fact_pay
       - judge_vova_collection_order_goods
-      - dwb_vova_user_month_cohort_16
+      - dwb_vova_user_month_cohort_14
 
   - name: dwb_vova_user_month_cohort_12
     type: command
@@ -952,7 +952,7 @@ nodes:
       - judge_dim_vova_devices
       - judge_dwd_vova_fact_pay
       - judge_vova_collection_order_goods
-      - dwb_vova_user_month_cohort_16
+      - dwb_vova_user_month_cohort_14
 
   - name: dwb_vova_user_month_cohort_11
     type: command
@@ -965,7 +965,7 @@ nodes:
       - judge_dim_vova_devices
       - judge_dwd_vova_fact_pay
       - judge_vova_collection_order_goods
-      - dwb_vova_user_month_cohort_16
+      - dwb_vova_user_month_cohort_12
 
   - name: dwb_vova_user_month_cohort_10
     type: command
@@ -978,7 +978,7 @@ nodes:
       - judge_dim_vova_devices
       - judge_dwd_vova_fact_pay
       - judge_vova_collection_order_goods
-      - dwb_vova_user_month_cohort_11
+      - dwb_vova_user_month_cohort_12
 
 
   - name: dwb_vova_user_month_cohort_09
@@ -992,7 +992,7 @@ nodes:
       - judge_dim_vova_devices
       - judge_dwd_vova_fact_pay
       - judge_vova_collection_order_goods
-      - dwb_vova_user_month_cohort_11
+      - dwb_vova_user_month_cohort_10
 
 
   - name: dwb_vova_user_month_cohort_08
@@ -1006,7 +1006,7 @@ nodes:
       - judge_dim_vova_devices
       - judge_dwd_vova_fact_pay
       - judge_vova_collection_order_goods
-      - dwb_vova_user_month_cohort_11
+      - dwb_vova_user_month_cohort_10
 
   - name: dwb_vova_user_month_cohort_07
     type: command
@@ -1019,7 +1019,7 @@ nodes:
       - judge_dim_vova_devices
       - judge_dwd_vova_fact_pay
       - judge_vova_collection_order_goods
-      - dwb_vova_user_month_cohort_11
+      - dwb_vova_user_month_cohort_08
 
 
   - name: dwb_vova_user_month_cohort_06
@@ -1033,7 +1033,7 @@ nodes:
       - judge_dim_vova_devices
       - judge_dwd_vova_fact_pay
       - judge_vova_collection_order_goods
-      - dwb_vova_user_month_cohort_11
+      - dwb_vova_user_month_cohort_08
 
 
   - name: dwb_vova_user_month_cohort_05
@@ -1075,7 +1075,7 @@ nodes:
       - judge_dim_vova_devices
       - judge_dwd_vova_fact_pay
       - judge_vova_collection_order_goods
-      - dwb_vova_user_month_cohort_06
+      - dwb_vova_user_month_cohort_04
 
   - name: dwb_vova_user_month_cohort_02
     type: command
@@ -1088,7 +1088,7 @@ nodes:
       - judge_dim_vova_devices
       - judge_dwd_vova_fact_pay
       - judge_vova_collection_order_goods
-      - dwb_vova_user_month_cohort_06
+      - dwb_vova_user_month_cohort_04
 
   - name: dwb_vova_user_month_cohort_01
     type: command
