@@ -20,6 +20,20 @@ STORED AS PARQUETFILE;
 sh /mnt/vova-bigdata-scripts/common/job_message_put.sh
 --jname=ads_vova_royalty_threshold_detail_d --from=data --to=java_server --jtype=1D --retry=0
 
+curl -L -X POST 'http://ab81e133a11e611ebbee60ebf226a60d-1866282236.us-east-1.elb.amazonaws.com/vova/api/jobmss/out' -H 'Content-Type: application/json' --data-raw '{
+"data":[
+{
+"jname": "ads_vova_royalty_threshold_detail_d",
+"from": "data",
+"to": "java_server",
+"jstatus": "success",
+"jtype": "1D",
+"retry": "0",
+"freedoms":{"pt":"2021-05-26"}
+}
+]
+}'
+
 
 -- 算法 输出表：
 drop table ads.ads_vova_royalty_threshold_d;
@@ -37,8 +51,6 @@ STORED AS PARQUETFILE;
 算法执行完成后发消息：
 sh /mnt/vova-bigdata-scripts/common/job_message_get.sh
 --jname=ads_vova_royalty_threshold_d --from=mlb --to=data --jtype=1D --retry=0
-
-
 
 
 

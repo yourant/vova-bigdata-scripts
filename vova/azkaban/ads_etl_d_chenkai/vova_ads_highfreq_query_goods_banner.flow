@@ -28,11 +28,20 @@ nodes:
     dependsOn:
       - start_flag
 
-#### ads.ads_vova_bod_name_translation
-  - name: judge_ads_vova_goods_knowledge_graph
+#### ads.ads_vova_bod_name_translation  ads_vova_bod_goods_rank_data
+  - name: judge_ads_vova_bod_goods_rank_data
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_knowledge_graph
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_bod_goods_rank_data
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_rec_m_tagcombine_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_rec_m_tagcombine_d
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -89,7 +98,8 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_dim_vova_goods
-      - judge_ads_vova_goods_knowledge_graph
+      - judge_ads_vova_bod_goods_rank_data
+      - judge_ads_vova_rec_m_tagcombine_d
 #      - judge_ads_goods_banner_pre
       - judge_mlb_rec_highfreq_query
       - judge_mlb_vova_rec_b_goods_score_d_message_get
