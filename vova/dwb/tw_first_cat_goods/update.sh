@@ -5,11 +5,10 @@ cur_date=$1
 if [ ! -n "$1" ];then
 cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
-spark-sql  --conf "spark.app.name=dwb_vova_tw_first_cat_goods" --conf "spark.sql.crossJoin.enabled=true"  --conf "spark.dynamicNAocation.maxExecutors=100"  -e "
+spark-sql  --conf "spark.app.name=dwb_vova_tw_first_cat_goods" --conf "spark.sql.crossJoin.enabled=true"  --conf "spark.dynamicAllocation.maxExecutors=100"  -e "
 
-DROP TABLE IF EXISTS tmp.tmp_vova_TW_expre;
-CREATE TABLE IF NOT EXISTS tmp.tmp_vova_TW_expre as
-select
+insert overwrite table tmp.tmp_vova_TW_expre
+select /*+ REPARTITION(2) */
        nvl(case
                when a.platform = 'pc' then 'pc'
                when a.platform = 'web' then 'mob'
@@ -47,9 +46,8 @@ group by cube (
                    ELSE 'old' END, nvl(b.first_cat_name, 'NA'));
 
 
-DROP TABLE IF EXISTS tmp.tmp_vova_TW_clk;
-CREATE TABLE IF NOT EXISTS tmp.tmp_vova_TW_clk as
-select
+insert overwrite table tmp.tmp_vova_TW_clk as
+select /*+ REPARTITION(2) */
        nvl(case
                when a.platform = 'pc' then 'pc'
                when a.platform = 'web' then 'mob'
@@ -84,9 +82,8 @@ group by cube (
                        THEN 'new'
                    ELSE 'old' END, nvl(b.first_cat_name, 'NA'));
 
-DROP TABLE IF EXISTS tmp.tmp_vova_TW_pay;
-CREATE TABLE IF NOT EXISTS tmp.tmp_vova_TW_pay as
-select
+insert overwrite table  tmp.tmp_vova_TW_pay
+select /*+ REPARTITION(2) */
        nvl(nvl(a.platform,'NA'), 'all') as                  platform,
        nvl(nvl(c.main_channel, 'NA'), 'all')   main_channel,
        nvl(CASE
