@@ -164,8 +164,15 @@ group by dog.order_id
 
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
-spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"  --conf "spark.dynamicAllocation.maxExecutors=110" --conf "spark.dynamicAllocation.initialExecutors=40" --conf "spark.app.name=dwb_vova_tw_order" -e "$sql"
-
+spark-sql \
+--conf "spark.sql.parquet.writeLegacyFormat=true"  \
+--conf "spark.dynamicAllocation.minExecutors=20" \
+--conf "spark.dynamicAllocation.initialExecutors=20" \
+--conf "spark.dynamicAllocation.maxExecutors=60" \
+--conf "spark.app.name=dwb_vova_tw_order" \
+--conf "spark.sql.shuffle.partitions=280" \
+--conf "spark.dynamicAllocation.maxExecutors=180" \
+-e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1

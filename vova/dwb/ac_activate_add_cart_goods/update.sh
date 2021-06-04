@@ -85,9 +85,16 @@ WHERE base_goods.region_code IN ('all', 'GB', 'FR', 'DE', 'IT', 'ES')
 "
 
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
-spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true"  --conf "spark.dynamicAllocation.minExecutors=20" --conf "spark.dynamicAllocation.initialExecutors=40" --conf "spark.app.name=dwb_ac_activate_add_cart_goods" -e "$sql"
+spark-sql \
+--conf "spark.sql.parquet.writeLegacyFormat=true"  \
+--conf "spark.dynamicAllocation.minExecutors=20" \
+--conf "spark.dynamicAllocation.initialExecutors=20" \
+--conf "spark.dynamicAllocation.maxExecutors=60" \
 
-
+--conf "spark.app.name=dwb_ac_activate_add_cart_goods" \
+--conf "spark.sql.shuffle.partitions=280" \
+--conf "spark.dynamicAllocation.maxExecutors=180" \
+-e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
