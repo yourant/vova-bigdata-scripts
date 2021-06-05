@@ -106,6 +106,8 @@ create table if not exists tmp.tmp_vova_goods_reach_norm_detail_${table_suffix} 
     and dg.brand_id = 0 -- 非brand商品
     and to_date(dm.first_publish_time) >= date_sub('${cur_date}', 90) -- ID对应的店铺为近3个月的新激活店铺（店铺首次上架商品的时间）
     and to_date(dm.first_publish_time) <= '${cur_date}'
+    and t1.pt='${cur_month}'
+    and t2.pt='${cur_date}'
 ;
 
 -- 每个商品 当月超过日阈值的天数
