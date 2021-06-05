@@ -15,6 +15,7 @@ nodes:
       - sqoop_mlb_vova_goods_second_cat
       - sqoop_mlb_rec_m_catlike_d
       - sqoop_mlb_vova_rec_m_user_cat_expand_d
+      - sqoop_mlb_vova_gender_hot_goods_d
 
   - name: start_flag
     type: command
@@ -269,3 +270,22 @@ nodes:
       - start_flag
       - judge_mlb_vova_rec_m_user_cat_expand_d
 
+# 兜底策略&rating分相关数据 mlb_vova_gender_hot_goods_d
+  - name: judge_mlb_vova_gender_hot_goods_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_gender_hot_goods_d
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: sqoop_mlb_vova_gender_hot_goods_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/gender_hot_goods_d/sqoop_export.sh
+      retries: 20
+      retry.backoff: 1800000
+    dependsOn:
+      - start_flag
+      - judge_mlb_vova_gender_hot_goods_d
