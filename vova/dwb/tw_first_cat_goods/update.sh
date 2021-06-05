@@ -46,7 +46,7 @@ group by cube (
                    ELSE 'old' END, nvl(b.first_cat_name, 'NA'));
 
 
-insert overwrite table tmp.tmp_vova_TW_clk as
+insert overwrite table tmp.tmp_vova_TW_clk
 select /*+ REPARTITION(2) */
        nvl(case
                when a.platform = 'pc' then 'pc'
