@@ -13,10 +13,10 @@ nodes:
       - ads_vova_activity_ac_brand
       - ads_vova_activity_best_sale
       - ads_vova_activity_clearance_sale
-      - ads_vova_activity_daily_selection
+#      - ads_vova_activity_daily_selection
       - ads_vova_activity_home_garden
       - ads_vova_activity_men_cloth_and_shoes
-      - ads_vova_activity_outlets
+#      - ads_vova_activity_outlets
       - ads_vova_activity_women_cloth
       - ads_vova_activity_women_clothing_clearance_sale
       - ads_vova_activity_user_only
@@ -157,15 +157,15 @@ nodes:
       - judge_dim_vova_goods
 
 
-  - name:  ads_vova_activity_daily_selection
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_daily_selection/update.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - judge_dwd_vova_activity_goods_ctry_behave
-      - judge_dim_vova_goods
+#  - name:  ads_vova_activity_daily_selection
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_daily_selection/update.sh
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - judge_dwd_vova_activity_goods_ctry_behave
+#      - judge_dim_vova_goods
 
 
   - name:  ads_vova_activity_home_garden
@@ -190,16 +190,16 @@ nodes:
       - judge_dim_vova_goods
       - judge_ads_vova_min_price_goods_d
 
-  - name:  ads_vova_activity_outlets
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_outlets/update.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - judge_dwd_vova_activity_goods_ctry_behave
-      - judge_dim_vova_goods
-      - judge_ads_vova_min_price_goods_d
+#  - name:  ads_vova_activity_outlets
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_outlets/update.sh
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - judge_dwd_vova_activity_goods_ctry_behave
+#      - judge_dim_vova_goods
+#      - judge_ads_vova_min_price_goods_d
 
 
   - name:  ads_vova_activity_women_cloth
