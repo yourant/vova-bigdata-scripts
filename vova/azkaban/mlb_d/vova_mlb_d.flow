@@ -29,6 +29,7 @@ nodes:
       - mlb_vova_rec_m_user_cat_expand_d
       - mlb_vova_six_mct_get_data
       - mlb_vova_gender_hot_goods_d
+      - mlb_vova_buyer_negative_feedback
 
   - name: start_flag
     type: command
@@ -531,3 +532,13 @@ nodes:
     dependsOn:
       - judge_ads_vova_goods_portrait
       - judge_mlb_vova_rec_b_goods_score_d_message_get
+
+# 用户负反馈 每天删除 mysql 过期负反馈数据 mlb_vova_buyer_negative_feedback
+  - name: mlb_vova_buyer_negative_feedback
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/buyer_negative_feedback/update.sh
+    dependsOn:
+      - start_flag
+
+
