@@ -150,44 +150,6 @@ nodes:
     dependsOn:
       - judge_mlb_vova_goods_second_cat
 
-# [8523]Tik Tok渠道用户推荐优化 a recall_poll
-  - name: judge_ads_vova_channel_region_top
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_channel_region_top
-      retries: 10
-      retry.backoff: 300000
-    dependsOn:
-      - start_flag
-
-  - name: sqoop_ads_vova_channel_region_top
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_channel_optimize/sqoop_export_channel_region_top.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - judge_ads_vova_channel_region_top
-
-# [8523]Tik Tok渠道用户推荐优化 b  recall_poll
-  - name: judge_ads_vova_age_range_top
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_age_range_top
-      retries: 10
-      retry.backoff: 300000
-    dependsOn:
-      - start_flag
-
-  - name: sqoop_ads_vova_age_range_top
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_channel_optimize/sqoop_export_age_range_top.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - judge_ads_vova_age_range_top
-
 # [9166]首页新增用户类目偏好发现召回-导数 3 张表 heliu
 ## mlb_rec_m_catlike_d
   - name: judge_mlb_rec_m_catlike_d
