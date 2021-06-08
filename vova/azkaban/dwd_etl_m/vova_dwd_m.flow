@@ -1,0 +1,48 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - dwd_vova_fact_start_up_m
+
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: judge_dwd_vova_log_screen_view
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_screen_view
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_start_up
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_start_up
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+# 一个月跑一次, 必须在每月一号调度
+  - name: dwd_vova_fact_start_up_m
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwd/start_up/update_m.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_screen_view
+      - judge_dwd_vova_fact_start_up
+    condition: all_success
