@@ -3,6 +3,7 @@
 path=$1
 tableName=$2
 catId=$3
+
 spark-submit \
   --master yarn  \
   --conf spark.app.name=GoodsCatAttribute_$catId \
