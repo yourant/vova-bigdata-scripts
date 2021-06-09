@@ -17,7 +17,7 @@ sqoop export \
 --hcatalog-database ads \
 --hcatalog-table ads_mct_behave_3m \
 --update-key pt,mct_id \
---columns pt,mct_id,mct_name,confirm_order_cnt_3m,confirm_order_cnt_1m,order_cnt_1m,gmv_1m,refund_rate_9w,wl_refund_rate_9w,nwl_refund_rate_9w,mct_cancel_cnt,mct_cancel_rate,mark_deliver_rate,online_rate,loss_weight_rate,exp_income,second_cat_ids \
+--columns pt,mct_id,mct_name,confirm_order_cnt_3m,confirm_order_cnt_1m,order_cnt_1m,gmv_1m,refund_rate_9w,wl_refund_rate_9w,nwl_refund_rate_9w,mct_cancel_cnt,mct_cancel_rate,mark_deliver_rate,online_rate,loss_weight_rate,exp_income,second_cat_ids,year_refund_rate,received_rate_9w,received_rate_year,delivered_time_per_60,delivered_time_per_80,delivered_time_per_90 \
 --hcatalog-partition-keys pt  \
 --hcatalog-partition-values  ${pre_date} \
 --fields-terminated-by '\001' \

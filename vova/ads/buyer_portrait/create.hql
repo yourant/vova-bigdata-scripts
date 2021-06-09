@@ -24,6 +24,7 @@ CREATE external TABLE IF NOT EXISTS ads.ads_vova_buyer_portrait_d
 
 
 alter table ads.ads_vova_buyer_portrait_d add columns(`sub_new_buyers` int comment '1.首单在七日内次新人用户，0.其它');
+alter table ads.ads_vova_buyer_portrait_d add columns(`is_order_complete` int comment 'is_order_complete :1是，0否') cascade;
 
 drop table ads.ads_vova_buyer_push_portrait;
 CREATE external TABLE IF NOT EXISTS ads.ads_vova_buyer_push_portrait
@@ -56,7 +57,6 @@ CREATE external TABLE IF NOT EXISTS ads.ads_vova_buyer_push_portrait
  PARTITIONED BY ( pt string) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
 alter table ads.ads_vova_buyer_push_portrait add columns(`gmv_stage` int comment '国家近三月客单价分层，1:小于1倍客单价，2：大于等于1倍客单价小于2倍客单价，3：大于等于2倍客单价小于等于3倍客单价，4：大于等于3倍客单价') cascade;
-
 
 
 

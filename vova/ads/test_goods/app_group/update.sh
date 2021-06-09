@@ -98,14 +98,14 @@ current_timestamp() as create_time,
 current_timestamp() as last_update_time
 from
 tmp_date t1
-where t1.datasource = 'vova_app_site' and impressions <= 1000 and ctr >= 0.02
-and exists
+where t1.datasource = 'vova_app_site' and impressions <= 1000 and gmv >0 and ctr >= 0.03 and gcr>60
+-- and exists
 -- vova 数据判断
-(
-select
-1
-from tmp_date t2 where datasource = 'vova' and is_brand = 1 and sales_order >= 7 and ctr > 0.02 and t1.goods_id = t2.goods_id
-)
+-- (
+-- select
+-- 1
+-- from tmp_date t2 where datasource = 'vova' and is_brand = 1 and sales_order >= 7 and ctr > 0.02 and t1.goods_id = t2.goods_id
+-- )
 ;
 "
 
@@ -140,3 +140,7 @@ spark-submit --master yarn \
 --name "ads_vova_app_group_test_goods_export" \
 --class com.vova.bigdata.sparkbatch.dataprocess.ads.AppGroupGoodsTest s3://vomkt-emr-rec/jar/vova-bigdata/vova-bigdata-sparkbatch/vova-bigdata-sparkbatch-1.0-SNAPSHOT.jar \
 --envFile prod --pt ${pre_date} --tableName test_goods_behave
+
+if [ $? -ne 0 ]; then
+  exit 1
+fi
