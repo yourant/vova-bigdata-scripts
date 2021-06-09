@@ -27,8 +27,12 @@ from
 left join
   ods_vova_vbts.ods_vova_rec_gid_pic_similar rgps
 on fp.goods_id = rgps.goods_id
+left join
+  dim.dim_vova_goods dg
+on fp.goods_id = dg.goods_id
 where from_unixtime(to_unix_timestamp(fp.pay_time), 'yyyy-MM') = substr('${cur_date}',0,7)
   and fp.datasource = 'vova'
+  and dg.brand_id = 0
 group by fp.first_cat_id, rgps.group_id
 ;
 "

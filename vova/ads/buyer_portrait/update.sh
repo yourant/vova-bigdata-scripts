@@ -16,7 +16,8 @@ nvl(bp.ship_cnt_his,0) ship_cnt_his,
 nvl(bp.max_visits_cnt_cw,0) max_visits_cnt_cw,
 nvl(bp.price_prefer_1w,'') price_range,
 nvl(gs.gmv_stage,0) as gmv_stage,
-nvl(abp.sub_new_buyers,0) as sub_new_buyers
+nvl(abp.sub_new_buyers,0) as sub_new_buyers,
+nvl(abp.is_order_complete,0) as is_order_complete
 from dws.dws_vova_buyer_portrait bp
 left join  ads.ads_vova_buyer_gmv_stage_3m gs
 on bp.buyer_id = gs.buyer_id

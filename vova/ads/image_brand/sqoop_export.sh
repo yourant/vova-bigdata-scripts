@@ -23,7 +23,7 @@ echo ${resp}
 
 freedoms=`echo $resp | jq '.data' | jq '.freedoms' | sed -e 's/^"//' -e 's/"$//' | sed 's.\\\\..g'`
 echo ${freedoms}
-pt=`echo ${freedoms} | jq '.pt' | sed $'s/\"//g'`
+pt=`echo ${freedoms} | jq '.dt' | sed $'s/\"//g'`
 echo "pt: ${pt}"
 
 echo "pre_date: ${pre_date}"

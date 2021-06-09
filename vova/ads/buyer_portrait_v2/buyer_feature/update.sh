@@ -66,6 +66,8 @@ left join (select distinct buyer_id, 1 is_clk from dwd.dwd_vova_log_goods_click 
 
 INSERT overwrite TABLE ads.ads_vova_buyer_portrait_feature partition(pt='$pre_date')
 SELECT
+/*+ repartition(200) */
+/*+ broadcast(boc) */
   db.buyer_id,
   db.gender AS reg_gender,
   db.user_age_group AS reg_age_group,
@@ -109,7 +111,8 @@ SELECT
   nvl(tmp_email.email_act,0) as email_act,
   nvl(gs.gmv_stage,0) as gmv_stage,
   nvl(bbl.is_brand,0) as is_brand,
-  if(datediff('$pre_date',db.first_order_time)>=0 and datediff('$pre_date',db.first_order_time)<7,1,0) as sub_new_buyers
+  if(datediff('$pre_date',db.first_order_time)>=0 and datediff('$pre_date',db.first_order_time)<7,1,0) as sub_new_buyers,
+  nvl(boc.is_order_complete,0) as is_order_complete
 FROM
   dim.dim_vova_buyers db
   LEFT JOIN dim.dim_vova_devices dd ON dd.device_id = db.current_device_id
@@ -388,6 +391,7 @@ left join ads.ads_vova_buyer_gmv_stage_3m gs
 on db.buyer_id = gs.buyer_id
 left join ads.ads_vova_buyer_brand_level bbl
 on db.buyer_id = bbl.buyer_id
+left join ads.ads_vova_buyer_order_complate boc on db.buyer_id = boc.buyer_id
 
 "
 

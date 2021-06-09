@@ -11,8 +11,6 @@ nodes:
       command: echo "stop job"
     dependsOn:
       - ads_vova_mct_manage_module
-      - ads_vova_channel_region_top
-      - ads_vova_age_range_top
       - ads_vova_red_packet_gsn_goods
       - ads_vova_royalty_threshold_detail_d_job_message_put
 
@@ -160,33 +158,6 @@ nodes:
       - judge_dwd_vova_fact_logistics
       - judge_ads_vova_traff_control
 
-# [8523]Tik Tok渠道用户推荐优化：
-### a.统计Tik Tok渠道top5国家，每个国家/全站各取销量最高top200商品，根据用户的国家获取相应的商品
-  - name: ads_vova_channel_region_top
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_channel_optimize/update_channel_region_top.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - judge_dwd_vova_fact_pay
-      - judge_dim_vova_goods
-      - judge_dim_vova_buyers
-      - judge_dim_vova_devices
-      - judge_dim_vova_region
-
-### b.统计0~18和18~35年龄段用户，各取两个段内销量最高的top100商品
-  - name: ads_vova_age_range_top
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_channel_optimize/update_age_range_top.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - judge_dwd_vova_fact_pay
-      - judge_dim_vova_goods
-      - judge_dim_vova_buyers
-
 # [8525]商家红包替换逻辑改为gsn逻辑
 ### 红包商品对应 gsn 下的全部 goods_id
   - name: ads_vova_red_packet_gsn_goods
@@ -222,25 +193,6 @@ nodes:
 
 
 ## export #############################################################
-# 迁到 vova/azkaban/mlb_export_d/vova_mlb_export_d.flow
-#  - name: sqoop_ads_vova_channel_region_top
-#    type: command
-#    config:
-#      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_channel_optimize/sqoop_export_channel_region_top.sh
-#      retries: 5
-#      retry.backoff: 600000
-#    dependsOn:
-#      - ads_vova_channel_region_top
-#
-#  - name: sqoop_ads_vova_age_range_top
-#    type: command
-#    config:
-#      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_channel_optimize/sqoop_export_age_range_top.sh
-#      retries: 5
-#      retry.backoff: 600000
-#    dependsOn:
-#      - ads_vova_age_range_top
-
 # 迁到 vova/azkaban/ads_export_d/vova_ads_export_bi.flow
 #  - name: sqoop_ads_vova_red_packet_gsn_goods
 #    type: command

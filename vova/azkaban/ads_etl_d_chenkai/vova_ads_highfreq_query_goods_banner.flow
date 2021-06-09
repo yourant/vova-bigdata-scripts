@@ -1,0 +1,119 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_highfreq_query_goods_banner_message_put
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+## judge ############################################
+
+  - name: judge_dim_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+#### ads.ads_vova_bod_name_translation  ads_vova_bod_goods_rank_data
+  - name: judge_ads_vova_bod_goods_rank_data
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_bod_goods_rank_data
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_rec_m_tagcombine_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_rec_m_tagcombine_d
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+#### ads.ads_vova_image_matting
+#  - name: judge_ads_goods_banner_pre
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_goods_banner_pre
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - start_flag
+
+#### mlb.mlb_vova_highfreq_query_match_d; mlb.mlb_vova_highfreq_query_mapping_d
+  - name: judge_mlb_rec_highfreq_query
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_rec_highfreq_query
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+#### mlb.mlb_vova_rec_b_catgoods_score_d
+  - name: judge_mlb_vova_rec_b_goods_score_d_message_get
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=mlb_goods_score_vova --from=mlb --to=data --valid_hour=6
+      retries: 45
+      retry.backoff: 1200000
+    dependsOn:
+      - start_flag
+
+# 获取前一天算法消息
+  - name: judge_message_get_ads_vova_home_info_banner
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get_last.sh --jname=ads_vova_home_info_banner_pcv --from=cv --to=data
+      retries: 10
+      retry.backoff: 1200000
+    dependsOn:
+      - start_flag
+
+## job #############################################################
+
+# [9485] 搜索词会场个性化banner图像提取-取数
+  - name: ads_vova_highfreq_query_goods_banner
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/highfreq_query_goods_banner/get_data.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_ads_vova_bod_goods_rank_data
+      - judge_ads_vova_rec_m_tagcombine_d
+#      - judge_ads_goods_banner_pre
+      - judge_mlb_rec_highfreq_query
+      - judge_mlb_vova_rec_b_goods_score_d_message_get
+      - judge_message_get_ads_vova_home_info_banner
+
+
+  - name: ads_vova_highfreq_query_goods_banner_message_put
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=ads_vova_home_info_banner_qdata --from=data --to=cv --jtype=1D --retry=0
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - ads_vova_highfreq_query_goods_banner
+
+
+
