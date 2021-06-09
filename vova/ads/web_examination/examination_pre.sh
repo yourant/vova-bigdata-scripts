@@ -266,7 +266,8 @@ spark-sql \
 --executor-memory 8G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=10" \
---conf "spark.dynamicAllocation.initialExecutors=20" \
+--conf "spark.dynamicAllocation.initialExecutors=10" \
+--conf "spark.dynamicAllocation.maxExecutors=40" \
 --conf "spark.app.name=ads_vova_web_examination_pre" \
 --conf "spark.sql.crossJoin.enabled=true" \
 --conf "spark.default.parallelism = 280" \

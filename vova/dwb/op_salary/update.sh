@@ -61,6 +61,7 @@ from ods_vova_vbd.ods_vova_test_goods_behave
 ) t where rank=1 and create_time>='2021-04-01 00:00:00' and test_result =1 and employee_name !='computer' and trunc(create_time,'MM')='$cur_month'
 ) t
 left join dim.dim_vova_goods g on t.goods_id = g.goods_id
+where g.brand_id =0
 ) t1
 join
 (
@@ -82,7 +83,7 @@ g.first_cat_id,
 sum(p.shop_price * p.goods_number + p.shipping_fee) gmv
 from dwd.dwd_vova_fact_pay p
 join dim.dim_vova_goods g on p.goods_id = g.goods_id
-where trunc(pay_time,'MM')='$cur_month'
+where trunc(pay_time,'MM')='$cur_month' and g.brand_id=0
 group by if(g.group_id=-1,g.goods_id * -1,g.group_id),g.first_cat_id
 ) t join ads.ads_vova_royalty_threshold_d r on t.first_cat_id = r.first_cat_id
 where pt='$cur_date'
@@ -105,12 +106,13 @@ from
 (
 select
 to_date(pay_time) event_date,
-goods_id,
-first_cat_name,
-sum(shop_price * goods_number + shipping_fee) gmv
-from dwd.dwd_vova_fact_pay
-where trunc(pay_time,'MM')='$cur_month'
-group by to_date(pay_time), goods_id,first_cat_name
+p.goods_id,
+p.first_cat_name,
+sum(p.shop_price * p.goods_number + p.shipping_fee) gmv
+from dwd.dwd_vova_fact_pay p
+join dim.dim_vova_goods g on p.goods_id = g.goods_id
+where trunc(pay_time,'MM')='$cur_month' and g.brand_id=0
+group by to_date(pay_time), p.goods_id,p.first_cat_name
 ) t join dwb.dwb_vova_op_salary_thd r on t.first_cat_name = r.first_cat_name
 where pt='$cur_month'
 ) t group by goods_id

@@ -453,8 +453,8 @@ select /*+ REPARTITION(1) */
   t1.second_cat_id,
   regexp_replace(if(t1.second_cat_id = 'all', 'all', t3.second_cat_name),'\'','') second_cat_name,
   t1.is_brand,
-  gsn_cnt,   -- gsn总数
-  applying_gsn_cnt,   -- 报名中gsn总数
+  gsn_cnt.gsn_cnt,   -- gsn总数
+  gsn_cnt.applying_gsn_cnt,   -- 报名中gsn总数
   replenish_applying_gsn_cnt,   -- 补充报名中gsn总数
   activity_gsn_cnt,   -- 活动中gsn总数
   group_gsn_cnt,   -- 成团gsn数量
@@ -470,7 +470,7 @@ from
     nvl(first_cat_id, 'all') first_cat_id,
     nvl(second_cat_id, 'all') second_cat_id,
     nvl(is_brand, 'all') is_brand,
-    count(distinct goods_sn) gsn_cnt,
+    count(distinct goods_sn) gsn_cnt, -- 当前商家报名的商品 gsn
     count(distinct applying_gsn_cnt) applying_gsn_cnt,
     count(distinct replenish_applying_gsn_cnt) replenish_applying_gsn_cnt,
     count(distinct activity_gsn_cnt) activity_gsn_cnt,
@@ -484,7 +484,7 @@ from
       nvl(dg.first_cat_id, 'unknown') first_cat_id,
       nvl(dg.second_cat_id, 'unknown') second_cat_id,
       if(dg.brand_id > 0, 'Y', 'N') is_brand,
-      dg.goods_sn goods_sn, -- gsn
+      dg.goods_sn goods_sn, -- 当前商家报名的商品 gsn
       dg.goods_id goods_id,
       if(t1.gsn_status = 1, goods_sn, null) applying_gsn_cnt, -- 报名中gsn
       if(t1.gsn_status = 2, goods_sn, null) replenish_applying_gsn_cnt, -- 补充报名中gsn
@@ -506,7 +506,6 @@ from
         ods_vova_vts.ods_vova_gsn_coupon_sign_goods gcsg
       on gca.goods_sn = gcsg.goods_sn
       where gca.is_delete = 0 and gca.gsn_status != 4
-
       union all
       select
         gcshl.goods_id goods_id,
@@ -522,6 +521,32 @@ from
   )
   group by cube(first_cat_id, second_cat_id, is_brand)
 ) t1
+left join
+(
+  select
+    nvl(first_cat_id, 'all') first_cat_id,
+    nvl(second_cat_id, 'all') second_cat_id,
+    nvl(is_brand, 'all') is_brand,
+    count(distinct goods_sn) gsn_cnt, -- gsn 总数
+    count(distinct applying_gsn) applying_gsn_cnt -- 报名中gsn数
+  from
+  (
+    select
+      nvl(dg.first_cat_id, 'unknown') first_cat_id,
+      nvl(dg.second_cat_id, 'unknown') second_cat_id,
+      if(dg.brand_id > 0, 'Y', 'N') is_brand,
+      dg.goods_sn, -- 总 gsn
+      if(gca.gsn_status=1, dg.goods_sn, null) applying_gsn -- 报名中gsn
+    from
+      ods_vova_vts.ods_vova_gsn_coupon_activity gca
+    left join
+      dim.dim_vova_goods dg
+    on gca.goods_id = dg.goods_id
+    where gca.is_delete = 0 and gca.gsn_status > 0
+  )
+  group by cube(first_cat_id, second_cat_id, is_brand)
+) gsn_cnt
+on t1.first_cat_id = gsn_cnt.first_cat_id and t1.second_cat_id = gsn_cnt.second_cat_id and t1.is_brand = gsn_cnt.is_brand
 left join
 (
   select

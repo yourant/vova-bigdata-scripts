@@ -51,6 +51,21 @@ derived_ts ts,
 null order_id
 from dwd.dwd_fd_session_channel where pt>='${pre_month}'
 union all
+select distinct
+if(ga_channel='',null,ga_channel) ga_channel,
+if(mkt_source='',null,mkt_source) mkt_source,
+if(campaign_name='',null,campaign_name) campaign_name,
+if(campaign_id='',null,campaign_id) campaign_id,
+if(adgroup_id='',null,adgroup_id) adgroup_id,
+if(mkt_medium='',null,mkt_medium) mkt_medium,
+if(mkt_term='',null,mkt_medium) mkt_term,
+domain_userid,
+derived_ts,
+derived_ts ts,
+'click' event_name,
+null order_id
+from dwd.dwd_fd_session_channel_arc where pt>='${pt}'
+union all
 select
 null ga_channel,
 null mkt_source,
@@ -59,11 +74,21 @@ null campaign_id,
 null adgroup_id,
 null mkt_medium,
 null mkt_term,
-sp_duid domain_userid,
+ud.sp_duid domain_userid,
 null derived_ts,
-from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss') ts,
+unix_timestamp(to_utc_timestamp(order_time, 'America/Los_Angeles'),'yyyy-MM-dd HH:mm:ss') ts,
 'order' event_name,
 order_id
-from dwd.dwd_fd_order_info where to_date(from_unixtime(order_time,'yyyy-MM-dd HH:mm:ss'))>='${pre_two_pt}'
+from ods_fd_vb.ods_fd_order_info_h oi
+left join (
+select du.user_id, du.sp_duid
+from (
+select user_id, sp_duid, row_number() OVER (PARTITION BY user_id ORDER BY last_update_time DESC) AS rank
+from ods_fd_vb.ods_fd_user_duid_h
+where sp_duid IS NOT NULL
+) du
+ where du.rank = 1
+) ud ON oi.user_id = ud.user_id
+ where to_date(from_unixtime(unix_timestamp(to_utc_timestamp(order_time, 'America/Los_Angeles'),'yyyy-MM-dd HH:mm:ss'),'yyyy-MM-dd HH:mm:ss'))>='${pre_two_pt}'
 ) t
 ) t where event_name='order';

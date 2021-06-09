@@ -62,7 +62,9 @@ create table dwb.dwb_vova_royalty_norm
 PARTITIONED BY ( pt string) STORED AS PARQUETFILE
 ;
 
--- t2: 商品达标明细
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_royalty_norm/*
+
+--*/ t2: 商品达标明细
 create table dwb.dwb_vova_goods_reach_norm_detail
 (
     first_cat_id          bigint        COMMENT '一级品类ID',
@@ -74,6 +76,9 @@ create table dwb.dwb_vova_goods_reach_norm_detail
 PARTITIONED BY(pt string) STORED AS PARQUETFILE
 ;
 
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_goods_reach_norm_detail/*
+
+-- */ dwb.dwb_vova_goods_group_inc
 drop table dwb.dwb_vova_goods_group_inc;
 create table dwb.dwb_vova_goods_group_inc
 (
@@ -84,7 +89,9 @@ create table dwb.dwb_vova_goods_group_inc
 PARTITIONED BY(pt string) STORED AS PARQUETFILE
 ;
 
--- t3: 提成汇总
+hadoop fs -du -s -h s3://bigdata-offline/warehouse/dwb/dwb_vova_goods_group_inc/*
+
+-- */ t3: 提成汇总
 create table dwb.dwb_vova_commission
 (
     first_cat_id          bigint        COMMENT '一级品类ID',

@@ -1,8 +1,7 @@
 set hive.exec.dynamic.partition.mode=nonstrict;
 set hive.exec.dynamic.partition=true;
 
-drop table tmp.tmp_dwb_fd_ad_cost_gmv;
-create table tmp.tmp_dwb_fd_ad_cost_gmv as
+insert overwrite table tmp.tmp_dwb_fd_ad_cost_gmv
 select /*+ REPARTITION(1) */
     nvl(date, 'all')                                              AS event_date,
     nvl(if(ads_site_code = 'FD', 'floryday', 'airydress'), 'all') AS project_name,
@@ -51,8 +50,7 @@ group by date, if(ads_site_code = 'FD', 'floryday', 'airydress'), ga_channel, r.
 with cube
 having event_date != "all";
 
-drop table tmp.tmp_dwb_fd_ad_est;
-create table tmp.tmp_dwb_fd_ad_est as
+insert overwrite table tmp.tmp_dwb_fd_ad_est
 select
 /*+ REPARTITION(1) */
     nvl(install_date, 'all') AS event_date,

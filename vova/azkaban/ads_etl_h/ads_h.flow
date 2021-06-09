@@ -30,6 +30,7 @@ nodes:
       - judge_vova_fact_log_v2_h
       - judge_vova_goods_h
       - judge_vova_category_h
+      - judge_vova_virtual_goods_h
 
 
   - name: judge_vova_fact_log_v2_h
@@ -45,6 +46,15 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_goods_h
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_virtual_goods_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_virtual_goods_h
       retries: 5
       retry.backoff: 600000
     dependsOn:

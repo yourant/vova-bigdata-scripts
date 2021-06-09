@@ -28,7 +28,8 @@ select /*+ REPARTITION(10) */
        t2.pre_position,
        t2.pre_test_info,
        t2.pre_recall_pool,
-       t2.pre_language
+       t2.pre_language,
+       t2.pre_session_id
 from (select og.datasource,
              g.virtual_goods_id,
              g.goods_id,
@@ -56,7 +57,8 @@ from (select og.datasource,
                 absolute_position as pre_position,
                 test_info as pre_test_info,
                 recall_pool as pre_recall_pool,
-                language as pre_language
+                language as pre_language,
+                session_id as pre_session_id
          from (
                   select datasource,
                          virtual_goods_id,
@@ -73,6 +75,7 @@ from (select og.datasource,
                          test_info,
                          recall_pool,
                          language,
+                         session_id,
                          row_number()
                                  over(partition by datasource,device_id,virtual_goods_id
                                  order by dvce_created_tstamp desc) as row_num
@@ -103,7 +106,8 @@ select /*+ REPARTITION(10) */
        t2.pre_position,
        t2.pre_test_info,
        t2.pre_recall_pool,
-       t2.pre_language
+       t2.pre_language,
+       t2.pre_session_id
 from (select datasource,
              goods_id,
              virtual_goods_id,
@@ -130,7 +134,8 @@ from (select datasource,
                 absolute_position as pre_position,
                 test_info as pre_test_info,
                 recall_pool as pre_recall_pool,
-                language as pre_language
+                language as pre_language,
+                session_id as pre_session_id
          from (
                   select datasource,
                          virtual_goods_id,
@@ -147,6 +152,7 @@ from (select datasource,
                          test_info,
                          recall_pool,
                          language,
+                         session_id,
                          row_number() over(partition by datasource,device_id,virtual_goods_id
                                       order by dvce_created_tstamp desc) as row_num
                   from dwd.dwd_vova_log_goods_impression
@@ -174,7 +180,8 @@ select /*+ REPARTITION(1) */
        pre_position,
        pre_test_info,
        pre_recall_pool,
-       pre_language
+       pre_language,
+       pre_session_id
 from
 (
 select
@@ -192,7 +199,8 @@ select
        pre_position,
        pre_test_info,
        pre_recall_pool,
-       pre_language
+       pre_language,
+       pre_session_id
 from tmp.tmp_vova_fact_order_cause_v2_glk_cause
 where pre_page_code is not null
 union all
@@ -211,7 +219,8 @@ select
        pre_position,
        pre_test_info,
        pre_recall_pool,
-       pre_language
+       pre_language,
+       pre_session_id
 from tmp.tmp_vova_fact_order_cause_v2_expre_cause
 ) t where order_goods_id is not null;
 "

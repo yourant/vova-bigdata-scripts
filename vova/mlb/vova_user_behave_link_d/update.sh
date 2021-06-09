@@ -7,22 +7,18 @@ now_date=`date -d "-1 days ago ${cur_date}" +%Y-%m-%d`
 
 
 spark-sql \
---driver-memory 8G \
---executor-memory 16G --executor-cores 4 \
+--executor-memory 8G --executor-cores 1 \
 --conf "spark.blacklist.enabled=true" \
---conf "spark.sql.parquet.writeLegacyFormat=true"  \
---conf "spark.dynamicAllocation.minExecutors=5" \
---conf "spark.dynamicAllocation.initialExecutors=20" \
 --conf "spark.app.name=mlb_vova_user_behavior_link" \
 --conf "spark.sql.crossJoin.enabled=true" \
---conf "spark.default.parallelism = 300" \
---conf "spark.sql.shuffle.partitions=300" \
---conf "spark.dynamicAllocation.maxExecutors=150" \
+--conf "spark.default.parallelism = 500" \
+--conf "spark.sql.shuffle.partitions=500" \
+--conf "spark.dynamicAllocation.maxExecutors=250" \
 --conf "spark.sql.adaptive.enabled=true" \
 --conf "spark.sql.adaptive.join.enabled=true" \
 --conf "spark.shuffle.sort.bypassMergeThreshold=10000" \
---conf "spark.driver.maxResultSize=8G" \
 -e"
+
 
 insert overwrite table tmp.tmp_user_behavior_link_add_clk_tmp
 SELECT event_fingerprint,
@@ -54,7 +50,7 @@ SELECT event_fingerprint,
 ;
 
 
-insert overwrite table tmp.tmp_vova_user_clk_behave_link_d_distinct
+insert overwrite table tmp.tmp_vova_user_clk_behave_link_d_distinct partition(pt='$cur_date')
 select /*+ REPARTITION(200) */
 session_id    ,
 buyer_id      ,
@@ -918,7 +914,7 @@ select  /*+ REPARTITION(30) */
 from tmp.tmp_user_behavior_link_add_clks_final a
 left join (select a.device_id,a.buyer_id,a.collector_tstamp,b.goods_id from dwd.dwd_vova_log_common_click a
             left join dim.dim_vova_goods b on cast(a.element_id AS BIGINT) = b.virtual_goods_id
-            where a.pt <= '$cur_date' and a.pt >= date_sub('$cur_date',2)
+            where a.pt <= '$cur_date' and a.pt >= date_sub('$cur_date',1)
            and a.platform = 'mob' and a.page_code = 'product_detail'
            and a.element_name in ('pdAddToCartSuccess')
     ) c on a.buyer_id = c.buyer_id and a.device_id = c.device_id and unix_timestamp(a.expre_time,'yyyy-MM-dd HH:mm:ss') * 1000 > c.collector_tstamp
@@ -1471,7 +1467,6 @@ group by     a.session_id    ,
 if [ $? -ne 0 ];then
   exit 1
 fi
-
 
 
 
