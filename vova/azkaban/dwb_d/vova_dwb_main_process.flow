@@ -11,6 +11,7 @@ nodes:
       command: echo "stop job"
     dependsOn:
       - dwb_vova_main_process
+      - dwb_vova_bystore_main_process_email
 
   - name: start_flag
     type: command
@@ -114,6 +115,31 @@ nodes:
       - judge_dwd_vova_log_order_process
       - judge_dwd_vova_fact_buyer_device_releation
       - judge_dwd_vova_fact_activity_order_goods
+
+  - name: dwb_vova_bystore_main_process
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/bystore_main_process_email/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_devices
+      - judge_dim_vova_order_goods
+      - judge_dwd_vova_fact_pay
+      - judge_dwd_vova_log_screen_view
+      - judge_dwd_vova_log_common_click
+      - judge_dwd_vova_log_order_process
+      - judge_dwd_vova_fact_buyer_device_releation
+      - judge_dwd_vova_fact_activity_order_goods
+
+  - name: dwb_vova_bystore_main_process_email
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/bystore_main_process_email/email.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - dwb_vova_bystore_main_process
 
 
 

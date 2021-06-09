@@ -66,32 +66,6 @@ where g.brand_id =0
 join
 (
 select
-group_id,
-first_cat_id
-from
-(
-select
-t.group_id,
-t.first_cat_id,
-t.gmv,
-r.month_sale_threshold
-from
-(
-select
-if(g.group_id=-1,g.goods_id * -1,g.group_id) group_id,
-g.first_cat_id,
-sum(p.shop_price * p.goods_number + p.shipping_fee) gmv
-from dwd.dwd_vova_fact_pay p
-join dim.dim_vova_goods g on p.goods_id = g.goods_id
-where trunc(pay_time,'MM')='$cur_month' and g.brand_id=0
-group by if(g.group_id=-1,g.goods_id * -1,g.group_id),g.first_cat_id
-) t join ads.ads_vova_royalty_threshold_d r on t.first_cat_id = r.first_cat_id
-where pt='$cur_date'
-) t where gmv>month_sale_threshold
-) t2 on t1.group_id = t2.group_id  and t1.first_cat_id = t2.first_cat_id
-join
-(
-select
 goods_id,
 sum(gmv_more) cnt
 from
@@ -116,7 +90,7 @@ group by to_date(pay_time), p.goods_id,p.first_cat_name
 ) t join dwb.dwb_vova_op_salary_thd r on t.first_cat_name = r.first_cat_name
 where pt='$cur_month'
 ) t group by goods_id
-having cnt >7
+having cnt >3
 ) t3 on t1.goods_id = t3.goods_id
 left join dim.dim_vova_mct_op o on t1.first_cat_name = o.first_cat_name;
 
@@ -124,6 +98,8 @@ insert overwrite table dwb.dwb_vova_op_salary_summary PARTITION (pt = '${cur_mon
 select
 /*+ REPARTITION(1) */
 first_cat_name,
+op,
+mct_op,
 count(if(is_self='Y',g.goods_id,null)) self_goods_cnt,
 count(if(is_self='N',g.goods_id,null)) no_self_goods_cnt,
 count(if(is_self='Y',g.goods_id,null)) * 200 + count(if(is_self='N',g.goods_id,null))* 100 op_amount,
@@ -132,11 +108,23 @@ from dwb.dwb_vova_op_salary_goods_ok g
 left join (select group_id from dwb.dwb_vova_op_salary_goods_ok  where pt<'${cur_month}' group by group_id) t1 on g.group_id = t1.group_id
 left join (select goods_id from dwb.dwb_vova_op_salary_goods_ok  where pt<'${cur_month}' group by goods_id) t2 on g.goods_id = t2.goods_id
 where pt = '${cur_month}' and t1.group_id is null and t2.goods_id is null
-group by first_cat_name;
+group by first_cat_name,op,mct_op;
 "
 #如果使用spark-sql运行，则执行spark-sql -e
 spark-sql --conf "spark.app.name=dwb_vova_op_salary_zhangyin" --conf "spark.dynamicAllocation.maxExecutors=100" -e "$sql"
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
+fi
+
+cnt=$(spark-sql -e "select count(*) from dwb.dwb_vova_op_salary_goods_ok where pt='${cur_month}';" | tail -1)
+echo ${cnt}
+if [ ${cnt} -le 0 ]; then
+  spark-sql -e "alter table dwb.dwb_vova_op_salary_goods_ok drop if exists partition (pt='${cur_month}');"
+fi
+
+cnt=$(spark-sql -e "select count(*) from dwb.dwb_vova_op_salary_thd where pt='${cur_month}';" | tail -1)
+echo ${cnt}
+if [ ${cnt} -le 0 ]; then
+  spark-sql -e "alter table dwb.dwb_vova_op_salary_thd  drop if exists partition (pt='${cur_month}');"
 fi
