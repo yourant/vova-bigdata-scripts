@@ -42,7 +42,7 @@ from
     
     union all
     select
-      0 gender,
+      2 gender,
       goods_id,
       second_cat_id
     from
@@ -55,7 +55,7 @@ from
     
     union all
     select
-      -1 gender, -- 通用
+      0 gender, -- 通用
       goods_id,
       second_cat_id
     from

@@ -21,7 +21,7 @@ drop table if exists rec_recall.mlb_vova_gender_hot_goods_d_new;
 
 create table if not exists rec_recall.mlb_vova_gender_hot_goods_d_new (
 id                   bigint(20)  NOT NULL AUTO_INCREMENT COMMENT '自增主键',
-gender               int         NOT NULL COMMENT '性别:1:男；0:女；-1:通用',
+gender               int         NOT NULL COMMENT '性别:1:男；2:女；0:通用',
 goods_id             bigint      NOT NULL COMMENT '商品id',
 goods_score          double      NOT NULL COMMENT '商品综合评分',
 update_time          datetime    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -32,7 +32,7 @@ update_time          datetime    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIM
 
 create table if not exists rec_recall.mlb_vova_gender_hot_goods_d (
 id                   bigint(20)  NOT NULL AUTO_INCREMENT COMMENT '自增主键',
-gender               int         NOT NULL COMMENT '性别:1:男；0:女；-1:通用',
+gender               int         NOT NULL COMMENT '性别:1:男；2:女；0:通用',
 goods_id             bigint      NOT NULL COMMENT '商品id',
 goods_score          double      NOT NULL COMMENT '商品综合评分',
 update_time          datetime    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
