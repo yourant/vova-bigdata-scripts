@@ -14,16 +14,27 @@ echo "time:${cur_date} ${pre_hour}"
 
 sql="
 set hive.exec.dynamic.partition.mode=nonstrict;
-insert overwrite table ads.ads_vova_new_user_analysis_h partition(pt,hour)
+insert overwrite table ads.ads_goods_expre_analysis_h partition(pt,hour)
 select
-count(distinct(if(t2.buyer_id is null ,fp.buyer_id,null))) as new_user_cnt,
-count(distinct(t2.buyer_id)) as old_user_cnt,
+dg.goods_id,
+dg.first_cat_name,
+if(dg.brand_id>0,1,0) is_brand,
+t1.page_code,
+t1.expre_cnt,
+mr.rank as mct_rank,
 '${cur_date}' as pt,
 '${pre_hour}' as hour
 from
-dwd.dwd_vova_fact_pay_h fp
-left join (select buyer_id from dwd.dwd_vova_fact_pay_h where date(pay_time) < '${cur_date}' group by buyer_id) t2 on fp.buyer_id = t2.buyer_id
-where date(fp.pay_time) = '${cur_date}' and hour(fp.pay_time) <= ${pre_hour}
+(select
+imp.element_id as vir_goods_id,
+imp.page_code,
+count(*) expre_cnt
+from
+dwd.dwd_vova_log_impressions_arc imp
+where imp.pt='${cur_date}' and imp.hour <= '${pre_hour}' and imp.event_type='goods'
+group by imp.page_code,imp.element_id) t1
+inner join dim.dim_vova_goods dg on t1.vir_goods_id = dg.virtual_goods_id
+left join ads.ads_vova_mct_rank mr on  mr.pt = date_add('${cur_date}',-2) and dg.mct_id = mr.mct_id and dg.first_cat_id = mr.first_cat_id
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
 spark-sql \
@@ -32,7 +43,7 @@ spark-sql \
 --conf "spark.dynamicAllocation.minExecutors=5" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
 --conf "spark.dynamicAllocation.maxExecutors=100" \
---conf "spark.app.name=ads_vova_fact_pay_analysis_h" \
+--conf "spark.app.name=ads_goods_expre_analysis_h" \
 --conf "spark.default.parallelism = 380" \
 --conf "spark.sql.shuffle.partitions=380" \
 --conf "spark.sql.adaptive.enabled=true" \

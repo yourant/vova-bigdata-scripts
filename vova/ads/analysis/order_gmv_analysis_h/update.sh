@@ -14,16 +14,27 @@ echo "time:${cur_date} ${pre_hour}"
 
 sql="
 set hive.exec.dynamic.partition.mode=nonstrict;
-insert overwrite table ads.ads_vova_new_user_analysis_h partition(pt,hour)
+insert overwrite table ads.ads_vova_order_gmv_analysis_h partition(pt,hour)
 select
-count(distinct(if(t2.buyer_id is null ,fp.buyer_id,null))) as new_user_cnt,
-count(distinct(t2.buyer_id)) as old_user_cnt,
+t1.country,
+t1.order_cnt,
+t1.gmv,
+nvl((t1.order_cnt - t2.order_cnt)/t2.order_cnt*100,0) as order_cnt_growth_rate,
+nvl((t1.gmv - t2.gmv)/t2.gmv*100,0)                   as gmv_growth_rate,
+dvr.country_name_cn,
 '${cur_date}' as pt,
 '${pre_hour}' as hour
 from
+(select
+region_code as country,
+count(distinct order_id) as order_cnt,
+sum(shop_price*goods_number+shipping_fee) as gmv
+from
 dwd.dwd_vova_fact_pay_h fp
-left join (select buyer_id from dwd.dwd_vova_fact_pay_h where date(pay_time) < '${cur_date}' group by buyer_id) t2 on fp.buyer_id = t2.buyer_id
 where date(fp.pay_time) = '${cur_date}' and hour(fp.pay_time) <= ${pre_hour}
+group by region_code) t1
+left join (select country, max(order_cnt) as order_cnt, max(gmv) as gmv from ads.ads_vova_order_gmv_analysis_h where pt = date_add('${cur_date}',-1) and hour <= ${pre_hour} group by country) t2 on t1.country = t2.country
+left join dim.dim_vova_region dvr on t1.country = dvr.country_code and dvr.parent_id=0 and dvr.country_code is not null
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
 spark-sql \
@@ -32,7 +43,7 @@ spark-sql \
 --conf "spark.dynamicAllocation.minExecutors=5" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
 --conf "spark.dynamicAllocation.maxExecutors=100" \
---conf "spark.app.name=ads_vova_fact_pay_analysis_h" \
+--conf "spark.app.name=ads_vova_order_gmv_analysis_h" \
 --conf "spark.default.parallelism = 380" \
 --conf "spark.sql.shuffle.partitions=380" \
 --conf "spark.sql.adaptive.enabled=true" \

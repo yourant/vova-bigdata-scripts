@@ -28,12 +28,14 @@ nvl(sum(mct_refund_15w)/count(*),0)*100 as mct_refund_15w_rate,
 nvl(sum(is_start_refund_9w)/count(1),0)*100 as start_refund_9w_rate,
 nvl(sum(is_start_refund_lfr_9w)/count(1),0)*100 as start_refund_9w_lrf_rate,
 nvl(sum(is_start_refund_nlfr_9w)/count(1),0)*100 as start_refund_9w_nlrf_rate,
+nvl(is_brand,'all') as is_brand,
 substr(weekday,0,10) as pt
 from
 (select
 concat(date_sub(date(fp.pay_time),if(dayofweek(date(fp.pay_time))=1,6,dayofweek(date(fp.pay_time))-2)),'~',date_add(date(fp.pay_time),if(dayofweek(date(fp.pay_time))=1,0,8-dayofweek(date(fp.pay_time))))) as weekday,
 nvl(fp.region_code,'NALL') as region_code,
 fr.order_goods_id,
+if(og.brand_id>0,'Y','N') as is_brand,
 if(fr.refund_type_id not in (1,7)  and (fr.rr_audit_status = 'audit_passed' or ogs.sku_pay_status = 4),1,0) as is_refund,
 if(fr.refund_type_id not in (1,7)  and ogs.sku_pay_status > 1 and ((fr.rr_audit_status = 'audit_passed' and datediff(fr.rr_audit_time,fp.confirm_time)<63) or (fr.rr_audit_status != 'audit_passed' and ogs.sku_pay_status = 4 and datediff(fr.exec_refund_time,fp.confirm_time)<63))  ,1,0) as is_refund_9w,
 if(fr.refund_type_id not in (1,7)  and ogs.sku_pay_status > 1 and ((fr.rr_audit_status = 'audit_passed' and datediff(fr.rr_audit_time,fp.confirm_time)<84) or (fr.rr_audit_status != 'audit_passed' and ogs.sku_pay_status = 4 and datediff(fr.exec_refund_time,fp.confirm_time)<84)),1,0) as is_refund_12w,
@@ -60,9 +62,12 @@ where date(fp.pay_time) >= date_sub('${start_date}',dayofweek('${start_date}')-2
 and fp.datasource='vova')
 group by
 weekday,
-region_code
+region_code,
+is_brand
 grouping sets(
+(weekday,region_code,is_brand),
 (weekday,region_code),
+(weekday,is_brand),
 (weekday)
 )
 "

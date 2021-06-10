@@ -6,13 +6,10 @@ if [ ! -n "$1" ]; then
   pre_date=$(date -d "-1 day" +%Y-%m-%d)
 fi
 
-sh /mnt/vova-bigdata-scripts/common/table_check.sh  ads.ads_vova_activity_no_brand_goods_pool 800 "pt='${pre_date}'"
-
-
 sql="
-drop table if exists themis.ads_vova_activity_no_brand_goods_pool_pre;
-drop table if exists themis.ads_vova_activity_no_brand_goods_pool_new;
-CREATE TABLE IF NOT EXISTS \`themis\`.\`ads_vova_activity_no_brand_goods_pool_new\` (
+drop table if exists themis.ads_vova_activity_low_price_goods_pre;
+drop table if exists themis.ads_vova_activity_low_price_goods_new;
+CREATE TABLE IF NOT EXISTS \`themis\`.\`ads_vova_activity_low_price_goods_new\` (
   \`id\` int(11) NOT NULL AUTO_INCREMENT,
   \`goods_id\` int(11) NOT NULL COMMENT '商品id',
   \`region_id\` int(11) NOT NULL COMMENT '国家id',
@@ -24,10 +21,9 @@ CREATE TABLE IF NOT EXISTS \`themis\`.\`ads_vova_activity_no_brand_goods_pool_ne
   \`update_time\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (\`id\`) USING BTREE,
   KEY \`region_id_key\` (\`region_id\`),
-  KEY \`goods_id_key\` (\`goods_id\`),
   KEY \`first_cat_id_key\` (\`first_cat_id\`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
-CREATE TABLE IF NOT EXISTS \`themis\`.\`ads_vova_activity_no_brand_goods_pool\` (
+CREATE TABLE IF NOT EXISTS \`themis\`.\`ads_vova_activity_low_price_goods\` (
   \`id\` int(11) NOT NULL AUTO_INCREMENT,
   \`goods_id\` int(11) NOT NULL COMMENT '商品id',
   \`region_id\` int(11) NOT NULL COMMENT '国家id',
@@ -39,7 +35,6 @@ CREATE TABLE IF NOT EXISTS \`themis\`.\`ads_vova_activity_no_brand_goods_pool\` 
   \`update_time\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (\`id\`) USING BTREE,
   KEY \`region_id_key\` (\`region_id\`),
-  KEY \`goods_id_key\` (\`goods_id\`),
   KEY \`first_cat_id_key\` (\`first_cat_id\`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 "
@@ -55,9 +50,9 @@ sqoop export \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
 --username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \
 --m 1 \
---table ads_vova_activity_no_brand_goods_pool_new \
+--table ads_vova_activity_low_price_goods_new \
 --hcatalog-database ads \
---hcatalog-table ads_vova_activity_no_brand_goods_pool \
+--hcatalog-table ads_vova_activity_low_price_goods \
 --hcatalog-partition-keys pt \
 --hcatalog-partition-values ${pre_date} \
 --columns goods_id,region_id,first_cat_id,second_cat_id,biz_type,rp_type,rank \
@@ -69,7 +64,7 @@ fi
 
 echo "----------开始rename-------"
 mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx <<EOF
-rename table themis.ads_vova_activity_no_brand_goods_pool to themis.ads_vova_activity_no_brand_goods_pool_pre,themis.ads_vova_activity_no_brand_goods_pool_new to themis.ads_vova_activity_no_brand_goods_pool;
+rename table themis.ads_vova_activity_low_price_goods to themis.ads_vova_activity_low_price_goods_pre,themis.ads_vova_activity_low_price_goods_new to themis.ads_vova_activity_low_price_goods;
 EOF
 echo "-------rename结束--------"
 

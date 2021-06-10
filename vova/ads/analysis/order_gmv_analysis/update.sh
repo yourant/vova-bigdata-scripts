@@ -6,33 +6,23 @@ if [ ! -n "$1" ]; then
   pre_date=$(date -d "-1 day" +%Y-%m-%d)
 fi
 sql="
-insert overwrite table ads.ads_vova_goods_knowledge_graph partition(pt='${pre_date}')
+insert overwrite table ads.ads_vova_order_gmv_analysis partition(pt='${pre_date}')
 select
-/*+ repartition(1) */
-gs_id as goods_id,
-dg.goods_name,
-dg.goods_desc,
-dg.goods_sn,
-gp.first_cat_id,
-gp.second_cat_id,
-dg.brand_id,
-dg.is_on_sale,
-dg.is_delete
-from ads.ads_vova_goods_portrait gp
-inner join ods_vova_vts.ods_vova_goods dg
-on gp.gs_id = dg.goods_id
-where date(cast(dg.add_time as timestamp)) = '${pre_date}' and gp.pt = '${pre_date}'
-;
+count(distinct order_id) as order_cnt,
+sum(shop_price*goods_number+shipping_fee)/count(distinct order_id) as avg_price,
+sum(shop_price*goods_number+shipping_fee) as gmv
+from
+dwd.dwd_vova_fact_pay fp
+where date(fp.pay_time) = '${pre_date}';
 "
-
 
 #如果使用spark-sql运行，则执行spark-sql -e
 spark-sql \
---executor-memory 8G --executor-cores 1 \
+--executor-memory 4G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=5" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
---conf "spark.app.name=ads_vova_goods_knowledge_graph" \
+--conf "spark.app.name=ads_vova_order_gmv_analysis" \
 --conf "spark.sql.crossJoin.enabled=true" \
 --conf "spark.default.parallelism = 300" \
 --conf "spark.sql.shuffle.partitions=300" \
@@ -46,11 +36,3 @@ spark-sql \
 if [ $? -ne 0 ];then
   exit 1
 fi
-
-
-sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=nlp_kg_ner_task_server --from=data --to=java --jtype=1D --retry=0
-
-if [ $? -ne 0 ];then
-  exit 1
-fi
-

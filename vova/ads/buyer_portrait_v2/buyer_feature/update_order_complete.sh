@@ -1,38 +1,37 @@
 #!/bin/bash
 #指定日期和引擎
-pre_date=$1
+cur_date=$1
 #默认日期为昨天
 if [ ! -n "$1" ]; then
-  pre_date=$(date -d "-1 day" +%Y-%m-%d)
+  cur_date=`date +%Y-%m-%d`
 fi
-sql="
-insert overwrite table ads.ads_vova_goods_knowledge_graph partition(pt='${pre_date}')
-select
-/*+ repartition(1) */
-gs_id as goods_id,
-dg.goods_name,
-dg.goods_desc,
-dg.goods_sn,
-gp.first_cat_id,
-gp.second_cat_id,
-dg.brand_id,
-dg.is_on_sale,
-dg.is_delete
-from ads.ads_vova_goods_portrait gp
-inner join ods_vova_vts.ods_vova_goods dg
-on gp.gs_id = dg.goods_id
-where date(cast(dg.add_time as timestamp)) = '${pre_date}' and gp.pt = '${pre_date}'
-;
-"
 
+sql="
+insert overwrite table ads.ads_vova_buyer_order_complate
+select
+buyer_id,
+if(sum(is_order_complete)>=1,1,0) as is_order_complete
+from
+(select
+fp.buyer_id,
+if(process_tag='Delivered' or '2021-06-04'> oge.latest_delivery_time,1,0 ) as is_order_complete
+from
+dwd.dwd_vova_fact_pay fp
+left join
+dwd.dwd_vova_fact_logistics fl  on fl.order_goods_id = fp.order_goods_id
+left join (select rec_id,from_unixtime(extension_info)  as latest_delivery_time from
+ods_vova_vts.ods_vova_order_goods_extension where ext_name='latest_delivery_time') oge on fp.order_goods_id = oge.rec_id)
+group by
+buyer_id
+"
 
 #如果使用spark-sql运行，则执行spark-sql -e
 spark-sql \
---executor-memory 8G --executor-cores 1 \
+--executor-memory 4G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=5" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
---conf "spark.app.name=ads_vova_goods_knowledge_graph" \
+--conf "spark.app.name=ads_vova_buyer_order_complate" \
 --conf "spark.sql.crossJoin.enabled=true" \
 --conf "spark.default.parallelism = 300" \
 --conf "spark.sql.shuffle.partitions=300" \
@@ -46,11 +45,3 @@ spark-sql \
 if [ $? -ne 0 ];then
   exit 1
 fi
-
-
-sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=nlp_kg_ner_task_server --from=data --to=java --jtype=1D --retry=0
-
-if [ $? -ne 0 ];then
-  exit 1
-fi
-

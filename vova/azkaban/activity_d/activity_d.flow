@@ -27,6 +27,7 @@ nodes:
       - ads_vova_activity_daily_selection_v2
       - ads_vova_activity_no_brand_goods_pool
       - ads_vova_activity_green_health
+      - ads_vova_activity_low_price_goods
 
   - name: start_flag
     type: command
@@ -315,3 +316,14 @@ nodes:
     dependsOn:
       - judge_dwd_vova_activity_goods_ctry_behave
       - judge_mlb_vova_rec_b_goods_score_d_message_get
+
+  - name: ads_vova_activity_low_price_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_low_price_goods/update.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_activity_goods_ctry_behave
+      - judge_dim_vova_goods
+      - judge_ads_vova_min_price_goods_d
