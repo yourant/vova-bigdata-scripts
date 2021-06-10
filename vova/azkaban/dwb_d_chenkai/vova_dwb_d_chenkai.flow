@@ -38,6 +38,7 @@ nodes:
       - dwb_vova_active_user_form_m
       - dwb_vova_royalty_norm
       - dwb_vova_user_month_cohort_00
+      - dwb_vova_push_click_behavior_v2
 
   - name: start_flag
     type: command
@@ -1116,8 +1117,19 @@ nodes:
       - judge_vova_collection_order_goods
       - dwb_vova_user_month_cohort_05
 
-
-
+# [9561]消息中心-推送报表v2-presto 报表重构
+  - name: dwb_vova_push_click_behavior_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/push_click_behavior_v2/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_push_click
+      - judge_dim_vova_order_goods
+      - judge_dim_vova_devices
+      - judge_dwd_vova_log_common_click
+      - judge_dwd_vova_log_goods_impression
 
 
 
