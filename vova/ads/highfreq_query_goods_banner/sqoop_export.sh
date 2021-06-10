@@ -62,12 +62,12 @@ sql="
 create table if not exists als_images.ads_vova_home_info_banner (
   id                    bigint(20)   NOT NULL AUTO_INCREMENT COMMENT '自增主键',
   goods_id              bigint(11)   NOT NULL COMMENT '商品id',
-  banner_url            varchar(200) NOT NULL COMMENT '品牌id',
+  banner_url            varchar(80) NOT NULL COMMENT '品牌id',
   language_id           bigint(11)   NOT NULL COMMENT '语言id',
   bod_id                bigint(11)   NOT NULL COMMENT '榜单id',
   update_time           datetime    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (id) USING BTREE,
-  KEY goods_id (goods_id) USING BTREE
+  UNIQUE KEY goods_language_banner (goods_id,language_id,banner_url) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='搜索词会场个性化banner图像提取'
 ;
 "
