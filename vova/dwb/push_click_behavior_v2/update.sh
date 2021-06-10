@@ -198,7 +198,7 @@ where datasource in ('nurkk', 'kulmasa', 'lupumart', 'boonlife', 'paivana')
 
 union all -- 曝光
 select /*+ REPARTITION(10) */
-  nvl(fpc.datasource, 'NA') datasource,,
+  nvl(fpc.datasource, 'NA') datasource,
   nvl(fpc.region_code, 'NA') region_code,
   nvl(fpc.platform, 'NA') platform,
   nvl(fpc.config_id, 'NA') config_id,
@@ -263,7 +263,7 @@ on fpc.device_id = gi.device_id and fpc.datasource = gi.datasource
 
 union all -- 加购
 select /*+ REPARTITION(1) */
-  nvl(fpc.datasource, 'NA') datasource,,
+  nvl(fpc.datasource, 'NA') datasource,
   nvl(fpc.region_code, 'NA') region_code,
   nvl(fpc.platform, 'NA') platform,
   nvl(fpc.config_id, 'NA') config_id,
@@ -312,7 +312,7 @@ on fpc.device_id = cc.device_id and fpc.datasource = cc.datasource
 
 union all -- 下单
 select /*+ REPARTITION(1) */
-  nvl(fpc.datasource, 'NA') datasource,,
+  nvl(fpc.datasource, 'NA') datasource,
   nvl(fpc.region_code, 'NA') region_code,
   nvl(fpc.platform, 'NA') platform,
   nvl(fpc.config_id, 'NA') config_id,
@@ -353,7 +353,7 @@ where og.order_time > fpc.click_time
 
 union all -- 支付
 select /*+ REPARTITION(1) */
-  nvl(fpc.datasource, 'NA') datasource,,
+  nvl(fpc.datasource, 'NA') datasource,
   nvl(fpc.region_code, 'NA') region_code,
   nvl(fpc.platform, 'NA') platform,
   nvl(fpc.config_id, 'NA') config_id,
