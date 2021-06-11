@@ -427,8 +427,6 @@ left join
   where py.pay_time >= '${cur_date}'
 ) fp -- 支付订单 及 gmv
 on fpc.device_id = fp.device_id and fpc.datasource = fp.datasource
-where fp.pay_time > fpc.click_time
-  and unix_timestamp(fp.pay_time) - 24 * 3600 < unix_timestamp(fpc.click_time)
 ;
 
 insert overwrite table dwb.dwb_vova_push_click_behavior partition(pt='${cur_date}')
