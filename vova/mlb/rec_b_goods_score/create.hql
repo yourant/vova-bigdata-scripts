@@ -317,10 +317,31 @@ STORED AS PARQUETFILE;
 sqoop_export_catgoods_score.sh
 sqoop_export_goods_score.sh
 
+#####################################################################
+【数据】[9698] 商品评分增加72小时集运入库率 https://zt.gitvv.com/index.php?m=task&f=view&taskID=352
+任务描述
+需求背景：
+调整商品评分计算逻辑，增加商品加分规则，提升商品违规惩罚力度，保证商品流量划分合理。
 
+需求描述：
+（1）在商品评分中增加集运相关数据并给予提权，
+72小时集运入库率：3天前再往前一个月的确认订单，入库时间减订单确认的时间小于3天的子订单数/3天前再往前一个月的确认子订单数。
+（2）调整非物流退款率权重，对于退款过高的商品给予适当的减分；
+（3）增加商品曝光效率维度，
 
+商品曝光效率：gmv*10000/曝光量。
+商品评分相关数据见：https://confluence.gitvv.com/pages/viewpage.action?pageId=21268801
 
+expre_uv_15d                    bigint  近15天曝光UV
+pay_uv_15d                      bigint  近15天支付UV
+entry_warehouse_72h_order_goods bigint  72小时入库订单数: 入库时间减订单确认的时间小于3天的子订单数
+collection_order_goods          bigint  商品集运总订单数:3天前再往前一个月的确认子订单数
 
+alter table mlb.mlb_vova_rec_goods_scorebase_data_d add columns(`expre_uv_15d` bigint comment '近15天曝光UV') cascade;
+alter table mlb.mlb_vova_rec_goods_scorebase_data_d add columns(`pay_uv_15d` bigint comment '近15天支付UV') cascade;
+
+alter table mlb.mlb_vova_rec_goods_scorebase_data_d add columns(`entry_warehouse_72h_order_goods` bigint comment '72小时入库订单数') cascade;
+alter table mlb.mlb_vova_rec_goods_scorebase_data_d add columns(`collection_order_goods` bigint comment '商品集运总订单数') cascade;
 
 
 
