@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS \`themis\`.\`ads_activity_user_only_new\` (
   \`update_time\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (\`id\`) USING BTREE,
   KEY \`region_id_key\` (\`region_id\`),
+  KEY \`goods_id_key\` (\`goods_id\`),
   KEY \`first_cat_id_key\` (\`first_cat_id\`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 CREATE TABLE IF NOT EXISTS \`themis\`.\`ads_activity_user_only\` (
@@ -41,6 +42,7 @@ CREATE TABLE IF NOT EXISTS \`themis\`.\`ads_activity_user_only\` (
   \`update_time\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (\`id\`) USING BTREE,
   KEY \`region_id_key\` (\`region_id\`),
+  KEY \`goods_id_key\` (\`goods_id\`),
   KEY \`first_cat_id_key\` (\`first_cat_id\`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 "
