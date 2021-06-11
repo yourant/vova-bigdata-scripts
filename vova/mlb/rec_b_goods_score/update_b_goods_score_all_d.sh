@@ -85,7 +85,10 @@ SELECT /*+ REPARTITION(10) */
     if(t1.inter_days_score > 100, 100, t1.inter_days_score) inter_days_score, -- 平滑上网天数评分
     dg.first_cat_name,
     dg.second_cat_name,
-    avg_inter_days_3_6w
+    avg_inter_days_3_6w,
+    gather_rate_score,
+    cr_score,
+    cr_cat_score
 from
 (
   SELECT
@@ -162,7 +165,10 @@ from
       when t3.avg_inter_days_3_6w = 6 and t4.inter_rate_score > 0 then t4.inter_rate_score + 0.5
       else t4.inter_rate_score
     end inter_days_score, -- 平滑上网天数评分
-    avg_inter_days_3_6w
+    avg_inter_days_3_6w,
+    t4.gather_rate_score,
+    t4.cr_score,
+    t5.cr_cat_score
   from
     mlb.mlb_vova_rec_b_goods_score_d t1
   inner join

@@ -343,5 +343,12 @@ alter table mlb.mlb_vova_rec_goods_scorebase_data_d add columns(`pay_uv_15d` big
 alter table mlb.mlb_vova_rec_goods_scorebase_data_d add columns(`entry_warehouse_72h_order_goods` bigint comment '72小时入库订单数') cascade;
 alter table mlb.mlb_vova_rec_goods_scorebase_data_d add columns(`collection_order_goods` bigint comment '商品集运总订单数') cascade;
 
+-- 汇总表新增三个字段
+gather_rate_score  商品集运评分
+cr_score           商品转化率评分
+cr_cat_score       商品转化率一级品类评分
+alter table mlb.mlb_vova_rec_b_goods_score_all_d add columns(`gather_rate_score` double comment '商品集运评分') cascade;
+alter table mlb.mlb_vova_rec_b_goods_score_all_d add columns(`cr_score` double comment '商品转化率评分') cascade;
+alter table mlb.mlb_vova_rec_b_goods_score_all_d add columns(`cr_cat_score` double comment '商品转化率一级品类评分') cascade;
 
 
