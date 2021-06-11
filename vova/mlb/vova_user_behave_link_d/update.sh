@@ -6,7 +6,7 @@ fi
 now_date=`date -d "-1 days ago ${cur_date}" +%Y-%m-%d`
 
 
-spark-sql \
+
 spark-sql \
 --driver-memory 8G \
 --executor-memory 8G --executor-cores 1 \
