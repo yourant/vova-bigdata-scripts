@@ -384,7 +384,7 @@ nodes:
   - name: judge_ads_vova_activity_daily_selection
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_daily_selection
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_daily_selection_v2
       retries: 30
       retry.backoff: 300000
     dependsOn:
@@ -394,7 +394,7 @@ nodes:
   - name: judge_ads_vova_activity_outlets
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_outlets
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_outlets_v2
       retries: 30
       retry.backoff: 300000
     dependsOn:
@@ -461,6 +461,33 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_women_clothing_clearance_sale
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_activity_no_brand_goods_pool
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_no_brand_goods_pool
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_activity_green_health
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_green_health
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_paypal_txn
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_paypal_txn
       retries: 30
       retry.backoff: 300000
     dependsOn:
@@ -630,6 +657,7 @@ nodes:
       - judge_dwd_vova_log_impressions
       - judge_dim_vova_devices
       - judge_dim_vova_order_goods
+      - judge_vova_paypal_txn
 
 
   - name: dwb_element_device_uv
@@ -871,3 +899,5 @@ nodes:
       - judge_ads_vova_activity_men_cloth_and_shoes
       - judge_ads_vova_activity_new_user
       - judge_ads_vova_activity_women_clothing_clearance_sale
+      - judge_ads_vova_activity_no_brand_goods_pool
+      - judge_ads_vova_activity_green_health
