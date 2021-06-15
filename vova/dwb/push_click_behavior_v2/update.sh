@@ -95,9 +95,6 @@ from
     and device_id is not null
     and datasource in ('nurkk', 'kulmasa', 'lupumart', 'boonlife', 'paivana')
 ) fpc -- 所有的 加 部分站群的
-left join
-  dim.dim_vova_devices dev
-on dev.device_id = fpc.device_id and dev.datasource = fpc.datasource
 join
 (
   select
@@ -113,14 +110,52 @@ join
     and a.element_name = 'PushUserDecide'
     and a.element_id like '%@%'
   group by datasource, device_id, session_id
+
+  union all
+  select
+    'app-group' datasource,
+    device_id,
+    session_id
+  from
+    dwd.dwd_vova_log_common_click a
+  join
+    ods_vova_vtp.ods_vova_app_push_task b
+  on split(a.element_id, '@')[0] = b.id
+  where a.pt = '${cur_date}'
+    and a.element_name = 'PushUserDecide'
+    and a.element_id like '%@%'
+    and datasource not in ('vova', 'airyclub')
+  group by device_id, session_id
+
 ) flcc -- 推送点击打点
 on fpc.device_id = flcc.device_id and fpc.datasource = flcc.datasource
+left join
+(
+  SELECT
+    datasource,
+    device_id,
+    region_code,
+    main_channel
+  from
+    dim.dim_vova_devices
+  union all
+  SELECT
+    'app-group' datasource,
+    device_id,
+    region_code,
+    main_channel
+  from
+    dim.dim_vova_devices
+  where datasource not in ('vova', 'airyclub')
+  group by device_id, region_code, main_channel
+) dev
+on dev.device_id = fpc.device_id and dev.datasource = fpc.datasource
 left join
   ods_vova_vtp.ods_vova_app_push_task_config vaptc
 on fpc.config_id = vaptc.id
 where date(fpc.push_time) = '${cur_date}'
   and fpc.device_id is not null
-  and fpc.datasource in (select distinct data_domain from ods_vova_vtsf.ods_vova_acg_app)
+  -- and fpc.datasource in (select distinct data_domain from ods_vova_vtsf.ods_vova_acg_app)
   and unix_timestamp(fpc.click_time) - unix_timestamp(fpc.push_time) + cast(fpc.time_zone as bigint) * 3600 < 24 * 3600
 ;
 
@@ -258,6 +293,19 @@ inner join
     dwd.dwd_vova_log_goods_impression gi
   where gi.pt >= '${cur_date}'
     and gi.pt <= date_add('${cur_date}', 1)
+  union all
+  select
+    'app-group' datasource,
+    device_id,
+    buyer_id,
+    collector_tstamp,
+    device_id,
+    page_code
+  from
+    dwd.dwd_vova_log_goods_impression
+  where pt >= '${cur_date}'
+    and pt <= date_add('${cur_date}', 1)
+    and datasource not in ('vova','airyclub')
 ) gi -- 曝光
 on fpc.device_id = gi.device_id and fpc.datasource = gi.datasource
 
@@ -307,6 +355,17 @@ inner join
   where cc.pt >= '${cur_date}'
     and cc.pt <= date_add('${cur_date}', 1)
     and cc.element_name = 'pdAddToCartClick'
+  union all
+  select
+    'app-group' datasource,
+    device_id,
+    collector_tstamp
+  from
+    dwd.dwd_vova_log_common_click
+  where pt >= '${cur_date}'
+    and pt <= date_add('${cur_date}', 1)
+    and element_name = 'pdAddToCartClick'
+    and datasource not in ('vova', 'airyclub')
 ) cc -- 加购
 on fpc.device_id = cc.device_id and fpc.datasource = cc.datasource
 
@@ -346,7 +405,24 @@ select /*+ REPARTITION(1) */
 from
   tmp.tmp_push_click_${table_suffix} fpc -- 推送点击
 inner join
-  dim.dim_vova_order_goods og  -- 下单数
+(
+  select
+    datasource,
+    device_id,
+    order_time,
+    order_id
+  from
+    dim.dim_vova_order_goods
+  union all
+  select
+    'app-group' datasource,
+    device_id,
+    order_time,
+    order_id
+  from
+    dim.dim_vova_order_goods
+  where datasource not in ('vova','airyclub')
+) og  -- 下单数
 on fpc.device_id = og.device_id and fpc.datasource = og.datasource
 where og.order_time > fpc.click_time
   and unix_timestamp(og.order_time) - 24 * 3600 < unix_timestamp(fpc.click_time)
@@ -425,6 +501,39 @@ left join
   ) foc2
   on py.order_goods_id = foc2.order_goods_id and py.datasource = foc2.datasource
   where py.pay_time >= '${cur_date}'
+  union all
+  select
+    'app-group' datasource,
+    py_2.device_id,
+    py_2.order_id,
+    py_2.buyer_id,
+    py_2.shipping_fee,
+    py_2.goods_number,
+    py_2.shop_price,
+    py_2.shipping_fee + py_2.goods_number * py_2.shop_price gmv,
+    foc2_2.pre_session_id,
+    dg_2.brand_id,
+    py_2.order_id,
+    py_2.order_goods_id,
+    py_2.pay_time
+  from
+    dwd.dwd_vova_fact_pay py_2
+  inner join
+    dim.dim_vova_goods dg_2
+  on py_2.goods_id = dg_2.goods_id
+  left join
+  (
+    select distinct
+      datasource,
+      order_goods_id,
+      pre_session_id
+    from
+      dwd.dwd_vova_fact_order_cause_v2
+    where pt='${cur_date}'
+  ) foc2_2
+  on py_2.order_goods_id = foc2_2.order_goods_id and py_2.datasource = foc2_2.datasource
+  where py_2.pay_time >= '${cur_date}'
+  and py_2.datasource not in ('vova', 'airyclub')
 ) fp -- 支付订单 及 gmv
 on fpc.device_id = fp.device_id and fpc.datasource = fp.datasource
 ;
@@ -524,6 +633,7 @@ spark-sql \
 --conf "spark.sql.inMemoryColumnarStorage.partitionPruning=true" \
 --conf "spark.sql.inMemoryColumnarStorage.batchSize=100000" \
 --conf "spark.sql.broadcastTimeout=600" \
+--conf "spark.sql.autoBroadcastJoinThreshold=-1" \
 -e "$sql"
 
 #如果脚本失败，则报错
