@@ -10,7 +10,7 @@ nodes:
     config:
       command: echo "stop job"
     dependsOn:
-      - ads_vova_goods_pre_attribute_data
+      - ads_vova_goods_attribute_label_data
 
 
   - name: start_flag
@@ -50,10 +50,10 @@ nodes:
       - ads_vova_goods_pre_attribute_data_stage
 
 
-  - name: ads_vova_goods_pre_attribute_data
+  - name: ads_vova_goods_attribute_label_data
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_attribute/update3.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_attribute/update.sh
       retries: 5
       retry.backoff: 300000
     dependsOn:
