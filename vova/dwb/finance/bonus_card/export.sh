@@ -1,5 +1,5 @@
 
-#sh /mnt/vova-bigdata-scripts/vova/dwb/finance/bonus_card/update.sh
+#sh /mnt/vova-bigdata-scripts/vova/dwb/finance/bonus_card/read_es.sh
 
 spark-sql -e "
 select
