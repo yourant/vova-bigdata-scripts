@@ -10,7 +10,7 @@ last_8_week=`date -d $cur_date"-8 week" +%Y-%m-%d`
 src_weekday=`date -d $last_8_week +%w`
 if [ $src_weekday == 0 ]
 then
-src_weekday=7req_8198_log
+src_weekday=7
 fi
 src_day=`date -d "$last_8_week - $((src_weekday - 1)) days" +%F`
 end_day=`date -d $src_day"+6 day" +%Y-%m-%d`
