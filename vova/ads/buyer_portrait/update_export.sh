@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS themis.ads_buyer_portrait_d_new (
   price_range varchar(32) NOT NULL DEFAULT '' COMMENT '价格区间',
   gmv_stage int  NOT NULL DEFAULT '0' COMMENT '分国家近三月客单价分层，1:小于1倍客单价，2：大于等于1倍客单价小于2倍客单价，3：大于等于2倍客单价小于等于3倍客单价，4：大于等于3倍客单价,0:默认值',
   sub_new_buyers tinyint NOT NULL DEFAULT '0' COMMENT '1.首单在七日内次新人用户，0.其它',
+  is_order_complete tinyint NOT NULL DEFAULT '0' COMMENT '1.完成过一次全平台订单体验，0.其它',
   PRIMARY KEY (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户画像';
 
@@ -38,6 +39,7 @@ CREATE TABLE IF NOT EXISTS themis.ads_buyer_portrait_d (
   price_range varchar(32) NOT NULL DEFAULT '' COMMENT '价格区间',
   gmv_stage int  NOT NULL DEFAULT '0' COMMENT '分国家近三月客单价分层，1:小于1倍客单价，2：大于等于1倍客单价小于2倍客单价，3：大于等于2倍客单价小于等于3倍客单价，4：大于等于3倍客单价,0:默认值',
   sub_new_buyers tinyint NOT NULL DEFAULT '0' COMMENT '1.首单在七日内次新人用户，0.其它',
+  is_order_complete tinyint NOT NULL DEFAULT '0' COMMENT '1.完成过一次全平台订单体验，0.其它',
   PRIMARY KEY (user_id)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='用户画像';
 "

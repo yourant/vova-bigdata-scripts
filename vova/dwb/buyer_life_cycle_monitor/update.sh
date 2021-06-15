@@ -79,6 +79,26 @@ select /*+ REPARTITION(1) */
   if(datediff('${cur_date}', pt)>=60,  avg_order_cnt_day0_60,'NA')  avg_order_cnt_day0_60,  -- 60天平均订单数
   if(datediff('${cur_date}', pt)>=90,  avg_order_cnt_day0_90,'NA')  avg_order_cnt_day0_90,  -- 90天平均订单数
   if(datediff('${cur_date}', pt)>=180, avg_order_cnt_day0_180,'NA') avg_order_cnt_day0_180,  -- 180天平均订单数
+
+  if(datediff('${cur_date}', pt)>=3,  bonus_day0_3, 'NA') bonus_day0_3,  -- 当日激活用户中在0-3天内下单的用户所用补贴之和
+  if(datediff('${cur_date}', pt)>=7,  bonus_day0_7, 'NA') bonus_day0_7,  -- 当日激活用户中在0-7天内下单的用户所用补贴之和
+  if(datediff('${cur_date}', pt)>=28, bonus_day0_28,'NA') bonus_day0_28, -- 当日激活用户中在0-28天内下单的用户所用补贴之和
+  if(datediff('${cur_date}', pt)>=3,  avg_bonus_day0_3, 'NA') avg_bonus_day0_3,  -- 3天补贴成本
+  if(datediff('${cur_date}', pt)>=7,  avg_bonus_day0_7, 'NA') avg_bonus_day0_7,  -- 7天补贴成本
+  if(datediff('${cur_date}', pt)>=28, avg_bonus_day0_28,'NA') avg_bonus_day0_28, -- 28天补贴成本
+
+  pay_with_bonus_day0_uv, -- 当天新激活下单用户数
+  if(datediff('${cur_date}', pt)>=3,  pay_with_bonus_day3_uv,  'NA') pay_with_bonus_day3_uv , -- 3天用券用户数
+  if(datediff('${cur_date}', pt)>=7,  pay_with_bonus_day7_uv,  'NA') pay_with_bonus_day7_uv , -- 7天用券用户数
+  if(datediff('${cur_date}', pt)>=14, pay_with_bonus_day14_uv, 'NA') pay_with_bonus_day14_uv, -- 14天用券用户数
+  if(datediff('${cur_date}', pt)>=28, pay_with_bonus_day28_uv, 'NA') pay_with_bonus_day28_uv, -- 28天用券用户数
+
+  pay_with_bonus_day0_rate, -- 当天用券用户占比
+  if(datediff('${cur_date}', pt)>=3,  pay_with_bonus_day3_rate , 'NA') pay_with_bonus_day3_rate , -- 3天用券用户占比
+  if(datediff('${cur_date}', pt)>=7,  pay_with_bonus_day7_rate , 'NA') pay_with_bonus_day7_rate , -- 7天用券用户占比
+  if(datediff('${cur_date}', pt)>=14, pay_with_bonus_day14_rate, 'NA') pay_with_bonus_day14_rate, -- 14天用券用户占比
+  if(datediff('${cur_date}', pt)>=28, pay_with_bonus_day28_rate, 'NA') pay_with_bonus_day28_rate, -- 28天用券用户占比
+
   pt
 from
 (
@@ -90,6 +110,10 @@ select
   count(distinct device_id) activate_uv, -- 当天激活用户数
   sum(bonus_day0)           bonus_day0, -- 当日激活用户中在当日下单的用户所用补贴之和
   sum(bonus_day0_30)        bonus_day0_30, -- 当日激活用户中在0-30天内下单的用户所用补贴之和
+  sum(bonus_day0_3)         bonus_day0_3,  -- 当日激活用户中在0-3天内下单的用户所用补贴之和
+  sum(bonus_day0_7)         bonus_day0_7,  -- 当日激活用户中在0-7天内下单的用户所用补贴之和
+  sum(bonus_day0_28)        bonus_day0_28, -- 当日激活用户中在0-28天内下单的用户所用补贴之和
+
   count(distinct activate_pay_device_id)         activate_pay_day0_uv , -- 当天新激活下单用户数
   count(distinct activate_pay_device_id_day0_3 ) activate_pay_day3_uv , -- 3天下单用户数
   count(distinct activate_pay_device_id_day0_7 ) activate_pay_day7_uv , -- 7天下单用户数
@@ -119,6 +143,10 @@ select
 
   round(nvl(sum(bonus_day0) / count(distinct device_id), 0), 4) avg_bonus_day0, -- 当日补贴成本
   round(nvl(sum(bonus_day0_30) / count(distinct device_id), 0), 4) avg_bonus_day0_30, -- 30天补贴成本
+  round(nvl(sum(bonus_day0_3) / count(distinct device_id), 0), 4) avg_bonus_day0_3, -- 3天补贴成本
+  round(nvl(sum(bonus_day0_7) / count(distinct device_id), 0), 4) avg_bonus_day0_7, -- 7天补贴成本
+  round(nvl(sum(bonus_day0_28) / count(distinct device_id), 0), 4) avg_bonus_day0_28, -- 28天补贴成本
+
   round(nvl(sum(gmv_day0   ) / count(distinct device_id), 0), 4) liv_day0   , -- 当天LTV
   round(nvl(sum(gmv_day0_3 ) / count(distinct device_id), 0), 4) liv_day0_3 , -- 3天LTV
   round(nvl(sum(gmv_day0_7 ) / count(distinct device_id), 0), 4) liv_day0_7 , -- 7天LTV
@@ -145,6 +173,19 @@ select
   round(nvl(count(distinct order_id_day0_60) / count(distinct activate_pay_device_id_day0_60), 0), 4) avg_order_cnt_day0_60,  -- 60天平均订单数
   round(nvl(count(distinct order_id_day0_90) / count(distinct activate_pay_device_id_day0_90), 0), 4) avg_order_cnt_day0_90,  -- 90天平均订单数
   round(nvl(count(distinct order_id_day0_180) / count(distinct activate_pay_device_id_day0_180), 0), 4) avg_order_cnt_day0_180,  -- 180天平均订单数
+
+  count(distinct pay_with_bonus_device_id)         pay_with_bonus_day0_uv,  -- 当天用券用户数
+  count(distinct pay_with_bonus_device_id_day0_3)  pay_with_bonus_day3_uv,  -- 3天用券用户数
+  count(distinct pay_with_bonus_device_id_day0_7)  pay_with_bonus_day7_uv,  -- 7天用券用户数
+  count(distinct pay_with_bonus_device_id_day0_14) pay_with_bonus_day14_uv, -- 14天用券用户数
+  count(distinct pay_with_bonus_device_id_day0_28) pay_with_bonus_day28_uv, -- 28天用券用户数
+
+  round(nvl(count(distinct pay_with_bonus_device_id) / count(distinct device_id), 0), 4) pay_with_bonus_day0_rate, -- 当天用券用户占比
+  round(nvl(count(distinct pay_with_bonus_device_id_day0_3 )  / count(distinct device_id), 0), 4) pay_with_bonus_day3_rate , -- 3天用券用户占比
+  round(nvl(count(distinct pay_with_bonus_device_id_day0_7 )  / count(distinct device_id), 0), 4) pay_with_bonus_day7_rate , -- 7天用券用户占比
+  round(nvl(count(distinct pay_with_bonus_device_id_day0_14 ) / count(distinct device_id), 0), 4) pay_with_bonus_day14_rate, -- 14天用券用户占比
+  round(nvl(count(distinct pay_with_bonus_device_id_day0_28 ) / count(distinct device_id), 0), 4) pay_with_bonus_day28_rate, -- 28天用券用户占比
+
   nvl(pt, 'all') pt
 from
 (
@@ -168,6 +209,19 @@ from
       when datediff(fp.pt, dd.pt) >= 0 and datediff(fp.pt, dd.pt) <= 30 and fp.gmv <= fp.bonus then fp.gmv
       else 0 
     end bonus_day0_30, -- 当日激活用户中在0-30天内下单的用户所用补贴之和
+    case when datediff(fp.pt, dd.pt) >= 0 and datediff(fp.pt, dd.pt) <= 3 and fp.gmv > fp.bonus then fp.bonus
+      when datediff(fp.pt, dd.pt) >= 0 and datediff(fp.pt, dd.pt) <= 3 and fp.gmv <= fp.bonus then fp.gmv
+      else 0
+    end bonus_day0_3, -- 当日激活用户中在0-3天内下单的用户所用补贴之和
+    case when datediff(fp.pt, dd.pt) >= 0 and datediff(fp.pt, dd.pt) <= 7 and fp.gmv > fp.bonus then fp.bonus
+      when datediff(fp.pt, dd.pt) >= 0 and datediff(fp.pt, dd.pt) <= 7 and fp.gmv <= fp.bonus then fp.gmv
+      else 0
+    end bonus_day0_7, -- 当日激活用户中在0-7天内下单的用户所用补贴之和
+    case when datediff(fp.pt, dd.pt) >= 0 and datediff(fp.pt, dd.pt) <= 28 and fp.gmv > fp.bonus then fp.bonus
+      when datediff(fp.pt, dd.pt) >= 0 and datediff(fp.pt, dd.pt) <= 28 and fp.gmv <= fp.bonus then fp.gmv
+      else 0
+    end bonus_day0_28, -- 当日激活用户中在0-28天内下单的用户所用补贴之和
+
     if(datediff(dd.first_pay_time, dd.pt) = 0, dd.device_id, null) activate_pay_device_id, -- 当天新激活下单用户
     if(datediff(dd.first_pay_time, dd.pt) >=0 and datediff(dd.first_pay_time, dd.pt) <= 3,  dd.device_id, null) activate_pay_device_id_day0_3, -- 3天下单用户数
     if(datediff(dd.first_pay_time, dd.pt) >=0 and datediff(dd.first_pay_time, dd.pt) <= 7,  dd.device_id, null) activate_pay_device_id_day0_7, -- 7天下单用户数
@@ -193,7 +247,13 @@ from
     if(datediff(fp.pt, dd.pt) >=0 and datediff(fp.pt, dd.pt) <= 28, fp.order_id, null) order_id_day0_28, -- 28天订单数
     if(datediff(fp.pt, dd.pt) >=0 and datediff(fp.pt, dd.pt) <= 60, fp.order_id, null) order_id_day0_60, -- 60天订单数
     if(datediff(fp.pt, dd.pt) >=0 and datediff(fp.pt, dd.pt) <= 90, fp.order_id, null) order_id_day0_90, -- 90天订单数
-    if(datediff(fp.pt, dd.pt) >=0 and datediff(fp.pt, dd.pt) <= 180, fp.order_id, null) order_id_day0_180 -- 180天订单数
+    if(datediff(fp.pt, dd.pt) >=0 and datediff(fp.pt, dd.pt) <= 180, fp.order_id, null) order_id_day0_180, -- 180天订单数
+
+    if(datediff(dd.first_pay_time, dd.pt) = 0 and fp.bonus > 0, dd.device_id, null) pay_with_bonus_device_id, -- 当天新激活下单并使用优惠券的用户
+    if(datediff(dd.first_pay_time, dd.pt) >=0 and datediff(dd.first_pay_time, dd.pt) <= 3 and fp.bonus > 0,  dd.device_id, null) pay_with_bonus_device_id_day0_3, -- 3天用券用户
+    if(datediff(dd.first_pay_time, dd.pt) >=0 and datediff(dd.first_pay_time, dd.pt) <= 7 and fp.bonus > 0,  dd.device_id, null) pay_with_bonus_device_id_day0_7, -- 7天用券用户
+    if(datediff(dd.first_pay_time, dd.pt) >=0 and datediff(dd.first_pay_time, dd.pt) <= 14 and fp.bonus > 0,  dd.device_id, null) pay_with_bonus_device_id_day0_14, -- 14天用券用户
+    if(datediff(dd.first_pay_time, dd.pt) >=0 and datediff(dd.first_pay_time, dd.pt) <= 28 and fp.bonus > 0,  dd.device_id, null) pay_with_bonus_device_id_day0_28 -- 28天用券用户
 
   from
   (

@@ -18,6 +18,13 @@ CREATE TABLE `ads.ads_mct_behave_3m`(
   `second_cat_ids` string)
  COMMENT '商家表现数据' PARTITIONED BY (pt string)  STORED AS PARQUETFILE;
 
+ alter table ads.ads_mct_behave_3m add columns(year_refund_rate decimal(13,2) comment '年内退款率') cascade;
+ alter table ads.ads_mct_behave_3m add columns(received_rate_9w decimal(13,2) comment '9周妥投退款率') cascade;
+ alter table ads.ads_mct_behave_3m add columns(received_rate_year decimal(13,2) comment '年内妥投退款率') cascade;
+ alter table ads.ads_mct_behave_3m add columns(delivered_time_per_60 decimal(13,2) comment '60分位物流时效') cascade;
+ alter table ads.ads_mct_behave_3m add columns(delivered_time_per_80 decimal(13,2) comment '80分位物流时效') cascade;
+ alter table ads.ads_mct_behave_3m add columns(delivered_time_per_90 decimal(13,2) comment '90分位物流时效') cascade;
+
 
  CREATE TABLE IF NOT EXISTS themis.ads_mct_behave_3m(
  \`id\`                          int(11)        NOT NULL AUTO_INCREMENT          COMMENT    '自增主键',

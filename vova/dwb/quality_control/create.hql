@@ -38,6 +38,7 @@ CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_quality_control_refund
 alter table dwb.dwb_vova_quality_control_refund add columns(`start_refund_9w_rate` decimal(13,2)       COMMENT '订单支付后9周的退款发起率') cascade;
 alter table dwb.dwb_vova_quality_control_refund add columns(`start_refund_9w_lrf_rate` decimal(13,2)       COMMENT '订单支付后9周的物流退款发起率') cascade;
 alter table dwb.dwb_vova_quality_control_refund add columns(`start_refund_9w_nlrf_rate` decimal(13,2)       COMMENT '订单支付后9周的非物流退款发起率') cascade;
+alter table dwb.dwb_vova_quality_control_refund add columns(`is_brand` string      COMMENT '是否品牌') cascade;
 
 
 DROP TABLE dwb.dwb_vova_quality_control_delivered;

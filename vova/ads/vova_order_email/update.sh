@@ -10,7 +10,7 @@ last_8_week=`date -d $cur_date"-8 week" +%Y-%m-%d`
 src_weekday=`date -d $last_8_week +%w`
 if [ $src_weekday == 0 ]
 then
-src_weekday=7req_8198_log
+src_weekday=7
 fi
 src_day=`date -d "$last_8_week - $((src_weekday - 1)) days" +%F`
 end_day=`date -d $src_day"+6 day" +%Y-%m-%d`
@@ -89,7 +89,7 @@ spark-submit \
 --env prod \
 --sql "select email,region_name_cn as country_name,language_code as lang_code,order_cnt as ship_num ,'${src_day}' as start_time, '${end_day}' as end_time from ads.ads_vova_order_email where pt='${cur_date}' " \
 --url " http://vvfeature.vova.com.hk/api/v1/survey-email/inactive-email" \
---secretKey  "59b566a101b86dbec5066db10b76202b" \
+--secretKey  "69b562h101b7kdbac2066ls10b26d02b" \
 --batchSize 100 \
 --id ads_vova_order_email
 

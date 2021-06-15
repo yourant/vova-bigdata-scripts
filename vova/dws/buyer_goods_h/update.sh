@@ -24,6 +24,13 @@ job_name="dws_vova_buyer_goods_behave_h_req9592_gongrui_chenkai"
 sql="
 ALTER TABLE dws.dws_vova_buyer_goods_behave_h DROP if exists partition(pt = '$(date -d "${cur_date:0:10} -32day" +%Y-%m-%d)');
 
+msck repair table dwd.dwd_vova_log_goods_impression_arc;
+msck repair table dwd.dwd_vova_log_impressions_arc;
+msck repair table dwd.dwd_vova_log_goods_click_arc;
+msck repair table dwd.dwd_vova_log_click_arc;
+msck repair table dwd.dwd_vova_log_common_click_arc;
+msck repair table dwd.dwd_vova_log_data_arc;
+
 insert overwrite table dws.dws_vova_buyer_goods_behave_h partition(pt='${cur_date}')
 select /*+ REPARTITION(5) */
   tmp_expre.buyer_id,
@@ -197,7 +204,7 @@ spark-sql \
 --conf "spark.sql.crossJoin.enabled=true" \
 --conf "spark.default.parallelism = 300" \
 --conf "spark.sql.shuffle.partitions=300" \
---conf "spark.dynamicAllocation.maxExecutors=100" \
+--conf "spark.dynamicAllocation.maxExecutors=150" \
 --conf "spark.sql.adaptive.enabled=true" \
 --conf "spark.sql.adaptive.join.enabled=true" \
 --conf "spark.shuffle.sort.bypassMergeThreshold=10000" \

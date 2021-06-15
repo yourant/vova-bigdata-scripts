@@ -5,6 +5,7 @@ pre_date=$1
 if [ ! -n "$1" ]; then
   pre_date=$(date -d "-1 day" +%Y-%m-%d)
 fi
+emrfs sync s3://vomkt-emr-rec/data/banner_data/tab/ads_banner_image_pre_s3_v2
 sql="
 set hive.exec.dynamici.partition=true;
 set hive.exec.dynamic.partition.mode=nonstrict;

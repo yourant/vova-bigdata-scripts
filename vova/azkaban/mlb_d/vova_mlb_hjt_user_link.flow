@@ -11,8 +11,6 @@ nodes:
       command: echo "stop job"
     dependsOn:
       - mlb_vova_user_behave_link_d
-      - mlb_rec_search_correct_sqoop
-
 
   - name: start_flag
     type: command
@@ -115,31 +113,3 @@ nodes:
       - judge_dwd_vova_log_common_click
       - judge_dwd_vova_log_goods_impression
       - judge_dim_vova_goods
-
-  - name: mlb_rec_search_correct_sqoop
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_search_correct/update.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - mlb_rec_search_correct_gram
-
-  - name: mlb_rec_search_correct_gram
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/translation/search_correct_gram/update.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - judge_ads_vova_goods_portrait
-      - mlb_vova_user_behave_link_d
-
-  - name: judge_ads_vova_goods_portrait
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_portrait_v2
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - start_flag
