@@ -24,6 +24,10 @@ CREATE external TABLE IF NOT EXISTS dwb.dwb_expre_and_ord_his
 PARTITIONED BY ( pt string) STORED AS PARQUETFILE;
 
 
+alter table dwb.dwb_expre_and_ord_his add columns(payment_uv bigint comment 'payment页uv') cascade;
+alter table dwb.dwb_expre_and_ord_his add columns(try_payment_uv bigint comment '尝试支付uv') cascade;
+
+
 Drop table dwb.dwb_vova_element_device_uv;
 CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_element_device_uv (
 datasource                string                COMMENT 'd_datasource',

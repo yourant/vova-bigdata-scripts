@@ -16,6 +16,7 @@ sql="
 set hive.exec.dynamic.partition.mode=nonstrict;
 insert overwrite table ads.ads_goods_expre_analysis_h partition(pt,hour)
 select
+/*+ repartition(1) */
 dg.goods_id,
 dg.first_cat_name,
 if(dg.brand_id>0,1,0) is_brand,
