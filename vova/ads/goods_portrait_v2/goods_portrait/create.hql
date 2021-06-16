@@ -110,3 +110,34 @@ https://zt.gitvv.com/index.php?m=task&f=view&taskID=34369
 平均上网天数 = 7天再往前一个月的确认订单的平均上网天数
 alter table ads.ads_vova_goods_portrait add columns(`avg_inter_days_3_6w` int comment '商品平均上网天数') cascade;
 
+############
+[9698] 商品评分增加72小时集运入库率
+https://zt.gitvv.com/index.php?m=task&f=view&taskID=35245
+新增字段:
+expre_uv_1w            bigint  近一周曝光UV
+expre_uv_15d           bigint  近15天曝光UV
+expre_uv_1m            bigint  近一月曝光UV
+
+pay_uv_1w              bigint  近一周支付UV
+pay_uv_15d             bigint  近15天支付UV
+pay_uv_1m              bigint  近一月支付UV
+
+entry_warehouse_72h_order_goods bigint  72小时入库订单数: 入库时间减订单确认的时间小于3天的子订单数
+collection_order_goods          bigint  商品集运总订单数:3天前再往前一个月的确认子订单数
+
+alter table ads.ads_vova_goods_portrait add columns(`expre_uv_1w` bigint comment '近一周曝光UV') cascade;
+alter table ads.ads_vova_goods_portrait add columns(`expre_uv_15d` bigint comment '近15天曝光UV') cascade;
+alter table ads.ads_vova_goods_portrait add columns(`expre_uv_1m` bigint comment '近一月曝光UV') cascade;
+
+alter table ads.ads_vova_goods_portrait add columns(`pay_uv_1w` bigint comment '近一周支付UV') cascade;
+alter table ads.ads_vova_goods_portrait add columns(`pay_uv_15d` bigint comment '近15天支付UV') cascade;
+alter table ads.ads_vova_goods_portrait add columns(`pay_uv_1m` bigint comment '近一月支付UV') cascade;
+
+alter table ads.ads_vova_goods_portrait add columns(`entry_warehouse_72h_order_goods` bigint comment '72小时入库订单数') cascade;
+alter table ads.ads_vova_goods_portrait add columns(`collection_order_goods` bigint comment '商品集运总订单数') cascade;
+
+
+
+
+
+

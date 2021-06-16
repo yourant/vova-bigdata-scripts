@@ -18,6 +18,7 @@ nodes:
       - mlb_high_freq_search_recall_job_message_put
       - mlb_ebr_search_recall_job_message_put
       - mlb_als_rec_training
+      - mlb_rec_search_correct_sqoop
 
 
   - name: start_flag
@@ -218,3 +219,22 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_dwd_vova_log_page_view
+
+  - name: mlb_rec_search_correct_gram
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/translation/search_correct_gram/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_goods_portrait_v2
+      - judge_mlb_vova_user_behave_link_d
+
+  - name: mlb_rec_search_correct_sqoop
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_search_correct/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_rec_search_correct_gram
