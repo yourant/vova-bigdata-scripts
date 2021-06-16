@@ -1,0 +1,67 @@
+#!/bin/bash
+#指定日期和引擎
+pre_date=$1
+#默认日期为昨天
+if [ ! -n "$1" ]; then
+  pre_date=$(date -d "-1 day" +%Y-%m-%d)
+fi
+
+sql="
+drop table if exists themis.ads_vova_newly_activated_recommend_goods_pre;
+drop table if exists themis.ads_vova_newly_activated_recommend_goods_new;
+CREATE TABLE IF NOT EXISTS \`themis\`.\`ads_vova_newly_activated_recommend_goods_new\` (
+  \`id\` int(11) NOT NULL AUTO_INCREMENT,
+  \`goods_id\` int(11) NOT NULL COMMENT '商品id',
+  \`first_cat_id\` int(11) NOT NULL COMMENT '一级分类id',
+  \`second_cat_id\` int(11) NOT NULL COMMENT '二级品类id',
+  \`update_time\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (\`id\`) USING BTREE,
+  KEY \`goods_id_key\` (\`goods_id\`),
+  KEY \`first_cat_id_key\` (\`first_cat_id\`),
+  KEY \`second_cat_id_key\` (\`second_cat_id\`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
+CREATE TABLE IF NOT EXISTS \`themis\`.\`ads_vova_newly_activated_recommend_goods\` (
+  \`id\` int(11) NOT NULL AUTO_INCREMENT,
+  \`goods_id\` int(11) NOT NULL COMMENT '商品id',
+  \`first_cat_id\` int(11) NOT NULL COMMENT '一级分类id',
+  \`second_cat_id\` int(11) NOT NULL COMMENT '二级品类id',
+  \`update_time\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (\`id\`) USING BTREE,
+  KEY \`goods_id_key\` (\`goods_id\`),
+  KEY \`first_cat_id_key\` (\`first_cat_id\`),
+  KEY \`second_cat_id_key\` (\`second_cat_id\`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
+"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx -e "${sql}"
+
+if [ $? -ne 0 ];then
+  exit 1
+fi
+
+sqoop export \
+-Dorg.apache.sqoop.export.text.dump_data_on_error=true \
+-Dsqoop.export.records.per.statement=1000 \
+--connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
+--username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \
+--m 1 \
+--table ads_vova_newly_activated_recommend_goods_new \
+--hcatalog-database ads \
+--hcatalog-table ads_vova_newly_activated_recommend_goods \
+--hcatalog-partition-keys pt \
+--hcatalog-partition-values ${pre_date} \
+--columns goods_id,first_cat_id,second_cat_id \
+--fields-terminated-by '\001'
+
+if [ $? -ne 0 ];then
+  exit 1
+fi
+
+echo "----------开始rename-------"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx <<EOF
+rename table themis.ads_vova_newly_activated_recommend_goods to themis.ads_vova_newly_activated_recommend_goods_pre,themis.ads_vova_newly_activated_recommend_goods_new to themis.ads_vova_newly_activated_recommend_goods;
+EOF
+echo "-------rename结束--------"
+
+if [ $? -ne 0 ];then
+  exit 1
+fi
