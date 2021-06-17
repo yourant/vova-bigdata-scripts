@@ -8,9 +8,9 @@ fi
 echo "cur_date:'${cur_date}'"
 
 reg='\\&|\\"|\\/|\\^|#|\\\n|\\\t|\\\r|\\|,|,|，|`|\\;|!|\\[|\\]|\\+|\\*|\\?|:|。|《|》|\\<|\\>|_|\\{|\\}\\~|\\@|\\¥|=|、|%|\\$'
-
-regt="\'s|）|\\)|_\\*"
-
+reg2=' |\\\\|/|\\('
+reg3='）|\\)|_\\*'
+reg4='__|（|-'
 
 sql="
 with tmp_vova_goods_attribute as (
@@ -48,7 +48,7 @@ from (
                              when second_cat_id in (5809) then 15
                              else 0
                              end            as class_id,
-                         regexp_replace(regexp_replace(regexp_replace(regexp_replace(lower(b.name), ' |\\\\|/|\\(', '_'), '__|（|-', '_'), '${regt}',
+                         regexp_replace(regexp_replace(regexp_replace(regexp_replace(lower(b.name), '${reg2}', '_'), '${reg4}', '_'), '${reg3}',
                                         ''),'__','_') as name,
                          concat_ws(' ', sentences(
                                  lower(
@@ -72,6 +72,14 @@ from (
     and c.is_delete = 0
      ) t1
 where class_id != 0
+),
+tmp_vova_goods_attribute_final as (
+select
+goods_id,
+class_id,
+regexp_replace(name,'\'s','') as name,
+value
+from tmp_vova_goods_attribute
 )
 
 insert overwrite table ads.ads_vova_goods_attribute_merge PARTITION (pt='${cur_date}')
@@ -92,7 +100,7 @@ from (
              nvl(a.name,b.attr_key) as attr_key,
              nvl(a.value,b.attr_value) as attr_value
          from
-             tmp_vova_goods_attribute a
+             tmp_vova_goods_attribute_final a
                  full outer join
              ads.ads_vova_goods_attribute_label_data b
              on a.goods_id = b.goods_id
@@ -107,7 +115,7 @@ from (
 spark-sql \
 --conf "spark.app.name=ads_vova_goods_attribute_merge" \
 --conf "spark.dynamicAllocation.minExecutors=5" \
---conf "spark.dynamicAllocation.initialExecutors=20" \
+--conf "spark.dynamicAllocation.initialExecutors=5" \
 --conf "spark.dynamicAllocation.maxExecutors=100" \
 --conf "spark.sql.broadcastTimeout=600" \
 -e "$sql"
