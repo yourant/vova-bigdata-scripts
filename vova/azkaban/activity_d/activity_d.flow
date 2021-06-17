@@ -28,6 +28,7 @@ nodes:
       - ads_vova_activity_no_brand_goods_pool
       - ads_vova_activity_green_health
       - ads_vova_activity_low_price_goods
+      - ads_vova_activity_ac_new_user_only_goods
 
   - name: start_flag
     type: command
@@ -123,6 +124,15 @@ nodes:
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwb_vova_red_packet_report
       retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_goods_performance
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_performance
+      retries: 30
       retry.backoff: 600000
     dependsOn:
       - start_flag
@@ -327,3 +337,13 @@ nodes:
       - judge_dwd_vova_activity_goods_ctry_behave
       - judge_dim_vova_goods
       - judge_ads_vova_min_price_goods_d
+
+  - name: ads_vova_activity_ac_new_user_only_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_ac_new_user_only/update.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_ads_vova_goods_performance
