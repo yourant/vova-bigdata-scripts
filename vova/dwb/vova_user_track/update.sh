@@ -29,7 +29,9 @@ t3.homepage_pop_uv,
 t3.category_uv,
 t3.sear_begin_uv,
 t3.sear_result_uv,
-t3.pro_list_uv
+t3.pro_list_uv,
+t3.payment_uv,
+t5.try_payment_uv
 from
 (
 select
@@ -49,7 +51,8 @@ count(distinct t2.homepage_pop_device_id) as homepage_pop_uv,
 count(distinct t2.category_device_id) as category_uv,
 count(distinct t2.sear_begin_device_id) as sear_begin_uv,
 count(distinct t2.sear_result_device_id) as sear_result_uv,
-count(distinct t2.pro_list_device_id) as pro_list_uv
+count(distinct t2.pro_list_device_id) as pro_list_uv,
+count(distinct t2.payment_device_id) as payment_uv
 from
 (
 select
@@ -69,7 +72,8 @@ CASE when t1.page_code='homepage' and  t1.event_name ='goods_impression' and  li
 CASE when t1.page_code='category' and t1.view_type='show' and t1.event_name ='screen_view'   THEN t1.device_id end category_device_id,
 CASE when t1.page_code='search_begin' and t1.view_type='show' and t1.event_name ='screen_view'  THEN t1.device_id end sear_begin_device_id,
 CASE when t1.page_code='search_result' and t1.view_type='show' and t1.event_name ='screen_view'  THEN t1.device_id end sear_result_device_id,
-CASE when t1.page_code='product_list' and t1.view_type='show' and t1.event_name ='screen_view'  THEN t1.device_id end pro_list_device_id
+CASE when t1.page_code='product_list' and t1.view_type='show' and t1.event_name ='screen_view'  THEN t1.device_id end pro_list_device_id,
+CASE when t1.page_code='payment'  THEN t1.device_id end payment_device_id
 
 from
 (
@@ -131,7 +135,8 @@ nvl(t1.region_code,'all') region_code,
 nvl(t1.platform,'all') platform,
 nvl(t1.main_channel,'all') main_channel,
 nvl(t1.is_new,'all') is_new,
-count(distinct t1.buyer_id) as ordered_user_num
+count(distinct t1.buyer_id) as ordered_user_num,
+count(distinct if(order_sn is not null, t1.buyer_id, null) ) as try_payment_uv
 from
 (
 select
@@ -139,10 +144,12 @@ nvl(ddog.datasource,'NA') datasource,
 nvl(ddog.region_code,'NA') region_code,
 nvl(ddog.platform,'NA') platform,
 nvl(dd.main_channel,'NA') main_channel,
+pt.order_sn,
 CASE WHEN datediff(ddog.order_time,dd.activate_time)=0 THEN 'new' ELSE 'old' END is_new,
 ddog.buyer_id
 from dim.dim_vova_order_goods ddog
 left join dim.dim_vova_devices dd on dd.device_id = ddog.device_id and dd.datasource=ddog.datasource
+LEFT JOIN (SELECT order_sn  FROM ods_vova_vts.ods_vova_paypal_txn where date(txn_datetime)>=date_add('${cur_date}',-7) group by order_sn) pt ON pt.order_sn = ddog.order_sn
 where to_date(ddog.order_time) = '${cur_date}' and (ddog.from_domain like '%api.vova%' or ddog.from_domain like '%api.airyclub%')
 and (ddog.order_tag not like '%luckystar_activity_id%' or ddog.order_tag is null)
 ) t1

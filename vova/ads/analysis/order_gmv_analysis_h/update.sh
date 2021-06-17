@@ -16,6 +16,7 @@ sql="
 set hive.exec.dynamic.partition.mode=nonstrict;
 insert overwrite table ads.ads_vova_order_gmv_analysis_h partition(pt,hour)
 select
+/*+ repartition(1) */
 t1.country,
 t1.order_cnt,
 t1.gmv,

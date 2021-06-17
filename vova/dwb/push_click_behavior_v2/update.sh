@@ -64,24 +64,6 @@ select /*+ REPARTITION(10) */ distinct
 from
 (
   select distinct
-    case when datasource = 'vova' then 'vova'
-      when datasource = 'airyclub' then 'airyclub'
-      else 'app-group'
-      end datasource,
-    nvl(platform, 'NA')          AS platform,
-    nvl(config_id, 'NA')         AS config_id,
-    click_time                   AS click_time,
-    push_time,
-    time_zone,
-    device_id
-  from
-    dwd.dwd_vova_fact_push_click
-  where date(push_time) = '${cur_date}'
-    and device_id is not null
-    and datasource in (select distinct data_domain from ods_vova_vtsf.ods_vova_acg_app)
-  -- 需要单独再算站群的
-  union all
-  select distinct
     datasource datasource,
     nvl(platform, 'NA')          AS platform,
     nvl(config_id, 'NA')         AS config_id,
@@ -93,11 +75,8 @@ from
     dwd.dwd_vova_fact_push_click
   where date(push_time) = '${cur_date}'
     and device_id is not null
-    and datasource in ('nurkk', 'kulmasa', 'lupumart', 'boonlife', 'paivana')
-) fpc -- 所有的 加 部分站群的
-left join
-  dim.dim_vova_devices dev
-on dev.device_id = fpc.device_id and dev.datasource = fpc.datasource
+    and datasource in (select distinct data_domain from ods_vova_vtsf.ods_vova_acg_app)
+) fpc
 join
 (
   select
@@ -116,11 +95,22 @@ join
 ) flcc -- 推送点击打点
 on fpc.device_id = flcc.device_id and fpc.datasource = flcc.datasource
 left join
+(
+  SELECT
+    datasource,
+    device_id,
+    region_code,
+    main_channel
+  from
+    dim.dim_vova_devices
+) dev
+on dev.device_id = fpc.device_id and dev.datasource = fpc.datasource
+left join
   ods_vova_vtp.ods_vova_app_push_task_config vaptc
 on fpc.config_id = vaptc.id
 where date(fpc.push_time) = '${cur_date}'
   and fpc.device_id is not null
-  and fpc.datasource in (select distinct data_domain from ods_vova_vtsf.ods_vova_acg_app)
+  -- and fpc.datasource in (select distinct data_domain from ods_vova_vtsf.ods_vova_acg_app)
   and unix_timestamp(fpc.click_time) - unix_timestamp(fpc.push_time) + cast(fpc.time_zone as bigint) * 3600 < 24 * 3600
 ;
 
@@ -128,9 +118,7 @@ where date(fpc.push_time) = '${cur_date}'
 create table IF NOT EXISTS tmp.tmp_push_result_log_${table_suffix} as
 -- 尝试推送,上传成功量,推送成功 明细
 select /*+ REPARTITION(70) */
-  case when datasource in ('vova','airyclub') then datasource
-    else 'app-group'
-  end datasource,
+  datasource datasource,
   nvl(region_code, 'NA') region_code,
   nvl(platform, 'NA') platform,
   nvl(config_id, 'NA') config_id,
@@ -161,40 +149,6 @@ select /*+ REPARTITION(70) */
   null session_no_brand_gmv
 from
   tmp.tmp_push_logs_${table_suffix}
-union all
-select /*+ REPARTITION(1) */
-  nvl(datasource, 'NA')datasource,
-  nvl(region_code, 'NA') region_code,
-  nvl(platform, 'NA') platform,
-  nvl(config_id, 'NA') config_id,
-  nvl(main_channel, 'NA') main_channel,
-  nvl(job_rate, 'NA') job_rate,
-
-  1 try_num,
-  if(push_result = 1, 1, 0) push_num,
-  if(push_result = 1 and switch_on = 1, 1, 0) success_num,
-  null push_click_device,
-  null impressions_pv,
-  null impressions_device,
-  null impressions_pd_pv,
-  null impressions_pd_device,
-  null impressions_ex_pd_pv,
-  null impressions_ex_pd_device,
-  null carts               ,
-  null carts_device        ,
-  null orders              ,
-  null orders_device       ,
-  null pays                ,
-  null pays_device         ,
-  null gmv                 ,
-  null brand_gmv           ,
-  null no_brand_gmv        ,
-  null session_gmv         ,
-  null session_brand_gmv   ,
-  null session_no_brand_gmv
-from
-  tmp.tmp_push_logs_${table_suffix}
-where datasource in ('nurkk', 'kulmasa', 'lupumart', 'boonlife', 'paivana')
 
 union all -- 曝光
 select /*+ REPARTITION(10) */
@@ -427,19 +381,17 @@ left join
   where py.pay_time >= '${cur_date}'
 ) fp -- 支付订单 及 gmv
 on fpc.device_id = fp.device_id and fpc.datasource = fp.datasource
-where fp.pay_time > fpc.click_time
-  and unix_timestamp(fp.pay_time) - 24 * 3600 < unix_timestamp(fpc.click_time)
 ;
 
 insert overwrite table dwb.dwb_vova_push_click_behavior partition(pt='${cur_date}')
 select /*+ REPARTITION(1) */
-  nvl(fpc.datasource, 'all')   as datas,
+  nvl(fpc.datas, 'all')   as datasource,
   nvl(fpc.platform, 'all')     as platform,
   nvl(fpc.region_code, 'all')  as region_code,
   nvl(fpc.config_id, 'all')    as config_id,
   nvl(fpc.main_channel, 'all') as main_channel,
-  nvl(fpc.job_rate, 'all')     as job_rate,
 
+  max(fpc.job_rate)            as job_rate,
   sum(try_num)     try_num,
   sum(push_num)    push_num,
   sum(success_num) success_num,
@@ -463,9 +415,16 @@ select /*+ REPARTITION(1) */
   sum(session_brand_gmv)        session_brand_gmv   ,
   sum(session_no_brand_gmv)     session_no_brand_gmv
 from
-  tmp.tmp_push_result_log_${table_suffix} fpc
-where datasource in ('vova', 'airyclub', 'app-group')
-group by cube (fpc.datasource, fpc.platform,fpc.config_id, fpc.main_channel, fpc.region_code,fpc.job_rate)
+(
+  SELECT
+    *,
+    case when datasource in ('vova', 'airyclub') then datasource
+      else 'app-group'
+    end datas
+  from
+    tmp.tmp_push_result_log_${table_suffix}
+) fpc
+group by cube (fpc.datas, fpc.platform,fpc.config_id, fpc.main_channel, fpc.region_code)
 union all
 select /*+ REPARTITION(1) */
   nvl(fpc.datasource, 'all')   as datas,
@@ -473,8 +432,8 @@ select /*+ REPARTITION(1) */
   nvl(fpc.region_code, 'all')  as region_code,
   nvl(fpc.config_id, 'all')    as config_id,
   nvl(fpc.main_channel, 'all') as main_channel,
-  nvl(fpc.job_rate, 'all')     as job_rate,
 
+  max(fpc.job_rate)            as job_rate,
   sum(try_num)     try_num,
   sum(push_num)    push_num,
   sum(success_num) success_num,
@@ -499,8 +458,8 @@ select /*+ REPARTITION(1) */
   sum(session_no_brand_gmv)     session_no_brand_gmv
 from
   tmp.tmp_push_result_log_${table_suffix} fpc
-where datasource not in ('vova', 'airyclub', 'app-group')
-group by cube (fpc.datasource, fpc.platform,fpc.config_id, fpc.main_channel, fpc.region_code,fpc.job_rate)
+where datasource in ('nurkk', 'kulmasa', 'lupumart', 'boonlife', 'paivana')
+group by cube (fpc.datasource, fpc.platform,fpc.config_id, fpc.main_channel, fpc.region_code)
 having datas != 'all'
 ;
 
@@ -526,7 +485,8 @@ spark-sql \
 --conf "spark.sql.inMemoryColumnarStorage.partitionPruning=true" \
 --conf "spark.sql.inMemoryColumnarStorage.batchSize=100000" \
 --conf "spark.sql.broadcastTimeout=600" \
--e "$sql"
+--conf "spark.sql.autoBroadcastJoinThreshold=-1" \
+-e "${sql}"
 
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
