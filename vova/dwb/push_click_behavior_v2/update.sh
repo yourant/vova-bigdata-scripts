@@ -64,24 +64,6 @@ select /*+ REPARTITION(10) */ distinct
 from
 (
   select distinct
-    case when datasource = 'vova' then 'vova'
-      when datasource = 'airyclub' then 'airyclub'
-      else 'app-group'
-      end datasource,
-    nvl(platform, 'NA')          AS platform,
-    nvl(config_id, 'NA')         AS config_id,
-    click_time                   AS click_time,
-    push_time,
-    time_zone,
-    device_id
-  from
-    dwd.dwd_vova_fact_push_click
-  where date(push_time) = '${cur_date}'
-    and device_id is not null
-    and datasource in (select distinct data_domain from ods_vova_vtsf.ods_vova_acg_app)
-  -- 需要单独再算站群的
-  union all
-  select distinct
     datasource datasource,
     nvl(platform, 'NA')          AS platform,
     nvl(config_id, 'NA')         AS config_id,
@@ -93,8 +75,8 @@ from
     dwd.dwd_vova_fact_push_click
   where date(push_time) = '${cur_date}'
     and device_id is not null
-    and datasource in ('nurkk', 'kulmasa', 'lupumart', 'boonlife', 'paivana')
-) fpc -- 所有的 加 部分站群的
+    and datasource in (select distinct data_domain from ods_vova_vtsf.ods_vova_acg_app)
+) fpc
 join
 (
   select
@@ -110,23 +92,6 @@ join
     and a.element_name = 'PushUserDecide'
     and a.element_id like '%@%'
   group by datasource, device_id, session_id
-
-  union all
-  select
-    'app-group' datasource,
-    device_id,
-    session_id
-  from
-    dwd.dwd_vova_log_common_click a
-  join
-    ods_vova_vtp.ods_vova_app_push_task b
-  on split(a.element_id, '@')[0] = b.id
-  where a.pt = '${cur_date}'
-    and a.element_name = 'PushUserDecide'
-    and a.element_id like '%@%'
-    and datasource not in ('vova', 'airyclub')
-  group by device_id, session_id
-
 ) flcc -- 推送点击打点
 on fpc.device_id = flcc.device_id and fpc.datasource = flcc.datasource
 left join
@@ -138,16 +103,6 @@ left join
     main_channel
   from
     dim.dim_vova_devices
-  union all
-  SELECT
-    'app-group' datasource,
-    device_id,
-    region_code,
-    main_channel
-  from
-    dim.dim_vova_devices
-  where datasource not in ('vova', 'airyclub')
-  group by device_id, region_code, main_channel
 ) dev
 on dev.device_id = fpc.device_id and dev.datasource = fpc.datasource
 left join
@@ -163,9 +118,7 @@ where date(fpc.push_time) = '${cur_date}'
 create table IF NOT EXISTS tmp.tmp_push_result_log_${table_suffix} as
 -- 尝试推送,上传成功量,推送成功 明细
 select /*+ REPARTITION(70) */
-  case when datasource in ('vova','airyclub') then datasource
-    else 'app-group'
-  end datasource,
+  datasource datasource,
   nvl(region_code, 'NA') region_code,
   nvl(platform, 'NA') platform,
   nvl(config_id, 'NA') config_id,
@@ -196,40 +149,6 @@ select /*+ REPARTITION(70) */
   null session_no_brand_gmv
 from
   tmp.tmp_push_logs_${table_suffix}
-union all
-select /*+ REPARTITION(1) */
-  nvl(datasource, 'NA')datasource,
-  nvl(region_code, 'NA') region_code,
-  nvl(platform, 'NA') platform,
-  nvl(config_id, 'NA') config_id,
-  nvl(main_channel, 'NA') main_channel,
-  nvl(job_rate, 'NA') job_rate,
-
-  1 try_num,
-  if(push_result = 1, 1, 0) push_num,
-  if(push_result = 1 and switch_on = 1, 1, 0) success_num,
-  null push_click_device,
-  null impressions_pv,
-  null impressions_device,
-  null impressions_pd_pv,
-  null impressions_pd_device,
-  null impressions_ex_pd_pv,
-  null impressions_ex_pd_device,
-  null carts               ,
-  null carts_device        ,
-  null orders              ,
-  null orders_device       ,
-  null pays                ,
-  null pays_device         ,
-  null gmv                 ,
-  null brand_gmv           ,
-  null no_brand_gmv        ,
-  null session_gmv         ,
-  null session_brand_gmv   ,
-  null session_no_brand_gmv
-from
-  tmp.tmp_push_logs_${table_suffix}
-where datasource in ('nurkk', 'kulmasa', 'lupumart', 'boonlife', 'paivana')
 
 union all -- 曝光
 select /*+ REPARTITION(10) */
@@ -293,19 +212,6 @@ inner join
     dwd.dwd_vova_log_goods_impression gi
   where gi.pt >= '${cur_date}'
     and gi.pt <= date_add('${cur_date}', 1)
-  union all
-  select
-    'app-group' datasource,
-    device_id,
-    buyer_id,
-    collector_tstamp,
-    device_id,
-    page_code
-  from
-    dwd.dwd_vova_log_goods_impression
-  where pt >= '${cur_date}'
-    and pt <= date_add('${cur_date}', 1)
-    and datasource not in ('vova','airyclub')
 ) gi -- 曝光
 on fpc.device_id = gi.device_id and fpc.datasource = gi.datasource
 
@@ -355,17 +261,6 @@ inner join
   where cc.pt >= '${cur_date}'
     and cc.pt <= date_add('${cur_date}', 1)
     and cc.element_name = 'pdAddToCartClick'
-  union all
-  select
-    'app-group' datasource,
-    device_id,
-    collector_tstamp
-  from
-    dwd.dwd_vova_log_common_click
-  where pt >= '${cur_date}'
-    and pt <= date_add('${cur_date}', 1)
-    and element_name = 'pdAddToCartClick'
-    and datasource not in ('vova', 'airyclub')
 ) cc -- 加购
 on fpc.device_id = cc.device_id and fpc.datasource = cc.datasource
 
@@ -405,24 +300,7 @@ select /*+ REPARTITION(1) */
 from
   tmp.tmp_push_click_${table_suffix} fpc -- 推送点击
 inner join
-(
-  select
-    datasource,
-    device_id,
-    order_time,
-    order_id
-  from
-    dim.dim_vova_order_goods
-  union all
-  select
-    'app-group' datasource,
-    device_id,
-    order_time,
-    order_id
-  from
-    dim.dim_vova_order_goods
-  where datasource not in ('vova','airyclub')
-) og  -- 下单数
+  dim.dim_vova_order_goods og  -- 下单数
 on fpc.device_id = og.device_id and fpc.datasource = og.datasource
 where og.order_time > fpc.click_time
   and unix_timestamp(og.order_time) - 24 * 3600 < unix_timestamp(fpc.click_time)
@@ -501,52 +379,19 @@ left join
   ) foc2
   on py.order_goods_id = foc2.order_goods_id and py.datasource = foc2.datasource
   where py.pay_time >= '${cur_date}'
-  union all
-  select
-    'app-group' datasource,
-    py_2.device_id,
-    py_2.order_id,
-    py_2.buyer_id,
-    py_2.shipping_fee,
-    py_2.goods_number,
-    py_2.shop_price,
-    py_2.shipping_fee + py_2.goods_number * py_2.shop_price gmv,
-    foc2_2.pre_session_id,
-    dg_2.brand_id,
-    py_2.order_id,
-    py_2.order_goods_id,
-    py_2.pay_time
-  from
-    dwd.dwd_vova_fact_pay py_2
-  inner join
-    dim.dim_vova_goods dg_2
-  on py_2.goods_id = dg_2.goods_id
-  left join
-  (
-    select distinct
-      datasource,
-      order_goods_id,
-      pre_session_id
-    from
-      dwd.dwd_vova_fact_order_cause_v2
-    where pt='${cur_date}'
-  ) foc2_2
-  on py_2.order_goods_id = foc2_2.order_goods_id and py_2.datasource = foc2_2.datasource
-  where py_2.pay_time >= '${cur_date}'
-  and py_2.datasource not in ('vova', 'airyclub')
 ) fp -- 支付订单 及 gmv
 on fpc.device_id = fp.device_id and fpc.datasource = fp.datasource
 ;
 
 insert overwrite table dwb.dwb_vova_push_click_behavior partition(pt='${cur_date}')
 select /*+ REPARTITION(1) */
-  nvl(fpc.datasource, 'all')   as datas,
+  nvl(fpc.datas, 'all')   as datasource,
   nvl(fpc.platform, 'all')     as platform,
   nvl(fpc.region_code, 'all')  as region_code,
   nvl(fpc.config_id, 'all')    as config_id,
   nvl(fpc.main_channel, 'all') as main_channel,
-  nvl(fpc.job_rate, 'all')     as job_rate,
 
+  max(fpc.job_rate)            as job_rate,
   sum(try_num)     try_num,
   sum(push_num)    push_num,
   sum(success_num) success_num,
@@ -570,9 +415,16 @@ select /*+ REPARTITION(1) */
   sum(session_brand_gmv)        session_brand_gmv   ,
   sum(session_no_brand_gmv)     session_no_brand_gmv
 from
-  tmp.tmp_push_result_log_${table_suffix} fpc
-where datasource in ('vova', 'airyclub', 'app-group')
-group by cube (fpc.datasource, fpc.platform,fpc.config_id, fpc.main_channel, fpc.region_code,fpc.job_rate)
+(
+  SELECT
+    *,
+    case when datasource in ('vova', 'airyclub') then datasource
+      else 'app-group'
+    end datas
+  from
+    tmp.tmp_push_result_log_${table_suffix}
+) fpc
+group by cube (fpc.datas, fpc.platform,fpc.config_id, fpc.main_channel, fpc.region_code)
 union all
 select /*+ REPARTITION(1) */
   nvl(fpc.datasource, 'all')   as datas,
@@ -580,8 +432,8 @@ select /*+ REPARTITION(1) */
   nvl(fpc.region_code, 'all')  as region_code,
   nvl(fpc.config_id, 'all')    as config_id,
   nvl(fpc.main_channel, 'all') as main_channel,
-  nvl(fpc.job_rate, 'all')     as job_rate,
 
+  max(fpc.job_rate)            as job_rate,
   sum(try_num)     try_num,
   sum(push_num)    push_num,
   sum(success_num) success_num,
@@ -606,8 +458,8 @@ select /*+ REPARTITION(1) */
   sum(session_no_brand_gmv)     session_no_brand_gmv
 from
   tmp.tmp_push_result_log_${table_suffix} fpc
-where datasource not in ('vova', 'airyclub', 'app-group')
-group by cube (fpc.datasource, fpc.platform,fpc.config_id, fpc.main_channel, fpc.region_code,fpc.job_rate)
+where datasource in ('nurkk', 'kulmasa', 'lupumart', 'boonlife', 'paivana')
+group by cube (fpc.datasource, fpc.platform,fpc.config_id, fpc.main_channel, fpc.region_code)
 having datas != 'all'
 ;
 
@@ -634,7 +486,7 @@ spark-sql \
 --conf "spark.sql.inMemoryColumnarStorage.batchSize=100000" \
 --conf "spark.sql.broadcastTimeout=600" \
 --conf "spark.sql.autoBroadcastJoinThreshold=-1" \
--e "$sql"
+-e "${sql}"
 
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
