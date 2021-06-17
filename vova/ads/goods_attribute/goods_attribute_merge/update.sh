@@ -43,6 +43,8 @@ from (
                              when second_cat_id in (5821, 5818) then 12
                              when second_cat_id in
                                   (5796, 5797, 5798, 5799, 5800, 5801, 5802, 5803, 5804, 5805, 5807, 5808, 5986) then 13
+                             when second_cat_id in (5810, 5811,5812,5813,5814,5815,5816,5988 ) then 14
+                             when second_cat_id in (5809) then 15
                              else 0
                              end            as class_id,
                          regexp_replace(regexp_replace(regexp_replace(regexp_replace(lower(b.name), ' |\\\\|/|\\(', '_'), '__|（|-', '_'), '${reg2}',
@@ -89,7 +91,7 @@ from (
              nvl(a.name,b.attr_key) as attr_key,
              nvl(a.value,b.attr_value) as attr_value
          from
-             tmp.vova_goods_attribute_ysj_20210610 a
+             tmp_vova_goods_attribute a
                  full outer join
              ads.ads_vova_goods_attribute_label_data b
              on a.goods_id = b.goods_id
