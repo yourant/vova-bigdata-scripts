@@ -52,8 +52,8 @@ select /*+ REPARTITION(10) */ distinct
   nvl(fpc.platform, 'NA')          AS platform,
   nvl(fpc.config_id, 'NA')         AS config_id,
   case
-    when vaptc.expected_period = 0 then '单日单次'
-    when vaptc.expected_period = 20 then '每日循环'
+    when vaptc.expected_period = 0 then 'one_day_once' -- '单日单次'
+    when vaptc.expected_period = 20 then 'daily_cycle' -- '每日循环'
     else 'others' end               job_rate,
   fpc.click_time                   AS click_time,
   fpc.push_time,
