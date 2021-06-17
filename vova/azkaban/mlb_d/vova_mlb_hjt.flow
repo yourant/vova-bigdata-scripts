@@ -19,6 +19,7 @@ nodes:
       - mlb_ebr_search_recall_job_message_put
       - mlb_als_rec_training
       - mlb_rec_search_correct_sqoop
+      - mlb_vova_category_feat_d
 
 
   - name: start_flag
@@ -238,3 +239,13 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - mlb_rec_search_correct_gram
+
+  - name: mlb_vova_category_feat_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/categroy_feat_d/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_user_behave_link_d
+      - judge_ads_vova_goods_portrait_v2
