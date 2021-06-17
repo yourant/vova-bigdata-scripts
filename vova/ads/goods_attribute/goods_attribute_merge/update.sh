@@ -11,6 +11,7 @@ reg='\\&|\\"|\\/|\\^|#|\\\n|\\\t|\\\r|\\|,|,|，|`|\\;|!|\\[|\\]|\\+|\\*|\\?|:|�
 
 regt="\'s|）|\\)|_\\*"
 
+
 sql="
 with tmp_vova_goods_attribute as (
 select *
@@ -47,7 +48,7 @@ from (
                              when second_cat_id in (5809) then 15
                              else 0
                              end            as class_id,
-                         regexp_replace(regexp_replace(regexp_replace(regexp_replace(lower(b.name), ' |\\\\|/|\\(', '_'), '__|（|-', '_'), '${reg2}',
+                         regexp_replace(regexp_replace(regexp_replace(regexp_replace(lower(b.name), ' |\\\\|/|\\(', '_'), '__|（|-', '_'), '${regt}',
                                         ''),'__','_') as name,
                          concat_ws(' ', sentences(
                                  lower(
