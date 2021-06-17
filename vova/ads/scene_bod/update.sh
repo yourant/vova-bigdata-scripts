@@ -15,17 +15,15 @@ select
 /*+ repartition(1) */
 bod_id,goods_id,rank from (
   select
-  b.bod_id,a.goods_id,row_number() over(partition by b.bod_id order by c.overall_score desc) as rank
+  b.bod_id,a.goods_id,row_number() over(partition by b.bod_id order by b.bod_id) as rank
   from (
   select
       distinct bod_name,goods_id FROM ads.ads_vova_scene_bod_original_data
       lateral view explode(split(goods_list,'${reg}')) t AS goods_id
   ) a left join ads.ads_vova_bod b on a.bod_name=b.bod_name
-  left join  mlb.mlb_vova_rec_b_goods_score_d c on c.goods_id=a.goods_id
-  where c.pt='${cur_date}' and b.bod_type=6
+  where b.bod_type=6
 ) t where rank<=500;
 "
-echo ${sql}
 #如果使用spark-sql运行，则执行spark-sql -e
 spark-sql --conf "spark.app.name=ads_vova_scene_bod_goods_rank_data" --conf "spark.dynamicAllocation.maxExecutors=50" -e "$sql"
 #如果脚本失败，则报错
