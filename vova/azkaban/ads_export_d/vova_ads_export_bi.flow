@@ -662,7 +662,7 @@ nodes:
   - name: ads_vova_newly_activated_recommend_goods_export
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/newly_activated_reommend_goods/export.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/newly_activated_recommend_goods/export.sh
       retries: 10
       retry.backoff: 600000
     dependsOn:
