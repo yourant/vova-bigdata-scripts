@@ -1,17 +1,12 @@
 #!/bin/bash
 echo "start_time:"  `date +"%Y-%m-%d %H:%M:%S" -d "8 hour"`
 
-month=$1
 #指定日期和引擎
-cur_date=$2
-
-if [ ! -n "$1" ]; then
-  month=24
-fi
+cur_date=$1
 #默认日期为一年前的月的第一天
-if [ ! -n "$2" ];then
+if [ ! -n "$1" ];then
 # cur_date=`date -d "-1 day" +%Y-%m-%d`  '${cur_date}'
-cur_date=`date +"%Y-%m-01" -d "-${month} month"`
+cur_date=`date +"%Y-%m-01" -d "-24 month"`
 fi
 
 echo "cur_date: $cur_date"
@@ -19,7 +14,10 @@ job_name="dwb_vova_user_month_cohort_req_chenkai_${cur_date}"
 
 ###逻辑sql
 sql="
-insert overwrite table tmp.tmp_vova_user_month_cohort_v2 PARTITION (pt='${cur_date}')
+
+set hive.exec.dynamic.partition=true;
+set hive.exec.dynamic.partition.mode=nonstrict;
+insert overwrite table dwb.dwb_vova_user_month_cohort PARTITION (pt)
 SELECT /*+ REPARTITION(1) */
   nvl(final.start_month, 'all')  AS start_month,
   nvl(final.datasource, 'all')  AS datasource,
@@ -51,7 +49,8 @@ SELECT /*+ REPARTITION(1) */
   count(DISTINCT final.next_22)  AS next_22_num,
   count(DISTINCT final.next_23)  AS next_23_num,
   count(DISTINCT final.next_24)  AS next_24_num,
-  nvl(final.is_new, 'all') AS buyer_type
+  nvl(final.is_new, 'all') AS buyer_type,
+  nvl(final.start_month, 'all') AS pt
 FROM
 (
   SELECT
@@ -96,46 +95,27 @@ FROM
       su.region_code,
       su.platform
     FROM dwd.dwd_vova_fact_start_up su
-    where trunc(su.pt, 'MM') = '${cur_date}'
+    where su.pt >= '${cur_date}'
     GROUP BY trunc(pt, 'MM'), su.device_id, su.datasource, su.region_code, su.platform
   ) start_up1
   INNER JOIN
   (
-
     SELECT
-      start_month,
-      t1.device_id,
-      t1.datasource,
-      t1.region_code,
-      t1.platform
-    from
-    (
-      select
-        trunc(pt, 'MM') AS start_month,
-        device_id,
-        datasource,
-        region_code,
-        platform
-      from
-        dwd.dwd_vova_fact_start_up_m
-      where month >= '${cur_date}'
-      union all
-      select
-        trunc(pt, 'MM') AS start_month,
-        su.device_id,
-        su.datasource,
-        su.region_code,
-        su.platform
-      FROM dwd.dwd_vova_fact_start_up su
-      where pt >= add_months(trunc('${cur_date}', 'MM'), ${month})
-    ) t1
-    GROUP BY t1.start_month, t1.device_id, t1.datasource, t1.region_code, t1.platform
-
+      trunc(pt, 'MM') AS start_month,
+      su.device_id,
+      su.datasource,
+      su.region_code,
+      su.platform
+    FROM dwd.dwd_vova_fact_start_up su
+    where su.pt >= '${cur_date}'
+    GROUP BY trunc(pt, 'MM'), su.device_id, su.datasource, su.region_code, su.platform
   ) start_up2
   ON start_up1.device_id = start_up2.device_id
   AND start_up1.datasource = start_up2.datasource
   AND start_up1.region_code = start_up2.region_code
   AND start_up1.platform = start_up2.platform
+  AND start_up2.start_month >= start_up1.start_month
+  AND months_between(start_up2.start_month, start_up1.start_month) <= 24
   LEFT JOIN
   (
     SELECT

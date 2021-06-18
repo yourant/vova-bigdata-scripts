@@ -29,6 +29,7 @@ nodes:
       - ads_vova_activity_green_health_export
       - ads_vova_activity_low_price_goods_export
       - ads_vova_activity_low_price_newly_activated_goods_export
+      - ads_vova_activity_ac_new_user_only_goods_export
 
   - name: start_flag
     type: command
@@ -159,6 +160,15 @@ nodes:
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_low_price_goods
       retries: 20
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_activity_ac_new_user_only_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_activity_ac_new_user_only_goods
+      retries: 30
       retry.backoff: 300000
     dependsOn:
       - start_flag
@@ -395,4 +405,13 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_ads_vova_activity_low_price_goods
+
+  - name: ads_vova_activity_ac_new_user_only_goods_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/activity/activity_ac_new_user_only/sqoop_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_activity_ac_new_user_only_goods
 

@@ -20,6 +20,13 @@ echo "cur_date: ${cur_date}"
 
 job_name="dws_vova_buyer_goods_behave_h_req9592_gongrui_chenkai"
 
+# msck repair table dwd.dwd_vova_log_goods_impression_arc;
+# msck repair table dwd.dwd_vova_log_impressions_arc;
+# msck repair table dwd.dwd_vova_log_goods_click_arc;
+# msck repair table dwd.dwd_vova_log_click_arc;
+# msck repair table dwd.dwd_vova_log_common_click_arc;
+# msck repair table dwd.dwd_vova_log_data_arc;
+
 ###逻辑sql
 sql="
 ALTER TABLE dws.dws_vova_buyer_goods_behave_h DROP if exists partition(pt = '$(date -d "${cur_date:0:10} -32day" +%Y-%m-%d)');
@@ -197,7 +204,7 @@ spark-sql \
 --conf "spark.sql.crossJoin.enabled=true" \
 --conf "spark.default.parallelism = 300" \
 --conf "spark.sql.shuffle.partitions=300" \
---conf "spark.dynamicAllocation.maxExecutors=100" \
+--conf "spark.dynamicAllocation.maxExecutors=150" \
 --conf "spark.sql.adaptive.enabled=true" \
 --conf "spark.sql.adaptive.join.enabled=true" \
 --conf "spark.shuffle.sort.bypassMergeThreshold=10000" \

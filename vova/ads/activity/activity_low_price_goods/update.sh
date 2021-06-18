@@ -237,7 +237,7 @@ spark-sql \
 --conf "spark.shuffle.sort.bypassMergeThreshold=10000" \
 --conf "spark.sql.inMemoryColumnarStorage.compressed=true" \
 --conf "spark.sql.inMemoryColumnarStorage.partitionPruning=true" \
---conf "spark.sql.inMemoryColumnarStorage.batchSize=100000" \
+--conf "spark.sql.inMemoryColumnarStorage.batchSize=300000" \
 --conf "spark.network.timeout=300" \
 -e "$sql"
 #如果脚本失败，则报错

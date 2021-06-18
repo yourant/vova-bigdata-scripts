@@ -14,7 +14,7 @@ result
 
 create TABLE mlb.mlb_vova_gender_hot_goods_d
 (
-    gender               int              COMMENT '性别:1:男；0:女；-1:通用',
+    gender               int              COMMENT '性别:1:男；2:女；0:通用',
     goods_id             bigint           COMMENT '商品id',
     goods_score          double           COMMENT '商品综合评分'
 ) COMMENT '性别热门兜底' PARTITIONED BY (pt STRING)
@@ -44,9 +44,10 @@ STORED AS parquet
 
 依赖: ads.ads_vova_goods_portrait ; mlb.mlb_vova_rec_b_catgoods_score_d
 
+drop table  mlb.mlb_vova_gender_hot_goods_d;
 create TABLE mlb.mlb_vova_gender_hot_goods_d
 (
-    gender               int              COMMENT '性别:1:男；0:女；-1:通用',
+    gender               int              COMMENT '性别:1:男；2:女；0:通用',
     goods_id             bigint           COMMENT '商品id',
     goods_score          double           COMMENT '商品综合评分'
 ) COMMENT '性别热门兜底' PARTITIONED BY (pt STRING)
