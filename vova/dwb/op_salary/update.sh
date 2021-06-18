@@ -19,10 +19,10 @@ insert overwrite table dwb.dwb_vova_op_salary_thd PARTITION (pt = '${cur_month}'
 select
 /*+ REPARTITION(1) */
 c.first_cat_name,
-month_sale_threshold / dayofmonth('$cur_date') sale_threshold_d
+month_sale_threshold / dayofmonth('${cur_date}') sale_threshold_d
 from ads.ads_vova_royalty_threshold_d t
 join dim.dim_vova_category c on t.first_cat_id = c.first_cat_id
-where pt='$cur_date' and c.depth=1;
+where pt='${cur_date}' and c.depth=1;
 
 insert overwrite table dwb.dwb_vova_op_salary_goods_ok PARTITION (pt = '${cur_month}')
 select
@@ -58,7 +58,7 @@ test_result,
 employee_name,
 row_number() over(partition by goods_id order by create_time) rank
 from ods_vova_vbd.ods_vova_test_goods_behave
-) t where rank=1 and create_time>='2021-04-01 00:00:00' and test_result =1 and employee_name !='computer' and trunc(create_time,'MM')='$cur_month'
+) t where rank=1 and create_time>='2021-04-01 00:00:00' and test_result =1 and employee_name !='computer' and trunc(create_time,'MM')='${cur_month}'
 ) t
 left join dim.dim_vova_goods g on t.goods_id = g.goods_id
 where g.brand_id =0
@@ -85,10 +85,10 @@ p.first_cat_name,
 sum(p.shop_price * p.goods_number + p.shipping_fee) gmv
 from dwd.dwd_vova_fact_pay p
 join dim.dim_vova_goods g on p.goods_id = g.goods_id
-where trunc(pay_time,'MM')='$cur_month' and g.brand_id=0
+where trunc(pay_time,'MM')='${cur_month}' and g.brand_id=0
 group by to_date(pay_time), p.goods_id,p.first_cat_name
 ) t join dwb.dwb_vova_op_salary_thd r on t.first_cat_name = r.first_cat_name
-where pt='$cur_month'
+where pt='${cur_month}'
 ) t group by goods_id
 having cnt >3
 ) t3 on t1.goods_id = t3.goods_id

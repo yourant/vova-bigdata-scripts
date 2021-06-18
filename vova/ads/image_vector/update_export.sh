@@ -18,8 +18,8 @@ echo "pt=$pt"
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=default \
--Dmapreduce.map.memory.mb=8192 \
--Dmapreduce.reduce.memory.mb=8192 \
+-Dmapreduce.map.memory.mb=12288 \
+-Dmapreduce.reduce.memory.mb=12288 \
 -Dsqoop.export.records.per.statement=1000 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/als_images \
 --username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \

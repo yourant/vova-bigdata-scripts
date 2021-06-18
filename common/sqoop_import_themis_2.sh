@@ -5,7 +5,7 @@ if [ ! -n "$1" ];then
     echo $show_usage
     exit 1
 fi
-api_url=10.108.11.8:18081
+api_url=10.108.10.191:18081
 ARGS=$(getopt -o jn --long db_code:,etl_type:,pt:,table_name:,mapers:,split_id:,inc_column:,partition_num:,period_type:,primary_key:,table_type:,executor_memory:,hive_delims: -- "$@")
 eval set -- "${ARGS}"
 inc_column=""
