@@ -23,7 +23,7 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
-      retries: 5
+      retries: 15
       retry.backoff: 600000
     dependsOn:
       - start_flag
@@ -33,7 +33,7 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_bod_goods_rank_data
-      retries: 5
+      retries: 20
       retry.backoff: 600000
     dependsOn:
       - start_flag
@@ -42,7 +42,7 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_rec_m_tagcombine_d
-      retries: 5
+      retries: 20
       retry.backoff: 600000
     dependsOn:
       - start_flag
@@ -62,7 +62,7 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_rec_highfreq_query
-      retries: 5
+      retries: 20
       retry.backoff: 600000
     dependsOn:
       - start_flag
