@@ -3,11 +3,11 @@
 pt=$1
 #默认日期为昨天
 if [ ! -n "$1" ]; then
-  hive -e "msck repair table ads.ads_image_vector_target_d;"
+  hive -e "msck repair table ads.ads_vova_image_vector_target_d;"
 if [ $? -ne 0 ];then
   exit 1
 fi
-max_pt=$(hive -e "show partitions ads.ads_image_vector_target_d" | tail -1)
+max_pt=$(hive -e "show partitions ads.ads_vova_image_vector_target_d" | tail -1)
 if [ $? -ne 0 ];then
   exit 1
 fi
@@ -18,6 +18,8 @@ echo "pt=$pt"
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=default \
+-Dmapreduce.map.memory.mb=12288 \
+-Dmapreduce.reduce.memory.mb=12288 \
 -Dsqoop.export.records.per.statement=1000 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/als_images \
 --username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \
@@ -26,7 +28,7 @@ sqoop export \
 --table ads_image_vector_v3 \
 --update-mode allowinsert \
 --hcatalog-database ads \
---hcatalog-table ads_image_vector_target_d \
+--hcatalog-table ads_vova_image_vector_target_d \
 --hcatalog-partition-keys pt  \
 --hcatalog-partition-values  ${pt} \
 --fields-terminated-by '\001' \
