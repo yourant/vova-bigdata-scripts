@@ -68,7 +68,7 @@ fi
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=default \
--Dsqoop.export.records.per.statement=1000 \
+-Dsqoop.export.records.per.statement=500 \
 --connect jdbc:mysql://bd-warehouse-maxscale.gitvv.com:3311/artemis \
 --username market --password MyF4k2y9jJSv \
 --m 1 \
