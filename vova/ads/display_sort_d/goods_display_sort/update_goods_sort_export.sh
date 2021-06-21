@@ -39,7 +39,7 @@ mysql -h vovadb.cei8p8whxxwd.us-east-1.rds.amazonaws.com -u dbg20200517 -poghi3C
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=default \
--Dsqoop.export.records.per.statement=1000 \
+-Dsqoop.export.records.per.statement=500 \
 --connect jdbc:mysql://vovadb.cei8p8whxxwd.us-east-1.rds.amazonaws.com/themis?rewriteBatchedStatements=true \
 --username dbg20200517 --password oghi3Cait3aixeGei<gh= \
 --table goods_display_sort_new \

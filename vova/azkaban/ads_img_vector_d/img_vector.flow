@@ -18,6 +18,34 @@ nodes:
     config:
       command: echo "start job"
 
+
+  - name: judge_dim_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_goods_sku
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods_sku
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_goods_gallery
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_goods_gallery
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
   - name: vova_image_vector_update_status_get
     type: command
     config:
@@ -35,6 +63,9 @@ nodes:
       command: sh /mnt/vova-bigdata-scripts/vova/ads/img_search_source/update.sh
     dependsOn:
       - vova_image_vector_update_status_get
+      - judge_dim_vova_goods
+      - judge_dim_vova_goods_sku
+      - judge_vova_goods_gallery
 
   - name: vova_image_vector_handle_get
     type: command

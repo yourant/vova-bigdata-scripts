@@ -59,7 +59,7 @@ fi
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=important \
--Dsqoop.export.records.per.statement=3000 \
+-Dsqoop.export.records.per.statement=500 \
 --connect jdbc:mysql://fn-rec.cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/search \
 --username datagroup20200925 --password 8SxDdHGDZyrsesCgfdEZvJmr \
 --m 1 \

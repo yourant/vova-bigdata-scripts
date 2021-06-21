@@ -50,7 +50,7 @@ mysql -h rec-backend.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwbacke
 
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
--Dsqoop.export.records.per.statement=1000 \
+-Dsqoop.export.records.per.statement=500 \
 --connect jdbc:mysql://rec-backend.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com/backend?rewriteBatchedStatements=true \
 --username dwbackendwriter --password Rap11rJQZE3ATA18GZHAbySsNZVIvjnE \
 --table vova_goods_examination_new \
