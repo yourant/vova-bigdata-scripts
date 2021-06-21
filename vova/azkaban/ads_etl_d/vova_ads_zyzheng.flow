@@ -445,7 +445,7 @@ nodes:
   - name: ads_vova_newly_activated_recommend_goods
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/newly_activated_reommend_goods/update.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/newly_activated_recommend_goods/update.sh
       retries: 20
       retry.backoff: 600000
     dependsOn:
