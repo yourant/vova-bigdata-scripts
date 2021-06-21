@@ -113,7 +113,7 @@ left join
     cc.buyer_id,
     cast(cc.element_id as bigint) as vir_gs_id,
     count(*) as clk_cnt,
-    sum(if(cc.element_name ='pdAddToWishlistClick',1,0)) as collect_cnt,
+    sum(if(cc.element_name in ('pdAddToWishlistClick', 'addWishlist'),1,0)) as collect_cnt,
     sum(if(cc.element_name ='pdAddToCartSuccess',1,0)) as add_cat_cnt
   from
   -- dwd.dwd_vova_log_common_click_arc
