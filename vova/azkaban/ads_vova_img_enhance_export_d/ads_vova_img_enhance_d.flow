@@ -17,15 +17,6 @@ nodes:
     config:
       command: echo "start job"
 
-  - name: ads_vova_image_enhancement_res_get
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/job_message_get_last.sh --jname=ads_vova_image_enhancement_res --from=cv_algo --to=data
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - start_flag
-
   - name: judge_dwd_vova_fact_pay
     type: command
     config:
@@ -70,7 +61,6 @@ nodes:
       retries: 5
       retry.backoff: 600000
     dependsOn:
-      - ads_vova_image_enhancement_res_get
       - judge_dwd_vova_fact_pay
       - judge_vova_goods_gallery
       - judge_dim_vova_goods

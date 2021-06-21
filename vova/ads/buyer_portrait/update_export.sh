@@ -52,7 +52,7 @@ fi
 
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
--Dsqoop.export.records.per.statement=3000 \
+-Dsqoop.export.records.per.statement=500 \
 -Dmapreduce.job.queuename=default \
 -Dmapreduce.map.memory.mb=12288 \
 -Dmapreduce.reduce.memory.mb=12288 \

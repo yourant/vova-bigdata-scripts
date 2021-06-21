@@ -35,7 +35,7 @@ mysql -h trigram-fn.cn899du7tges.us-east-1.rds.amazonaws.com -u datagw2021052812
 
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
--Dsqoop.export.records.per.statement=1000 \
+-Dsqoop.export.records.per.statement=500 \
 --connect jdbc:mysql://trigram-fn.cn899du7tges.us-east-1.rds.amazonaws.com/trigram_shopping?rewriteBatchedStatements=true \
 --username datagw2021052812 --password Ien3aingae%w2xa5OhCei \
 --table min_price_goods_new \
