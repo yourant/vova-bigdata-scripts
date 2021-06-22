@@ -111,6 +111,15 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_dwd_vova_fact_comment
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_comment
+      retries: 20
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
   - name: ads_vova_mct_perf_d
     type: command
     config:
