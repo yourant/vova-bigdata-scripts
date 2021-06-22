@@ -16,6 +16,8 @@ nodes:
       - sqoop_mlb_rec_m_catlike_d
       - sqoop_mlb_vova_rec_m_user_cat_expand_d
       - sqoop_mlb_vova_gender_hot_goods_d
+      - sqoop_mlb_vova_buyer_goods_rating_offline
+      - sqoop_mlb_vova_buyer_cat_rating_offline
 
   - name: start_flag
     type: command
@@ -61,6 +63,20 @@ nodes:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_goods_second_cat
       retries: 20
       retry.backoff: 1200000
+    dependsOn:
+      - start_flag
+
+  - name: judge_mlb_vova_buyer_goods_rating_offline
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_buyer_goods_pref
+    dependsOn:
+      - start_flag
+
+  - name: judge_mlb_vova_buyer_cat_rating_offline
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_buyer_cat_pref
     dependsOn:
       - start_flag
 
@@ -251,3 +267,24 @@ nodes:
     dependsOn:
       - start_flag
       - judge_mlb_vova_gender_hot_goods_d
+
+# 导数, 用户商品评分与品类评分
+  - name: sqoop_mlb_vova_buyer_goods_rating_offline
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_user_pref/user_goods_pref_sqoop.sh
+      retries: 20
+      retry.backoff: 1800000
+    dependsOn:
+      - start_flag
+      - judge_mlb_vova_buyer_goods_rating_offline
+
+  - name: sqoop_mlb_vova_buyer_cat_rating_offline
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_user_pref/user_cat_pref_sqoop.sh
+      retries: 20
+      retry.backoff: 1800000
+    dependsOn:
+      - start_flag
+      - judge_mlb_vova_buyer_cat_rating_offline
