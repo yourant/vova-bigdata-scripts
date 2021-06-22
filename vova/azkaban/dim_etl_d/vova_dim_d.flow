@@ -23,6 +23,7 @@ nodes:
       - dim_vova_supply_goods
       - dim_vova_goods
       - dim_vova_virtual_six_mct_goods
+      - dim_vova_goods_sku
 
 
   - name: start_flag
@@ -523,6 +524,34 @@ nodes:
       - start_flag
 
 
+  - name: judge_vova_goods_sku
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_goods_sku
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_style_value
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_style_value
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_sku_style
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_sku_style
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
   - name: dim_vova_virtual_six_mct_goods
     type: command
     config:
@@ -532,3 +561,14 @@ nodes:
     dependsOn:
       - judge_vova_backend_test_goods_behave
       - dim_vova_goods
+
+  - name: dim_vova_goods_sku
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dim/sku/update.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_vova_goods_sku
+      - judge_vova_sku_style
+      - judge_vova_style_value

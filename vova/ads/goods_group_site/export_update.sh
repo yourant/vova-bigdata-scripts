@@ -60,7 +60,7 @@ fi
 
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
--Dsqoop.export.records.per.statement=1000 \
+-Dsqoop.export.records.per.statement=500 \
 --connect jdbc:mysql://trigram-fn.cn899du7tges.us-east-1.rds.amazonaws.com:3306/trigram_data \
 --username trigram_data2021052811 --password iPha7Sae5Quai3ahR5vi~ \
 --m 1 \

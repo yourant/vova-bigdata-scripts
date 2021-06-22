@@ -184,3 +184,8 @@ spark-sql --conf "spark.app.name=ads_vova_img_search_source_d_zhangyin"  --conf 
 if [ $? -ne 0 ];then
   exit 1
 fi
+
+sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=vova_image_vector_extract_data_src --from=data --to=cv --jtype=1D --retry=0 --freedoms={"pt":"$cur_date"}
+if [ $? -ne 0 ];then
+  exit 1
+fi

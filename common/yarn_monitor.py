@@ -12,12 +12,12 @@ if __name__ == "__main__":
     fileName=sys.argv[0]
     name=sys.argv[1]
     headers = {"accept": "application/json"}
-    url = "http://ip-10-108-13-164.ec2.internal:8088/ws/v1/cluster/apps?state=RUNNING,ACCEPTED"
-    url1 = "http://ip-10-108-3-0.ec2.internal:8088/ws/v1/cluster/apps?state=RUNNING,ACCEPTED"
-    url2 = "http://ip-10-108-11-213.ec2.internal:8088/ws/v1/cluster/apps?state=RUNNING,ACCEPTED"
-    ip ="ip-10-108-13-164.ec2.internal"
-    ip1 ="ip-10-108-3-0.ec2.internal"
-    ip2 ="ip-10-108-11-213.ec2.internal"
+    url = "http://ip-10-108-11-99.ec2.internal:8088/ws/v1/cluster/apps?state=RUNNING,ACCEPTED"
+    url1 = "http://ip-10-108-0-51.ec2.internal:8088/ws/v1/cluster/apps?state=RUNNING,ACCEPTED"
+    url2 = "http://ip-10-108-5-194.ec2.internal:8088/ws/v1/cluster/apps?state=RUNNING,ACCEPTED"
+    ip ="ip-10-108-11-99.ec2.internal"
+    ip1 ="ip-10-108-0-51.ec2.internal"
+    ip2 ="ip-10-108-5-194.ec2.internal"
     arr = []
     try:
         conn=getResponse(ip,url)

@@ -20,16 +20,16 @@ echo "cur_date: ${cur_date}"
 
 job_name="dws_vova_buyer_goods_behave_h_req9592_gongrui_chenkai"
 
+# msck repair table dwd.dwd_vova_log_goods_impression_arc;
+# msck repair table dwd.dwd_vova_log_impressions_arc;
+# msck repair table dwd.dwd_vova_log_goods_click_arc;
+# msck repair table dwd.dwd_vova_log_click_arc;
+# msck repair table dwd.dwd_vova_log_common_click_arc;
+# msck repair table dwd.dwd_vova_log_data_arc;
+
 ###逻辑sql
 sql="
 ALTER TABLE dws.dws_vova_buyer_goods_behave_h DROP if exists partition(pt = '$(date -d "${cur_date:0:10} -32day" +%Y-%m-%d)');
-
-msck repair table dwd.dwd_vova_log_goods_impression_arc;
-msck repair table dwd.dwd_vova_log_impressions_arc;
-msck repair table dwd.dwd_vova_log_goods_click_arc;
-msck repair table dwd.dwd_vova_log_click_arc;
-msck repair table dwd.dwd_vova_log_common_click_arc;
-msck repair table dwd.dwd_vova_log_data_arc;
 
 insert overwrite table dws.dws_vova_buyer_goods_behave_h partition(pt='${cur_date}')
 select /*+ REPARTITION(5) */
@@ -113,7 +113,7 @@ left join
     cc.buyer_id,
     cast(cc.element_id as bigint) as vir_gs_id,
     count(*) as clk_cnt,
-    sum(if(cc.element_name ='pdAddToWishlistClick',1,0)) as collect_cnt,
+    sum(if(cc.element_name in ('pdAddToWishlistClick', 'addWishlist'),1,0)) as collect_cnt,
     sum(if(cc.element_name ='pdAddToCartSuccess',1,0)) as add_cat_cnt
   from
   -- dwd.dwd_vova_log_common_click_arc

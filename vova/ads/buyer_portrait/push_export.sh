@@ -101,7 +101,7 @@ sqoop export \
 -Dmapreduce.job.queuename=default \
 -Dmapreduce.map.memory.mb=8192 \
 -Dmapreduce.reduce.memory.mb=8192 \
--Dsqoop.export.records.per.statement=1000 \
+-Dsqoop.export.records.per.statement=500 \
 --connect jdbc:mariadb:aurora://db-logistics-w.gitvv.com:3306/themis_logistics_report \
 --username vvreport20210517 --password thuy*at1OhG1eiyoh8she \
 --connection-manager org.apache.sqoop.manager.MySQLManager \

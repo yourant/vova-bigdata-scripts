@@ -25,6 +25,8 @@ drop table if exists dwb.dwb_vova_op_salary_summary;
 CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_op_salary_summary
 (
     first_cat_name        string        COMMENT '一级品类名称',
+    op                    string        COMMENT '运营',
+    mct_op                string        COMMENT '商家运营',
     self_goods_cnt        bigint        COMMENT '自营店铺提成商品数',
     no_self_goods_cnt     bigint        COMMENT '非自营店铺提成商品数',
     op_amount             decimal(10,4) COMMENT '运营提成金额',
