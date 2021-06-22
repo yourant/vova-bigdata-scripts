@@ -562,6 +562,7 @@ nodes:
     dependsOn:
       - judge_dws_vova_buyer_goods_behave
       - judge_ads_vova_buyer_portrait_feature
+      - judge_ads_vova_buyer_portrait_feature
 
 # rating分修改 用户-商品评分
   - name: mlb_vova_buyer_goods_pref
