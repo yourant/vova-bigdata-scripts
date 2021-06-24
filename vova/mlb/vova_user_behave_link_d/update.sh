@@ -82,7 +82,8 @@ geo_latitude,
 geo_longitude,
 geo_region,
 absolute_position,
-imsi
+imsi,
+search_words_or_goods_clk_ts
 from tmp.tmp_vova_user_clk_behave_link_d
 where pt = '$cur_date'
 group by session_id    ,
@@ -119,7 +120,8 @@ geo_latitude,
 geo_longitude,
 geo_region,
 absolute_position,
-imsi;
+imsi,
+search_words_or_goods_clk_ts;
 
 
 
@@ -168,7 +170,8 @@ first(geo_latitude),
 first(geo_longitude),
 first(geo_region),
 first(absolute_position),
-first(imsi)
+first(imsi),
+first(search_words_or_goods_clk_ts)
     from
 (select
        t1.*,
@@ -211,7 +214,8 @@ a.geo_latitude,
 a.geo_longitude,
 a.geo_region,
 a.absolute_position,
-a.imsi
+a.imsi,
+a.search_words_or_goods_clk_ts
 from tmp.tmp_vova_user_clk_behave_link_d_distinct a
 left join tmp.tmp_user_behavior_link_add_clk_tmp b on  a.device_id = b.device_id and unix_timestamp(a.expre_time,'yyyy-MM-dd HH:mm:ss') * 1000 > b.collector_tstamp
 where a.pt = '$cur_date' and  a.device_id is not null)t1)
@@ -285,7 +289,8 @@ first(geo_latitude),
 first(geo_longitude),
 first(geo_region),
 first(absolute_position),
-first(imsi)
+first(imsi),
+first(search_words_or_goods_clk_ts)
     from
 (select
        t1.*,
@@ -328,7 +333,8 @@ a.geo_latitude,
 a.geo_longitude,
 a.geo_region,
 a.absolute_position,
-a.imsi
+a.imsi,
+a.search_words_or_goods_clk_ts
 from tmp.tmp_user_behavior_link_add_clks_final a
 left join (select a.device_id,a.buyer_id,a.collector_tstamp,b.goods_id from dwd.dwd_vova_log_common_click a
             left join dim.dim_vova_goods b on cast(a.element_id AS BIGINT) = b.virtual_goods_id
@@ -409,7 +415,8 @@ first(geo_latitude),
 first(geo_longitude),
 first(geo_region),
 first(absolute_position),
-first(imsi)
+first(imsi),
+first(search_words_or_goods_clk_ts)
     from
 (select
        t1.*,
@@ -454,7 +461,8 @@ a.geo_latitude,
 a.geo_longitude,
 a.geo_region,
 a.absolute_position,
-a.imsi
+a.imsi,
+a.search_words_or_goods_clk_ts
 from tmp.tmp_user_behavior_link_add_cart_final a
 left join (select a.device_id,a.buyer_id,a.collector_tstamp,b.goods_id from dwd.dwd_vova_log_common_click a
             left join dim.dim_vova_goods b on cast(a.element_id AS BIGINT) = b.virtual_goods_id
@@ -540,6 +548,7 @@ first(geo_longitude),
 first(geo_region),
 first(absolute_position),
 first(imsi),
+first(search_words_or_goods_clk_ts),
         page_code pagecode
 from tmp.tmp_user_behavior_link_add_wish_final a
 left join (
