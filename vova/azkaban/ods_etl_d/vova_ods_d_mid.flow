@@ -270,9 +270,9 @@ nodes:
           - vova_user_tags
           - vova_app_install_record
           - vova_email_task_config
-          - vova_email_send_log_a
-          - vova_email_send_log_b
-          - vova_email_send_log_c
+#          - vova_email_send_log_a
+#          - vova_email_send_log_b
+#          - vova_email_send_log_c
 
       - name: vova_channel_mapping
         type: command
@@ -392,32 +392,32 @@ nodes:
         dependsOn:
           - other_mktcpn_start
 
-      - name: vova_email_send_log_a
-        type: command
-        config:
-          retries: 4
-          retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vtp --table_name=email_send_log_a --inc_column=update_time --mapers=5 --etl_type=INCTIME --period_type=day --partition_num=40
-        dependsOn:
-          - other_mktcpn_start
-
-      - name: vova_email_send_log_b
-        type: command
-        config:
-          retries: 4
-          retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vtp --table_name=email_send_log_b --inc_column=update_time --mapers=5 --etl_type=INCTIME --period_type=day --partition_num=30
-        dependsOn:
-          - other_mktcpn_start
-
-      - name: vova_email_send_log_c
-        type: command
-        config:
-          retries: 4
-          retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vtp --table_name=email_send_log_c --inc_column=update_time --mapers=5 --etl_type=INCTIME --period_type=day --partition_num=50
-        dependsOn:
-          - other_mktcpn_start
+#      - name: vova_email_send_log_a
+#        type: command
+#        config:
+#          retries: 4
+#          retry.backoff: 600000
+#          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vtp --table_name=email_send_log_a --inc_column=update_time --mapers=5 --etl_type=INCTIME --period_type=day --partition_num=40
+#        dependsOn:
+#          - other_mktcpn_start
+#
+#      - name: vova_email_send_log_b
+#        type: command
+#        config:
+#          retries: 4
+#          retry.backoff: 600000
+#          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vtp --table_name=email_send_log_b --inc_column=update_time --mapers=5 --etl_type=INCTIME --period_type=day --partition_num=30
+#        dependsOn:
+#          - other_mktcpn_start
+#
+#      - name: vova_email_send_log_c
+#        type: command
+#        config:
+#          retries: 4
+#          retry.backoff: 600000
+#          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vtp --table_name=email_send_log_c --inc_column=update_time --mapers=5 --etl_type=INCTIME --period_type=day --partition_num=50
+#        dependsOn:
+#          - other_mktcpn_start
 
 
 # flow: 营销活动域数据抽取
@@ -1274,7 +1274,7 @@ nodes:
         config:
           retries: 4
           retry.backoff: 600000
-          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=ok_coupon --etl_type=ALL  --mapers=50 --period_type=day --partition_num=60
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=ok_coupon --etl_type=ALL  --mapers=50 --period_type=day --partition_num=60 --executor_memory=12G
         dependsOn:
           - themis_mktcpn_start
 

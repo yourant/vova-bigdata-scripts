@@ -1,0 +1,36 @@
+-- 用户画像推送到app端数据
+CREATE external TABLE `ads.ads_vova_buyer_portrait_to_app`(
+   `user_id`                  int             COMMENT 'i_用户id',
+   `os_type`                   string          COMMENT 'd_系统类型',
+   `reg_age_group`             string          COMMENT 'd_注册年龄',
+   `reg_channel`               string          COMMENT 'd_注册渠道',
+   `reg_ctry`                  string          COMMENT 'd_注册国家',
+   `reg_gender`                string          COMMENT 'd_注册性别',
+   `reg_time`                  date_time       COMMENT 'd_注册时间',
+   `first_cat_likes`           string          COMMENT 'd_一级品类偏好Top3',
+   `second_cat_likes`          string          COMMENT 'd_二级品类偏好Top3',
+   `first_order_time`          date_time       COMMENT 'd_首单时间',
+   `last_order_time`           date_time       COMMENT 'd_最近下单时间',
+   `order_cnt`                 int             COMMENT 'd_购买订单数',
+   `avg_price`                 decimal(13,2)   COMMENT 'd_笔单价',
+   `price_range`               int             COMMENT 'd_价格偏好层级',
+   `buyer_act`                 string          COMMENT 'd_活跃度',
+   `trade_act`                 string          COMMENT 'd_交易阶段',
+   `last_logint_type`          int             COMMENT 'd_上次登入时间',
+   `last_buyer_type`           int             COMMENT 'd_上次购买时间',
+   `buy_times_type`            int             COMMENT 'd_消费频率',
+   `email_act`                 int             COMMENT 'd_EDM-邮件分组',
+   `pay_cnt_his`               int             COMMENT '历史支付成功订单数',
+   `ship_cnt_his`              int             COMMENT '历史发货成功订单数',
+   `max_visits_cnt_cw`         int             COMMENT '过去的每个自然周访问的最高频次，0~7',
+   `gmv_stage`                 int             COMMENT '国家近三月客单价分层，1:小于1倍客单价，2：大于等于1倍客单价小于2倍客单价，3：大于等于2倍客单价小于等于3倍客单价，4：大于等于3倍客单价,0:默认值',
+   `sub_new_buyers`            int             COMMENT '1.首单在七日内次新人用户，0.其它',
+   `is_order_complete`         int             COMMENT '1是，0否',
+   `rfm_pm`                    int             COMMENT 'RFM90_M,1:最近90天有消费，且最近90天内总消费金额大于等于70美元,2:最近90天有消费，且最近90天内总消费金额小于70美元,0:默认值',
+   `rfm_pf`                    int             COMMENT 'RFM90_F,1:最近90天有消费，且最近90天内总消费天数大于等于3天,2:最近90天有消费，最近90天有消费，且最近90天内总消费天数小于3天,0:默认值',
+   `rfm_pr`                    int             COMMENT 'RFM90_R,1:最近90天有消费，且最近一次消费日期在最近30天内（含30）,2:最近90天有消费，且最近一次消费日期不在最近30天内（不含30）,0:默认值',
+   `rfm_pn`                    int             COMMENT 'RFM90_N,1:最近90天未消费，但90天之前消费过,2:用户激活时间小于等于7天，且用户从未消费过,3:用户激活时间大于7天小于等于30天，且用户从未消费过,4:用户激活时间大于30天，且用户从未消费过,0:默认值',
+   `rfm_pimp`                  int             COMMENT 'RFM90_重要价值'
+  )
+COMMENT '用户画像推送到app端数据'
+PARTITIONED BY ( `pt` string) stored as parquetfile;

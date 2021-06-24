@@ -16,7 +16,7 @@ echo "table_suffix: ${table_suffix}"
 job_name="dwb_vova_push_click_behavior_v2_chenkai_${cur_date}"
 
 sql="
-CREATE TABLE IF NOT EXISTS tmp.tmp_push_logs_${table_suffix} as
+CREATE TABLE IF NOT EXISTS tmp.tmp_push_logs_v2_${table_suffix} as
 SELECT /*+ REPARTITION(100) */
   vapl.user_id                          as buyer_id,
   nvl(dev.region_code, 'NA')            as region_code,
@@ -45,15 +45,15 @@ on vapl.user_id = dev.current_buyer_id
 where vapl.pt = '${cur_date}'
 ;
 
-create table IF NOT EXISTS tmp.tmp_push_click_${table_suffix} as
+create table IF NOT EXISTS tmp.tmp_push_click_v2_${table_suffix} as
 select /*+ REPARTITION(10) */ distinct
   fpc.datasource datasource,
   nvl(dev.region_code, 'NA') region_code,
   nvl(fpc.platform, 'NA')          AS platform,
   nvl(fpc.config_id, 'NA')         AS config_id,
   case
-    when vaptc.expected_period = 0 then '单日单次'
-    when vaptc.expected_period = 20 then '每日循环'
+    when vaptc.expected_period = 0 then 'one_day_once' -- '单日单次'
+    when vaptc.expected_period = 20 then 'daily_cycle' -- '每日循环'
     else 'others' end               job_rate,
   fpc.click_time                   AS click_time,
   fpc.push_time,
@@ -148,7 +148,7 @@ select /*+ REPARTITION(70) */
   null session_brand_gmv   ,
   null session_no_brand_gmv
 from
-  tmp.tmp_push_logs_${table_suffix}
+  tmp.tmp_push_logs_v2_${table_suffix}
 
 union all -- 曝光
 select /*+ REPARTITION(10) */
@@ -198,7 +198,7 @@ select /*+ REPARTITION(10) */
   null session_brand_gmv   ,
   null session_no_brand_gmv
 from
-  tmp.tmp_push_click_${table_suffix} fpc -- 推送点击
+  tmp.tmp_push_click_v2_${table_suffix} fpc -- 推送点击
 inner join
 (
   select
@@ -249,7 +249,7 @@ select /*+ REPARTITION(1) */
   null session_brand_gmv   ,
   null session_no_brand_gmv
 from
-  tmp.tmp_push_click_${table_suffix} fpc -- 推送点击
+  tmp.tmp_push_click_v2_${table_suffix} fpc -- 推送点击
 inner join
 (
   select
@@ -298,7 +298,7 @@ select /*+ REPARTITION(1) */
   null session_brand_gmv   ,
   null session_no_brand_gmv
 from
-  tmp.tmp_push_click_${table_suffix} fpc -- 推送点击
+  tmp.tmp_push_click_v2_${table_suffix} fpc -- 推送点击
 inner join
   dim.dim_vova_order_goods og  -- 下单数
 on fpc.device_id = og.device_id and fpc.datasource = og.datasource
@@ -345,7 +345,7 @@ select /*+ REPARTITION(1) */
   if(fp.pre_session_id is not null and fpc.session_id = fp.pre_session_id and fp.brand_id > 0, fp.gmv, null) session_brand_gmv,
   if(fp.pre_session_id is not null and fpc.session_id = fp.pre_session_id and fp.brand_id = 0, fp.gmv, null) session_no_brand_gmv
 from
-  tmp.tmp_push_click_${table_suffix} fpc -- 推送点击
+  tmp.tmp_push_click_v2_${table_suffix} fpc -- 推送点击
 left join
 (
   select
@@ -463,8 +463,8 @@ group by cube (fpc.datasource, fpc.platform,fpc.config_id, fpc.main_channel, fpc
 having datas != 'all'
 ;
 
-drop table if EXISTS tmp.tmp_push_logs_${table_suffix};
-drop table if EXISTS tmp.tmp_push_click_${table_suffix};
+drop table if EXISTS tmp.tmp_push_logs_v2_${table_suffix};
+drop table if EXISTS tmp.tmp_push_click_v2_${table_suffix};
 drop table if EXISTS tmp.tmp_push_result_log_${table_suffix};
 "
 

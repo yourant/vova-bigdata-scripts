@@ -16,7 +16,10 @@ CREATE external TABLE IF NOT EXISTS dwd.dwd_vova_fact_comment
     mct_id         bigint COMMENT '商家id',
     display_order  bigint COMMENT '排序',
     language_id    bigint COMMENT '评论语言id',
-    tag STRING COMMENT '用户评论选择的标签的语言包code'
+    tag STRING COMMENT '用户评论选择的标签的语言包code',
+    comment_has_img bigint COMMENT '评论是否包含图片，1包含，0不包含',
+    cs_rating bigint COMMENT '客服评分 1 2 3 4 5',
+    logistics_rating bigint  COMMENT '物流评分 1 2 3 4 5'
 ) COMMENT '评论事实表'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 

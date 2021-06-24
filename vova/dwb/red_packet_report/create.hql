@@ -92,8 +92,18 @@ STORED AS PARQUETFILE
   2）【原始数据-类目】，二级类目名称增加all
   3）【原始数据-店铺】，所属类目当前等级的gmv均值，按照N/Y/ALL分别计算gmv
 
+######################################################
+[9906]【报表需求】红包商品报表增加字段
+任务描述
+需求背景：
+运营提交红包数量增加，需要区分GSN选品来源。
 
+需求内容：
+【原始数据-类目】这张表里再加一个统计字段【选品渠道】，值有：自荐，运营，自营。
 
+dwb.dwb_vova_red_packet_cat 添加字段 gsn_source
+
+alter table dwb.dwb_vova_red_packet_cat add columns(`gsn_source` string comment 'gsn来源，0默认1自荐2运营3自营') cascade;
 
 
 

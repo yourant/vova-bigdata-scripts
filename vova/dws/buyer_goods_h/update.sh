@@ -33,63 +33,82 @@ ALTER TABLE dws.dws_vova_buyer_goods_behave_h DROP if exists partition(pt = '$(d
 
 insert overwrite table dws.dws_vova_buyer_goods_behave_h partition(pt='${cur_date}')
 select /*+ REPARTITION(5) */
-  tmp_expre.buyer_id,
+  t1.buyer_id,
   dg.goods_id as gs_id,
   dg.cat_id,
   dg.first_cat_id ,
   dg.second_cat_id,
   dg.third_cat_id ,
   dg.brand_id     ,
-  nvl(tmp_expre.expre_cnt, 0) impression_cnt,
-  nvl(tmp_clk.clk_cnt, 0),
-  nvl(tmp_add_cat.collect_cnt, 0),
-  nvl(tmp_add_cat.add_cat_cnt, 0),
-  nvl(tmp_click_order.ord_cnt, 0) ord_cnt
+  nvl(t1.impression_cnt, 0) impression_cnt,
+  nvl(t1.clk_cnt, 0) clk_cnt,
+  nvl(t1.collect_cnt, 0) collect_cnt,
+  nvl(t1.add_cat_cnt, 0) add_cat_cnt,
+  nvl(t1.ord_cnt, 0) ord_cnt
+from
+(
+select
+  buyer_id,
+  virtual_goods_id,
+  sum(impression_cnt) impression_cnt,
+  sum(clk_cnt)        clk_cnt,
+  sum(collect_cnt)    collect_cnt,
+  sum(add_cat_cnt)    add_cat_cnt,
+  sum(ord_cnt)        ord_cnt
+
 from
 (
   select
     gi.buyer_id,
-    gi.virtual_goods_id as vir_gs_id,
-    count(*) as expre_cnt
+    gi.virtual_goods_id as virtual_goods_id,
+
+    count(*) impression_cnt,
+    0 clk_cnt       ,
+    0 collect_cnt   ,
+    0 add_cat_cnt   ,
+    0 ord_cnt
   from
     -- dwd.dwd_vova_log_goods_impression_arc
   (
     select
       buyer_id,
       virtual_goods_id,
-      platform
+      platform,
+      datasource
     from
       dwd.dwd_vova_log_goods_impression_arc
     WHERE (pt='${cur_date}'and date(collector_ts)='${cur_date}') or (pt=date_sub('${cur_date}',1) and hour ='23' and date(collector_ts)='${cur_date}') or (pt=date_add('${cur_date}',1) and hour ='00' and date(collector_ts)='${cur_date}')
-      and datasource = 'vova'
-    union all 
+    union all
     select
       buyer_id,
       cast(element_id as bigint) virtual_goods_id,
-      platform
+      platform,
+      datasource
     from
       dwd.dwd_vova_log_impressions_arc
     WHERE ((pt='${cur_date}'and date(collector_ts)='${cur_date}' ) or (pt=date_sub('${cur_date}',1) and hour ='23' and date(collector_ts)='${cur_date}') or (pt=date_add('${cur_date}',1) and hour ='00' and date(collector_ts)='${cur_date}')) and event_type='goods'
-      and datasource = 'vova'
-    
+
   ) gi
-  where platform ='mob'
+  where platform ='mob' and datasource = 'vova'
   group by gi.buyer_id,gi.virtual_goods_id
-) tmp_expre
-left join
+union all
   -- 点击数数据
-(
   select
     gc.buyer_id,
     gc.virtual_goods_id as vir_gs_id,
+
+    0 impression_cnt,
     count(*) as clk_cnt,
-    count(*) as clk_valid_cnt
+    0 collect_cnt   ,
+    0 add_cat_cnt   ,
+    0 ord_cnt
   from
   -- dwd.dwd_vova_log_goods_click_arc
   (
     select
       buyer_id,
-      virtual_goods_id
+      virtual_goods_id,
+      datasource
     FROM
       dwd.dwd_vova_log_goods_click_arc
     WHERE pt='${cur_date}'
@@ -97,24 +116,26 @@ left join
     union all
     select
       buyer_id,
-      cast(element_id as bigint) virtual_goods_id
+      cast(element_id as bigint) virtual_goods_id,
+      datasource
     FROM
       dwd.dwd_vova_log_click_arc
     WHERE ((pt='${cur_date}'and date(collector_ts)='${cur_date}') or (pt=date_sub('${cur_date}',1) and hour ='23' and date(collector_ts)='${cur_date}') or (pt=date_add('${cur_date}',1) and hour ='00' and date(collector_ts)='${cur_date}')) and event_type='goods'
-      and datasource = 'vova'
+
   ) gc
+  where datasource = 'vova'
   group by gc.buyer_id,gc.virtual_goods_id
-) tmp_clk
-on tmp_clk.buyer_id = tmp_expre.buyer_id and tmp_clk.vir_gs_id = tmp_expre.vir_gs_id
-left join
+union all
   -- 加车收藏数据
-(
   select
     cc.buyer_id,
     cast(cc.element_id as bigint) as vir_gs_id,
-    count(*) as clk_cnt,
-    sum(if(cc.element_name ='pdAddToWishlistClick',1,0)) as collect_cnt,
-    sum(if(cc.element_name ='pdAddToCartSuccess',1,0)) as add_cat_cnt
+
+    0 impression_cnt,
+    0 clk_cnt,
+    sum(if(cc.element_name in ('pdAddToWishlistClick', 'addWishlist'),1,0)) as collect_cnt,
+    sum(if(cc.element_name ='pdAddToCartSuccess',1,0)) as add_cat_cnt,
+    0 ord_cnt
   from
   -- dwd.dwd_vova_log_common_click_arc
   (
@@ -126,7 +147,6 @@ left join
       datasource
     FROM dwd.dwd_vova_log_common_click_arc
     WHERE (pt='${cur_date}'and date(collector_ts)='${cur_date}' ) or (pt=date_sub('${cur_date}',1) and hour ='23' and date(collector_ts)='${cur_date}') or (pt=date_add('${cur_date}',1) and hour ='00' and date(collector_ts)='${cur_date}')
-      and datasource = 'vova'
     union all
     SELECT
       platform,
@@ -136,7 +156,6 @@ left join
       datasource
     FROM dwd.dwd_vova_log_click_arc
     WHERE (pt='${cur_date}'and date(collector_ts)='${cur_date}' ) or (pt=date_sub('${cur_date}',1) and hour ='23' and date(collector_ts)='${cur_date}') or (pt=date_add('${cur_date}',1) and hour ='00' and date(collector_ts)='${cur_date}') and event_type='normal'
-      and datasource = 'vova'
     union all
     SELECT
       platform,
@@ -146,19 +165,20 @@ left join
       datasource
     FROM dwd.dwd_vova_log_data_arc
     WHERE (pt='${cur_date}'and date(collector_ts)='${cur_date}' ) or (pt=date_sub('${cur_date}',1) and hour ='23' and date(collector_ts)='${cur_date}') or (pt=date_add('${cur_date}',1) and hour ='00' and date(collector_ts)='${cur_date}') and element_name='pdAddToCartSuccess'
-      and datasource = 'vova'
-    
+
   ) cc
-  where platform ='mob'
+  where platform ='mob' and datasource = 'vova'
   group by cc.buyer_id,cc.element_id
-) tmp_add_cat
-on tmp_expre.buyer_id = tmp_add_cat.buyer_id and tmp_expre.vir_gs_id = tmp_add_cat.vir_gs_id
-left join
+union all
   -- 下单点击
-(
   select
     buyer_id,
     virtual_goods_id,
+
+    0 impression_cnt,
+    count(*) as clk_cnt,
+    0 collect_cnt   ,
+    0 add_cat_cnt   ,
     count(*) ord_cnt
   from
   (
@@ -182,15 +202,19 @@ left join
         and page_code = 'checkout_new'
         and element_name = 'checkout_place_order'
         and event_type='normal'
+        and datasource ='vova'
     ) t1
     lateral view explode(split(virtual_goods_id_list, ',')) lv as col3
   )
   group by buyer_id, virtual_goods_id
-) tmp_click_order
-on tmp_expre.buyer_id = tmp_click_order.buyer_id and tmp_expre.vir_gs_id = tmp_click_order.virtual_goods_id
+) tmp
+group by
+  buyer_id,
+  virtual_goods_id
+) t1
 inner join
   dim.dim_vova_goods dg
-on tmp_expre.vir_gs_id = dg.virtual_goods_id
+on t1.virtual_goods_id = dg.virtual_goods_id
 ;
 "
 

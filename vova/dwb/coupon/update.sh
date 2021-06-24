@@ -68,9 +68,9 @@ nvl(currency,'all') as currency,
 0 AS use_amount,
 0 AS use_user,
 0 AS gmv,
-count(distinct(if(datediff(cur_date, pay_date)<3,order_id,null))) AS use_num_3,
-count(distinct(if(datediff(cur_date, pay_date)<7,order_id,null))) AS use_num_7,
-count(distinct(if(datediff(cur_date, pay_date)<15,order_id,null))) AS use_num_15,
+count(distinct(if(datediff(pay_date,cur_date)<3,order_id,null))) AS use_num_3,
+count(distinct(if(datediff(pay_date,cur_date)<7,order_id,null))) AS use_num_7,
+count(distinct(if(datediff(pay_date,cur_date)<15,order_id,null))) AS use_num_15,
 count(distinct order_id) AS use_num_30
 from
 (select
