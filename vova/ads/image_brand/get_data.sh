@@ -19,57 +19,61 @@ job_name="ads_vova_no_brand_goods_img_get_data_req9531_chenkai_${cur_date}"
 ###逻辑sql
 # 取数: 相似图片组中历史有销量的非brand商品
 sql="
+
 insert overwrite table ads.ads_vova_no_brand_goods_img partition(pt='${cur_date}')
 select /*+ REPARTITION(1) */
   t1.goods_id,
   vgg.img_id,
   vgg.img_url
+-- select
+--   count(distinct t1.goods_id),
+--   count(distinct vgg.img_id)
 from
 (
   select
     distinct goods_id
   from
-    dwd.dwd_vova_fact_pay fp
-) t
-inner join
-(
-  select
-    distinct min_price_goods_id as goods_id
-  from
-    ads.ads_vova_min_price_goods_d ampg
-  where pt='2021-05-11'
+  (
+    select
+      rgps.group_id,
+      dg.goods_id,
+      dg.shop_price,
+      row_number() over(partition by if(rgps.group_id is not null, rgps.group_id, dg.goods_id) order by dg.shop_price) row
+    from
+      dim.dim_vova_goods dg
+    left join
+      ods_vova_vbts.ods_vova_rec_gid_pic_similar rgps
+    on rgps.goods_id = dg.goods_id
+    where dg.brand_id = 0
+    and dg.is_on_sale = 1
+  )
+  where row = 1
 ) t1
-on t.goods_id = t1.goods_id
-inner join
-  dim.dim_vova_goods dg
-on t1.goods_id = dg.goods_id
 left join
   ods_vova_vteos.ods_vova_goods_gallery vgg
 on t1.goods_id = vgg.goods_id
 left join
 (
-  select
-    *
+  select distinct
+    goods_id
   from
     ads.ads_vova_no_brand_goods_img
   where pt < '${cur_date}'
 ) t_arc
-on t_arc.goods_id = t1.goods_id and t_arc.img_id = vgg.img_id
+on t_arc.goods_id = t1.goods_id
 left join
 (
-  select
-    distinct
+  select distinct
     goods_id
   from
     ads.ads_vova_image_brand_d
   where pt < '${cur_date}' and brand_id != -1
 ) t_res
 on t1.goods_id = t_res.goods_id
-where dg.brand_id = 0 and dg.is_on_sale = 1
-  and vgg.img_id is not null
+where vgg.img_id is not null
   and vgg.img_url != ''
   and vgg.is_delete = 0
-  and t_arc.goods_id is null and t_arc.img_id is null
+  and t_arc.goods_id is null
   and t_res.goods_id is null
 ;
 "
