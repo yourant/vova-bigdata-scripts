@@ -20,6 +20,7 @@ nodes:
       - mlb_als_rec_training
       - mlb_rec_search_correct_sqoop
       - mlb_vova_category_feat_d
+      - mlb_vova_buyer_brand_name
 
 
   - name: start_flag
@@ -249,3 +250,51 @@ nodes:
     dependsOn:
       - judge_mlb_vova_user_behave_link_d
       - judge_ads_vova_goods_portrait_v2
+
+  - name: judge_dwd_vova_fact_pay
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_order_cause_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_order_cause_v2
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_buyer_portrait_brand_likes_exp
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_buyer_portrait_brand_likes_sqoop_export
+      retries: 20
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_start_up
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_start_up
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: mlb_vova_buyer_brand_name
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_buyer_brand_name/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_pay
+      - judge_dwd_vova_fact_order_cause_v2
+      - judge_ads_vova_buyer_portrait_brand_likes_exp
+      - judge_dwd_vova_fact_start_up
