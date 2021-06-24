@@ -26,6 +26,7 @@ nodes:
       - ads_vova_sale_goods_3m
       - ads_vova_six_mct_goods_flow_support_d
       - ads_vova_newly_activated_recommend_goods
+      - ads_vova_six_rank_mct_update
 
   - name: start_flag
     type: command
@@ -202,6 +203,15 @@ nodes:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_images_vector
       retries: 20
       retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_traff_control
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_traff_control
+      retries: 20
+      retry.backoff: 360000
     dependsOn:
       - start_flag
 
@@ -452,3 +462,14 @@ nodes:
       - judge_dim_vova_goods
       - judge_dim_vova_virtual_six_mct_goods
       - judge_ads_vova_goods_portrait_v2
+
+  - name: ads_vova_six_rank_mct_update
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/traff_control/six_mct_update.sh
+      retries: 20
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_dwd_vova_fact_pay
+      - judge_ads_vova_traff_control
