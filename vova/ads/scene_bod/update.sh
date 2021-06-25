@@ -18,7 +18,7 @@ bod_id,goods_id,rank from (
   b.bod_id,a.goods_id,row_number() over(partition by b.bod_id order by b.bod_id) as rank
   from (
   select
-      distinct bod_name,goods_id FROM ads.ads_vova_scene_bod_original_data
+      bod_name,goods_id FROM ads.ads_vova_scene_bod_original_data
       lateral view explode(split(goods_list,'${reg}')) t AS goods_id
   ) a left join ads.ads_vova_bod b on a.bod_name=b.bod_name
   where b.bod_type=6
