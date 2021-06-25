@@ -82,3 +82,13 @@ CREATE EXTERNAL TABLE IF NOT EXISTS mlb.mlb_vova_user_behave_link_d
     location 's3://vova-mlb/REC/data/base/mlb_vova_users_behave_link_d'
 ;
 
+
+
+ALTER TABLE tmp.tmp_vova_expre_with_clk_from ADD COLUMNS(search_words_or_goods_clk_ts string COMMENT '搜索词或商品点击发生的时间(如:2020-12-26 00:02:14)');
+ALTER TABLE tmp.tmp_vova_result_with_expre_from ADD COLUMNS(search_words_or_goods_clk_ts string COMMENT '搜索词或商品点击发生的时间(如:2020-12-26 00:02:14)');
+ALTER TABLE tmp.tmp_vova_user_clk_behave_link_d ADD COLUMNS(search_words_or_goods_clk_ts string COMMENT '搜索词或商品点击发生的时间(如:2020-12-26 00:02:14)') CASCADE;
+ALTER TABLE tmp.tmp_vova_user_clk_behave_link_d_distinct ADD COLUMNS(search_words_or_goods_clk_ts string COMMENT '搜索词或商品点击发生的时间(如:2020-12-26 00:02:14)') CASCADE;
+ALTER TABLE tmp.tmp_user_behavior_link_add_clks_final ADD COLUMNS(search_words_or_goods_clk_ts string COMMENT '搜索词或商品点击发生的时间(如:2020-12-26 00:02:14)');
+ALTER TABLE tmp.tmp_user_behavior_link_add_cart_final ADD COLUMNS(search_words_or_goods_clk_ts string COMMENT '搜索词或商品点击发生的时间(如:2020-12-26 00:02:14)');
+ALTER TABLE tmp.tmp_user_behavior_link_add_wish_final ADD COLUMNS(search_words_or_goods_clk_ts string COMMENT '搜索词或商品点击发生的时间(如:2020-12-26 00:02:14)');
+ALTER TABLE mlb.mlb_vova_user_behave_link_d ADD COLUMNS(search_words_or_goods_clk_ts string COMMENT '搜索词或商品点击发生的时间(如:2020-12-26 00:02:14)') CASCADE;

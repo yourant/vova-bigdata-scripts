@@ -106,7 +106,8 @@ select /*+ REPARTITION(200) */ * from (
                          t1.geo_longitude,
                          t1.geo_region,
                          t1.absolute_position,
-                         t1.imsi
+                         t1.imsi,
+                         t2.collector_tstamp search_words_or_goods_clk_ts
                   from (select a.buyer_id,
                                a.event_fingerprint,
                                a.device_id,
@@ -196,7 +197,8 @@ select /*+ REPARTITION(200) */* from (
                          t1.geo_longitude,
                          t1.geo_region,
                          t1.absolute_position,
-                         t1.imsi
+                         t1.imsi,
+                         t1.search_words_or_goods_clk_ts
                   from tmp.tmp_vova_expre_with_clk_from t1
                            left join tmp.tmp_vova_product_detail_with_clk_from t2
                                      on t1.buyer_id = t2.buyer_id and t1.page_code = t2.page_code and
@@ -243,7 +245,8 @@ select /*+ REPARTITION(200) */ tmp.session_id,
                                tmp.geo_longitude,
                                tmp.geo_region,
                                tmp.absolute_position,
-                               tmp.imsi
+                               tmp.imsi,
+                               tmp.search_words_or_goods_clk_ts
 from (select *,if(element_id is null ,-rand() * 100000,element_id) as element_id_2 from tmp.tmp_vova_result_with_expre_from) tmp
          left join dim.dim_vova_goods dg
                    on tmp.virtual_goods_id = dg.virtual_goods_id
