@@ -38,7 +38,9 @@ tmp_goods_score as (
 )
 
 insert overwrite table ads.ads_vova_knowledge_graph_bod_goods_rank_data partition (pt = '${cur_date}')
-select distinct bod_id,goods_id,rank from (
+select
+/*+ REPARTITION(1) */
+distinct bod_id,goods_id,rank from (
 select t2.bod_id,t3.target_goods_id as goods_id,dense_rank() over(partition by t2.bod_id order by t3.overall_score desc) as rank from
     (
         select tt1.goods_id goods_id
