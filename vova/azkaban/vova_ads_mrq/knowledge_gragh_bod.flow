@@ -1,0 +1,66 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_knowledge_graph_bod_goods_rank_data_export
+
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: judge_mlb_vova_rec_b_goods_score_d_message_get
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=mlb_goods_score_vova --from=mlb --to=data --valid_hour=3
+      retries: 20
+      retry.backoff: 1800000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_goods_attribute_merge
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_attribute_merge
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_goods_portrait
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_portrait_v2
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_knowledge_graph_bod_goods_rank_data
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/vova_bod/knowledge_graph/update.sh
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+      - judge_ads_vova_goods_attribute_merge
+      - judge_ads_vova_goods_portrait
+      - judge_mlb_vova_rec_b_goods_score_d_message_get
+
+  - name: ads_vova_knowledge_graph_bod_goods_rank_data_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/vova_bod/knowledge_graph/sqoop_export.sh
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+      - ads_vova_knowledge_graph_bod_goods_rank_data
