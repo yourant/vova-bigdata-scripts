@@ -6,22 +6,14 @@ if [ ! -n "$1" ];then
 cur_date=`date  +%Y-%m-%d`
 fi
 
-spark-sql   --conf "spark.sql.autoBroadcastJoinThreshold=31457280"  \
+
+spark-sql     \
 --executor-memory 8G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=5" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
 --conf "spark.dynamicAllocation.maxExecutors=120" \
 --conf "spark.app.name=dwb_vova_ab_test_h" \
---conf "spark.default.parallelism = 380" \
---conf "spark.sql.shuffle.partitions=380" \
---conf "spark.sql.adaptive.enabled=true" \
---conf "spark.sql.adaptive.join.enabled=true" \
---conf "spark.shuffle.sort.bypassMergeThreshold=10000" \
---conf "spark.sql.inMemoryColumnarStorage.compressed=true" \
---conf "spark.sql.inMemoryColumnarStorage.partitionPruning=true" \
---conf "spark.sql.inMemoryColumnarStorage.batchSize=100000" \
---conf "spark.network.timeout=300" \
 -e "
 
 
