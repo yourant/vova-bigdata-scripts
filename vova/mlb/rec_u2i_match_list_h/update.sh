@@ -21,7 +21,8 @@ spark-submit \
 --name mlb_vova_list_u2i_h_gr_chenkai \
 --class com.vova.rec.model.list.list_u2i \
 s3://vova-mlb/REC/util/list_u2i.jar \
-${cur_date} ${cur_hour} 100 30 20 0 3 5 6
+${cur_date} ${cur_hour} 200 30 20 5 1 3 8 10
+
 
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
