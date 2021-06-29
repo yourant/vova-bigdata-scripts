@@ -1,0 +1,169 @@
+---
+config:
+  failure.emails: longgu@vova.com.hk
+  retries: 10
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_daily_job_start
+    type: noop
+
+  - name: tmp_fd_goods_uv
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_snowplow_uv/run14.sh
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: tmp_fd_goods_uv_interval
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_snowplow_uv/run7.sh
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: dwd_fd_goods_order
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_goods_order/run.sh
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: dwd_fd_goods_order_interval
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_goods_order_interval/run.sh
+    dependsOn:
+      - fd_daily_job_start
+
+
+  - name: ads_fd_goods_display_order_artemis
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_display_order_artemis/run.sh
+    dependsOn:
+      - tmp_fd_goods_uv
+      - dwd_fd_goods_order
+
+  - name: ads_fd_goods_display_order_artemis_interval
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_display_order_artemis_interval/run.sh
+    dependsOn:
+      - tmp_fd_goods_uv_interval
+      - dwd_fd_goods_order_interval
+
+  - name: ads_fd_goods_display_order_artemis_sqoop
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_display_order_artemis/sqoop.sh
+    dependsOn:
+      - ads_fd_goods_display_order_artemis
+
+  - name: ads_fd_goods_display_order_artemis_sqoop_interval
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_display_order_artemis_interval/sqoop.sh
+    dependsOn:
+      - ads_fd_goods_display_order_artemis_interval
+
+
+  - name: ads_fd_goods_display_order_artemis_country
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_display_order_artemis_country/run.sh
+    dependsOn:
+      - tmp_fd_goods_uv
+      - dwd_fd_goods_order
+
+  - name: ads_fd_goods_display_order_artemis_country_interval
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_display_order_artemis_country_interval/run.sh
+    dependsOn:
+      - tmp_fd_goods_uv_interval
+      - dwd_fd_goods_order_interval
+
+  - name: ads_fd_goods_display_order_artemis_country_sqoop
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_display_order_artemis_country/sqoop.sh
+    dependsOn:
+      - ads_fd_goods_display_order_artemis_country
+
+  - name: ads_fd_goods_display_order_artemis_country_sqoop_interval
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_display_order_artemis_country_interval/sqoop.sh
+    dependsOn:
+      - ads_fd_goods_display_order_artemis_country_interval
+
+  - name: ads_fd_goods_display_order_artemis_language
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_display_order_artemis_language/run.sh
+    dependsOn:
+      - tmp_fd_goods_uv
+      - dwd_fd_goods_order
+
+  - name: ads_fd_goods_display_order_artemis_language_interval
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_display_order_artemis_language_interval/run.sh
+    dependsOn:
+      - tmp_fd_goods_uv_interval
+      - dwd_fd_goods_order_interval
+
+  - name: ads_fd_goods_display_order_artemis_language_sqoop
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_display_order_artemis_language/sqoop.sh
+    dependsOn:
+      - ads_fd_goods_display_order_artemis_language
+
+  - name: ads_fd_goods_display_order_artemis_language_sqoop_interval
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_display_order_artemis_language_interval/sqoop.sh
+    dependsOn:
+      - ads_fd_goods_display_order_artemis_language_interval
+
+  - name: ads_fd_goods_display_top_artemis_country
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_display_top_artemis_country/run.sh
+    dependsOn:
+      - tmp_fd_goods_uv
+
+  - name: ads_fd_goods_display_top_artemis_country_interval
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_display_top_artemis_country_interval/run.sh
+    dependsOn:
+      - tmp_fd_goods_uv_interval
+
+  - name: ads_fd_goods_display_top_artemis_country_sqoop
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_display_top_artemis_country/sqoop.sh
+    dependsOn:
+      - ads_fd_goods_display_top_artemis_country
+
+  - name: ads_fd_goods_display_top_artemis_country_sqoop_interval
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_display_top_artemis_country_interval/sqoop.sh
+    dependsOn:
+      - ads_fd_goods_display_top_artemis_country_interval
+
+  - name: fd_daily_job_end
+    type: noop
+    dependsOn:
+      - ads_fd_goods_display_order_artemis_sqoop
+      - ads_fd_goods_display_order_artemis_sqoop_interval
+      - ads_fd_goods_display_order_artemis_country_sqoop
+      - ads_fd_goods_display_order_artemis_country_sqoop_interval
+      - ads_fd_goods_display_order_artemis_language_sqoop
+      - ads_fd_goods_display_order_artemis_language_sqoop_interval
+      - ads_fd_goods_display_top_artemis_country_sqoop
+      - ads_fd_goods_display_top_artemis_country_sqoop_interval

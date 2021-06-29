@@ -1,0 +1,35 @@
+---
+config:
+  failure.emails: longgu@vova.com.hk
+  retries: 10
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_weekly_job_start
+    type: noop
+
+  - name: judge_dwb_fd_goods_test_channel
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwb_fd_goods_test_channel
+    dependsOn:
+      - fd_weekly_job_start
+
+  - name:  ads_fd_goods_test_channel
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_test_channel/run.sh
+    dependsOn:
+      - judge_dwb_fd_goods_test_channel
+
+  - name: ads_fd_goods_test_channel_sqoop
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_test_channel/sqoop.sh
+    dependsOn:
+      - ads_fd_goods_test_channel
+
+  - name: fd_weekly_job_end
+    type: noop
+    dependsOn:
+      - ads_fd_goods_test_channel_sqoop

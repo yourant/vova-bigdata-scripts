@@ -1,0 +1,75 @@
+---
+config:
+  failure.emails: longgu@vova.com.hk
+  retries: 10
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_daily_job_start
+    type: noop
+
+  - name: ads_fd_goods_target_14_data
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_target_14day/run_tmp.sh
+    dependsOn:
+      - fd_daily_job_start
+
+
+  - name: ads_fd_goods_target_14_center
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_target_14day/run_center.sh
+    dependsOn:
+      - ads_fd_goods_target_14_data
+
+
+  - name: ads_fd_goods_target_14day
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_target_14day/run_final.sh
+    dependsOn:
+      - ads_fd_goods_target_14_center
+
+  - name: ads_fd_goods_target_14day_sqoop
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_target_14day/sqoop.sh
+    dependsOn:
+      - ads_fd_goods_target_14day
+
+  - name: ads_fd_goods_target_7_data
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_target_7day/run_tmp.sh
+    dependsOn:
+      - fd_daily_job_start
+
+
+  - name: ads_fd_goods_target_7_center
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_target_7day/run_center.sh
+    dependsOn:
+      - ads_fd_goods_target_7_data
+
+
+  - name: ads_fd_goods_target_7day
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_target_7day/run_final.sh
+    dependsOn:
+      - ads_fd_goods_target_7_center
+
+  - name: ads_fd_goods_target_7day_sqoop
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_target_7day/sqoop.sh
+    dependsOn:
+      - ads_fd_goods_target_7day
+
+  - name: fd_daily_job_end
+    type: noop
+    dependsOn:
+      - ads_fd_goods_target_14day_sqoop
+      - ads_fd_goods_target_7day_sqoop

@@ -1,0 +1,22 @@
+---
+config:
+  failure.emails: longgu@vova.com.hk
+  retries: 10
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_hour_job_start
+    type: noop
+
+  - name: ods_vb_order_extension
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vb --etl_type=INCTIME --inc_column=last_update_time --table_name=order_extension  --partition_num=10 --period_type=hour
+    dependsOn:
+      - fd_hour_job_start
+
+
+  - name: fd_hour_job_end
+    type: noop
+    dependsOn:
+      - ods_vb_order_extension
