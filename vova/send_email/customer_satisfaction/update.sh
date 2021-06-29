@@ -33,7 +33,7 @@ from dim.dim_vova_order_goods a
                    on e.language_id = f.languages_id
          left join (select order_goods_id,refund_reason from dwd.dwd_vova_fact_refund where refund_type_id = 2) g
                    on a.order_goods_id = g.order_goods_id
-         left join ods_vova_ext.ods_vova_email_unsubscribe h
+         left join (select email from dwb.dwb_vova_customer_satisfaction where pt >= date_sub('${cur_date}',59) group by email) h
                    on a.email = h.email
          join (
     select order_sn
@@ -41,15 +41,12 @@ from dim.dim_vova_order_goods a
              select a.order_sn, dense_rank() over (partition by a.region_code order by a.order_sn) rn
              from dim.dim_vova_order_goods a
                       join dwd.dwd_vova_fact_pay b on a.order_goods_id = b.order_goods_id
-                      left join (select email from dwb.dwb_vova_customer_satisfaction where pt < '${cur_date}') c
-                                on a.email = c.email
-                      left join ods_vova_ext.ods_vova_email_unsubscribe h
+                      left join (select email from dwb.dwb_vova_customer_satisfaction where pt >= date_sub('${cur_date}',59) group by email) h
                    on a.email = h.email
              where to_date(a.confirm_time) = '${his_date}'
                and a.datasource = 'vova'
                and a.region_code in ('GB', 'FR', 'DE', 'IT', 'ES')
                and h.email is null
-               and c.email is null
          ) tmp
     where tmp.rn <= 600
     group by order_sn
