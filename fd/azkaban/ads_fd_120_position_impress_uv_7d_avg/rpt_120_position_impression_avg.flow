@@ -1,0 +1,36 @@
+---
+config:
+  failure.emails: longgu@vova.com.hk
+  retries: 10
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_day_job_start
+    type: noop
+
+  - name: judge_dwb_fd_120_position_impression_uv_7d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwb_fd_120_position_impression_uv_7d
+    dependsOn:
+      - fd_day_job_start
+
+  - name: ads_fd_120_position_impress_uv_7d_avg
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_120_position_impress_uv_7d_avg/run.sh
+    dependsOn:
+      - judge_dwb_fd_120_position_impression_uv_7d
+
+  - name: ads_fd_120_position_impress_uv_7d_avg_sqoop
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_120_position_impress_uv_7d_avg/sqoop.sh
+    dependsOn:
+      - ads_fd_120_position_impress_uv_7d_avg
+
+  - name: fd_day_job_end
+    type: noop
+    dependsOn:
+      - ads_fd_120_position_impress_uv_7d_avg_sqoop
+
