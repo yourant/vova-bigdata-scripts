@@ -71,8 +71,8 @@ with tmp_goods_portrait as
   tmp_expre.expre_uv_1m,
   ord_uv_1w  as pay_uv_1w,
   ord_uv_15d as pay_uv_15d,
-  ord_uv_1m  as pay_uv_1m
-
+  ord_uv_1m  as pay_uv_1m,
+  dg.goods_thumb
 FROM
 dim.dim_vova_goods dg
 left  JOIN
@@ -537,7 +537,8 @@ select
   pay_uv_15d  , -- 近15天支付UV
   pay_uv_1m   , -- 近一月支付UV
   entry_warehouse_72h_order_goods, -- 72小时入库订单数
-  collection_order_goods -- 商品集运总订单数
+  collection_order_goods, -- 商品集运总订单数
+  a.goods_thumb --商品主图
 from tmp_goods_portrait a
 left join tmp_goods_painting_pt b
   on a.goods_id = b.goods_id
