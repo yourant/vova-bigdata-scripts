@@ -60,9 +60,9 @@ create table if not exists ods_fd_snowplow.ods_fd_snowplow_element_event
     referrer_page_code   STRING,
     url_route_sn         STRING,
     url_virtual_goods_id STRING,
-    element_event_struct struct<list_uri : String, list_type : String, element_name : String, element_url
+    element_event_struct struct<list_uri : String, list_type : String, types: String, element_name : String, element_url
                                 : String, element_content : String, element_id : String, element_type : String, picture
-                                : String, absolute_position : BIGINT, extra : String>
+                                : String, absolute_position : BIGINT, element_batch: String, element_tag: String, extra : String>
 ) partitioned by (
     `pt` string,
     `hour` string

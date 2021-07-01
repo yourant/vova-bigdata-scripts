@@ -17,7 +17,7 @@ create table if not exists ods_fd_snowplow.ods_fd_snowplow_all_event
     user_ipaddress       STRING,
     session_idx          BIGINT,
     session_id           STRING,
-    useragent            STRING,dwb.dwb_fd_abtest_funnel_rate_rpt
+    useragent            STRING,
     dvce_type            STRING,
     dvce_ismobile        BOOLEAN,
     os_name              STRING,
@@ -63,10 +63,10 @@ create table if not exists ods_fd_snowplow.ods_fd_snowplow_all_event
     goods_event_struct    array<struct<list_uri : String, list_type : String, virtual_goods_id : String, picture
                                       : String, page_position : bigint, absolute_position : bigint, page_size : bigint,
                                       page_no
-                                      : bigint, element_name : String, extra : String>>,
-    element_event_struct array<struct<list_uri : String, list_type : String, element_name : String, element_url
+                                      : bigint, element_name : String, picture_group: String, picture_batch: String, extra : String>>,
+    element_event_struct array<struct<list_uri : String, list_type : String, types: String, element_name : String, element_url
                                       : String, element_content : String, element_id : String, element_type : String,
-                                      picture : String, absolute_position : BIGINT, extra : String>>,
+                                      picture : String, absolute_position : BIGINT, element_batch: String, element_tag: String, extra : String>>,
     data_event_struct    struct<element_name : String, extra : String>,
     ecommerce_action     struct<id : String, affiliation : String, option : String, list : String, revenue : Double,
                                 step : BIGINT>,

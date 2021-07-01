@@ -64,7 +64,7 @@ create table if not exists ods_fd_snowplow.ods_fd_snowplow_goods_event
     goods_event_struct   struct<list_uri : String, list_type : String, virtual_goods_id : String, picture
                                 : String, page_position : bigint, absolute_position : bigint, page_size : bigint,
                                 page_no
-                                : bigint, element_name : String, extra : String>
+                                : bigint, element_name : String, picture_group: String, picture_batch: String, extra : String>
 ) partitioned by (
     `pt` string,
     `hour` string
