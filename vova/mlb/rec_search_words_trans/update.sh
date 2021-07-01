@@ -30,13 +30,13 @@ select json_tuple(json, 'source', 'result')
 from (SELECT explode(split(regexp_replace(regexp_replace(regexp_replace(regexp_replace(trans_result,'\\\\, ','\\\\,'),': ',':'),'\\\\[|\\\\]',''),'\\\\}\\\\,\\\\{','\\\\}\\\\;\\\\{'),'\\\\;')) as json from tmp.tmp_vova_search_words_trans_result_json where pt = '${cur_date}') test
 ;
 
-insert overwrite table mlb.mlb_vova_user_query_translation_d  PARTITION (pt = '${cur_date}')
+insert overwrite table mlb.mlb_vova_user_query_translation_d_new  PARTITION (pt = '${cur_date}')
 select /*+ REPARTITION(1) */
 nvl(b.source,a.source),
 nvl(b.result,a.result)
 from tmp.tmp_vova_search_words_trans_result a
 left join tmp.tmp_vova_search_words_trans_result_800 b on a.source = b.source
-left join mlb.mlb_vova_user_query_translation_d c on a.source = c.clk_from
+left join mlb.mlb_vova_user_query_translation_d_new c on a.source = c.clk_from
 where a.pt = '${cur_date}' and a.source is not null
 and c.clk_from is null
 group by nvl(b.source,a.source),nvl(b.result,a.result)

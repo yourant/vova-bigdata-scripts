@@ -15,7 +15,7 @@ if [ ${query_translation} -eq 0 ]; then
 fi
 
 
-hive -e "msck repair table mlb.mlb_vova_user_query_translation_d;"
+hive -e "msck repair table mlb.mlb_vova_user_query_translation_d_new;"
 
 
 if [ $? -ne 0 ];then
@@ -44,7 +44,7 @@ sqoop export \
 --table query_translation_new \
 --m 10 \
 --hcatalog-database mlb \
---hcatalog-table mlb_vova_user_query_translation_d \
+--hcatalog-table mlb_vova_user_query_translation_d_new \
 --columns clk_from,translation_query \
 --fields-terminated-by '\t'
 
