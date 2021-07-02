@@ -72,7 +72,7 @@ with tmp_goods_portrait as
   ord_uv_1w  as pay_uv_1w,
   ord_uv_15d as pay_uv_15d,
   ord_uv_1m  as pay_uv_1m,
-  dg.goods_thumb
+  dg.goods_thumb,dg.first_on_time
 FROM
 dim.dim_vova_goods dg
 left  JOIN
@@ -526,7 +526,7 @@ select
   a.goods_name,
   a.goods_sn,
   a.is_on_sale,
-  if(e.goods_id is null and a.is_on_sale = 1,1,0) is_recommend,
+  if(mct_id = 1 and to_date(a.first_on_time) > '2021-07-01',0,if(e.goods_id is null and a.is_on_sale = 1,1,0)) is_recommend,
   t5.avg_inter_days_3_6w avg_inter_days_3_6w, -- 平均上网天数
   third_cat_id,
   fourth_cat_id,
