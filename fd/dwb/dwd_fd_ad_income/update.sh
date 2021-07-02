@@ -575,7 +575,7 @@ select
 '毛利',
 round(tmp1.day_gmv * (1 - ${refund_order_cnt_rate_send}) + tmp1.day_bonus * (1 - ${refund_amount_rate_send}) + tmp1.day_shou_express - tmp1.should_express_amount_day - (tmp1.union_cost_day + (tmp1.ad_cost_day) + tmp1.order_amount_day * ${pay_free_rate_1_send} + tmp1.day_order_cnt * ${pay_free_rate_2_send}),2),
 '',
-round(tmp1.mon_gmv * (1 - ${refund_order_cnt_rate_send}) + tmp1.mon_bonus * (1 - ${refund_amount_rate_send}) + tmp1.mon_shou_express -tmp1.should_express_amount_month - (tmp1.unit_cost_month + (tmp1.ad_cost_month) + tmp1.mon_gmv * ${pay_free_rate_1_send} + tmp1.mon_order_cnt * ${pay_free_rate_2_send}),2),
+round(tmp1.mon_gmv * (1 - ${refund_order_cnt_rate_send}) + tmp1.mon_bonus * (1 - ${refund_amount_rate_send}) + tmp1.mon_shou_express -tmp1.should_express_amount_month - (tmp1.unit_cost_month + (tmp1.ad_cost_month) + tmp1.order_amount_month * ${pay_free_rate_1_send} + tmp1.mon_order_cnt * ${pay_free_rate_2_send}),2),
 '',16
 from tmp.tmp_ad_income_03 tmp1
 union all
