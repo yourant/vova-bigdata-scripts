@@ -79,7 +79,7 @@ nodes:
         dependsOn:
           - ods_fd_ecs_order_info_arc
       
-      - name: ods_fd_ecs_region_inc
+      - name: ods_fd_ecs_region_incarc_run.sh
         type: command
         config:
           command: sh /mnt/vova-bigdata-scripts/fd/ods/binlog_table/ecshop/inc_run.sh ecs_region

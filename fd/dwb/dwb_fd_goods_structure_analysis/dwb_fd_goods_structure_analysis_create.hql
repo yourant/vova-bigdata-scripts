@@ -9,6 +9,7 @@ create table if not exists dwb.dwb_fd_goods_structure_analysis
     dynamic_goods_num	   BIGINT COMMENT '动销商品数',
     up_sale_gooods         BIGINT COMMENT '上架商品数',
     down_sale_gooods	   BIGINT COMMENT '下架商品数',
+
     goods_sale_100		   BIGINT COMMENT '日销100件商品数',
     goods_sale_50		   BIGINT COMMENT '日销50件商品数',
     goods_sale_10          BIGINT COMMENT '日销10件商品数',

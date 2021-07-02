@@ -177,6 +177,7 @@ display_bonus_exchange ,
 token ,
 payer_id
 from ods_fd_vb.ods_fd_order_info_arc where pt = '$pt_last'
+
 UNION ALL
 select  pt,
 order_id ,

@@ -18,6 +18,7 @@ CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_recall_pool(
   goods_impressions bigint,
   recall_uv         bigint
 ) COMMENT '推送点击报表' PARTITIONED BY (event_date STRING)
+
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE
 LOCATION "s3://bigdata-offline/warehouse/dwb/dwb_vova_recall_pool/"
 ;

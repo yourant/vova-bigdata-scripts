@@ -1,0 +1,55 @@
+---
+config:
+    failure.emails: shihu@i9i8.com
+    retries: 15
+    retry.backoff: 300000
+
+nodes:
+  - name: fd_mps_flow_start
+    type: noop
+
+
+  - name: ods_mps_qc_workload
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=mps --etl_type=INCTIME --inc_column=abs_id --table_name=qc_workload --mapers=15 --partition_num=15 --period_type=day
+    dependsOn:
+         - fd_mps_flow_start
+
+  - name: ods_mps_qc_workload_history
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=mps --etl_type=INCTIME --inc_column=abs_id --table_name=qc_workload_history --mapers=1 --partition_num=1 --period_type=day
+    dependsOn:
+         - fd_mps_flow_start
+
+  - name: ods_mps_receipt_batch
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=mps --etl_type=INCTIME --inc_column=receipt_batch_id --table_name=receipt_batch --mapers=1 --partition_num=1 --period_type=day
+    dependsOn:
+         - fd_mps_flow_start
+
+  - name: ods_mps_receipt_dispatch_sn
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=mps --etl_type=INCTIME --inc_column=receipt_batch_id --table_name=receipt_dispatch_sn --mapers=15 --partition_num=15 --period_type=day
+    dependsOn:
+         - fd_mps_flow_start
+
+  - name: ods_mps_supplier_dispatch_list
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=mps --etl_type=INCTIME --inc_column=supplier_dispatch_list_id --table_name=supplier_dispatch_list --mapers=60 --partition_num=60 --period_type=day
+    dependsOn:
+         - fd_mps_flow_start
+
+
+  - name: fd_mps_inc_flow_end
+    type: noop
+    dependsOn:
+        - ods_mps_qc_workload
+        - ods_mps_qc_workload_history
+        - ods_mps_receipt_batch
+        - ods_mps_receipt_dispatch_sn
+        - ods_mps_supplier_dispatch_list

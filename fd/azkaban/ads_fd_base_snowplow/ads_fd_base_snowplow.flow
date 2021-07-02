@@ -1,0 +1,38 @@
+---
+config:
+  failure.emails: bob.zhu@i9i8.com
+  retries: 10
+  retry.backoff: 300000
+
+nodes:
+  - name: ads_fd_base_snowplow_start
+    type: noop
+
+  - name: judge_ods_fd_snowplow_all_event
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_snowplow_goods_event_hour
+    dependsOn:
+      - ads_fd_base_snowplow_start
+
+  - name: ads_fd_base_snowplow
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_base_snowplow/run.sh
+    dependsOn:
+      - judge_ods_fd_snowplow_all_event
+      - ads_fd_base_snowplow_start
+
+  - name: ads_fd_base_snowplow
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_base_snowplow/sqoop.sh
+    dependsOn:
+      - judge_ods_fd_snowplow_all_event
+      - ads_fd_base_snowplow
+      - ads_fd_base_snowplow_start
+
+  - name: ads_fd_base_snowplow_end
+    type: noop
+    dependsOn:
+      - judge_ods_fd_snowplow_all_event

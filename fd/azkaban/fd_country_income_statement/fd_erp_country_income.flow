@@ -1,0 +1,152 @@
+---
+config:
+  failure.emails: htgao@i9i8.com
+  retries: 30
+  retry.backoff: 600000
+
+nodes:
+  - name: fd_erp_country_income_start
+    type: noop
+
+  - name: judge_ods_fd_ecs_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_ecs_goods
+    dependsOn:
+      - fd_erp_country_income_start
+
+  - name: judge_ods_fd_vb_order_info
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_order_info
+    dependsOn:
+      - fd_erp_country_income_start
+
+  - name: judge_ads_adgroup_daily_flat_report
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_ecs_order_info/check_ads.sh
+    dependsOn:
+      - fd_erp_country_income_start
+
+  - name: judge_ods_currency_conversion
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_currency_conversion
+    dependsOn:
+      - fd_erp_country_income_start
+
+  - name: judge_ods_refund
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_refund
+    dependsOn:
+      - fd_erp_country_income_start
+
+  - name: judge_ods_ecs_region
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_ecs_region
+    dependsOn:
+      - fd_erp_country_income_start
+
+  - name: judge_ods_fd_ecs_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_ecs_order_goods
+    dependsOn:
+      - fd_erp_country_income_start
+
+  - name: judge_ods_fd_ecs_order_info
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_ecs_order_info
+    dependsOn:
+      - fd_erp_country_income_start
+
+  - name: judge_ods_goods_purchase_price
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_goods_purchase_price
+    dependsOn:
+      - fd_erp_country_income_start
+
+  - name: judge_ods_inventory_item
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_inventory_item
+    dependsOn:
+      - fd_erp_country_income_start
+
+  - name: judge_ods_order_inv_reserved
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_order_inv_reserved
+    dependsOn:
+      - fd_erp_country_income_start
+
+  - name: judge_ods_order_inv_reserved_detail
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_order_inv_reserved_detail
+    dependsOn:
+      - fd_erp_country_income_start
+
+  - name: judge_ods_order_inv_reserverd_inventory_mapping
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_order_inv_reserverd_inventory_mapping
+    dependsOn:
+      - fd_erp_country_income_start
+
+  - name: dim_fd_ecs_region
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dim/dim_ecs_region/run.sh dim_fd_ecs_region
+    dependsOn:
+      - judge_ods_ecs_region
+
+  - name: dwd_fd_refund_executed
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_refund_executed/run.sh
+    dependsOn:
+      - judge_ods_fd_vb_order_info
+      - judge_ads_adgroup_daily_flat_report
+      - judge_ods_fd_ecs_goods
+      - judge_ods_currency_conversion
+      - judge_ods_refund
+      - judge_ods_fd_ecs_order_goods
+      - judge_ods_fd_ecs_order_info
+      - judge_ods_goods_purchase_price
+      - judge_ods_inventory_item
+      - judge_ods_order_inv_reserved
+      - judge_ods_order_inv_reserved_detail
+      - judge_ods_order_inv_reserverd_inventory_mapping
+      - dim_fd_ecs_region
+
+  - name: dwd_fd_ecs_order_info
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_ecs_order_info/run.sh
+    dependsOn:
+      - dwd_fd_refund_executed
+
+  - name: dwb_fd_income_cost
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_income_cost/run.sh
+    dependsOn:
+      - dwd_fd_ecs_order_info
+
+  - name: dwb_fd_income_cost_paid
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_income_cost_paid/run.sh
+    dependsOn:
+      - dwb_fd_income_cost
+
+  - name: fd_erp_country_income_end
+    type: noop
+    dependsOn:
+      - dwb_fd_income_cost_paid

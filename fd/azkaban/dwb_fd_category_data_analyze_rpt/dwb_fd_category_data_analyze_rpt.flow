@@ -1,91 +1,35 @@
 ---
 config:
-  failure.emails: shihu@i9i8.com
-  retries: 20
-  retry.backoff: 600000
+failure.emails: bob.zhu@i9i8.com
+retries: 10
+retry.backoff: 300000
 
 nodes:
-  - name: dwb_fd_category_data_analyze_start
-    type: noop
+- name: ads_fd_base_snowplow_start
+  type: noop
 
-  - name: dwb_fd_category_data_analyze_flow
-    type: flow
-    config:
-      prop: value
-    nodes:
-      - name: dwb_fd_category_data_analyze_flow_start
-        type: noop
-      
-      - name: judge_fd_snowplow_ecommerce_event
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_snowplow_ecommerce_event_hour
-        dependsOn:
-          - dwb_fd_category_data_analyze_flow_start
+- name: judge_ods_fd_snowplow_all_event
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_snowplow_goods_event_hour
+dependsOn:
+- ads_fd_base_snowplow_start
 
-      - name: judge_fd_snowplow_goods_event
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_snowplow_goods_event_hour
-        dependsOn:
-          - dwb_fd_category_data_analyze_flow_start
+- name: ads_fd_base_snowplow
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_base_snowplow/run.sh
+dependsOn:
+- judge_ods_fd_snowplow_all_event
 
-      - name: judge_fd_dim_goods
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh fd_dim_goods
-        dependsOn:
-          - dwb_fd_category_data_analyze_flow_start
+- name: ads_fd_base_snowplow_export
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_base_snowplow/sqoop.sh
+dependsOn:
+- ads_fd_base_snowplow
 
-
-      - name: judge_dim_fd_category
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_fd_category
-        dependsOn:
-          - dwb_fd_category_data_analyze_flow_start
-
-
-      - name: judge_dwd_fd_order_goods
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_goods
-        dependsOn:
-          - dwb_fd_category_data_analyze_flow_start
-
-
-
-
-      - name: dwd_fd_goods_event_detail
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_category_data_analyze_goods_event_detail/run.sh ${pt}
-        dependsOn:
-          - judge_fd_snowplow_ecommerce_event
-          - judge_fd_snowplow_goods_event
-          - judge_fd_dim_goods
-          - judge_dim_fd_category
-
-
-      - name: dwd_fd_category_analyze_order_detail
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_category_data_analyze_order_detail/run.sh ${pt}
-        dependsOn:
-          - judge_dwd_fd_order_goods
-
-      - name: dwb_fd_category_data_analyze_rpt
-        type: command
-        config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_category_data_analyze_rpt/run.sh ${pt}
-        dependsOn:
-          - dwd_fd_goods_event_detail
-          - dwd_fd_category_analyze_order_detail
-
-    dependsOn:
-      - dwb_fd_category_data_analyze_start
-
-  - name: dwb_fd_category_data_analyze_end
-    type: noop
-    dependsOn:
-      - dwb_fd_category_data_analyze_flow
+- name: ads_fd_base_snowplow_end
+type: noop
+dependsOn:
+- ads_fd_base_snowplow_export

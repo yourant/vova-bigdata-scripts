@@ -29,7 +29,6 @@ shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_adjust_price_rpt"
 spark-sql \
   --conf "spark.app.name=goods_click_collect_gaohaitao" \
   --conf "spark.dynamicAllocation.maxExecutors=100" \
-  --conf "spark.executor.memoryOverhead=8G" \
   --driver-memory 4g \
   -d pt=$pt \
   -d pt3=$pt3 \

@@ -6,7 +6,7 @@ SELECT
        lower(collect_set(project_name)[0]),
        REGEXP_REPLACE(collect_set(finder)[0], '[^0-9a-zA-Z,.]', '')
 FROM (
-         select gf.goods_id,
+         select gf.goods_id,regexp
                 gf.virtual_goods_id,
                 gf.project_name,
                 gf.finder

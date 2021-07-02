@@ -359,7 +359,7 @@ nodes:
         dependsOn:
           - fd_ods_user_flow_start
 
-      - name: ods_fd_vb_user_agent_analysis
+      - name: ods_fd_ods_fd_rar_user_personavb_user_agent_analysis
         type: command
         config:
           command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=vb --etl_type=INCID --inc_column=user_agent_id --table_name=user_agent_analysis  --partition_num=2  --period_type=day

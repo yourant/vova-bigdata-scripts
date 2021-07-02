@@ -35,6 +35,6 @@ create external table if not exists pdb.pdb_fd_snowplow_all_event
     `hour` string)
     ROW FORMAT SERDE 'org.apache.hive.hcatalog.data.JsonSerDe'
     stored as textfile
-    location '${hiveconf:flume_path}/fd/snowplow/snowplow_all_event';
+    location 's3://bigdata-offline/warehouse/pdb/fd/snowplow/snowplow_all_event';
 
 MSCK REPAIR TABLE pdb.pdb_fd_snowplow_all_event;

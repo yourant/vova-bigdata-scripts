@@ -95,7 +95,7 @@ from (
         goods_status,
         coupon_goods_id,
         coupon_config_value,
-        coupon_config_coupon_type,
+        coupon_config_coupon_type,from_unixtime
         goods_price_original
     from ods_fd_vb.ods_fd_order_goods
 )og

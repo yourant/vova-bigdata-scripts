@@ -1,0 +1,31 @@
+---
+config:
+  failure.emails: ekko.zhang@i9i8.com
+  retries: 10
+  retry.backoff: 300000
+
+nodes:
+  - name: dwd_fd_batch_detail_start
+    type: noop
+
+  - name: judge_ods_fd_snowplow_goods_event
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_snowplow_goods_event_hour
+    dependsOn:
+      - dwd_fd_batch_detail_start
+
+  - name: judge_ods_fd_snowplow_element_event
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_snowplow_element_event_hour
+    dependsOn:
+      - dwd_fd_batch_detail_start
+
+  - name: dwd_fd_batch_detail
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_batch_detail/run.sh "${pt}"
+    dependsOn:
+      - judge_ods_fd_snowplow_goods_event
+      - judge_ods_fd_snowplow_element_event

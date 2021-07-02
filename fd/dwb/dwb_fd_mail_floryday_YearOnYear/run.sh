@@ -42,7 +42,7 @@ spark-submit \
   --name 'dwb_fd_mail_floryday_YearOnYear_send_email' \
   --master yarn  \
   --conf spark.executor.memory=1g \
-  --conf spark.dynamicAllocation.maxExecutors=40 \
+  --conf spark.dynamicAllocation.maxExecutors=60 \
   --conf spark.executor.memoryOverhead=1024 \
   --class com.vova.utils.EmailUtil s3://vomkt-emr-rec/jar/vova-bd/dataprocess/new/vova-db-dataprocess-1.0-SNAPSHOT.jar \
   --env prod \
@@ -58,14 +58,17 @@ spark-submit \
           ,last_year_paid_amount
           ,concat(round(last_year_paid_amount/last_year_dau*100,2),'%') last_year_cr
 
-          ,round(this_year_PC_amount,2)
-          ,concat(round(this_year_PC_amount/this_year_PC_dau*100,2),'%') pc_cr
-          ,round(this_year_M_amount,2)
-          ,concat(round(this_year_M_amount/this_year_M_dau*100,2),'%') m_cr
-          ,round(this_year_IOS_amount,2)
-          ,concat(round(this_year_IOS_amount/this_year_IOS_dau*100,2),'%') ios_cr
-          ,round(this_year_Android_amount,2)
-          ,concat(round(this_year_Android_amount/this_year_Android_dau*100,2),'%') android_cr
+          ,round(this_year_PC_sales_amount,2)
+          ,concat(round(this_year_PC_paid_amount/this_year_PC_dau*100,2),'%') pc_cr
+
+          ,round(this_year_M_sales_amount,2)
+          ,concat(round(this_year_M_paid_amount/this_year_M_dau*100,2),'%') m_cr
+
+          ,round(this_year_IOS_sales_amount,2)
+          ,concat(round(this_year_IOS_paid_amount/this_year_IOS_dau*100,2),'%') ios_cr
+
+          ,round(this_year_Android_sales_amount,2)
+          ,concat(round(this_year_Android_paid_amount/this_year_Android_dau*100,2),'%') android_cr
         from
           dwb.dwb_fd_mail_floryday_YearOnYear
         where

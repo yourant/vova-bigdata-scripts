@@ -66,4 +66,4 @@ from ods_fd_snowplow.ods_fd_snowplow_all_event
          LATERAL VIEW OUTER explode(element_event_struct) element_event as ee
 where pt = "${pt}"
   and hour = "${hour}"
-  and event_name in ("common_click", "common_impression");
+  and event_name in ("common_click","common_impression");

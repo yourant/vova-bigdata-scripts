@@ -6,17 +6,23 @@ with
               ,lower(project_name) project
               ,sum(goods_amount+shipping_fee) GMV
               ,sum(goods_amount) sales_amount
-              ,count(if(pay_status = '2',1,null)) paid_amount
-              ,count(if(pay_status = '2' and platform_type in ('pc_web','tablet_web'),1,null)) PC_paid_amount
-              ,count(if(pay_status = '2' and platform_type  = 'mobile_web',1,null)) M_paid_amount
-              ,count(if(pay_status = '2' and platform_type  = 'ios_app',1,null)) IOS_paid_amount
-              ,count(if(pay_status = '2' and platform_type  = 'android_app',1,null)) Android_paid_amount
+              ,count(1) paid_amount
+              ,count( if(platform_type in ('pc_web','tablet_web'),1,null) ) PC_paid_amount
+              ,count( if(platform_type  = 'mobile_web',1,null) ) M_paid_amount
+              ,count( if(platform_type  = 'ios_app',1,null) ) IOS_paid_amount
+              ,count( if(platform_type  = 'android_app',1,null) ) Android_paid_amount
+
+              ,sum( if(platform_type in ('pc_web','tablet_web'),goods_amount,0) ) PC_sales_amount
+              ,sum( if(platform_type  = 'mobile_web',goods_amount,0) ) M_sales_amount
+              ,sum( if(platform_type  = 'ios_app',goods_amount,0) ) IOS_sales_amount
+              ,sum( if(platform_type  = 'android_app',goods_amount,0) ) Android_sales_amount
             from
               dwd.dwd_fd_order_info
             where
               to_date(from_utc_timestamp(from_unixtime(pay_time),'PRC')) > '2020-03-01'
               and platform_type in ('pc_web','tablet_web','mobile_web','ios_app','android_app')
               and lower(project_name) = 'floryday'
+              and pay_status = '2'
             group by
                to_date(from_utc_timestamp(from_unixtime(pay_time),'PRC'))
               ,lower(project_name)
@@ -91,12 +97,19 @@ select
   ,tab3.paid_amount
   ,tab4.DAU
 
+  ,tab1.PC_sales_amount
   ,tab1.PC_paid_amount
   ,tab2.PC_DAU
+
+  ,tab1.M_sales_amount
   ,tab1.M_paid_amount
   ,tab2.M_DAU
+
+  ,tab1.IOS_sales_amount
   ,tab1.IOS_paid_amount
   ,tab2.IOS_DAU
+
+  ,tab1.Android_sales_amount
   ,tab1.Android_paid_amount
   ,tab2.Android_DAU
 from
@@ -108,6 +121,10 @@ from
           ,GMV
           ,sales_amount
           ,paid_amount
+          ,PC_sales_amount
+          ,M_sales_amount
+          ,IOS_sales_amount
+          ,Android_sales_amount
           ,PC_paid_amount
           ,M_paid_amount
           ,IOS_paid_amount

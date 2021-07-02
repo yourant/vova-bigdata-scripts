@@ -1,4 +1,3 @@
-
 CREATE TABLE IF NOT EXISTS dwb.dwb_fd_goods_test_finder_rpt
 (
     project                     string comment '项目',

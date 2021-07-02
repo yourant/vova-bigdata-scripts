@@ -1,0 +1,173 @@
+---
+config:
+failure.emails: htgao@i9i8.com
+retries: 15
+retry.backoff: 300000
+
+nodes:
+- name: fd_ecshop_flow_start
+type: noop
+
+- name: ods_fd_ecs_goods
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ecshop --etl_type=ALL --table_name=ecs_goods --mapers=2 --partition_num=1 --period_type=day
+dependsOn:
+- fd_ecshop_flow_start
+
+- name: ods_fd_stock_ecs_order_sale_bak_detail
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ecshop --etl_type=ALL --table_name=fd_stock_ecs_order_sale_bak_detail --mapers=2 --partition_num=1 --period_type=day
+dependsOn:
+- fd_ecshop_flow_start
+
+- name: ods_fd_sku_backups
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ecshop --etl_type=ALL --table_name=fd_sku_backups --mapers=2 --partition_num=1 --period_type=day
+dependsOn:
+- fd_ecshop_flow_start
+
+- name: ods_fd_spring_festival_stock_up_info
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ecshop --etl_type=ALL --table_name=fd_spring_festival_stock_up_info --mapers=2 --partition_num=1 --period_type=day
+dependsOn:
+- fd_ecshop_flow_start
+
+- name: ods_fd_stock_goods_config
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ecshop --etl_type=ALL --table_name=fd_stock_goods_config --mapers=2 --partition_num=1 --period_type=day
+dependsOn:
+- fd_ecshop_flow_start
+
+- name: ods_ecs_region
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ecshop --etl_type=ALL --table_name=ecs_region --mapers=2 --partition_num=1 --period_type=day
+dependsOn:
+- fd_ecshop_flow_start
+
+- name: ods_category_product_line
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ecshop --etl_type=ALL --table_name=category_product_line --mapers=1 --partition_num=1 --period_type=day
+dependsOn:
+- fd_ecshop_flow_start
+
+- name: ods_ecs_provider
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ecshop --etl_type=ALL --table_name=ecs_provider --mapers=1 --partition_num=1 --period_type=day
+dependsOn:
+- fd_ecshop_flow_start
+
+- name: ods_package_workload_statistics
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ecshop --etl_type=INCTIME --inc_column=update_time --table_name=package_workload_statistics --mapers=1 --partition_num=1 --period_type=day
+dependsOn:
+- fd_ecshop_flow_start
+
+- name: ods_fd_provider_daily_report
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ecshop --etl_type=ALL --table_name=fd_provider_daily_report --mapers=2 --partition_num=1 --period_type=day
+dependsOn:
+- fd_ecshop_flow_start
+
+- name: ods_fd_ecs_provider_provider_attribute
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ecshop --etl_type=ALL --table_name=ecs_provider_provider_attribute --mapers=2 --partition_num=1 --period_type=day
+dependsOn:
+- fd_ecshop_flow_start
+
+- name: ods_fd_provider_attribute
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ecshop --etl_type=ALL --table_name=provider_attribute --mapers=2 --partition_num=1 --period_type=day
+dependsOn:
+- fd_ecshop_flow_start
+
+- name: ods_fd_goods_provider_department
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ecshop --etl_type=ALL --table_name=goods_provider_department --mapers=2 --partition_num=1 --period_type=day
+dependsOn:
+- fd_ecshop_flow_start
+
+- name: ods_ecs_return_apply
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=ecshop --etl_type=INCTIME --inc_column=update_time --table_name=return_apply --mapers=2 --partition_num=1 --period_type=day
+dependsOn:
+- fd_ecshop_flow_start
+
+- name: ods_ecs_return_apply_detail
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=ecshop --etl_type=INCID --inc_column=return_apply_detail_id --table_name=return_apply_detail --mapers=2 --partition_num=1 --period_type=day
+dependsOn:
+- fd_ecshop_flow_start
+
+- name: ods_ecs_refund_bonus_detail
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=ecshop --etl_type=INCID --inc_column=abs_id --table_name=refund_bonus_detail --mapers=2 --partition_num=1 --period_type=day
+dependsOn:
+- fd_ecshop_flow_start
+
+- name: ods_ecs_fly_fish_logistics_order
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=ecshop --etl_type=INCTIME --inc_column=updated_at --table_name=fly_fish_logistics_order --mapers=2 --partition_num=1 --period_type=day
+dependsOn:
+- fd_ecshop_flow_start
+
+- name: ods_ecs_order_attribute
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=ecshop --etl_type=INCID --inc_column=attribute_id --table_name=order_attribute --mapers=2 --partition_num=1 --period_type=day
+dependsOn:
+- fd_ecshop_flow_start
+
+- name: ods_ecs_order_goods
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=ecshop --etl_type=INIT --table_name=ecs_order_goods --mapers=20 --partition_num=200 --period_type=day
+dependsOn:
+- fd_ecshop_flow_start
+
+- name: ods_ecshop_sync_flyfish_queue
+type: command
+config:
+command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=ecshop --etl_type=INCTIME --inc_column=update_at --table_name=sync_flyfish_queue --mapers=2 --partition_num=1 --period_type=day
+dependsOn:
+- fd_ecshop_flow_start
+
+- name: fd_ecshop_inc_flow_end
+type: noop
+dependsOn:
+- ods_fd_ecs_goods
+- ods_fd_stock_ecs_order_sale_bak_detail
+- ods_fd_spring_festival_stock_up_info
+- ods_fd_sku_backups
+- ods_fd_stock_goods_config
+- ods_ecs_region
+- ods_category_product_line
+- ods_ecs_provider
+- ods_package_workload_statistics
+- ods_fd_provider_daily_report
+- ods_fd_ecs_provider_provider_attribute
+- ods_fd_provider_attribute
+- ods_fd_goods_provider_department
+- ods_ecs_return_apply
+- ods_ecs_return_apply_detail
+- ods_ecs_refund_bonus_detail
+- ods_ecs_fly_fish_logistics_order
+- ods_ecs_order_attribute
+- ods_ecs_order_goods
+- ods_ecshop_sync_flyfish_queue

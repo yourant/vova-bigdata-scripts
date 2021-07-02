@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_order_info_inc
     district BIGINT,
     district_text STRING COMMENT '县/区，输入',
     address STRING,
-    zipcode STRING,
+    zipcode STRING,dwb_fd_realtime_new_rpt
     tel STRING,
     mobile STRING,
     email STRING,

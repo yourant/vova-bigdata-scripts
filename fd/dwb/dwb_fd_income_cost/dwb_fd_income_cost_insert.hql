@@ -9,7 +9,7 @@ select /*+ REPARTITION(1) */t.project
      , t.dimension_type
      , t.pt_date
 
-     , nvl(t.purchase_cost, 0.0) as purchase_cost
+     , nvl(t.purchase_amount, 0.0) as purchase_amount
      , nvl(t.sale_amount, 0.0)   as sale_amount
      , nvl(t.coupon_cost, 0.0)   as coupon_cost
      , nvl(t.ads_cost, 0.0)      as ads_cost
@@ -24,7 +24,7 @@ from (
               , sum(t1.sale_amount)                                              as sale_amount
               , sum(t1.coupon_cost)                                              as coupon_cost
               , sum(t1.ads_cost)                                                 as ads_cost
-              , sum(t1.purchase_cost)                                            as purchase_cost
+              , sum(t1.purchase_amount)                                          as purchase_amount
               , sum(t1.refund_cost)                                              as refund_cost
               , sum(t1.total_cost)                                               as total_cost
          from (
@@ -36,7 +36,7 @@ from (
                        , nvl(goods_amount, 0.0)                                         as sale_amount
                        , nvl(bouns_amount, 0.0)                                         as coupon_cost
                        , nvl(ads_cost, 0.0)                                             as ads_cost
-                       , nvl(purchase_amount, 0.0)                                      as purchase_cost
+                       , nvl(purchase_amount, 0.0)                                      as purchase_amount
                        , nvl(goods_refund_amount, 0.0)                                  as refund_cost
                        , nvl(bouns_amount, 0.0) + nvl(ads_cost, 0.0) + nvl(purchase_amount, 0.0) + nvl(goods_refund_amount, 0.0) as total_cost
                   from dwd.dwd_fd_ecs_order_info_shipping
@@ -52,7 +52,7 @@ from (
               , sum(t2.sale_amount)                                              as sale_amount
               , sum(t2.coupon_cost)                                              as coupon_cost
               , sum(t2.ads_cost)                                                 as ads_cost
-              , sum(t2.purchase_cost)                                            as purchase_cost
+              , sum(t2.purchase_amount)                                          as purchase_amount
               , sum(t2.refund_cost)                                              as refund_cost
               , sum(t2.total_cost)                                               as total_cost
          from (
@@ -64,7 +64,7 @@ from (
                        , nvl(goods_amount, 0.0)                                        as sale_amount
                        , nvl(bouns_amount, 0.0)                                        as coupon_cost
                        , nvl(ads_cost, 0.0)                                            as ads_cost
-                       , nvl(purchase_amount, 0.0)                                     as purchase_cost
+                       , nvl(purchase_amount, 0.0)                                     as purchase_amount
                        , nvl(if(goods_refund_amount != 0,goods_refund_amount,order_amount_diff), 0.0) as refund_cost
                        , nvl(bouns_amount, 0.0) + nvl(ads_cost, 0.0) + nvl(purchase_amount, 0.0) + nvl(if(goods_refund_amount != 0,goods_refund_amount,order_amount_diff), 0.0) as total_cost
                   from dwd.dwd_fd_ecs_order_info_paid isn

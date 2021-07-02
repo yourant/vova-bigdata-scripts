@@ -35,6 +35,6 @@ create external table if not exists pdb.pdb_fd_snowplow_offline
     `hour` string)
     ROW FORMAT SERDE 'org.apache.hive.hcatalog.data.JsonSerDe'
     stored as textfile
-    location 's3://bigdata-offline/warehouse/pdb/fd/snowplow/snowplow_offline';
+    location 's3://bigdata-offline/warehouse/pdb/fd/snowplow/snowplow_batch';
 
 MSCK REPAIR TABLE pdb.pdb_fd_snowplow_offline;

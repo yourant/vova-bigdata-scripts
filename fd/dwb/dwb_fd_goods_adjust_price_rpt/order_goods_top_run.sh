@@ -28,7 +28,7 @@ shell_path="/mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_adjust_price_rpt"
 
 spark-sql \
   --conf "spark.app.name=order_goods_top_gaohaitao" \
-  --conf "spark.dynamicAllocation.maxExecutors=60" \
+  --conf "spark.dynamicAllocation.maxExecutors=100" \
   -d pt=$pt \
   -d pt3=$pt3 \
   -d pt11=$pt11 \

@@ -1,0 +1,204 @@
+---
+config:
+  failure.emails: htgao@i9i8.com
+  retries: 15
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_romeo_flow_start
+    type: noop
+
+  - name: ods_currency_conversion
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=currency_conversion --mapers=2 --partition_num=1 --period_type=day
+    dependsOn:
+        - fd_romeo_flow_start
+
+  - name: ods_order_inv_reserved_detail
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=order_inv_reserved_detail  --mapers=300 --partition_num=50 --period_type=day
+    dependsOn:
+        - fd_romeo_flow_start
+
+  - name: ods_order_inv_reserved
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=order_inv_reserved  --partition_num=2 --period_type=day
+    dependsOn:
+        - fd_romeo_flow_start
+
+  - name: ods_order_inv_reserverd_inventory_mapping
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=order_inv_reserverd_inventory_mapping  --mapers=100 --partition_num=40 --period_type=day
+    dependsOn:
+        - fd_romeo_flow_start
+  
+  - name: ods_inventory_item
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=INCTIME --inc_column=last_updated_stamp --table_name=inventory_item  --partition_num=1 --period_type=day
+    dependsOn:
+        - fd_romeo_flow_start
+
+  - name: ods_refund
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=INCTIME --inc_column=last_update_stamp --table_name=refund  --partition_num=1 --period_type=day
+    dependsOn:
+        - fd_romeo_flow_start
+
+  - name: ods_goods_purchase_price
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=goods_purchase_price --mapers=2 --partition_num=1 --period_type=day
+    dependsOn:
+        - fd_romeo_flow_start
+
+  - name: ods_party
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=party --mapers=2 --partition_num=1 --period_type=day
+    dependsOn:
+        - fd_romeo_flow_start
+
+  - name: ods_party_config
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=party_config --mapers=2 --partition_num=1 --period_type=day
+    dependsOn:
+        - fd_romeo_flow_start
+
+  - name: ods_inventory_summary
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=inventory_summary --mapers=2 --partition_num=1 --period_type=day
+    dependsOn:
+        - fd_romeo_flow_start
+
+  - name: ods_remo_basket_shipment_detail
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=basket_shipment_detail --mapers=2 --partition_num=1 --period_type=day
+    dependsOn:
+         - fd_romeo_flow_start
+
+  - name: ods_remo_basket_shipment_detail_history
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=INCTIME --inc_column=abs_id --table_name=basket_shipment_detail_history --mapers=40 --partition_num=40 --period_type=day
+    dependsOn:
+         - fd_romeo_flow_start
+
+
+  - name: ods_remo_dispatch_list
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=INCTIME --inc_column=LAST_UPDATE_STAMP --table_name=dispatch_list --mapers=2 --partition_num=1 --period_type=day
+    dependsOn:
+       - fd_romeo_flow_start
+
+  - name: ods_remo_facility
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=facility --mapers=1 --partition_num=1 --period_type=day
+    dependsOn:
+         - fd_romeo_flow_start
+
+  - name: ods_remo_facility_location
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL  --table_name=facility_location --mapers=1 --partition_num=1 --period_type=day --primary_key=location_capacity
+    dependsOn:
+         - fd_romeo_flow_start
+
+  - name: ods_remo_inventory_item_detail
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=INCTIME --inc_column=LAST_UPDATED_STAMP --table_name=inventory_item_detail --mapers=5 --partition_num=5 --period_type=day
+    dependsOn:
+         - fd_romeo_flow_start
+
+  - name: ods_remo_obcc
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=obcc --mapers=2 --partition_num=1 --period_type=day
+    dependsOn:
+         - fd_romeo_flow_start
+
+  - name: ods_remo_obdm
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=obdm --mapers=2 --partition_num=1 --period_type=day
+    dependsOn:
+         - fd_romeo_flow_start
+
+
+  - name: ods_remo_obdm_history
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=INCTIME --inc_column=abs_id --table_name=obdm_history --mapers=2 --partition_num=1 --period_type=day
+    dependsOn:
+         - fd_romeo_flow_start
+
+  - name: ods_remo_order_shipment
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=order_shipment --mapers=1 --partition_num=1 --period_type=day --primary_key=SHIPMENT_ID
+    dependsOn:
+         - fd_romeo_flow_start
+
+
+  - name: ods_remo_shipment
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=INCTIME --inc_column=LAST_UPDATE_STAMP --table_name=shipment --mapers=2 --partition_num=1 --period_type=day
+    dependsOn:
+         - fd_romeo_flow_start
+
+
+  - name: ods_remo_basket_shipment
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=basket_shipment --mapers=2 --partition_num=1 --period_type=day
+    dependsOn:
+         - fd_romeo_flow_start
+
+
+  - name: ods_remo_dispatch_location
+    type: command
+    config:
+        command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=romeo --etl_type=ALL --table_name=dispatch_location --mapers=2 --partition_num=1 --period_type=day
+    dependsOn:
+         - fd_romeo_flow_start
+
+
+  - name: fd_romeo_inc_flow_end
+    type: noop
+    dependsOn:
+        - ods_currency_conversion
+        - ods_order_inv_reserved_detail
+        - ods_order_inv_reserved
+        - ods_order_inv_reserverd_inventory_mapping
+        - ods_inventory_item
+        - ods_refund
+        - ods_goods_purchase_price
+        - ods_party
+        - ods_party_config
+        - ods_inventory_summary
+        - ods_remo_basket_shipment_detail
+        - ods_remo_basket_shipment_detail_history
+        - ods_remo_dispatch_list
+        - ods_remo_facility
+        - ods_remo_facility_location
+        - ods_remo_inventory_item_detail
+        - ods_remo_obcc
+        - ods_remo_obdm
+        - ods_remo_obdm_history
+        - ods_remo_shipment
+        - ods_remo_order_shipment
+        - ods_remo_basket_shipment
+        - ods_remo_dispatch_location
+

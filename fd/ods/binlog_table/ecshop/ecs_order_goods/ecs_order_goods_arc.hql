@@ -58,7 +58,7 @@ from(
                     goods_number,
                     market_price,
                     goods_price,
-                    goods_attr,
+                    goods_attr,dwd_fd_order_info
                     send_number,
                     is_real,
                     extension_code,

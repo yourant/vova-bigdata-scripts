@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS ods_fd_vb.ods_fd_goods(
-  `goods_id` bigint,
+      `goods_id` bigint,
       `goods_party_id` bigint,
       `cat_id` bigint,
       `goods_sn` string,

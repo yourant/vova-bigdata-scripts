@@ -126,6 +126,8 @@ coupon_config_coupon_type,
 goods_price_original
 from ods_fd_vb.ods_fd_order_goods
 )og
+
+
 LEFT JOIN (
 select
 order_id,
@@ -169,7 +171,9 @@ project_name,
 user_agent_id
 from ods_fd_vb.ods_fd_order_info
 where email not regexp '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
-) oi ON og.order_id = oi.order_id
+) oi
+ON og.order_id = oi.order_id
+
 left join (
 select du.user_id,du.sp_duid
 from (

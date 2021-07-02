@@ -17,7 +17,7 @@ create table if not exists ods_fd_snowplow.ods_fd_snowplow_all_event
     user_ipaddress       STRING,
     session_idx          BIGINT,
     session_id           STRING,
-    useragent            STRING,dwb.dwb_fd_abtest_funnel_rate_rpt
+    useragent            STRING,
     dvce_type            STRING,
     dvce_ismobile        BOOLEAN,
     os_name              STRING,

@@ -1,0 +1,32 @@
+---
+config:
+    failure.emails: bob.zhu@i9i8.com
+    retries: 20
+    retry.backoff: 300000
+
+nodes:
+  - name: dwd_fd_homepage_modular_click_impression_start
+    type: noop
+
+  - name: judge_ods_fd_snowplow_element_event_hour
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_snowplow_element_event_hour
+
+  - name: judge_ods_fd_snowplow_goods_event_hour
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_snowplow_goods_event_hour
+
+  - name: dwd_fd_homepage_modular_click_impression
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_homepage_modular_click_impression/run.sh
+    dependsOn:
+      - judge_ods_fd_snowplow_element_event_hour
+      - judge_ods_fd_snowplow_goods_event_hour
+
+  - name: dwd_fd_homepage_modular_click_impression_end
+    type: noop
+    dependsOn:
+      - dwd_fd_homepage_modular_click_impression

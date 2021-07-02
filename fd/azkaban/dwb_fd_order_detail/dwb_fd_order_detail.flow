@@ -1,0 +1,44 @@
+---
+config:
+  failure.emails: bob.zhu@i9i8.com
+  retries: 10
+  retry.backoff: 600000
+
+nodes:
+  - name: dwb_fd_order_detail_start
+    type: noop
+
+  - name: judge_dwd_fd_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_goods
+    dependsOn:
+      - dwb_fd_order_detail_start
+
+  - name: judge_ods_fd_vb_order_info
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_order_info
+    dependsOn:
+      - dwb_fd_order_detail_start
+
+  - name: judge_ods_fd_vb_order_marketing_data
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_order_marketing_data
+    dependsOn:
+      - dwb_fd_order_detail_start
+
+  - name: dwb_fd_order_detail
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_order_detail/run.sh
+    dependsOn:
+      - judge_dwd_fd_order_goods
+      - judge_ods_fd_vb_order_info
+      - judge_ods_fd_vb_order_marketing_data
+
+  - name: dwb_fd_order_detail_end
+    type: noop
+    dependsOn:
+      - dwb_fd_order_detail

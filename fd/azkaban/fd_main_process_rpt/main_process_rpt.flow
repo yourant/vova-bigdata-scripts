@@ -43,7 +43,7 @@ nodes:
       - name: main_process_report_caculate
         type: command
         config:
-          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_main_process_rpt/run.sh ${pt}
+          command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_main_process_rpt/run.sh
         dependsOn:
           - judge_snowplow_all_event
           - judge_session_channel

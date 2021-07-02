@@ -1,4 +1,4 @@
-INSERT OVERWRITE table  dwd.dwd_fd_order_channel_analytics
+INSERT OVERWRITE table dwd.dwd_fd_order_channel_analytics
 SELECT 
 ogi.order_id, 
 ogi.order_sn,
