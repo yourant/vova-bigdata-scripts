@@ -10,7 +10,7 @@ sql="
 drop table if exists themis.goods_id_behave_m_new;
 drop table if exists themis.goods_id_behave_m_pre;
 "
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx -e "${sql}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1
@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS themis.goods_id_behave_m (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 "
 
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx -e "${sql}"
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1
@@ -113,11 +113,11 @@ fi
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=default \
--Dsqoop.export.records.per.statement=1000 \
+-Dsqoop.export.records.per.statement=500 \
 -Dmapreduce.map.memory.mb=8192 \
 -Dmapreduce.reduce.memory.mb=8192 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
---username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
+--username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \
 --m 1 \
 --table goods_id_behave_m_new \
 --hcatalog-database ads \
@@ -153,7 +153,7 @@ if [ $? -ne 0 ];then
 fi
 
 echo "----------开始rename-------"
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx <<EOF
 rename table themis.goods_id_behave_m to themis.goods_id_behave_m_pre,themis.goods_id_behave_m_new to themis.goods_id_behave_m;
 EOF
 echo "-------rename结束--------"

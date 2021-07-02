@@ -158,16 +158,15 @@ from
       r.buyer_id,
       l.second_cat_id,
       exp(- 0.0767 * nvl(l.min_clk_day_gap, 31)) * (
-        0.4 * ( ord_cnt_1m / ( ord_cnt_all + 1 ) )
+        0.3 * ( ord_cnt_1m / ( ord_cnt_all + 1 ) )
         + 0.1 * ( clk_valid_cnt_1m / ( clk_valid_cnt_all + 1 ) )
         + 0.3 * ( collect_cnt_1m / ( collect_cnt_all + 1 ) )
-        + 0.1 * (add_cat_cnt_1m / ( add_cat_cnt_all + 1 ) )
-        + 0.1 * (gmv_1m / ( gmv_all + 1 ) )) weights,
-      exp(-0.09902 * nvl(l.min_clk_day_gap, 31)) * (0.4 * (ord_cnt_15d / (ord_cnt_15d_all + 1))
+        + 0.4 * (add_cat_cnt_1m / ( add_cat_cnt_all + 1 ) )
+        ) weights,
+      exp(-0.09902 * nvl(l.min_clk_day_gap, 31)) * (0.3 * (ord_cnt_15d / (ord_cnt_15d_all + 1))
         + 0.1 * (clk_valid_cnt_15d / (clk_valid_cnt_15d_all + 1))
         + 0.3 * (collect_cnt_15d / (collect_cnt_15d_all + 1))
-        + 0.1 * (add_cat_cnt_15d / (add_cat_cnt_15d_all + 1))
-        + 0.1 * (gmv_15d / (gmv_15d_all + 1))
+        + 0.4 * (add_cat_cnt_15d / (add_cat_cnt_15d_all + 1))
         ) weights_short, -- 短期偏好度
       null weights_medium, -- 中期偏好度
       null weights_long -- 长期偏好度
@@ -204,10 +203,10 @@ from
       l.second_cat_id,
       null weights,
       null weights_short, -- 短期偏好度
-      exp(-0.0315 * if(nvl(l.min_clk_day_gap, 61)-15 < 0, 0, nvl(l.min_clk_day_gap, 61)-15)) * (0.4 * (l.ord_cnt / (ord_cnt_medium_term_all + 1))
+      exp(-0.0315 * if(nvl(l.min_clk_day_gap, 61)-15 < 0, 0, nvl(l.min_clk_day_gap, 61)-15)) * (0.3 * (l.ord_cnt / (ord_cnt_medium_term_all + 1))
         + 0.1 * (l.clk_cnt / (clk_cnt_medium_term_all + 1))
         + 0.3 * (l.collect_cnt / (collect_cnt_medium_term_all + 1))
-        + 0.1 * (l.add_cat_cnt / (add_cat_cnt_medium_term_all + 1))
+        + 0.4 * (l.add_cat_cnt / (add_cat_cnt_medium_term_all + 1))
         ) weights_medium, -- 中期偏好度
       null weights_long -- 长期偏好度
     from

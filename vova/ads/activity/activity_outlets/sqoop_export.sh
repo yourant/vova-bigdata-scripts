@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS \`themis\`.\`ads_activity_outlets\` (
   KEY \`second_cat_id_key\` (\`second_cat_id\`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 "
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx -e "${sql}"
 
 if [ $? -ne 0 ];then
   exit 1
@@ -50,9 +50,9 @@ fi
 
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
--Dsqoop.export.records.per.statement=1000 \
+-Dsqoop.export.records.per.statement=500 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
---username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
+--username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \
 --m 1 \
 --table ads_activity_outlets_new \
 --hcatalog-database ads \
@@ -67,7 +67,7 @@ if [ $? -ne 0 ];then
 fi
 
 echo "----------开始rename-------"
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx <<EOF
 rename table themis.ads_activity_outlets to themis.ads_activity_outlets_pre,themis.ads_activity_outlets_new to themis.ads_activity_outlets;
 EOF
 echo "-------rename结束--------"

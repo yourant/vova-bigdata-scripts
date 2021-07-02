@@ -72,14 +72,33 @@ FROM ads.ads_vova_six_rank_mct srm
       AND ar.avg_rate_7d > 0
     GROUP BY ar.first_cat_id
 ) avg_rate ON srm.first_cat_id = avg_rate.first_cat_id
+WHERE srm.mct_id NOT IN (-1000, 36655)
+
+UNION ALL
+
+select
+srm.mct_id,
+srm.mct_name,
+srm.first_cat_id,
+srm.add_date,
+0 as goods_impression_uv_avg_7d,
+0 as avg_rate_7d,
+0 as avg_rate_first_cat_7d,
+0 AS is_delete
+FROM
+ads.ads_vova_six_rank_mct srm
+WHERE srm.mct_id IN (-1000, 36655)
 ;
 
-INSERT OVERWRITE TABLE ads.ads_vova_six_rank_mct_poll_his PARTITION (pt = '${cur_date}')
+INSERT OVERWRITE TABLE ads.ads_vova_six_rank_mct
 select
 /*+ REPARTITION(1) */
-six.
+mct_id,
+mct_name,
+first_cat_id,
+add_date
 from
-ads.ads_vova_six_rank_mct_poll_his six
+ads.ads_vova_six_rank_mct_poll_his
 WHERE pt = '${cur_date}'
 ;
 

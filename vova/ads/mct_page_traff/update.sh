@@ -16,7 +16,7 @@ sql="
 insert overwrite table ads.ads_vova_mct_page_traff_h PARTITION (pt = '${pt}',hour='$hour')
 select
 /*+ REPARTITION(1) */
-g.mct_id,
+if(vg.mct_id is not null,vg.mct_id,g.mct_id) mct_id,
 g.first_cat_id,
 nvl(page,'traff_all') page,
 t.country,
@@ -45,9 +45,11 @@ geo_country country,
 1 expre
 from dwd.dwd_vova_log_impressions_arc
 where pt='$pt' and hour = '$hour' and platform='mob' and event_type='goods' and datasource='vova'  and geo_country is not null
-) t left join dim.dim_vova_goods g on t.virtual_goods_id = g.virtual_goods_id
+) t
+left join dim.dim_vova_virtual_six_mct_goods vg on vg.virtual_goods_id = t.virtual_goods_id
+left join dim.dim_vova_goods g on t.virtual_goods_id = g.virtual_goods_id
 where g.first_cat_id is not null and g.mct_id is not null
-GROUP BY g.mct_id,g.first_cat_id,t.page,t.country grouping sets ((g.mct_id,g.first_cat_id,t.page,t.country),(g.mct_id,g.first_cat_id,country));
+GROUP BY if(vg.mct_id is not null,vg.mct_id,g.mct_id),g.first_cat_id,t.page,t.country grouping sets ((if(vg.mct_id is not null,vg.mct_id,g.mct_id),g.first_cat_id,t.page,t.country),(if(vg.mct_id is not null,vg.mct_id,g.mct_id),g.first_cat_id,country));
 "
 spark-sql --conf "spark.app.name=ads_vova_mct_page_traff_h_zhangyin" --conf spark.dynamicAllocation.maxExecutors=100  -e "$sql"
 #如果脚本失败，则报错

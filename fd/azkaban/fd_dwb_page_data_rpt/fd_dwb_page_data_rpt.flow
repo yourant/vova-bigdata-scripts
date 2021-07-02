@@ -1,0 +1,21 @@
+---
+config:
+  failure.emails: longgu@vova.com.hk
+  retries: 10
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_daily_job_start
+    type: noop
+
+  - name: dwb_fd_page_data_rpt
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_page_data_rpt/run.sh
+    dependsOn:
+      - fd_daily_job_start
+
+  - name: fd_daily_job_end
+    type: noop
+    dependsOn:
+      - dwb_fd_page_data_rpt

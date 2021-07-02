@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS \`trigram_data\`.\`ads_goods_behave_group_site\` (
   KEY \`platform_key\` (\`platform\`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 "
-mysql -h trigram-fn.cn899du7tges.us-east-1.rds.amazonaws.com -u trigram_data20201205 -pohwuYuiD%ex=uko4aeve/Y2 -e "${sql}"
+mysql -h trigram-fn.cn899du7tges.us-east-1.rds.amazonaws.com -u trigram_data2021052811 -piPha7Sae5Quai3ahR5vi~ -e "${sql}"
 
 if [ $? -ne 0 ];then
   exit 1
@@ -60,9 +60,9 @@ fi
 
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
--Dsqoop.export.records.per.statement=1000 \
+-Dsqoop.export.records.per.statement=500 \
 --connect jdbc:mysql://trigram-fn.cn899du7tges.us-east-1.rds.amazonaws.com:3306/trigram_data \
---username trigram_data20201205 --password ohwuYuiD%ex=uko4aeve/Y2 \
+--username trigram_data2021052811 --password iPha7Sae5Quai3ahR5vi~ \
 --m 1 \
 --table ads_goods_behave_group_site_new \
 --hcatalog-database ads \
@@ -77,7 +77,7 @@ if [ $? -ne 0 ];then
 fi
 
 echo "----------开始rename-------"
-mysql -h trigram-fn.cn899du7tges.us-east-1.rds.amazonaws.com -u trigram_data20201205 -pohwuYuiD%ex=uko4aeve/Y2 <<EOF
+mysql -h trigram-fn.cn899du7tges.us-east-1.rds.amazonaws.com -u trigram_data2021052811 -piPha7Sae5Quai3ahR5vi~ <<EOF
 rename table trigram_data.ads_goods_behave_group_site to trigram_data.ads_goods_behave_group_site_pre,trigram_data.ads_goods_behave_group_site_new to trigram_data.ads_goods_behave_group_site;
 EOF
 echo "-------rename结束--------"

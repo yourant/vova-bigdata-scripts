@@ -10,23 +10,26 @@ hadoop fs -mkdir s3://bigdata-offline/warehouse/dwd/dwd_vova_fact_comment
 sql="
 insert overwrite table dwd.dwd_vova_fact_comment
 SELECT /*+ REPARTITION(15) */
-       'vova'          AS datasource,
-       vgc.comment_id,
-       vgc.goods_id,
-       vgc.category_id AS cat_id,
-       vgc.order_goods_id,
-       vgc.user_id     AS buyer_id,
-       vgc.title,
-       vgc.comment,
-       vgc.rating,
-       vgc.status,
-       vgc.post_datetime AS post_time,
-       vgc.type,
-       vgc.merchant_id AS mct_id,
-       vgc.display_order,
-       vgc.language_id,
-       vgc.tag
-FROM ods_vova_vts.ods_vova_goods_comment vgc;
+       project_name          AS datasource,
+       comment_id,
+       goods_id,
+       category_id AS cat_id,
+       order_goods_id,
+       user_id     AS buyer_id,
+       title,
+       comment,
+       rating,
+       status,
+       post_datetime AS post_time,
+       type,
+       merchant_id AS mct_id,
+       display_order,
+       language_id,
+       tag,
+       if(comment like '%</img>%',1,0) comment_has_img,
+       customer_service_rating cs_rating,
+       logistics_transportation_rating logistics_rating
+FROM ods_vova_vts.ods_vova_goods_comment;
 "
 #如果使用spark-sql运行，则执行spark-sql --conf "spark.sql.parquet.writeLegacyFormat=true" -e
 spark-sql  --conf "spark.app.name=dwd_vova_fact_comment" --conf "spark.sql.parquet.writeLegacyFormat=true" -e "$sql"

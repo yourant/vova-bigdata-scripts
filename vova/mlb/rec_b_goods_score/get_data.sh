@@ -36,6 +36,10 @@ SELECT
   ,t2.clk_uv_15d                  AS clk_uv_15d
   ,nvl(t3.score,60)               AS mct_score
   ,t2.avg_inter_days_3_6w         as avg_inter_days_3_6w
+  ,t2.expre_uv_15d                as expre_uv_15d
+  ,t2.pay_uv_15d                  as pay_uv_15d
+  ,t2.entry_warehouse_72h_order_goods as entry_warehouse_72h_order_goods
+  ,t2.collection_order_goods      as collection_order_goods
 FROM
 (
 	SELECT  goods_id
@@ -50,14 +54,14 @@ LEFT JOIN
 (
 	SELECT *
 	FROM ads.ads_vova_goods_portrait
-	WHERE to_date(pt) = date_sub('${cur_date}', 1)
+	WHERE to_date(pt) = '${cur_date}'
 ) t2
 ON t1.goods_id = t2.gs_id
 LEFT JOIN
 (
 	SELECT  *
 	FROM ads.ads_vova_mct_rank
-	WHERE to_date(pt) = date_sub('${cur_date}', 1)
+	WHERE to_date(pt) = '${cur_date}'
 ) t3
 ON t1.mct_id = t3.mct_id AND t1.first_cat_id = t3.first_cat_id
 ;

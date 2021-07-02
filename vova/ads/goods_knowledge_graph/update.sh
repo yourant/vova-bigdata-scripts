@@ -21,14 +21,14 @@ dg.is_delete
 from ads.ads_vova_goods_portrait gp
 inner join ods_vova_vts.ods_vova_goods dg
 on gp.gs_id = dg.goods_id
-where date(cast(dg.add_time as timestamp)) = '${pre_date}'
+where date(cast(dg.add_time as timestamp)) = '${pre_date}' and gp.pt = '${pre_date}'
 ;
 "
 
 
 #如果使用spark-sql运行，则执行spark-sql -e
 spark-sql \
---executor-memory 15G --executor-cores 1 \
+--executor-memory 8G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=5" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \
@@ -46,3 +46,11 @@ spark-sql \
 if [ $? -ne 0 ];then
   exit 1
 fi
+
+
+sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=nlp_kg_ner_task_server --from=data --to=java --jtype=1D --retry=0
+
+if [ $? -ne 0 ];then
+  exit 1
+fi
+

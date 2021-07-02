@@ -36,6 +36,8 @@ nodes:
       - dwb_vova_buyer_life_cycle_monitor
       - dwb_vova_red_packet_report
       - dwb_vova_active_user_form_m
+      - dwb_vova_royalty_norm
+      - dwb_vova_push_click_behavior_v2
 
   - name: start_flag
     type: command
@@ -308,12 +310,12 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: judge_ads_vova_min_price_goods_h
+  - name: judge_ads_vova_min_price_goods_d
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_min_price_goods_h
-      retries: 5
-      retry.backoff: 600000
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_min_price_goods_d
+      retries: 25
+      retry.backoff: 900000
     dependsOn:
       - start_flag
 
@@ -370,6 +372,16 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_category
+    dependsOn:
+      - start_flag
+
+# ods_vova_vbts.ods_vova_rec_gid_pic_similar
+  - name: judge_vova_rec_gid_pic_similar
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_rec_gid_pic_similar
+      retries: 5
+      retry.backoff: 600000
     dependsOn:
       - start_flag
 
@@ -491,7 +503,7 @@ nodes:
       - judge_vova_brand
       - judge_dim_vova_merchant
       - judge_ads_vova_traff_control
-      - judge_ads_vova_min_price_goods_h
+      - judge_ads_vova_min_price_goods_d
 
 # 高退款率屏蔽商品监控
   - name: dwb_vova_high_refund_goods_restrict_monitor
@@ -747,6 +759,47 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - dwb_vova_active_user_form_d
+
+# [9531]招商提成商品数据
+## 阈值计算任务
+  - name: judge_ads_vova_royalty_threshold_d_message_get
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=ads_vova_royalty_threshold_d --from=mlb --to=data --valid_hour=5
+      retries: 5
+      retry.backoff: 1800000
+    dependsOn:
+      - start_flag
+
+  - name: dwb_vova_royalty_norm
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/attract_investment_royalty/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_pay
+      - judge_vova_rec_gid_pic_similar
+      - judge_dim_vova_category
+      - judge_dim_vova_goods
+      - judge_dim_vova_merchant
+      - judge_ads_vova_royalty_threshold_d_message_get
+
+# [9561]消息中心-推送报表v2-presto 报表重构
+  - name: dwb_vova_push_click_behavior_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/push_click_behavior_v2/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_push_click
+      - judge_dim_vova_order_goods
+      - judge_dim_vova_devices
+      - judge_dwd_vova_log_common_click
+      - judge_dwd_vova_log_goods_impression
+
+
 
 
 

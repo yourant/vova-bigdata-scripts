@@ -453,8 +453,8 @@ select /*+ REPARTITION(1) */
   t1.second_cat_id,
   regexp_replace(if(t1.second_cat_id = 'all', 'all', t3.second_cat_name),'\'','') second_cat_name,
   t1.is_brand,
-  gsn_cnt,   -- gsn总数
-  applying_gsn_cnt,   -- 报名中gsn总数
+  gsn_cnt.gsn_cnt,   -- gsn总数
+  gsn_cnt.applying_gsn_cnt,   -- 报名中gsn总数
   replenish_applying_gsn_cnt,   -- 补充报名中gsn总数
   activity_gsn_cnt,   -- 活动中gsn总数
   group_gsn_cnt,   -- 成团gsn数量
@@ -463,14 +463,16 @@ select /*+ REPARTITION(1) */
   round(nvl(order_gsn_cnt / group_gsn_cnt, 0), 4) turnover_rate, -- 动销率
   round(nvl(used_num / coupon_num, 0), 4) sell_out_rate, -- 售罄率
   coupon_num, -- 已成团红包数
-  used_num -- 消耗红包数
+  used_num, -- 消耗红包数
+  t1.gsn_source -- gsn来源
 from
 (
   select
     nvl(first_cat_id, 'all') first_cat_id,
     nvl(second_cat_id, 'all') second_cat_id,
     nvl(is_brand, 'all') is_brand,
-    count(distinct goods_sn) gsn_cnt,
+    nvl(gsn_source, 'all') gsn_source,
+    count(distinct goods_sn) gsn_cnt, -- 当前商家报名的商品 gsn
     count(distinct applying_gsn_cnt) applying_gsn_cnt,
     count(distinct replenish_applying_gsn_cnt) replenish_applying_gsn_cnt,
     count(distinct activity_gsn_cnt) activity_gsn_cnt,
@@ -484,7 +486,8 @@ from
       nvl(dg.first_cat_id, 'unknown') first_cat_id,
       nvl(dg.second_cat_id, 'unknown') second_cat_id,
       if(dg.brand_id > 0, 'Y', 'N') is_brand,
-      dg.goods_sn goods_sn, -- gsn
+      nvl(t1.gsn_source, 0) gsn_source,
+      dg.goods_sn goods_sn, -- 当前商家报名的商品 gsn
       dg.goods_id goods_id,
       if(t1.gsn_status = 1, goods_sn, null) applying_gsn_cnt, -- 报名中gsn
       if(t1.gsn_status = 2, goods_sn, null) replenish_applying_gsn_cnt, -- 补充报名中gsn
@@ -499,35 +502,69 @@ from
         gcsg.goods_id goods_id,
         gcsg.coupon_num coupon_num, -- 报名红包数量
         gcsg.remain_num remain_num, -- 剩余红包数量
-        gca.gsn_status gsn_status -- 活动状态
+        gca.gsn_status gsn_status, -- 活动状态
+        nvl(gca.gsn_source, 0) gsn_source -- gsn来源
       from
         ods_vova_vts.ods_vova_gsn_coupon_activity gca
       inner join
         ods_vova_vts.ods_vova_gsn_coupon_sign_goods gcsg
       on gca.goods_sn = gcsg.goods_sn
       where gca.is_delete = 0 and gca.gsn_status != 4
-
       union all
       select
         gcshl.goods_id goods_id,
         gcshl.coupon_num coupon_num,
         gcshl.remain_num remain_num,
-        4 gsn_status
+        4 gsn_status,
+        nvl(gchl.gsn_source, 0) gsn_source
       from
         ods_vova_vts.ods_vova_gsn_coupon_sign_history_log gcshl
+      left join
+        ods_vova_vts.ods_vova_gsn_coupon_history_log gchl
+      on gcshl.gchl_id = gchl.log_id
     ) t1
     left join
       dim.dim_vova_goods dg
     on t1.goods_id = dg.goods_id
   )
-  group by cube(first_cat_id, second_cat_id, is_brand)
+  group by cube(first_cat_id, second_cat_id, is_brand, gsn_source)
 ) t1
+left join
+(
+  select
+    nvl(first_cat_id, 'all') first_cat_id,
+    nvl(second_cat_id, 'all') second_cat_id,
+    nvl(is_brand, 'all') is_brand,
+    nvl(gsn_source, 'all') gsn_source,
+    count(distinct goods_sn) gsn_cnt, -- gsn 总数
+    count(distinct applying_gsn) applying_gsn_cnt -- 报名中gsn数
+  from
+  (
+    select
+      nvl(dg.first_cat_id, 'unknown') first_cat_id,
+      nvl(dg.second_cat_id, 'unknown') second_cat_id,
+      if(dg.brand_id > 0, 'Y', 'N') is_brand,
+      nvl(gca.gsn_source, 0) gsn_source,
+      dg.goods_sn, -- 总 gsn
+      if(gca.gsn_status=1, dg.goods_sn, null) applying_gsn -- 报名中gsn
+    from
+      ods_vova_vts.ods_vova_gsn_coupon_activity gca
+    left join
+      dim.dim_vova_goods dg
+    on gca.goods_id = dg.goods_id
+    where gca.is_delete = 0 and gca.gsn_status > 0
+  )
+  group by cube(first_cat_id, second_cat_id, is_brand, gsn_source)
+) gsn_cnt
+on t1.first_cat_id = gsn_cnt.first_cat_id and t1.second_cat_id = gsn_cnt.second_cat_id
+  and t1.is_brand = gsn_cnt.is_brand and t1.gsn_source = gsn_cnt.gsn_source
 left join
 (
   select
     first_cat_id,
     second_cat_id,
     is_brand,
+    gsn_source,
     count(distinct(if(remain_num = 0, goods_sn, null))) sell_out_gsn_cnt
   from
   (
@@ -536,7 +573,8 @@ left join
       nvl(second_cat_id, 'all') second_cat_id,
       nvl(is_brand, 'all') is_brand,
       nvl(goods_sn,'all') goods_sn,
-      sum(remain_num) remain_num
+      sum(remain_num) remain_num,
+      nvl(gsn_source, 'all') gsn_source
     from
     (
       select
@@ -544,14 +582,16 @@ left join
         nvl(second_cat_id, 'unknown') second_cat_id,
         if(dg.brand_id > 0, 'Y', 'N') is_brand,
         nvl(goods_sn, 'unknown') goods_sn,
-        remain_num
+        remain_num,
+        nvl(gsn_source, 0) gsn_source
       from
       (
         select
           gcsg.goods_id goods_id,
           gcsg.coupon_num coupon_num, -- 报名红包数量
           gcsg.remain_num remain_num, -- 剩余红包数量
-          gca.gsn_status gsn_status -- 活动状态
+          gca.gsn_status gsn_status, -- 活动状态
+          nvl(gca.gsn_source, 0) gsn_source
         from
           ods_vova_vts.ods_vova_gsn_coupon_activity gca
         inner join
@@ -564,19 +604,24 @@ left join
           gcshl.goods_id goods_id,
           gcshl.coupon_num coupon_num,
           gcshl.remain_num remain_num,
-          4 gsn_status
+          4 gsn_status,
+          nvl(gchl.gsn_source, 0) gsn_source
         from
           ods_vova_vts.ods_vova_gsn_coupon_sign_history_log gcshl
+        left join
+          ods_vova_vts.ods_vova_gsn_coupon_history_log gchl
+        on gcshl.gchl_id = gchl.log_id
       ) t1
       left join
         dim.dim_vova_goods dg
       on t1.goods_id = dg.goods_id
     )
-    group by cube(first_cat_id, second_cat_id,  is_brand, goods_sn)
+    group by cube(first_cat_id, second_cat_id,  is_brand, goods_sn, gsn_source)
   ) where first_cat_id != 'all' and goods_sn != 'all' -- and second_cat_id != 'all'
-  group by first_cat_id, second_cat_id, is_brand
+  group by first_cat_id, second_cat_id, is_brand, gsn_source
 ) t4
-on t1.first_cat_id = t4.first_cat_id and t1.second_cat_id = t4.second_cat_id and t1.is_brand = t4.is_brand
+on t1.first_cat_id = t4.first_cat_id and t1.second_cat_id = t4.second_cat_id
+  and t1.is_brand = t4.is_brand and t1.gsn_source = t4.gsn_source
 left join
 (
   select distinct

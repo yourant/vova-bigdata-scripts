@@ -23,7 +23,10 @@ nodes:
       - ads_zq_fn_vova_goods_export
       - ads_app_group_export
       - ads_vova_sale_goods_m
+      - ads_vova_sale_goods_3m
       - ads_vova_six_mct_goods_flow_support_d
+      - ads_vova_newly_activated_recommend_goods
+      - ads_vova_six_rank_mct_update
 
   - name: start_flag
     type: command
@@ -198,6 +201,33 @@ nodes:
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_images_vector
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_traff_control
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_traff_control
+      retries: 20
+      retry.backoff: 360000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_virtual_six_mct_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_virtual_six_mct_goods
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_goods_portrait_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_portrait_v2
       retries: 20
       retry.backoff: 120000
     dependsOn:
@@ -403,6 +433,15 @@ nodes:
     dependsOn:
       - judge_dwd_vova_fact_pay
 
+  - name: ads_vova_sale_goods_3m
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/display_sort_d/sale_goods_m/sale_goods_3m_update.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_pay
+
   - name: ads_vova_six_mct_goods_flow_support_d
     type: command
     config:
@@ -413,3 +452,24 @@ nodes:
       - judge_dim_vova_goods
       - judge_vova_images_vector
 
+  - name: ads_vova_newly_activated_recommend_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/newly_activated_recommend_goods/update.sh
+      retries: 20
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_dim_vova_virtual_six_mct_goods
+      - judge_ads_vova_goods_portrait_v2
+
+  - name: ads_vova_six_rank_mct_update
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/traff_control/six_mct_update.sh
+      retries: 20
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_dwd_vova_fact_pay
+      - judge_ads_vova_traff_control

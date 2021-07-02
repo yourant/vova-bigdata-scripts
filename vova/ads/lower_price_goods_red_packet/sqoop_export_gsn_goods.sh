@@ -37,7 +37,7 @@ create table IF NOT EXISTS themis.ads_vova_red_packet_gsn_goods(
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='红包报名商品对应gsn下goods_id'
 ;
 "
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx -e "${sql}"
 
 if [ $? -ne 0 ];then
   exit 1
@@ -46,9 +46,9 @@ fi
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.map.memory.mb=8096 \
--Dsqoop.export.records.per.statement=1000 \
+-Dsqoop.export.records.per.statement=500 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis?disableMariaDbDriver \
---username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
+--username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \
 --m 1 \
 --table ads_vova_red_packet_gsn_goods_new \
 --hcatalog-database ads \
@@ -63,7 +63,7 @@ if [ $? -ne 0 ];then
 fi
 
 echo "----------开始rename-------"
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx <<EOF
 rename table themis.ads_vova_red_packet_gsn_goods to themis.ads_vova_red_packet_gsn_goods_pre,themis.ads_vova_red_packet_gsn_goods_new to themis.ads_vova_red_packet_gsn_goods;
 EOF
 echo "-------rename结束--------"

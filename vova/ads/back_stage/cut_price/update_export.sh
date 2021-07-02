@@ -10,7 +10,7 @@ sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=default \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
---username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
+--username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \
 --table ads_goods_sn_cut_price \
 --m 1 \
 --update-key "goods_sn,event_date" \

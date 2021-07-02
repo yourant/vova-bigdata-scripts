@@ -10,7 +10,7 @@ with tmp_mct_behave(
 select
 mct_id,
 mct_name,
-nvl(count(*),0) as confirm_order_cnt_3m,
+nvl(count(if(day_gap<90,1,null)),0) as confirm_order_cnt_3m,
 nvl(count(if(day_gap<30,order_goods_id,null)),0) as confirm_order_cnt_1m,
 nvl(count(if(day_gap<30 and is_pay =1,order_goods_id,null)),0) as order_cnt_1m,
 nvl(sum(if(day_gap<30,total_amount,0)),0) as gmv_30d,
@@ -21,40 +21,74 @@ nvl(sum(if(is_mct_cancel=1 and day_gap>=8 and day_gap<37,1,0 )),0) as mct_cancel
 nvl(cast(sum(if(is_mct_cancel=1 and day_gap>=8 and day_gap<37,1,0 ))/sum(if(day_gap>=8 and day_gap<37,1,0 ))*100 as decimal(13,4)),0) as mct_cancel_rate,
 nvl(cast(sum(if(is_mark_deliver=1 and day_gap>=6 and day_gap<7,1,0 ))/sum(if(day_gap>=6 and day_gap<7,1,0 ))*100 as decimal(13,4)),0) as mark_deliver_rate,
 nvl(cast(sum(if(is_online=1 and day_gap>=8 and day_gap<37,1,0 ))/sum(if(day_gap>=8 and day_gap<37,1,0 ))*100 as decimal(13,4)),0) as online_rate,
-nvl(cast(sum(if(is_loss_weight=1 and day_gap>=8 and day_gap<37,1,0 ))/sum(if(day_gap>=8 and day_gap<37,1,0 ))*100 as decimal(13,4)),0) as loss_weight_rate
+nvl(cast(sum(if(is_loss_weight=1 and day_gap>=8 and day_gap<37,1,0 ))/sum(if(day_gap>=8 and day_gap<37,1,0 ))*100 as decimal(13,4)),0) as loss_weight_rate,
+nvl(sum(if(is_refund_2 = 1 and is_mark_deliver = 1 and is_this_year = 1 and day_gap>=63,1,0))/sum(if(is_this_year = 1 and day_gap>=63 and is_mark_deliver=1,1,0))*100,0) as year_refund_rate,
+nvl(sum(if(is_refund_2 = 1 and is_received=1 and day_gap>=63 and day_gap<90 ,1,0))/sum(if(is_received=1 and day_gap>=63 and day_gap<90 ,1,0))*100,0) as received_rate_9w,
+nvl(sum(if(is_refund_2 = 1 and is_received=1 and is_this_year = 1 and day_gap<=63 ,1,0))/sum(if(is_received=1 and is_this_year = 1 and day_gap<=63 ,1,0))*100,0) as received_rate_year,
+nvl(percentile_approx(if(is_this_year = 1,delivered_time_gap,null),0.6),180) as delivered_time_per_60,
+nvl(percentile_approx(if(is_this_year = 1,delivered_time_gap,null),0.8),180) as delivered_time_per_80,
+nvl(percentile_approx(if(is_this_year = 1,delivered_time_gap,null),0.9),180) as delivered_time_per_90
 from
 (select
 dm.mct_id,
 dm.mct_name,
 og.order_goods_id,
+og.confirm_time,
 if(fp.order_goods_id is null ,0,1) as is_pay,
 datediff('${pre_date}',og.confirm_time) as day_gap,
 fp.shop_price*fp.goods_number+fp.shipping_fee as total_amount,
 if(dr.refund_type_id in (2,12),1,0) is_refund,
+if(dr.refund_type_id = 2,1,0) is_refund_2,
 if(dr.refund_type_id = 2 and dr.refund_reason_type_id=8 ,1,0) is_wl_refund,
 if(dr.refund_type_id = 2 and dr.refund_reason_type_id!=8 ,1,0) is_nwl_refund,
 if(dr.refund_type_id in (5,6,11,14) or og.sku_order_status=5,1,0) is_mct_cancel,
 if(og.sku_shipping_status>=1,1,0) is_mark_deliver,
+if(og.sku_shipping_status=2,1,0) is_received,
 if(og.sku_pay_status>1 and og.sku_shipping_status > 0,1,0) is_online,
-if(ostd.weight=0 or ostd.weight is null ,1,0) is_loss_weight
+if(ostd.weight=0 or ostd.weight is null ,1,0) is_loss_weight,
+if(datediff(fl.delivered_time,og.confirm_time)>0 ,datediff(fl.delivered_time,og.confirm_time),180) as delivered_time_gap,
+if(year(og.confirm_time)=substr('${pre_date}',0,4),1,0) as is_this_year
 from
-dim.dim_vova_merchant dm
-left join dim.dim_vova_goods dg on dg.mct_id = dm.mct_id
-left join dim.dim_vova_order_goods og on dg.goods_id = og.goods_id and datediff('${pre_date}',og.confirm_time)<90 and  datediff('${pre_date}',og.confirm_time)>=0
+dim.dim_vova_order_goods og
+left join dim.dim_vova_goods dg on dg.goods_id = og.goods_id
+left join dim.dim_vova_merchant dm on dg.mct_id = dm.mct_id
 left join dwd.dwd_vova_fact_refund dr
 on og.order_goods_id = dr.order_goods_id
 left join dwd.dwd_vova_fact_pay fp
 on og.order_goods_id = fp.order_goods_id
 left join ods_vova_vts.ods_vova_order_shipping_tracking ost on ost.order_goods_id = og.order_goods_id
 left join ods_vova_vts.ods_vova_order_shipping_tracking_detail ostd on ost.tracking_id = ostd.tracking_id
+left join dwd.dwd_vova_fact_logistics fl on fl.order_goods_id = og.order_goods_id
+where (datediff('${pre_date}',og.confirm_time)<90 and  datediff('${pre_date}',og.confirm_time)>=0) or (year(og.confirm_time)=substr('${pre_date}',0,4))
 )
 group by mct_id,mct_name
 )
+
 INSERT overwrite TABLE ads.ads_mct_behave_3m partition(pt='${pre_date}')
 select
-t1.*,
+/*+ repartition(30) */
+t1.mct_id,
+t1.mct_name,
+t1.confirm_order_cnt_3m,
+t1.confirm_order_cnt_1m,
+t1.order_cnt_1m,
+t1.gmv_30d as gmv_1m,
+t1.refund_rate_9w,
+t1.wl_refund_rate_9w,
+t1.nwl_refund_rate_9w,
+t1.mct_cancel_cnt,
+t1.mct_cancel_rate,
+t1.mark_deliver_rate,
+t1.online_rate,
+t1.loss_weight_rate,
 t2.expre_cnt/t1.order_cnt_1m as exp_income,
-t3.second_cat_ids
+t3.second_cat_ids,
+t1.year_refund_rate,
+t1.received_rate_9w,
+t1.received_rate_year,
+t1.delivered_time_per_60,
+t1.delivered_time_per_80,
+t1.delivered_time_per_90
 from
 tmp_mct_behave t1
 left join

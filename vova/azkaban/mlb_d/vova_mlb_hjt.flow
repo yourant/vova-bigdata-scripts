@@ -13,8 +13,14 @@ nodes:
       - mlb_rec_search_words_trans_sqoop
       - mlb_vova_user_query_freqency_d
       - mlb_rec_highfreq_query
-      - mlb_search_expansion_a_d
       - mlb_data_me_u2i_rec_job_message_put
+      - mlb_search_spell_check
+      - mlb_high_freq_search_recall_job_message_put
+      - mlb_ebr_search_recall_job_message_put
+      - mlb_als_rec_training
+      - mlb_rec_search_correct_sqoop
+      - mlb_vova_category_feat_d
+      - mlb_vova_buyer_brand_name
 
 
   - name: start_flag
@@ -101,7 +107,8 @@ nodes:
       retries: 72
       retry.backoff: 600000
     dependsOn:
-      - start_flag
+      - mlb_ebr_search_recall_job_message_put
+      - mlb_high_freq_search_recall_job_message_put
 
   - name: mlb_rec_highfreq_query
     type: command
@@ -112,23 +119,6 @@ nodes:
     dependsOn:
       - mlb_rec_highfreq_query_job_message_get
 
-  - name: mlb_search_expansion_a_d_job_message_get
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=mlb_vova_search_expansion_d --from=mlb --to=data --valid_hour=3
-      retries: 72
-      retry.backoff: 600000
-    dependsOn:
-      - start_flag
-
-  - name: mlb_search_expansion_a_d
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/translation/search_expansion_a_d/update_sqoop.sh
-      retries: 72
-      retry.backoff: 600000
-    dependsOn:
-      - mlb_search_expansion_a_d_job_message_get
 
   - name: judge_dws_vova_buyer_goods_behave
     type: command
@@ -166,3 +156,145 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - mlb_data_me_u2i_rec
+
+  - name: mlb_search_spell_check
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/search_spell_check/update.sh
+      retries: 72
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_mlb_vova_user_behave_link_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_user_behave_link_d
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: mlb_high_freq_search_recall
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/high_freq_search_recall/update.sh
+      retries: 72
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_vova_user_query_freqency_d
+      - judge_ads_vova_goods_portrait_v2
+      - judge_mlb_vova_user_behave_link_d
+
+  - name: mlb_high_freq_search_recall_job_message_put
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=high_freq_search_recall --from=data --to=mlb --jtype=1D --retry=0
+      retries: 30
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_high_freq_search_recall
+
+  - name: mlb_ebr_search_recall_job_message_put
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=ebr_search_recall --from=data --to=mlb --jtype=1D --retry=0
+      retries: 30
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_high_freq_search_recall
+
+  - name: judge_dwd_vova_log_page_view
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_page_view
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: mlb_als_rec_training
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/als_rec_training/update.sh
+      retries: 30
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_log_page_view
+
+  - name: mlb_rec_search_correct_gram
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/translation/search_correct_gram/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_goods_portrait_v2
+      - judge_mlb_vova_user_behave_link_d
+
+  - name: mlb_rec_search_correct_sqoop
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_search_correct/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_rec_search_correct_gram
+
+  - name: mlb_vova_category_feat_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/categroy_feat_d/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_user_behave_link_d
+      - judge_ads_vova_goods_portrait_v2
+
+  - name: judge_dwd_vova_fact_pay
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_order_cause_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_order_cause_v2
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_buyer_portrait_brand_likes_exp
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_buyer_portrait_brand_likes_sqoop_export
+      retries: 20
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_start_up
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_start_up
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: mlb_vova_buyer_brand_name
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_buyer_brand_name/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_vova_fact_pay
+      - judge_dwd_vova_fact_order_cause_v2
+      - judge_ads_vova_buyer_portrait_brand_likes_exp
+      - judge_dwd_vova_fact_start_up

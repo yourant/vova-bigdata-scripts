@@ -1,0 +1,112 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_goods_attribute_merge
+
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+
+  - name: judge_goods_attribute_read_es
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_attribute/read_es.sh
+      retries: 5
+      retry.backoff: 6000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ods_vova_goods_attributes
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_vteos_goods_attributes
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ods_vova_attributes_name
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_vteos_attributes_name
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ods_vova_attributes_value
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_vteos_attributes_value
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+
+#################################################################
+
+  - name: ads_vova_goods_pre_attribute_data_stage
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_attribute/pre_update.sh
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+      - judge_goods_attribute_read_es
+
+  - name: ads_vova_goods_pre_attribute_data_increase_stage
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_attribute/pre_update_increase.sh
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+      - ads_vova_goods_pre_attribute_data_stage
+
+
+  - name: ads_vova_goods_pre_attribute_data
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_attribute/update.sh
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+      - ads_vova_goods_pre_attribute_data_increase_stage
+
+  - name: ads_vova_goods_attribute_merge
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/goods_attribute/goods_attribute_merge/update.sh
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+      - ads_vova_goods_pre_attribute_data
+      - judge_ods_vova_goods_attributes
+      - judge_ods_vova_attributes_name
+      - judge_ods_vova_attributes_value
+      - judge_dim_vova_goods
+
+

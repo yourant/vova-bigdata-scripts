@@ -1,0 +1,68 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - fd_ads_ga_channel_campaign_export
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: campaign_adgroup_mapping_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis.sh --db_code=ar --etl_type=INIT --table_name=campaign_adgroup_mapping --partition_num=1 --period_type=hour --split_id=is_rem
+    dependsOn:
+      - start_flag
+
+  - name: ods_fd_vb_user_duid_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vb --etl_type=INCTIME --inc_column=last_update_time --table_name=user_duid  --partition_num=10 --period_type=hour
+    dependsOn:
+      - start_flag
+
+  - name: dwd_fd_session_channel_arc
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_session_channel_arc/run.sh
+    dependsOn:
+      - start_flag
+
+  - name: judge_ods_fd_order_info_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_order_info_h
+    dependsOn:
+      - start_flag
+
+  - name: fd_ads_ga_channel_campaign
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_ga_channel_campaign/run.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ods_fd_order_info_h
+      - ods_fd_vb_user_duid_h
+      - dwd_fd_session_channel_arc
+      - campaign_adgroup_mapping_h
+
+  - name: fd_ads_ga_channel_campaign_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_ga_channel_campaign/sqoop.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - fd_ads_ga_channel_campaign
+

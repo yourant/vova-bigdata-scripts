@@ -269,4 +269,86 @@ alter table mlb.mlb_vova_rec_goods_scorebase_data_d add columns(`avg_inter_days_
 mlb.mlb_vova_rec_b_goods_score_all_d
 alter table mlb.mlb_vova_rec_b_goods_score_all_d add columns(`inter_days_score` double comment '平滑上网天数评分') cascade;
 
+alter table mlb.mlb_vova_rec_b_goods_score_all_d add columns(`first_cat_name` string comment '一级品类名称') cascade;
+alter table mlb.mlb_vova_rec_b_goods_score_all_d add columns(`second_cat_name` string comment '二级品类名称') cascade;
+
+alter table mlb.mlb_vova_rec_b_goods_score_all_d add columns(`avg_inter_days_3_6w` int comment '商品平均上网天数') cascade;
+
+#####################################################################
+
+9455 商品评分表增加分类字段
+https://zt.gitvv.com/index.php?m=task&f=view&taskID=34788
+任务描述
+在rec_recall.ads_rec_b_catgoods_score_d  商品一级品类综合评分表(搜索及mostpopular)，rec_recall.ads_rec_b_goods_score_d   商品综合评分表(搜索及mostpopular)中增加一级品类id、二级品类id、三级品类id、四级品类id。
+
+@@@
+基于 mlb.mlb_vova_rec_b_goods_score_d, mlb.mlb_vova_rec_b_catgoods_score_d
+建表, 不建分区表, 只存当天数据, 每天覆盖
+
+CREATE TABLE IF NOT EXISTS mlb.mlb_vova_rec_b_goods_score_d_supplement(
+  goods_id          bigint        COMMENT '商品id',
+  base_score        DOUBLE        COMMENT '基础评分',
+  hot_score         DOUBLE        COMMENT '热度评分',
+  conversion_score  DOUBLE        COMMENT '转化评分',
+  honor_score       DOUBLE        COMMENT '履约评分',
+  overall_score     DOUBLE        COMMENT '综合评分',
+  first_cat_id	    bigint	      COMMENT '商品一级类目',
+  second_cat_id	    bigint	      COMMENT '商品二级类目',
+  third_cat_id	    bigint	      COMMENT '商品三级类目',
+  fourth_cat_id	    bigint	      COMMENT '商品四级类目'
+) COMMENT '商品综合评分表(搜索及mostpopular) mysql补充字段'
+STORED AS PARQUETFILE;
+
+CREATE TABLE IF NOT EXISTS mlb.mlb_vova_rec_b_catgoods_score_d_supplement(
+  goods_id             bigint        COMMENT '商品id',
+  base_cat_score       DOUBLE        COMMENT '一级品类基础评分',
+  hot_cat_score        DOUBLE        COMMENT '一级品类热度评分',
+  conversion_cat_score DOUBLE        COMMENT '一级品类转化评分',
+  honor_cat_score      DOUBLE        COMMENT '一级品类履约评分',
+  overall_cat_score    DOUBLE        COMMENT '一级品类综合评分',
+  first_cat_id	       bigint	     COMMENT '商品一级类目',
+  second_cat_id	       bigint	     COMMENT '商品二级类目',
+  third_cat_id	       bigint	     COMMENT '商品三级类目',
+  fourth_cat_id	       bigint	     COMMENT '商品四级类目'
+) COMMENT '商品一级品类综合评分表(搜索及mostpopular) mysql补充字段'
+STORED AS PARQUETFILE;
+
+覆盖的代码 直接在以下两个 sqoop 脚本中
+sqoop_export_catgoods_score.sh
+sqoop_export_goods_score.sh
+
+#####################################################################
+【数据】[9698] 商品评分增加72小时集运入库率 https://zt.gitvv.com/index.php?m=task&f=view&taskID=352
+任务描述
+需求背景：
+调整商品评分计算逻辑，增加商品加分规则，提升商品违规惩罚力度，保证商品流量划分合理。
+
+需求描述：
+（1）在商品评分中增加集运相关数据并给予提权，
+72小时集运入库率：3天前再往前一个月的确认订单，入库时间减订单确认的时间小于3天的子订单数/3天前再往前一个月的确认子订单数。
+（2）调整非物流退款率权重，对于退款过高的商品给予适当的减分；
+（3）增加商品曝光效率维度，
+
+商品曝光效率：gmv*10000/曝光量。
+商品评分相关数据见：https://confluence.gitvv.com/pages/viewpage.action?pageId=21268801
+
+expre_uv_15d                    bigint  近15天曝光UV
+pay_uv_15d                      bigint  近15天支付UV
+entry_warehouse_72h_order_goods bigint  72小时入库订单数: 入库时间减订单确认的时间小于3天的子订单数
+collection_order_goods          bigint  商品集运总订单数:3天前再往前一个月的确认子订单数
+
+alter table mlb.mlb_vova_rec_goods_scorebase_data_d add columns(`expre_uv_15d` bigint comment '近15天曝光UV') cascade;
+alter table mlb.mlb_vova_rec_goods_scorebase_data_d add columns(`pay_uv_15d` bigint comment '近15天支付UV') cascade;
+
+alter table mlb.mlb_vova_rec_goods_scorebase_data_d add columns(`entry_warehouse_72h_order_goods` bigint comment '72小时入库订单数') cascade;
+alter table mlb.mlb_vova_rec_goods_scorebase_data_d add columns(`collection_order_goods` bigint comment '商品集运总订单数') cascade;
+
+-- 汇总表新增三个字段
+gather_rate_score  商品集运评分
+cr_score           商品转化率评分
+cr_cat_score       商品转化率一级品类评分
+alter table mlb.mlb_vova_rec_b_goods_score_all_d add columns(`gather_rate_score` double comment '商品集运评分') cascade;
+alter table mlb.mlb_vova_rec_b_goods_score_all_d add columns(`cr_score` double comment '商品转化率评分') cascade;
+alter table mlb.mlb_vova_rec_b_goods_score_all_d add columns(`cr_cat_score` double comment '商品转化率一级品类评分') cascade;
+
 

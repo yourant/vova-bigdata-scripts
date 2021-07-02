@@ -1,0 +1,137 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: huachen@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - dwb_vova_goods_current_limiting_email
+      - dwb_vova_query_translation_quality_control_email
+
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: judge_dwd_vova_fact_pay
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_refund
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_refund
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_order_goods_status
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_order_goods_status
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_order_goods
+      retries: 20
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_logistics
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_logistics
+      retries: 50
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_log_impressions
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_impressions
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+  - name: judge_dwd_vova_log_common_click
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_log_common_click
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: dwb_vova_goods_current_limiting
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/goods_current_limiting/update.sh
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+      - judge_dim_vova_goods
+      - judge_dwd_vova_fact_logistics
+      - judge_dim_vova_order_goods
+      - judge_vova_order_goods_status
+      - judge_dwd_vova_fact_refund
+      - judge_dwd_vova_fact_pay
+
+  - name: dwb_vova_goods_current_limiting_email
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/goods_current_limiting/send.sh
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+    - dwb_vova_goods_current_limiting
+
+  - name: dwb_vova_query_translation_quality_control
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/translation_quality_control/update.sh
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+      - judge_dwd_vova_log_impressions
+      - judge_dim_vova_order_goods
+      - judge_dwd_vova_log_common_click
+
+  - name: dwb_vova_query_translation_quality_control_email
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/translation_quality_control/send.sh
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+    - dwb_vova_query_translation_quality_control
+

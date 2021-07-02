@@ -27,7 +27,7 @@ PRIMARY KEY (id) USING BTREE,
 UNIQUE KEY buyer_id (buyer_id) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='近180天有pv的用户及激活时间';
 "
-mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pv5NxDS1N007jbIISAvB7yzJg2GSbL9zF -e "${sql}"
+mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwrecallwriter -pTsLdpZumzovrAvttIqnePCJhIVxZZ7bd -e "${sql}"
 
 if [ $? -ne 0 ];then
   exit 1
@@ -36,9 +36,9 @@ fi
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.map.memory.mb=8096 \
--Dsqoop.export.records.per.statement=1000 \
+-Dsqoop.export.records.per.statement=500 \
 --connect jdbc:mysql://rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/rec_recall?disableMariaDbDriver \
---username bimaster --password v5NxDS1N007jbIISAvB7yzJg2GSbL9zF \
+--username dwrecallwriter --password TsLdpZumzovrAvttIqnePCJhIVxZZ7bd \
 --m 1 \
 --table mlb_vova_buyer_activate_time_new \
 --hcatalog-database mlb \
@@ -53,7 +53,7 @@ if [ $? -ne 0 ];then
 fi
 
 echo "----------开始rename-------"
-mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pv5NxDS1N007jbIISAvB7yzJg2GSbL9zF <<EOF
+mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwrecallwriter -pTsLdpZumzovrAvttIqnePCJhIVxZZ7bd <<EOF
 rename table rec_recall.mlb_vova_buyer_activate_time to rec_recall.mlb_vova_buyer_activate_time_pre,rec_recall.mlb_vova_buyer_activate_time_new to rec_recall.mlb_vova_buyer_activate_time;
 EOF
 echo "-------rename结束--------"

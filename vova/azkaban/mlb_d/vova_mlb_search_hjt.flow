@@ -1,0 +1,39 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - mlb_search_expansion_a_d
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+
+
+  - name: mlb_search_expansion_a_d_job_message_get
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=mlb_vova_search_expansion_d --from=mlb --to=data --valid_hour=3
+      retries: 72
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: mlb_search_expansion_a_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/translation/search_expansion_a_d/update_sqoop.sh
+      retries: 72
+      retry.backoff: 600000
+    dependsOn:
+      - mlb_search_expansion_a_d_job_message_get
+

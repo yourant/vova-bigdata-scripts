@@ -174,12 +174,44 @@ alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(avg_order_cnt_day0
 在现有的superset平台的各数据报表的APP选择栏位，1、新增加 app-group 的选择， 2、增加目前后台没有的单个app小站的选择。
 
 
+#############################################################################
+[9713]“用户生命周期监控报表”部分字段更新&新增字段
+任务描述
+需求内容：https://docs.google.com/spreadsheets/d/19T8u5FUpg_AimNmB_880I-3R0IgdTJgy0-CZm-JmVOg/edit#gid=1958546271
+字段说明
+表名	字段名	字段业务口径（定义、公式或逻辑）
+表1：用户LTV表现报表
+    3天补贴成本	当日激活用户中在0-3天内下单的用户所用补贴之和/当天新激活用户数
+	7天补贴成本	当日激活用户中在0-7天内下单的用户所用补贴之和/当天新激活用户数
+	28天补贴成本	将原本30天补贴成本修改为28天补贴成本
+  bonus_day0_30         decimal(16,4)  COMMENT 'i_当日激活用户中在0-30天内下单的用户所用补贴之和',
 
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(bonus_day0_3 double comment 'i_当日激活用户中在0-3天内下单的用户所用补贴之和') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(bonus_day0_7 double comment 'i_当日激活用户中在0-7天内下单的用户所用补贴之和') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(bonus_day0_28 double comment 'i_当日激活用户中在0-28天内下单的用户所用补贴之和') cascade;
 
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(avg_bonus_day0_3 double comment '3天补贴成本') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(avg_bonus_day0_7 double comment '7天补贴成本') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(avg_bonus_day0_28 double comment '28天补贴成本') cascade;
 
+表4：用券用户占比报表
+    当天用券用户占比	当日激活用户中在当日内下单并使用优惠券的用户数/当天新激活用户数
+	3天用券用户占比	当日激活用户中在在0-3天内下单并使用优惠券的用户数/当天新激活用户数
+	7天用券用户占比	当日激活用户中在在0-7天内下单并使用优惠券的用户数/当天新激活用户数
+	14天用券用户占比	当日激活用户中在在0-14天内下单并使用优惠券的用户数/当天新激活用户数
+	28天用券用户占比	当日激活用户中在在0-28天内下单并使用优惠券的用户数/当天新激活用户数
 
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(pay_with_bonus_day0_uv bigint comment 'i_当日激活用户中在当日内下单并使用优惠券的用户数') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(pay_with_bonus_day3_uv bigint comment 'i_当日激活用户中在在0-3天内下单并使用优惠券的用户数') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(pay_with_bonus_day7_uv bigint comment 'i_当日激活用户中在在0-7天内下单并使用优惠券的用户数') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(pay_with_bonus_day14_uv bigint comment 'i_当日激活用户中在在0-14天内下单并使用优惠券的用户数') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(pay_with_bonus_day28_uv bigint comment 'i_当日激活用户中在在0-28天内下单并使用优惠券的用户数') cascade;
 
-
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(pay_with_bonus_day0_rate double comment '当天用券用户占比') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(pay_with_bonus_day3_rate double comment '3天用券用户占比') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(pay_with_bonus_day7_rate double comment '7天用券用户占比') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(pay_with_bonus_day14_rate double comment '14天用券用户占比') cascade;
+alter table dwb.dwb_vova_buyer_life_cycle_monitor add columns(pay_with_bonus_day28_rate double comment '28天用券用户占比') cascade;
 
 
 

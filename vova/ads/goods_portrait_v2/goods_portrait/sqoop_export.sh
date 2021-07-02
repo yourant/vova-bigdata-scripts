@@ -58,8 +58,9 @@ CREATE TABLE if not exists \`themis\`.\`ads_goods_portrait_now\` (
   \`goods_sn\` varchar(50) DEFAULT NULL COMMENT 'i_商品所属sn',
   \`is_on_sale\` int(2) DEFAULT NULL COMMENT 'i_真实是否在售',
   \`is_recommend\` int(2) DEFAULT NULL COMMENT 'i_是否可推荐',
+  \`goods_thumb\` varchar(512) DEFAULT NULL COMMENT 'i_商品主图',
   PRIMARY KEY (\`id\`) USING BTREE,
-  KEY \`idx_gs_id\` (\`gs_id\`),
+  UNIQUE KEY \`idx_gs_id\` (\`gs_id\`),
   KEY \`idx_second_cat_id\` (\`second_cat_id\`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商品画像表';
 
@@ -112,12 +113,13 @@ CREATE TABLE if not exists \`themis\`.\`ads_goods_portrait\` (
   \`goods_sn\` varchar(50) DEFAULT NULL COMMENT 'i_商品所属sn',
   \`is_on_sale\` int(2) DEFAULT NULL COMMENT 'i_真实是否在售',
   \`is_recommend\` int(2) DEFAULT NULL COMMENT 'i_是否可推荐',
+  \`goods_thumb\` varchar(512) DEFAULT NULL COMMENT 'i_商品主图',
   PRIMARY KEY (\`id\`) USING BTREE,
-  KEY \`idx_gs_id\` (\`gs_id\`),
+  UNIQUE KEY \`idx_gs_id\` (\`gs_id\`),
   KEY \`idx_second_cat_id\` (\`second_cat_id\`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商品画像表';
 "
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx -e "${sql}"
 
 if [ $? -ne 0 ];then
   exit 1
@@ -125,17 +127,17 @@ fi
 
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
--Dsqoop.export.records.per.statement=3000 \
+-Dsqoop.export.records.per.statement=500 \
 -Dmapreduce.map.memory.mb=8192 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
---username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
+--username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \
 --m 1 \
 --table ads_goods_portrait_now \
 --hcatalog-database ads \
 --hcatalog-table ads_vova_goods_portrait \
 --hcatalog-partition-keys pt \
 --hcatalog-partition-values ${pre_date} \
---columns  gs_id,cat_id,first_cat_id,second_cat_id,brand_id,shop_price,gs_discount,shipping_fee,mct_id,comment_cnt_6m,comment_good_cnt_6m,comment_bad_cnt_6m,gmv_1w,gmv_15d,gmv_1m,sales_vol_1w,sales_vol_15d,sales_vol_1m,expre_cnt_1w,expre_cnt_15d,expre_cnt_1m,clk_cnt_1w,clk_cnt_15d,clk_cnt_1m,collect_cnt_1w,collect_cnt_15d,collect_cnt_1m,add_cat_cnt_1w,add_cat_cnt_15d,add_cat_cnt_1m,clk_rate_1w,clk_rate_15d,clk_rate_1m,pay_rate_1w,pay_rate_15d,pay_rate_1m,add_cat_rate_1w,add_cat_rate_15d,add_cat_rate_1m,cr_rate_1w,cr_rate_15d,cr_rate_1m,goods_id,goods_name,goods_sn,is_on_sale,is_recommend \
+--columns  gs_id,cat_id,first_cat_id,second_cat_id,brand_id,shop_price,gs_discount,shipping_fee,mct_id,comment_cnt_6m,comment_good_cnt_6m,comment_bad_cnt_6m,gmv_1w,gmv_15d,gmv_1m,sales_vol_1w,sales_vol_15d,sales_vol_1m,expre_cnt_1w,expre_cnt_15d,expre_cnt_1m,clk_cnt_1w,clk_cnt_15d,clk_cnt_1m,collect_cnt_1w,collect_cnt_15d,collect_cnt_1m,add_cat_cnt_1w,add_cat_cnt_15d,add_cat_cnt_1m,clk_rate_1w,clk_rate_15d,clk_rate_1m,pay_rate_1w,pay_rate_15d,pay_rate_1m,add_cat_rate_1w,add_cat_rate_15d,add_cat_rate_1m,cr_rate_1w,cr_rate_15d,cr_rate_1m,goods_id,goods_name,goods_sn,is_on_sale,is_recommend,goods_thumb \
 --fields-terminated-by '\001'
 
 if [ $? -ne 0 ];then
@@ -143,7 +145,7 @@ if [ $? -ne 0 ];then
 fi
 
 echo "----------开始rename-------"
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx <<EOF
 rename table themis.ads_goods_portrait to themis.ads_goods_portrait_pre,themis.ads_goods_portrait_now to themis.ads_goods_portrait;
 EOF
 echo "-------rename结束--------"

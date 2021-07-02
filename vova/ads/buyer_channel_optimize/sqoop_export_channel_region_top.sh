@@ -29,7 +29,7 @@ create table if not exists rec_recall.ads_vova_channel_region_top (
   PRIMARY KEY (id) USING BTREE
   ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'Tik Tok渠道top5国家，每个国家/全站各取销量最高top200商品' ROW_FORMAT = Dynamic;
 "
-mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pv5NxDS1N007jbIISAvB7yzJg2GSbL9zF -e "${sql}"
+mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwrecallwriter -pTsLdpZumzovrAvttIqnePCJhIVxZZ7bd -e "${sql}"
 
 if [ $? -ne 0 ];then
   exit 1
@@ -38,9 +38,9 @@ fi
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.map.memory.mb=8096 \
--Dsqoop.export.records.per.statement=1000 \
+-Dsqoop.export.records.per.statement=500 \
 --connect jdbc:mysql://rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/rec_recall \
---username bimaster --password v5NxDS1N007jbIISAvB7yzJg2GSbL9zF \
+--username dwrecallwriter --password TsLdpZumzovrAvttIqnePCJhIVxZZ7bd \
 --m 1 \
 --table ads_vova_channel_region_top_new \
 --hcatalog-database ads \
@@ -55,7 +55,7 @@ if [ $? -ne 0 ];then
 fi
 
 echo "----------开始rename-------"
-mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bimaster -pv5NxDS1N007jbIISAvB7yzJg2GSbL9zF <<EOF
+mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwrecallwriter -pTsLdpZumzovrAvttIqnePCJhIVxZZ7bd <<EOF
 rename table rec_recall.ads_vova_channel_region_top to rec_recall.ads_vova_channel_region_top_pre,rec_recall.ads_vova_channel_region_top_new to rec_recall.ads_vova_channel_region_top;
 EOF
 echo "-------rename结束--------"

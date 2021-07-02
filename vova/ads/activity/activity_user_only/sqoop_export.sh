@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS \`themis\`.\`ads_activity_user_only_new\` (
   \`update_time\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (\`id\`) USING BTREE,
   KEY \`region_id_key\` (\`region_id\`),
+  KEY \`goods_id_key\` (\`goods_id\`),
   KEY \`first_cat_id_key\` (\`first_cat_id\`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 CREATE TABLE IF NOT EXISTS \`themis\`.\`ads_activity_user_only\` (
@@ -41,10 +42,11 @@ CREATE TABLE IF NOT EXISTS \`themis\`.\`ads_activity_user_only\` (
   \`update_time\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (\`id\`) USING BTREE,
   KEY \`region_id_key\` (\`region_id\`),
+  KEY \`goods_id_key\` (\`goods_id\`),
   KEY \`first_cat_id_key\` (\`first_cat_id\`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 "
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e -e "${sql}"
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx -e "${sql}"
 
 if [ $? -ne 0 ];then
   exit 1
@@ -52,9 +54,9 @@ fi
 
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
--Dsqoop.export.records.per.statement=1000 \
+-Dsqoop.export.records.per.statement=500 \
 --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
---username bdwriter --password Dd7LvXRPDP4iIJ7FfT8e \
+--username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \
 --m 1 \
 --table ads_activity_user_only_new \
 --hcatalog-database ads \
@@ -69,7 +71,7 @@ if [ $? -ne 0 ];then
 fi
 
 echo "----------开始rename-------"
-mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u bdwriter -pDd7LvXRPDP4iIJ7FfT8e <<EOF
+mysql -h rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwwriter -pwH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx <<EOF
 rename table themis.ads_activity_user_only to themis.ads_activity_user_only_pre,themis.ads_activity_user_only_new to themis.ads_activity_user_only;
 EOF
 echo "-------rename结束--------"

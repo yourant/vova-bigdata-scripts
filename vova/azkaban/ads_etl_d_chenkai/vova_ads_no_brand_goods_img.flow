@@ -1,0 +1,92 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_no_brand_goods_img_message_put
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+## judge ############################################
+
+  - name: judge_dim_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_pay
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ods_vova_goods_gallery
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_goods_gallery
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_min_price_goods_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_min_price_goods_d
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+# 获取前一天算法消息
+  - name: judge_message_get_ads_vova_brand_pcv
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get_last.sh --jname=ads_vova_brand_pcv --from=cv --to=data
+      retries: 10
+      retry.backoff: 1200000
+    dependsOn:
+      - start_flag
+
+## job #############################################################
+
+# [9464] brand图像识别接入后台打标流程
+  - name: ads_vova_no_brand_goods_img
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/image_brand/get_data.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_message_get_ads_vova_brand_pcv
+      - judge_dwd_vova_fact_pay
+      - judge_ads_vova_min_price_goods_d
+      - judge_dim_vova_goods
+      - judge_ods_vova_goods_gallery
+
+  - name: ads_vova_no_brand_goods_img_message_put
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=ads_vova_brand_qdata --from=data --to=cv --jtype=1D --retry=0
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - ads_vova_no_brand_goods_img
+

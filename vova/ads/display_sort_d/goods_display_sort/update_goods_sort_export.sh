@@ -11,7 +11,7 @@ fi
 sql="
 drop table if exists themis.goods_display_sort_new;
 "
-mysql -h vovadb.cei8p8whxxwd.us-east-1.rds.amazonaws.com -u dbg20191029 -plz5KtWHH8tIgGEYU5hYUbPGpkufmsfup -e "${sql}"
+mysql -h vovadb.cei8p8whxxwd.us-east-1.rds.amazonaws.com -u dbg20200517 -poghi3Cait3aixeGei\<gh= -e "${sql}"
 sql="
 CREATE TABLE IF NOT EXISTS themis.goods_display_sort_new
 (
@@ -34,14 +34,14 @@ CREATE TABLE IF NOT EXISTS themis.goods_display_sort_new
   DEFAULT CHARSET = utf8 COMMENT ='商品排序';
 "
 
-mysql -h vovadb.cei8p8whxxwd.us-east-1.rds.amazonaws.com -u dbg20191029 -plz5KtWHH8tIgGEYU5hYUbPGpkufmsfup -e "${sql}"
+mysql -h vovadb.cei8p8whxxwd.us-east-1.rds.amazonaws.com -u dbg20200517 -poghi3Cait3aixeGei\<gh= -e "${sql}"
 
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
 -Dmapreduce.job.queuename=default \
--Dsqoop.export.records.per.statement=1000 \
+-Dsqoop.export.records.per.statement=500 \
 --connect jdbc:mysql://vovadb.cei8p8whxxwd.us-east-1.rds.amazonaws.com/themis?rewriteBatchedStatements=true \
---username dbg20191029 --password lz5KtWHH8tIgGEYU5hYUbPGpkufmsfup \
+--username dbg20200517 --password oghi3Cait3aixeGei<gh= \
 --table goods_display_sort_new \
 --m 5 \
 --columns goods_id,impressions,clicks,users,sales_order,gmv,project_name,last_update_time,platform,gender \
@@ -60,14 +60,14 @@ fi
 sql="
 drop table if exists themis.goods_display_sort_pre;
 "
-mysql -h vovadb.cei8p8whxxwd.us-east-1.rds.amazonaws.com -u dbg20191029 -plz5KtWHH8tIgGEYU5hYUbPGpkufmsfup -e "${sql}"
+mysql -h vovadb.cei8p8whxxwd.us-east-1.rds.amazonaws.com -u dbg20200517 -poghi3Cait3aixeGei\<gh= -e "${sql}"
 
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
 fi
 
-mysql -h vovadb.cei8p8whxxwd.us-east-1.rds.amazonaws.com -u dbg20191029 -plz5KtWHH8tIgGEYU5hYUbPGpkufmsfup <<EOF
+mysql -h vovadb.cei8p8whxxwd.us-east-1.rds.amazonaws.com -u dbg20200517 -poghi3Cait3aixeGei\<gh= <<EOF
 rename table themis.goods_display_sort to themis.goods_display_sort_pre,themis.goods_display_sort_new to themis.goods_display_sort;
 EOF
 

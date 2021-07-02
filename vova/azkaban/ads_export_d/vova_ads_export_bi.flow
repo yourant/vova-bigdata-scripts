@@ -40,6 +40,9 @@ nodes:
       - ads_vova_sale_goods_m_export
       - ads_vova_mct_behave_3m_export
       - ads_vova_red_packet_gsn_goods_export
+      - ads_vova_buyer_portrait_category_likes_exp_export
+      - ads_vova_buyer_portrait_second_category_likes_exp_export
+      - ads_vova_newly_activated_recommend_goods_export
 
   - name: start_flag
     type: command
@@ -500,6 +503,15 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_ads_vova_newly_activated_recommend_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_newly_activated_recommend_goods
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
+
   - name: ads_vova_goods_id_country_behave_export
     type: command
     config:
@@ -512,7 +524,7 @@ nodes:
   - name: judge_ads_vova_goods_id_behave_m
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_id_country_behave
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_id_behave_m
       retries: 20
       retry.backoff: 120000
     dependsOn:
@@ -616,3 +628,42 @@ nodes:
       retry.backoff: 600000
     dependsOn:
       - judge_ads_vova_red_packet_gsn_goods
+
+
+
+  - name: ads_vova_buyer_portrait_category_likes_exp_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_portrait_v2/category_likes/sqoop_likes_weight_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_buyer_portrait_category_likes
+
+  - name: judge_ads_vova_buyer_portrait_second_category_likes
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_buyer_portrait_second_category_likes
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+
+  - name: ads_vova_buyer_portrait_second_category_likes_exp_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/buyer_portrait_v2/second_category_likes/sqoop_likes_weight_export.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_buyer_portrait_second_category_likes
+
+  - name: ads_vova_newly_activated_recommend_goods_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/newly_activated_recommend_goods/export.sh
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_newly_activated_recommend_goods

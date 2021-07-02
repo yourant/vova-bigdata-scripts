@@ -1,6 +1,6 @@
 ---
 config:
-  failure.emails: yzhang13@vova.com.hk
+  failure.emails: yzhang13@vova.com.hkt,ed.wan@vova.com.hk
   retries: 3
   retry.backoff: 600000
 
@@ -13,6 +13,9 @@ nodes:
       - ads_vova_test_goods_h
       - ads_vova_hot_search_words_h
       - ads_vova_back_stage_gsn_avg_price_h
+      - ads_vova_new_user_analysis_h
+      - ads_vova_order_gmv_analysis_h
+      - ads_vova_funnel_analysis_h
 
   - name: start_flag
     type: command
@@ -27,6 +30,7 @@ nodes:
       - judge_vova_fact_log_v2_h
       - judge_vova_goods_h
       - judge_vova_category_h
+      - judge_vova_virtual_goods_h
 
 
   - name: judge_vova_fact_log_v2_h
@@ -47,10 +51,28 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_vova_virtual_goods_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_virtual_goods_h
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
   - name: judge_vova_category_h
     type: command
     config:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_category_h
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_pay_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay_h
       retries: 5
       retry.backoff: 600000
     dependsOn:
@@ -69,3 +91,28 @@ nodes:
       command:  sh /mnt/vova-bigdata-scripts/vova/ads/back_stage/cut_price/goods_sn_h.sh
     dependsOn:
       - start_flag
+
+
+  - name: ads_vova_new_user_analysis_h
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/analysis/new_user_analysis/update.sh
+    dependsOn:
+      - start_flag
+      - judge_dwd_vova_fact_pay_h
+
+  - name: ads_vova_order_gmv_analysis_h
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/analysis/order_gmv_analysis_h/update.sh
+    dependsOn:
+      - start_flag
+      - judge_dwd_vova_fact_pay_h
+
+  - name: ads_vova_funnel_analysis_h
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/analysis/funnel_analysis_h/update.sh
+    dependsOn:
+      - start_flag
+      - judge_vova_fact_log_v2_h

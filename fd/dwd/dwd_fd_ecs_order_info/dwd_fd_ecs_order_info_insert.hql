@@ -17,7 +17,7 @@ ecs_order_info_with_currency as (
    from (
             select eoi.*,
                    nvl(ucc.currency_conversion_rate, 1.0)                                                     as usd_currency_conversion_rate,
-                   rank() OVER (PARTITION BY eoi.order_id ORDER BY ucc.currency_conversion_shanghai_ts DESC)  AS currency_rn
+                   ROW_NUMBER() OVER (PARTITION BY eoi.order_id ORDER BY ucc.currency_conversion_shanghai_ts DESC)  AS currency_rn
             from ods_fd_ecshop.ods_fd_ecs_order_info eoi
             left join usd_currency_conversion ucc on eoi.currency = ucc.to_currency_code AND eoi.order_time >= ucc.currency_conversion_shanghai_ts
         ) order_info_currency
@@ -32,7 +32,7 @@ romeo_goods_purchase_with_currency as (
             select gpp.goods_id,
                    gpp.price,
                    nvl(ucc.currency_conversion_rate, 1.0)                                                     as currency_conversion_rate,
-                   rank() OVER (PARTITION BY gpp.goods_id ORDER BY ucc.currency_conversion_shanghai_ts DESC) AS currency_rn
+                   ROW_NUMBER() OVER (PARTITION BY gpp.goods_id ORDER BY ucc.currency_conversion_shanghai_ts DESC) AS currency_rn
             from ods_fd_romeo.ods_fd_goods_purchase_price gpp
             left join usd_currency_conversion ucc on ucc.to_currency_code = 'RMB' and gpp.ctime >= ucc.currency_conversion_shanghai_ts
         ) goods_purchase_currency
@@ -64,7 +64,7 @@ ecs_order_info_paid as (
       order_info.user_id,
       nvl(order_info.goods_amount, 0.00)                                                                as goods_amount,
       nvl(order_info.bouns_amount, 0.00)                                                                as bouns_amount,
-      nvl(order_info.goods_amount / order_info.pt_goods_amount * ads_cost_table.pt_ads_cost,0.00)       as ads_cost,
+      nvl(1 / order_info.pt_goods_cnt * ads_cost_table.pt_ads_cost,0.00)       as ads_cost,
       nvl(order_purchase_estimate.purchase_amount, 0.00)                                                as es_purchase_amount,
       nvl(order_purchase.purchase_amount, 0.00)                                                         as purchase_amount,
       nvl(order_refund.goods_refund_amount, 0.00)                                                       as goods_refund_amount,
@@ -81,8 +81,8 @@ ecs_order_info_paid as (
                  eoi.party_id,
                  lower(p.name)                                                                           as project,
                  date(to_utc_timestamp(eoi.order_time, "Asia/Shanghai"))                                 as pt,
-                 sum(nvl(eoi.goods_amount / usd_currency_conversion_rate, 0.00))
-                     over (partition by date(to_utc_timestamp(eoi.order_time, "Asia/Shanghai")),p.name,eoi.country) as pt_goods_amount,
+                 sum(1)
+                     over (partition by date(to_utc_timestamp(eoi.order_time, "Asia/Shanghai")),p.name,eoi.country) as pt_goods_cnt,
                  to_utc_timestamp(eoi.order_time, "Asia/Shanghai")                                       as order_time,
                  from_unixtime(eoi.shipping_time,'yyyy-MM-dd HH:mm:ss')                                  as shipping_time,
                  shipping_status                                                                         as shipping_status,

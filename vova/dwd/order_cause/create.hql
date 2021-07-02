@@ -22,3 +22,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS dwd.dwd_vova_fact_order_cause_v2
 alter table dwd.dwd_vova_fact_order_cause_v2 ADD COLUMNS (
 pre_language STRING COMMENT '归因pre_language'
 ) CASCADE;
+
+alter table dwd.dwd_vova_fact_order_cause_v2 ADD COLUMNS (
+pre_session_id STRING COMMENT '归因 session_id'
+) CASCADE;

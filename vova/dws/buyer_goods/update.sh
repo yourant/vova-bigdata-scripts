@@ -10,6 +10,23 @@ insert overwrite table dws.dws_vova_buyer_goods_behave partition(pt ='${pre_date
 select
 /*+ REPARTITION(30) */
 /*+ BROADCAST(prt) */
+buyer_id,
+gs_id,
+max(cat_id) as cat_id,
+max(first_cat_id) as first_cat_id,
+max(second_cat_id) as second_cat_id,
+max(brand_id) as brand_id,
+max(price_range) as price_range,
+max(expre_cnt) as expre_cnt,
+max(clk_cnt) as clk_cnt,
+max(clk_valid_cnt) clk_valid_cnt,
+max(collect_cnt) as collect_cnt,
+max(add_cat_cnt) as add_cat_cnt,
+max(ord_cnt) as ord_cnt,
+max(sales_vol) as sales_vol,
+max(gmv) as gmv
+from
+(select
 tmp_all.buyer_id,
 tmp_all.gs_id,
 dg.cat_id,
@@ -103,11 +120,14 @@ inner join dim.dim_vova_goods dg
 on tmp_all.gs_id = dg.goods_id
 left join tmp.tmp_vova_dictionary_price_range_type prt
 on (dg.shop_price+dg.shipping_fee) >=prt.min_val and (dg.shop_price+dg.shipping_fee) <prt.max_val
+where  not exists (select distinct goods_id from ads.ads_vova_goods_black_list t1 where tmp_all.gs_id = t1.goods_id))
+group by buyer_id,gs_id
 "
 
 #如果使用spark-sql运行，则执行spark-sql -e
 spark-sql \
---executor-memory 5G --executor-cores 1 \
+--driver-memory 10G \
+--executor-memory 8G --executor-cores 1 \
 --conf "spark.sql.parquet.writeLegacyFormat=true"  \
 --conf "spark.dynamicAllocation.minExecutors=10" \
 --conf "spark.dynamicAllocation.initialExecutors=20" \

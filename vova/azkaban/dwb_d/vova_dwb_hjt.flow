@@ -29,6 +29,7 @@ nodes:
       - dwb_vova_search_view_monitor
       - dwb_vova_abnormal_low_price_goods
       - dwb_vova_stay_coupon
+      - dwb_vova_push_reject_appeal_info
 
 
   - name: start_flag
@@ -671,3 +672,17 @@ nodes:
       job.priority: 10
     dependsOn:
       - judge_vova_stay_coupon
+
+
+# 统计店铺驳回申诉率并推送后台
+  - name: dwb_vova_push_reject_appeal_info
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/push_reject_appeal_info/update.sh
+      retries: 3
+      retry.backoff: 600000
+      job.priority: 10
+    dependsOn:
+      - judge_dim_vova_order_goods
+      - judge_dim_vova_merchant
+      - judge_ods_vova_refund_audit_txn

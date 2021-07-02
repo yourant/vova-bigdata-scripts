@@ -1,0 +1,10 @@
+
+select
+pt,
+count(distinct device_id) uv,
+count(device_id) pv
+from
+dwd.dwd_vova_log_screen_view sv
+INNER JOIN ods_vova_vtsf.ods_vova_acg_app app ON lower(sv.datasource) = lower(app.app_name) and lower(app.app_name) != 'vova' and lower(app.app_name) != 'airyclub'
+where pt>='2021-04-20' and pt<='2021-04-21' and lower(page_code) like '%theme_activity%' and platform='mob'
+group by pt

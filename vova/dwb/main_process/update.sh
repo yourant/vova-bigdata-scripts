@@ -263,7 +263,7 @@ from
 dwd.dwd_vova_fact_act_ord_gs fag
 left join dwd.dwd_vova_fact_buyer_device_releation fbr on fag.byr_id = fbr.buyer_id and fag.datasource = fbr.datasource
 left join dim.dim_vova_devices dd on dd.device_id = fbr.device_id and dd.datasource=fbr.datasource
-where to_date(fag.pay_time)='${cur_date}' and fbr.pt='$cur_date' and fag.pay_sts>=1
+where to_date(fag.pay_time)='${cur_date}' and fbr.pt='${cur_date}' and fag.pay_sts>=1
 ) t1
 group by
 t1.datasource,
@@ -516,7 +516,7 @@ from
 dwd.dwd_vova_fact_act_ord_gs fag
 left join dwd.dwd_vova_fact_buyer_device_releation fbr on fag.byr_id = fbr.buyer_id and fag.datasource = fbr.datasource
 left join dim.dim_vova_devices dd on dd.device_id = fbr.device_id and dd.datasource=fbr.datasource
-where to_date(fag.pay_time)='${cur_date}' and fbr.pt='$cur_date' and fag.pay_sts>=1 and fag.datasource not in ('vova','airyclub')
+where to_date(fag.pay_time)='${cur_date}' and fbr.pt='${cur_date}' and fag.pay_sts>=1 and fag.datasource not in ('vova','airyclub')
 ) t1
 group by
 t1.region_code,

@@ -1,6 +1,6 @@
 ---
 config:
-  failure.emails: andy.zhang@vova.com.hk,kaicheng@vova.com.hk
+  failure.emails: andy.zhang@vova.com.hk,kaicheng@vova.com.hk,dyshu@vova.com.hk
   retries: 10
   retry.backoff: 600000
 
@@ -27,6 +27,11 @@ nodes:
       - mlb_rec_m_catlike_d
       - mlb_lightgcn_i2i_u2i_rec_job_message_put
       - mlb_vova_rec_m_user_cat_expand_d
+      - mlb_vova_six_mct_get_data
+      - mlb_vova_gender_hot_goods_d
+      - mlb_vova_buyer_negative_feedback
+      - mlb_vova_buyer_goods_pref
+      - mlb_vova_buyer_cat_pref
 
   - name: start_flag
     type: command
@@ -198,6 +203,15 @@ nodes:
       command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_pre_attribute_data
       retries: 15
       retry.backoff: 1800000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_buyer_portrait_feature
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_buyer_portrait_feature
+      retries: 20
+      retry.backoff: 600000
     dependsOn:
       - start_flag
 
@@ -489,6 +503,75 @@ nodes:
       - judge_dws_vova_buyer_goods_behave
 
 
+  - name: judge_vova_images_vector
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_images_vector
+      retries: 20
+      retry.backoff: 120000
+    dependsOn:
+      - start_flag
 
+  - name: judge_ads_vova_six_mct_goods_flow_support_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_six_mct_goods_flow_support_d
+      retries: 20
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
 
+  - name: mlb_vova_six_mct_get_data
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/six_mct/six_mct_get_data.sh
+      retries: 20
+      retry.backoff: 600000
+    dependsOn:
+      - judge_vova_images_vector
+      - judge_dim_vova_goods
+      - judge_mlb_vova_user_behave_link_d
+      - judge_ads_vova_six_mct_goods_flow_support_d
 
+# 兜底策略&rating分相关数据 mlb_vova_gender_hot_goods_d
+  - name: mlb_vova_gender_hot_goods_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/gender_hot_goods_d/update.sh
+      retries: 20
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_goods_portrait
+      - judge_mlb_vova_rec_b_goods_score_d_message_get
+
+# 用户负反馈 每天删除 mysql 过期负反馈数据 mlb_vova_buyer_negative_feedback
+  - name: mlb_vova_buyer_negative_feedback
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/buyer_negative_feedback/update.sh
+    dependsOn:
+      - start_flag
+
+# rating分修改 用户-品类偏好
+  - name: mlb_vova_buyer_cat_pref
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_user_pref/user_cat_pref.sh
+      retries: 20
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_goods_behave
+      - judge_ads_vova_buyer_portrait_feature
+      - judge_ads_vova_buyer_portrait_feature
+
+# rating分修改 用户-商品评分
+  - name: mlb_vova_buyer_goods_pref
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_user_pref/user_goods_pref.sh
+      retries: 20
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_goods_behave
+      - judge_ads_vova_buyer_portrait_feature
+      - judge_ads_vova_goods_portrait

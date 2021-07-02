@@ -10,7 +10,7 @@ last_8_week=`date -d $cur_date"-8 week" +%Y-%m-%d`
 src_weekday=`date -d $last_8_week +%w`
 if [ $src_weekday == 0 ]
 then
-src_weekday=7req_8198_log
+src_weekday=7
 fi
 src_day=`date -d "$last_8_week - $((src_weekday - 1)) days" +%F`
 end_day=`date -d $src_day"+6 day" +%Y-%m-%d`
@@ -74,23 +74,45 @@ fi
 
 spark-submit \
 --deploy-mode client \
---name 'vova_order_email_send' \
 --master yarn  \
---conf spark.executor.memory=4g \
---conf spark.dynamicAllocation.minExecutors=5 \
---conf spark.dynamicAllocation.maxExecutors=20 \
+--num-executors 3 \
+--executor-cores 1 \
+--executor-memory 8G \
+--driver-memory 8G \
+--conf spark.app.name=vova_order_email_send \
 --conf spark.executor.memoryOverhead=2048 \
---class com.vova.utils.EmailUtil s3://vomkt-emr-rec/jar/vova-bd/dataprocess/new/vova-db-dataprocess-1.0-SNAPSHOT.jar \
+--conf spark.dynamicAllocation.enabled=false \
+--conf spark.eventLog.enabled=false \
+--driver-java-options "-Dlog4j.configuration=hdfs:/conf/log4j.properties" \
+--conf spark.executor.extraJavaOptions="-Dlog4j.configuration=hdfs:/conf/log4j.properties" \
+--class com.vova.process.SendData2Interface s3://vomkt-emr-rec/jar/vova-bd/dataprocess/new/vova-db-dataprocess-1.0-SNAPSHOT.jar \
 --env prod \
--sql "select email,region_name_cn,language_code,order_cnt from ads.ads_vova_order_email where pt='${cur_date}'"  \
--head "邮箱,国家,语言,该时间段发货数量（子订单数量）"  \
--receiver "suzi@vova.com.hk,sanlian@vova.com.hk,jianxiangyun@vova.com.hk,ted.wan@vova.com.hk" \
--title "vova客服支付邮箱(${src_day}-${end_day})" \
---type attachment \
---fileName "vova客服支付邮箱(${src_day}-${end_day})"
+--sql "select email,region_name_cn as country_name,language_code as lang_code,order_cnt as ship_num ,'${src_day}' as start_time, '${end_day}' as end_time from ads.ads_vova_order_email where pt='${cur_date}' " \
+--url " http://vvfeature.vova.com.hk/api/v1/survey-email/inactive-email" \
+--secretKey  "69b562h101b7kdbac2066ls10b26d02b" \
+--batchSize 100 \
+--id ads_vova_order_email
+
+
+#spark-submit \
+#--deploy-mode client \
+#--name 'vova_order_email_send' \
+#--master yarn  \
+#--conf spark.executor.memory=4g \
+#--conf spark.dynamicAllocation.minExecutors=5 \
+#--conf spark.dynamicAllocation.maxExecutors=20 \
+#--conf spark.executor.memoryOverhead=2048 \
+#--class com.vova.utils.EmailUtil s3://vomkt-emr-rec/jar/vova-bd/dataprocess/new/vova-db-dataprocess-1.0-SNAPSHOT.jar \
+#--env prod \
+#-sql "select email,region_name_cn,language_code,order_cnt from ads.ads_vova_order_email where pt='${cur_date}'"  \
+#-head "邮箱,国家,语言,该时间段发货数量（子订单数量）"  \
+#-receiver "suzi@vova.com.hk,sanlian@vova.com.hk,jianxiangyun@vova.com.hk,ted.wan@vova.com.hk" \
+#-title "vova客服支付邮箱(${src_day}-${end_day})" \
+#--type attachment \
+#--fileName "vova客服支付邮箱(${src_day}-${end_day})"
 
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
-  echo "发送邮件失败"
+  echo "发送失败"
   exit 1
 fi

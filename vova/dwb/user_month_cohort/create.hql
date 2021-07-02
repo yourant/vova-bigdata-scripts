@@ -7,7 +7,7 @@ table   dwb.dwb_vova_order_month_cohort             用户复购月度留存
 
 #用户月度留存
 drop table dwb.dwb_vova_user_month_cohort;
-CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_user_month_cohort
+  CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_user_month_cohort
 (
     start_month  date COMMENT '启动日期',
     datasource   STRING,
@@ -27,6 +27,18 @@ CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_user_month_cohort
     next_10_num  bigint,
     next_11_num  bigint,
     next_12_num  bigint,
+    next_13_num  bigint,
+    next_14_num  bigint,
+    next_15_num  bigint,
+    next_16_num  bigint,
+    next_17_num  bigint,
+    next_18_num  bigint,
+    next_19_num  bigint,
+    next_20_num  bigint,
+    next_21_num  bigint,
+    next_22_num  bigint,
+    next_23_num  bigint,
+    next_24_num  bigint,
     -- buyer_type  string COMMENT '买家类型：only_pre_direct(只购买过前置仓直发),include_pre_direct(购买过前置仓直发),no_pre_direct(未购买过前置仓直发)',
     buyer_type       string comment '用户是否当月新激活:all、Y、N'
 ) COMMENT '用户留存报表' PARTITIONED BY (pt STRING)
@@ -51,6 +63,18 @@ CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_order_month_cohort
     next_10_num  bigint,
     next_11_num  bigint,
     next_12_num  bigint,
+    next_13_num  bigint,
+    next_14_num  bigint,
+    next_15_num  bigint,
+    next_16_num  bigint,
+    next_17_num  bigint,
+    next_18_num  bigint,
+    next_19_num  bigint,
+    next_20_num  bigint,
+    next_21_num  bigint,
+    next_22_num  bigint,
+    next_23_num  bigint,
+    next_24_num  bigint,
     is_new_user string COMMENT '是否新用户',
     region_code string COMMENT 'region_code',
     platform    string COMMENT 'platform',
@@ -83,6 +107,18 @@ CREATE external TABLE IF NOT EXISTS dwb.dwb_vova_order_month_start_up_cohort
     next_10_num bigint,
     next_11_num bigint,
     next_12_num bigint,
+    next_13_num  bigint,
+    next_14_num  bigint,
+    next_15_num  bigint,
+    next_16_num  bigint,
+    next_17_num  bigint,
+    next_18_num  bigint,
+    next_19_num  bigint,
+    next_20_num  bigint,
+    next_21_num  bigint,
+    next_22_num  bigint,
+    next_23_num  bigint,
+    next_24_num  bigint,
     -- buyer_type  string COMMENT '买家类型：only_pre_direct(只购买过前置仓直发),include_pre_direct(购买过前置仓直发),no_pre_direct(未购买过前置仓直发)',
     buyer_type      string comment '用户是否当月新激活:all、Y、N'
 ) COMMENT '用户复购月度报表' PARTITIONED BY (pt STRING)

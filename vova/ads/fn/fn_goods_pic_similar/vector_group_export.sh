@@ -11,7 +11,7 @@ drop table if exists trigram_shopping.min_price_goods_new;
 drop table if exists trigram_shopping.min_price_goods_pre;
 "
 
-mysql -h trigram-fn.cn899du7tges.us-east-1.rds.amazonaws.com -u datagw20200804 -paih8ooz0quoo\^b5hah\%p4Oo -e "${sql}"
+mysql -h trigram-fn.cn899du7tges.us-east-1.rds.amazonaws.com -u datagw2021052812 -pIen3aingae%w2xa5OhCei -e "${sql}"
 
 sql="
 CREATE TABLE trigram_shopping.min_price_goods_new
@@ -31,13 +31,13 @@ CREATE TABLE trigram_shopping.min_price_goods_new
   DEFAULT CHARSET = utf8mb4;
 "
 
-mysql -h trigram-fn.cn899du7tges.us-east-1.rds.amazonaws.com -u datagw20200804 -paih8ooz0quoo\^b5hah\%p4Oo -e "${sql}"
+mysql -h trigram-fn.cn899du7tges.us-east-1.rds.amazonaws.com -u datagw2021052812 -pIen3aingae%w2xa5OhCei -e "${sql}"
 
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
--Dsqoop.export.records.per.statement=1000 \
+-Dsqoop.export.records.per.statement=500 \
 --connect jdbc:mysql://trigram-fn.cn899du7tges.us-east-1.rds.amazonaws.com/trigram_shopping?rewriteBatchedStatements=true \
---username datagw20200804 --password aih8ooz0quoo^b5hah%p4Oo \
+--username datagw2021052812 --password Ien3aingae%w2xa5OhCei \
 --table min_price_goods_new \
 --m 1 \
 --columns goods_id,min_price_goods_id,strategy,group_number,min_show_price \
@@ -55,12 +55,12 @@ if [ $? -ne 0 ];then
   exit 1
 fi
 
-mysql -h trigram-fn.cn899du7tges.us-east-1.rds.amazonaws.com -u datagw20200804 -paih8ooz0quoo\^b5hah\%p4Oo <<EOF
+mysql -h trigram-fn.cn899du7tges.us-east-1.rds.amazonaws.com -u datagw2021052812 -pIen3aingae%w2xa5OhCei <<EOF
 rename table trigram_shopping.min_price_goods to trigram_shopping.min_price_goods_pre,
              trigram_shopping.min_price_goods_new to trigram_shopping.min_price_goods;
 EOF
 
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
-  exit 1
+  exit 1datagw2021052812
 fi

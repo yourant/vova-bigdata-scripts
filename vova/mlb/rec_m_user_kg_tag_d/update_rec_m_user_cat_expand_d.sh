@@ -20,9 +20,10 @@ spark-submit \
 --conf spark.dynamicAllocation.maxExecutors=100 \
 --name mlb_vova_rec_m_user_cat_expand_d_gongrui_chenkai \
 --conf spark.yarn.maxAppAttempts=1 \
---class com.vova.model.itemcf \
+--class com.vova.rec.model.user_cat_expand.rec_m_user_cat_expand_d \
 s3://vova-mlb/REC/util/user_cat_expand.jar
 
+# com.vova.rec.model.user_cat_expand.rec_m_user_cat_expand_d s3://vova-mlb/REC/util/user_cat_expand.jar
 #如果脚本失败，则报错
 if [ $? -ne 0 ]; then
   exit 1

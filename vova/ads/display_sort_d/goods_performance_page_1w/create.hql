@@ -30,8 +30,18 @@ CREATE EXTERNAL TABLE IF NOT EXISTS ads.ads_vova_goods_performance_page
     third_cat_id      string,
     third_cat_name    string,
     fourth_cat_id     string,
-    fourth_cat_name   string
+    fourth_cat_name   string,
+    overall_score decimal(13,2) COMMENT '综合评分'
 ) COMMENT '商品表现-页面' PARTITIONED BY (pt STRING)
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
+
+
+
+
+alter table ads.ads_vova_goods_performance_page
+
+alter table ads.ads_vova_goods_performance_page ADD COLUMNS (
+overall_score double COMMENT '综合评分'
+) CASCADE;
 
 

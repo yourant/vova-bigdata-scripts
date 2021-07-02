@@ -1,10 +1,11 @@
 #!/bin/bash
-show_usage="args:[--sql= hive sql,--index=es index,--partition=spark partition num,--mode=complete or append,--id=id]"
-ARGS=$(getopt -o src:t:ds:m --long sql:,index:,partition:,mode:,id: -- "$@")
+show_usage="args:[--sql= hive sql,--index=es index,--partition=spark partition num,--mode=complete or append,--id=id, --col_id=cols to id]"
+ARGS=$(getopt -o src:t:ds:m --long sql:,index:,partition:,mode:,id:,col_id: -- "$@")
 eval set -- "${ARGS}"
 partition=5
 #pt=$(date -d "-1 day" +%Y-%m-%d)
 mode="complete"
+col_id=""
 while true; do
   case "$1" in
   -sql | --sql)
@@ -25,6 +26,10 @@ while true; do
     ;;
   -id | --id)
     id=$2
+    shift 2
+    ;;
+  -col_id | --col_id)
+    col_id=$2
     shift 2
     ;;
   --)
@@ -53,7 +58,6 @@ alias="alias_${index}"
 echo "sql:${sql},index:${indexName},alias:${alias}"
 
 spark-submit \
---queue important \
 --deploy-mode client \
 --master yarn  \
 --conf spark.executor.memory=4g \
@@ -63,12 +67,13 @@ spark-submit \
 --conf spark.executor.memoryOverhead=2048 \
 --driver-java-options "-Dlog4j.configuration=log4j-driver.properties" \
 --conf spark.executor.extraJavaOptions="-Dlog4j.configuration=log4j-executor.properties" \
---files hdfs:///conf/log4j-driver.properties,hdfs:///conf/log4j-executor.properties \
---class  com.vova.process.ExportHive2Es s3://vomkt-emr-rec/jar/vova-bd/dataprocess/vova-db-dataprocess-1.0-SNAPSHOT.jar \
+--files hdfs:///tmp/jar/log4j-driver.properties,hdfs:///tmp/jar/log4j-executor.properties \
+--class  com.vova.process.ExportHive2Es s3://vomkt-emr-rec/jar/vova-bd/dataprocess/new/vova-db-dataprocess-1.0-SNAPSHOT.jar \
 -sql "${sql}"  \
 -index $indexName \
 -partition $partition \
 -aliasName $alias \
+-col_id $col_id \
 -mode $mode
 
 

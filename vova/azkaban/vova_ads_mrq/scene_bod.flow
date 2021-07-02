@@ -1,0 +1,45 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_scene_bod_goods_rank_data_export
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: judge_mlb_vova_rec_b_goods_score_d_message_get
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=mlb_goods_score_vova --from=mlb --to=data --valid_hour=3
+      retries: 20
+      retry.backoff: 1800000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_scene_bod_goods_rank_data
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/vova_bod/scene_bod/update.sh
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+      - judge_mlb_vova_rec_b_goods_score_d_message_get
+
+  - name: ads_vova_scene_bod_goods_rank_data_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/vova_bod/scene_bod/sqoop_export.sh
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+      - ads_vova_scene_bod_goods_rank_data

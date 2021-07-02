@@ -38,7 +38,7 @@ from (
                 nvl(element_type, 'NA')                            element_type,
                 nvl(list_type, 'NA')                               list_type,
                 case
-                    when page_code = 'homepage' and list_type = '/popular' then 'rec_best_selling'
+                    when page_code in ('homepage','dynamic_activity_template') and list_type in ('/popular','/dynamic_activity')  then 'rec_best_selling'
                     when page_code in ('homepage', 'product_list') and list_type = '/product_list_newarrival'
                         then 'rec_new_arrival'
                     when page_code in ('homepage', 'product_list') and
@@ -96,7 +96,7 @@ from (
              nvl(element_type, 'NA')                            element_type,
              nvl(list_type, 'NA')                               list_type,
              case
-                 when page_code = 'homepage' and list_type = '/popular' then 'rec_best_selling'
+                 when page_code in ('homepage','dynamic_activity_template') and list_type in ('/popular','/dynamic_activity')  then 'rec_best_selling'
                  when page_code in ('homepage', 'product_list') and list_type = '/product_list_newarrival'
                      then 'rec_new_arrival'
                  when page_code in ('homepage', 'product_list') and
@@ -173,7 +173,7 @@ nvl(country,'NA') country,
 nvl(pre_page_code,'NA') page_code,
 nvl(pre_element_type,'NA') element_type,
 nvl(pre_list_type,'NA') list_type,
-case when pre_page_code = 'homepage' and pre_list_type='/popular' then 'rec_best_selling'
+case when pre_page_code in ('homepage','dynamic_activity_template') and pre_list_type in ('/popular','/dynamic_activity')  then 'rec_best_selling'
      when pre_page_code in ('homepage','product_list') and pre_list_type = '/product_list_newarrival' then 'rec_new_arrival'
      when pre_page_code in ('homepage','product_list') and  pre_list_type in ('/product_list_popular','/product_list') then 'rec_most_popular'
      when pre_page_code in ('homepage','product_list') and  pre_list_type = '/product_list_sold' then 'rec_sold'
@@ -219,7 +219,7 @@ nvl(og.platform,'NA') os_type,
 nvl(pre_page_code,'NA') page_code,
 nvl(pre_element_type,'NA') element_type,
 nvl(pre_list_type,'NA') list_type,
-case when pre_page_code = 'homepage' and pre_list_type='/popular' then 'rec_best_selling'
+case when pre_page_code in ('homepage','dynamic_activity_template') and pre_list_type in ('/popular','/dynamic_activity') then 'rec_best_selling'
      when pre_page_code in ('homepage','product_list') and pre_list_type = '/product_list_newarrival' then 'rec_new_arrival'
      when pre_page_code in ('homepage','product_list') and  pre_list_type in ('/product_list_popular','/product_list') then 'rec_most_popular'
      when pre_page_code in ('homepage','product_list') and  pre_list_type = '/product_list_sold' then 'rec_sold'
@@ -270,7 +270,7 @@ nvl(og.platform,'NA') os_type,
 nvl(pre_page_code,'NA') page_code,
 nvl(pre_element_type,'NA') element_type,
 nvl(pre_list_type,'NA') list_type,
-case when pre_page_code = 'homepage' and pre_list_type='/popular' then 'rec_best_selling'
+case when pre_page_code in ('homepage','dynamic_activity_template') and pre_list_type in ('/popular','/dynamic_activity') then 'rec_best_selling'
      when pre_page_code in ('homepage','product_list') and pre_list_type = '/product_list_newarrival' then 'rec_new_arrival'
      when pre_page_code in ('homepage','product_list') and  pre_list_type in ('/product_list_popular','/product_list') then 'rec_most_popular'
      when pre_page_code in ('homepage','product_list') and  pre_list_type = '/product_list_sold' then 'rec_sold'

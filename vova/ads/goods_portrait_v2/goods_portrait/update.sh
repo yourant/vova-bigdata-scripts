@@ -63,7 +63,16 @@ with tmp_goods_portrait as
   gkw.key_words,
   nvl(tmp_ord.ord_cnt_1w,0) as ord_cnt_1w,
   nvl(tmp_ord.ord_cnt_15d,0) as ord_cnt_15d,
-  nvl(tmp_ord.ord_cnt_1m,0) as ord_cnt_1m
+  nvl(tmp_ord.ord_cnt_1m,0) as ord_cnt_1m,
+  dg.third_cat_id,
+  dg.fourth_cat_id,
+  tmp_expre.expre_uv_1w,
+  tmp_expre.expre_uv_15d,
+  tmp_expre.expre_uv_1m,
+  ord_uv_1w  as pay_uv_1w,
+  ord_uv_15d as pay_uv_15d,
+  ord_uv_1m  as pay_uv_1m,
+  dg.goods_thumb,dg.first_on_time
 FROM
 dim.dim_vova_goods dg
 left  JOIN
@@ -343,14 +352,15 @@ tmp_goods_painting_inter_rate_3_6w as
   t1.goods_id,
   sum(t1.so_order_cnt_3_6w)/count(t1.order_goods_id) as inter_rate_3_6w,
   (sum(t1.so_order_cnt_3_6w)+0.9*5)/(count(t1.order_goods_id)+5) as bs_inter_rate_3_6w,
-  CEILING(sum(inter_days) / count(t1.order_goods_id)) as avg_inter_days_3_6w -- 平均上网天数
+  CEILING(sum(inter_days) / count(t1.inter_order_goods_id)) as avg_inter_days_3_6w -- 平均上网天数
 from
 (
 select
   og.goods_id,
   og.order_goods_id,
-  datediff(fl.valid_tracking_date,fl.confirm_time) inter_days, -- 上网天数
-  case when datediff(fl.valid_tracking_date,fl.confirm_time)< 7 and og.sku_pay_status>1 then 1 else 0
+  if(datediff(fl.valid_tracking_date,fl.confirm_time) >= 0, og.order_goods_id, null) inter_order_goods_id, -- 有物流时间的订单
+  if(datediff(fl.valid_tracking_date,fl.confirm_time) >= 0, datediff(fl.valid_tracking_date,fl.confirm_time), 0) inter_days, -- 上网天数
+  case when datediff(fl.valid_tracking_date,fl.confirm_time)< 7 and datediff(fl.valid_tracking_date,fl.confirm_time) >= 0 and og.sku_pay_status>1 then 1 else 0
     end so_order_cnt_3_6w
 from dim.dim_vova_order_goods og
 left join dwd.dwd_vova_fact_logistics fl on fl.order_goods_id=og.order_goods_id
@@ -401,6 +411,35 @@ from
   where datediff('${pre_date}', date(og.confirm_time)) between 83 and 113
 ) t1
 group by t1.goods_id
+),
+
+-- 72小时集运入库
+tmp_collection as
+(
+  select
+    t1.goods_id,
+    count(distinct order_goods_id) collection_order_goods, -- 商品集运总订单数
+    count(distinct(if(to_date(in_warehouse_time)>='2000-01-01' and (unix_timestamp(in_warehouse_time) - unix_timestamp(confirm_time)) / 3600 <= 72 and (unix_timestamp(in_warehouse_time) - unix_timestamp(confirm_time)) / 3600 > 0, order_goods_id, null))) entry_warehouse_72h_order_goods -- 72小时入库订单数
+  from
+  (
+    select
+      fp.order_goods_id,
+      fp.goods_id,
+      fp.confirm_time, -- 子订单确认时间
+      ocog.in_warehouse_time -- 入库时间
+    from
+      dwd.dwd_vova_fact_pay fp
+    left join
+      dwd.dwd_vova_fact_logistics fl
+    on fp.order_goods_id = fl.order_goods_id
+    left join
+      ods_vova_vts.ods_vova_collection_order_goods ocog
+    on fp.order_goods_id = ocog.order_goods_id
+    where to_date(fp.pay_time) <= date_sub('${pre_date}', 3)
+      and to_date(fp.pay_time) >= date_sub('${pre_date}', 33)
+      and fl.collection_plan_id=2
+  ) t1
+  group by goods_id
 )
 
 INSERT overwrite TABLE ads.ads_vova_goods_portrait partition(pt='$pre_date')
@@ -487,8 +526,19 @@ select
   a.goods_name,
   a.goods_sn,
   a.is_on_sale,
-  if(e.goods_id is null and a.is_on_sale = 1,1,0) is_recommend,
-  t5.avg_inter_days_3_6w avg_inter_days_3_6w -- 平均上网天数
+  if(mct_id = 1 and to_date(a.first_on_time) > '2021-07-01',0,if(e.goods_id is null and a.is_on_sale = 1,1,0)) is_recommend,
+  t5.avg_inter_days_3_6w avg_inter_days_3_6w, -- 平均上网天数
+  third_cat_id,
+  fourth_cat_id,
+  expre_uv_1w , -- 近一周曝光UV
+  expre_uv_15d, -- 近15天曝光UV
+  expre_uv_1m , -- 近一月曝光UV
+  pay_uv_1w   , -- 近一周支付UV
+  pay_uv_15d  , -- 近15天支付UV
+  pay_uv_1m   , -- 近一月支付UV
+  entry_warehouse_72h_order_goods, -- 72小时入库订单数
+  collection_order_goods, -- 商品集运总订单数
+  a.goods_thumb --商品主图
 from tmp_goods_portrait a
 left join tmp_goods_painting_pt b
   on a.goods_id = b.goods_id
@@ -504,6 +554,8 @@ left join tmp_goods_painting_lrf_rate_9_12w t7
   on a.goods_id = t7.goods_id
 left join ads.ads_vova_goods_black_list e
   on a.goods_id = e.goods_id
+left join tmp_collection t8
+  on a.goods_id = t8.goods_id
 ;
 "
 
