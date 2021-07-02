@@ -7,24 +7,29 @@ fi
 echo $cur_date
 
 #退货/退款订单数 退款金额
-refund_order_cnt_rate=0.1310
+refund_order_cnt_rate=0.1327
+refund_order_cnt_rate_send=0.076
 #退货红包金额
-refund_amount_rate=0.0573
+refund_amount_rate=0.0598
+refund_amount_rate_send=0.0598
 #代付快递费
-pay_express_rate=0.2829
+pay_express_rate=0.2694
 #支付手续费
-pay_free_rate_1=0.0157
-pay_free_rate_2=0.27
+pay_free_rate_1=0.0161
+pay_free_rate_2=0.29
+
+pay_free_rate_1_send=0.0207
+pay_free_rate_2_send=0.3
 #人员工资
-employee_money_order=0.0451
-employee_money_send=0.053
+employee_money_order=0.0462
+employee_money_send=0.0454
 #仓储费
-stock_order=0.006
-stock_send=0.007
+stock_order=0.0099
+stock_send=0.0104
 #房租
-house_amount=3354
+house_amount=3504
 #服务器费用
-computer_amount=5291
+computer_amount=5209
 
 spark-sql   --conf "spark.app.name=dwb_ad_income_order" \
   --conf "spark.sql.crossJoin.enabled=true" \
@@ -471,11 +476,11 @@ select
 from tmp.tmp_ad_income_03 tmp1
 union all
 select
-'退货/退款订单数',cast(round(tmp1.day_order_cnt * ${refund_order_cnt_rate},0) as int),'',cast(round(tmp1.mon_order_cnt * ${refund_order_cnt_rate},0) as int),'',2
+'退货/退款订单数',cast(round(tmp1.day_order_cnt * ${refund_order_cnt_rate_send},0) as int),'',cast(round(tmp1.mon_order_cnt * ${refund_order_cnt_rate_send},0) as int),'',2
 from tmp.tmp_ad_income_03 tmp1
 union all
 select
-'净销售订单数',cast(round(tmp1.day_order_cnt * (1- ${refund_order_cnt_rate}),0) as int),'',cast(round(tmp1.mon_order_cnt * (1- ${refund_order_cnt_rate}),0) as int),'',3
+'净销售订单数',cast(round(tmp1.day_order_cnt * (1- ${refund_order_cnt_rate_send}),0) as int),'',cast(round(tmp1.mon_order_cnt * (1- ${refund_order_cnt_rate_send}),0) as int),'',3
 from tmp.tmp_ad_income_03 tmp1
 union all
 select
@@ -484,22 +489,22 @@ from tmp.tmp_ad_income_03 tmp1
 union all
 select
 '退款金额',
-round(tmp1.day_gmv * ${refund_order_cnt_rate},2),
-concat(round(tmp1.day_gmv * ${refund_order_cnt_rate} / tmp1.day_gmv * 100,2),'%'),
-round(tmp1.mon_gmv * ${refund_order_cnt_rate},2),
-concat(round(tmp1.mon_gmv * ${refund_order_cnt_rate} / tmp1.mon_gmv * 100,2),'%'),5
+round(tmp1.day_gmv * ${refund_order_cnt_rate_send},2),
+concat(round(tmp1.day_gmv * ${refund_order_cnt_rate_send} / tmp1.day_gmv * 100,2),'%'),
+round(tmp1.mon_gmv * ${refund_order_cnt_rate_send},2),
+concat(round(tmp1.mon_gmv * ${refund_order_cnt_rate_send} / tmp1.mon_gmv * 100,2),'%'),5
 from tmp.tmp_ad_income_03 tmp1
 union all
 select
-'商品销售净收入',round(tmp1.day_gmv * (1 - ${refund_order_cnt_rate}),2),'',round(tmp1.mon_gmv * (1 - ${refund_order_cnt_rate}),2),'',6
+'商品销售净收入',round(tmp1.day_gmv * (1 - ${refund_order_cnt_rate_send}),2),'',round(tmp1.mon_gmv * (1 - ${refund_order_cnt_rate_send}),2),'',6
 from tmp.tmp_ad_income_03 tmp1
 union all
 select
 '红包消耗总金额',
-round(tmp1.day_bonus * (1 - ${refund_amount_rate}),2),
-concat(round(abs(tmp1.day_bonus * (1 - ${refund_amount_rate}) / (tmp1.day_gmv)) * 100,2),'%'),
-round(tmp1.mon_bonus * (1 - ${refund_amount_rate}),2),
-concat(round(abs(tmp1.mon_bonus * (1 - ${refund_amount_rate}) / (tmp1.mon_gmv)) * 100,2),'%'),7
+round(tmp1.day_bonus * (1 - ${refund_amount_rate_send}),2),
+concat(round(abs(tmp1.day_bonus * (1 - ${refund_amount_rate_send}) / (tmp1.day_gmv)) * 100,2),'%'),
+round(tmp1.mon_bonus * (1 - ${refund_amount_rate_send}),2),
+concat(round(abs(tmp1.mon_bonus * (1 - ${refund_amount_rate_send}) / (tmp1.mon_gmv)) * 100,2),'%'),7
 from tmp.tmp_ad_income_03 tmp1
 union all
 select
@@ -512,10 +517,10 @@ from tmp.tmp_ad_income_03 tmp1
 union all
 select
 '退货红包金额',
-round(tmp1.day_bonus * -${refund_amount_rate},2),
-concat(round(abs(tmp1.day_bonus * ${refund_amount_rate} / (tmp1.day_gmv)) * 100,2),'%'),
-round(tmp1.mon_bonus * -${refund_amount_rate},2),
-concat(round(abs(tmp1.mon_bonus * ${refund_amount_rate} / (tmp1.mon_gmv)) * 100,2),'%'),9
+round(tmp1.day_bonus * -${refund_amount_rate_send},2),
+concat(round(abs(tmp1.day_bonus * ${refund_amount_rate_send} / (tmp1.day_gmv)) * 100,2),'%'),
+round(tmp1.mon_bonus * -${refund_amount_rate_send},2),
+concat(round(abs(tmp1.mon_bonus * ${refund_amount_rate_send} / (tmp1.mon_gmv)) * 100,2),'%'),9
 from tmp.tmp_ad_income_03 tmp1
 union all
 select
@@ -560,25 +565,25 @@ from tmp.tmp_ad_income_03 tmp1
 union all
 select
 '支付手续费',
-round(tmp1.order_amount_day * ${pay_free_rate_1} + tmp1.day_order_cnt * ${pay_free_rate_2},2),
-concat(round(abs((tmp1.order_amount_day * ${pay_free_rate_1} + tmp1.day_order_cnt * ${pay_free_rate_2}) / (tmp1.day_gmv)) * 100,2),'%'),
-round(tmp1.order_amount_month * ${pay_free_rate_1} + tmp1.mon_order_cnt * ${pay_free_rate_2},2),
-concat(round(abs((tmp1.order_amount_month * ${pay_free_rate_1} + tmp1.mon_order_cnt * ${pay_free_rate_2}) / (tmp1.mon_gmv)) * 100,2),'%'),15
+round(tmp1.order_amount_day * ${pay_free_rate_1_send} + tmp1.day_order_cnt * ${pay_free_rate_2_send},2),
+concat(round(abs((tmp1.order_amount_day * ${pay_free_rate_1_send} + tmp1.day_order_cnt * ${pay_free_rate_2_send}) / (tmp1.day_gmv)) * 100,2),'%'),
+round(tmp1.order_amount_month * ${pay_free_rate_1_send} + tmp1.mon_order_cnt * ${pay_free_rate_2_send},2),
+concat(round(abs((tmp1.order_amount_month * ${pay_free_rate_1_send} + tmp1.mon_order_cnt * ${pay_free_rate_2_send}) / (tmp1.mon_gmv)) * 100,2),'%'),15
 from tmp.tmp_ad_income_03 tmp1
 union all
 select
 '毛利',
-round(tmp1.day_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.day_bonus * (1 - ${refund_amount_rate}) + tmp1.day_shou_express - tmp1.should_express_amount_day - (tmp1.union_cost_day + (tmp1.ad_cost_day) + tmp1.order_amount_day * ${pay_free_rate_1} + tmp1.day_order_cnt * ${pay_free_rate_2}),2),
+round(tmp1.day_gmv * (1 - ${refund_order_cnt_rate_send}) + tmp1.day_bonus * (1 - ${refund_amount_rate_send}) + tmp1.day_shou_express - tmp1.should_express_amount_day - (tmp1.union_cost_day + (tmp1.ad_cost_day) + tmp1.order_amount_day * ${pay_free_rate_1_send} + tmp1.day_order_cnt * ${pay_free_rate_2_send}),2),
 '',
-round(tmp1.mon_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.mon_bonus * (1 - ${refund_amount_rate}) + tmp1.mon_shou_express -tmp1.should_express_amount_month - (tmp1.unit_cost_month + (tmp1.ad_cost_month) + tmp1.mon_gmv * ${pay_free_rate_1} + tmp1.mon_order_cnt * ${pay_free_rate_2}),2),
+round(tmp1.mon_gmv * (1 - ${refund_order_cnt_rate_send}) + tmp1.mon_bonus * (1 - ${refund_amount_rate_send}) + tmp1.mon_shou_express -tmp1.should_express_amount_month - (tmp1.unit_cost_month + (tmp1.ad_cost_month) + tmp1.order_amount_month * ${pay_free_rate_1_send} + tmp1.mon_order_cnt * ${pay_free_rate_2_send}),2),
 '',16
 from tmp.tmp_ad_income_03 tmp1
 union all
 select
 '毛利率%',
-concat(round(abs((tmp1.day_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.day_bonus * (1 - ${refund_amount_rate}) + tmp1.day_shou_express - tmp1.should_express_amount_day - (tmp1.union_cost_day + (tmp1.ad_cost_day) + tmp1.order_amount_day * ${pay_free_rate_1} + tmp1.day_order_cnt * ${pay_free_rate_2})) / (tmp1.day_gmv)) * 100,2),'%'),
+concat(round(abs((tmp1.day_gmv * (1 - ${refund_order_cnt_rate_send}) + tmp1.day_bonus * (1 - ${refund_amount_rate_send}) + tmp1.day_shou_express - tmp1.should_express_amount_day - (tmp1.union_cost_day + (tmp1.ad_cost_day) + tmp1.order_amount_day * ${pay_free_rate_1_send} + tmp1.day_order_cnt * ${pay_free_rate_2_send})) / (tmp1.day_gmv)) * 100,2),'%'),
 '',
-concat(round(abs((tmp1.mon_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.mon_bonus * (1 - ${refund_amount_rate}) + tmp1.mon_shou_express -tmp1.should_express_amount_month - (tmp1.unit_cost_month + (tmp1.ad_cost_month) + tmp1.mon_gmv * ${pay_free_rate_1} + tmp1.mon_order_cnt * ${pay_free_rate_2})) / (tmp1.mon_gmv)) * 100,2),'%'),
+concat(round(abs((tmp1.mon_gmv * (1 - ${refund_order_cnt_rate_send}) + tmp1.mon_bonus * (1 - ${refund_amount_rate_send}) + tmp1.mon_shou_express -tmp1.should_express_amount_month - (tmp1.unit_cost_month + (tmp1.ad_cost_month) + tmp1.mon_gmv * ${pay_free_rate_1_send} + tmp1.mon_order_cnt * ${pay_free_rate_2_send})) / (tmp1.mon_gmv)) * 100,2),'%'),
 '',17
 from tmp.tmp_ad_income_03 tmp1
 union all
@@ -624,19 +629,19 @@ from tmp.tmp_ad_income_03 tmp1
 union all
 select
 '净利润',
-round(tmp1.day_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.day_bonus * (1 - ${refund_amount_rate}) + tmp1.day_shou_express - tmp1.should_express_amount_day - (tmp1.union_cost_day + (tmp1.ad_cost_day) + tmp1.order_amount_day * ${pay_free_rate_1} + tmp1.day_order_cnt * ${pay_free_rate_2}) -
+round(tmp1.day_gmv * (1 - ${refund_order_cnt_rate_send}) + tmp1.day_bonus * (1 - ${refund_amount_rate_send}) + tmp1.day_shou_express - tmp1.should_express_amount_day - (tmp1.union_cost_day + (tmp1.ad_cost_day) + tmp1.order_amount_day * ${pay_free_rate_1_send} + tmp1.day_order_cnt * ${pay_free_rate_2_send}) -
 (tmp1.day_gmv * ${employee_money_send} + tmp1.day_gmv * ${stock_send} + ${house_amount} + ${computer_amount}),2),
 '',
-round(tmp1.mon_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.mon_bonus * (1 - ${refund_amount_rate}) + tmp1.mon_shou_express -tmp1.should_express_amount_month - (tmp1.unit_cost_month + (tmp1.ad_cost_month) + tmp1.mon_gmv * ${pay_free_rate_1} + tmp1.mon_order_cnt * ${pay_free_rate_2}) -
+round(tmp1.mon_gmv * (1 - ${refund_order_cnt_rate_send}) + tmp1.mon_bonus * (1 - ${refund_amount_rate_send}) + tmp1.mon_shou_express -tmp1.should_express_amount_month - (tmp1.unit_cost_month + (tmp1.ad_cost_month) + tmp1.mon_gmv * ${pay_free_rate_1_send} + tmp1.mon_order_cnt * ${pay_free_rate_2_send}) -
 (tmp1.mon_gmv * ${employee_money_send} + tmp1.mon_gmv * ${stock_send} + day('${cur_date}') * ${house_amount} + day('${cur_date}') * ${computer_amount}),2),
 '',23
 from tmp.tmp_ad_income_03 tmp1
 union all
 select
 '净利率',
-concat(round(((tmp1.day_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.day_bonus * (1 - ${refund_amount_rate}) + tmp1.day_shou_express - tmp1.should_express_amount_day - (tmp1.union_cost_day + (tmp1.ad_cost_day) + tmp1.order_amount_day * ${pay_free_rate_1} + tmp1.day_order_cnt * ${pay_free_rate_2}) -
+concat(round(((tmp1.day_gmv * (1 - ${refund_order_cnt_rate_send}) + tmp1.day_bonus * (1 - ${refund_amount_rate_send}) + tmp1.day_shou_express - tmp1.should_express_amount_day - (tmp1.union_cost_day + (tmp1.ad_cost_day) + tmp1.order_amount_day * ${pay_free_rate_1_send} + tmp1.day_order_cnt * ${pay_free_rate_2_send}) -
 (tmp1.day_gmv * ${employee_money_send} + tmp1.day_gmv * ${stock_send} + ${house_amount} + ${computer_amount})) / (tmp1.day_gmv)) * 100,2),'%'),'',
-concat((round((tmp1.mon_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.mon_bonus * (1 - ${refund_amount_rate}) + tmp1.mon_shou_express -tmp1.should_express_amount_month - (tmp1.unit_cost_month + (tmp1.ad_cost_month) + tmp1.mon_gmv * ${pay_free_rate_1} + tmp1.mon_order_cnt * ${pay_free_rate_2}) -
+concat((round((tmp1.mon_gmv * (1 - ${refund_order_cnt_rate_send}) + tmp1.mon_bonus * (1 - ${refund_amount_rate_send}) + tmp1.mon_shou_express -tmp1.should_express_amount_month - (tmp1.unit_cost_month + (tmp1.ad_cost_month) + tmp1.mon_gmv * ${pay_free_rate_1_send} + tmp1.mon_order_cnt * ${pay_free_rate_2_send}) -
 (tmp1.mon_gmv * ${employee_money_send} + tmp1.mon_gmv * ${stock_send} + day('${cur_date}') * ${house_amount} + day('${cur_date}') * ${computer_amount})) / (tmp1.mon_gmv) * 100,2)),'%'),'',24
 from tmp.tmp_ad_income_03 tmp1
 "
@@ -713,3 +718,4 @@ if [ $? -ne 0 ];then
 
 
 fi
+

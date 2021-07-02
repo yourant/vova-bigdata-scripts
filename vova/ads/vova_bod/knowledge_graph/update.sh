@@ -35,21 +35,27 @@ tmp_goods_score as (
 	left join mlb.mlb_vova_rec_b_goods_score_d b on a.goods_id=b.goods_id
 	where b.pt='${cur_date}' and a.group_id=-1 and c.pt='${cur_date}' and c.is_recommend = 1
 	)
+),
+tmp_bod_goods as (
+  select
+  distinct bod_id,goods_id,rank from (
+  select t2.bod_id,t3.target_goods_id as goods_id,dense_rank() over(partition by t2.bod_id order by t3.overall_score desc) as rank from
+      (
+          select tt1.goods_id goods_id
+                  ,concat_ws('|',tt1.v,tt2.v,tt1.second_cat_id) tags
+          from kg_data as tt1, kg_data as tt2
+          where tt1.goods_id = tt2.goods_id and tt1.key != tt2.key and tt1.v < tt2.v
+      ) t1 inner join ads.ads_vova_bod t2 on t1.tags = t2.bod_name
+      inner join tmp_goods_score t3 on t1.goods_id=t3.goods_id
+  ) T where rank<=500
 )
 
 insert overwrite table ads.ads_vova_knowledge_graph_bod_goods_rank_data partition (pt = '${cur_date}')
-select
-/*+ REPARTITION(1) */
-distinct bod_id,goods_id,rank from (
-select t2.bod_id,t3.target_goods_id as goods_id,dense_rank() over(partition by t2.bod_id order by t3.overall_score desc) as rank from
-    (
-        select tt1.goods_id goods_id
-                ,concat_ws('|',tt1.v,tt2.v,tt1.second_cat_id) tags
-        from kg_data as tt1, kg_data as tt2
-        where tt1.goods_id = tt2.goods_id and tt1.key != tt2.key and tt1.v < tt2.v
-    ) t1 inner join ads.ads_vova_bod t2 on t1.tags = t2.bod_name
-    inner join tmp_goods_score t3 on t1.goods_id=t3.goods_id
-) T where rank<=500
+select /*+ REPARTITION(1) */
+a.bod_id,b.goods_id,b.rank from (
+select bod_id from tmp_bod_goods
+group by bod_id having count(goods_id)>=50
+) a left join tmp_bod_goods b on a.bod_id=b.bod_id;
 "
 spark-sql --conf "spark.app.name=ads_vova_knowledge_graph_bod_goods_rank_data" --conf "spark.dynamicAllocation.maxExecutors=200" -e "$sql"
 #如果脚本失败，则报错
