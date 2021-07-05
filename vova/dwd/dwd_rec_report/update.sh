@@ -9,11 +9,7 @@ pre_week=`date -d "7 day ago ${cur_date}" +%Y-%m-%d`
 pre_date=`date -d "1 day ago ${cur_date}" +%Y-%m-%d`
 ###逻辑sql
 sql="
-alter table dwd.dwd_vova_rec_report_clk_expre drop if exists partition(pt = '$pre_week');
-alter table dwd.dwd_vova_rec_report_cart_cause drop if exists partition(pt = '$pre_week');
-alter table dwd.dwd_vova_rec_report_order_cause drop if exists partition(pt = '$pre_week');
-alter table dwd.dwd_vova_rec_report_pay_cause drop if exists partition(pt = '$pre_week');
-insert overwrite table dwd.dwd_vova_rec_report_clk_expre PARTITION (pt = '$cur_date')
+insert overwrite table dwd.dwd_vova_rec_report_clk_expre PARTITION (pt = '${cur_date}')
 select
 /*+ REPARTITION(40) */
 datasource,
@@ -85,7 +81,7 @@ from (
          from dwd.dwd_vova_log_goods_click gc
                   LEFT JOIN dim.dim_vova_goods dg ON gc.virtual_goods_id = dg.virtual_goods_id
                   left join dim.dim_vova_devices d on d.device_id = gc.device_id and d.datasource = gc.datasource
-         where pt = '$cur_date'
+         where pt = '${cur_date}'
            and os_type in ('ios', 'android')
          union all
          select
@@ -143,7 +139,7 @@ from (
          from dwd.dwd_vova_log_goods_impression gi
                   LEFT JOIN dim.dim_vova_goods dg ON gi.virtual_goods_id = dg.virtual_goods_id
                   left join dim.dim_vova_devices d on d.device_id = gi.device_id and d.datasource = gi.datasource
-         where pt = '$cur_date'
+         where pt = '${cur_date}'
            and os_type in ('ios', 'android')
      ) t
 group by datasource,
@@ -164,7 +160,7 @@ brand_status
 
 
 
-insert overwrite table dwd.dwd_vova_rec_report_cart_cause  PARTITION (pt = '$cur_date')
+insert overwrite table dwd.dwd_vova_rec_report_cart_cause  PARTITION (pt = '${cur_date}')
 select
 /*+ REPARTITION(1) */
 nvl(c.datasource,'NA') datasource,
@@ -206,11 +202,11 @@ if(get_rp_name(pre_recall_pool) like '%47%','Y','N') brand_status
 from dwd.dwd_vova_fact_cart_cause_v2 c
 LEFT JOIN dim.dim_vova_goods dg ON c.virtual_goods_id = dg.virtual_goods_id
 left join dim.dim_vova_devices d on d.device_id = c.device_id and d.datasource=c.datasource
-where pt='$cur_date' and pre_page_code is not null;
+where pt='${cur_date}' and pre_page_code is not null;
 
 
 
-insert overwrite table dwd.dwd_vova_rec_report_order_cause  PARTITION (pt = '$cur_date')
+insert overwrite table dwd.dwd_vova_rec_report_order_cause  PARTITION (pt = '${cur_date}')
 select
 /*+ REPARTITION(1) */
 nvl(og.datasource,'NA') datasource,
@@ -255,13 +251,13 @@ from dim.dim_vova_order_goods og
 LEFT JOIN dim.dim_vova_goods dg ON og.goods_id = dg.goods_id
 left join dwd.dwd_vova_fact_order_cause_v2 oc on og.order_goods_id = oc.order_goods_id
 left join dim.dim_vova_devices d on d.device_id = og.device_id and d.datasource=og.datasource
-where date(og.order_time) ='$cur_date' and oc.pt='$cur_date'
+where date(og.order_time) ='${cur_date}' and oc.pt='${cur_date}'
 and og.parent_rec_id =0
 --and (og.from_domain like '%api.vova%' or og.from_domain like '%api.airyclub%')
 and oc.pre_page_code is not null;
 
 
-insert overwrite table dwd.dwd_vova_rec_report_pay_cause  PARTITION (pt = '$cur_date')
+insert overwrite table dwd.dwd_vova_rec_report_pay_cause  PARTITION (pt = '${cur_date}')
 select
 /*+ REPARTITION(1) */
 nvl(og.datasource,'NA') datasource,
@@ -307,7 +303,7 @@ from dwd.dwd_vova_fact_pay og
 LEFT JOIN dim.dim_vova_goods dg ON og.goods_id = dg.goods_id
 left join dwd.dwd_vova_fact_order_cause_v2 oc on og.order_goods_id = oc.order_goods_id
 left join dim.dim_vova_devices d on d.device_id = og.device_id and d.datasource=og.datasource
-where date(og.pay_time) ='$cur_date' and (oc.pt>='$pre_week' and oc.pt<='$cur_date')
+where date(og.pay_time) ='${cur_date}' and (oc.pt>='${pre_week}' and oc.pt<='${cur_date}')
 --and (og.from_domain like '%api.vova%' or og.from_domain like '%api.airyclub%')
 and oc.pre_page_code is not null;
 

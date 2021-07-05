@@ -90,7 +90,8 @@ sqoop export \
 --hcatalog-partition-keys pt \
 --hcatalog-partition-values ${pt} \
 --fields-terminated-by '\001' \
---columns "goods_id,min_price_goods_id,strategy,group_number,min_show_price,avg_sku_price"
+--columns "goods_id,min_price_goods_id,strategy,group_number,min_show_price,avg_sku_price" \
+--verbose
 
 if [ $? -ne 0 ];then
   echo "ads_min_price_goods_h sqoop error"
