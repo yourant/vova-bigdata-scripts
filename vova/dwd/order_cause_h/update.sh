@@ -8,7 +8,7 @@ fi
 pre_month=`date -d "2 month ago ${pt}" +%Y-%m-%d`
 pre_pt=`date -d "1 day ago ${pt}" +%Y-%m-%d`
 
-echo "$pre_month"
+echo "${pre_month}"
 
 sql="
 insert overwrite table  tmp.tmp_vova_fact_order_cause_order_goods_h
@@ -33,7 +33,7 @@ left join ods_vova_vts.ods_vova_order_info_h oi on oi.order_id = og.order_id
 left join ods_vova_vts.ods_vova_virtual_goods_h g on g.goods_id = og.goods_id
 left join ods_vova_vts.ods_vova_order_relation_h ore on ore.order_id = oi.order_id
 where oi.email not regexp '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'
-and to_date(oi.order_time) = '$pt';
+and to_date(oi.order_time) = '${pt}';
 
 insert overwrite table  tmp.tmp_fact_order_cause_h_glk_cause_h
 select /*+ REPARTITION(10) */
@@ -59,7 +59,7 @@ from (select datasource,
              buyer_id,
              order_goods_id
       from tmp.tmp_vova_fact_order_cause_order_goods_h
-      where date(order_time) = '$pt' and platform in('ios','android')
+      where date(order_time) = '${pt}' and platform in('ios','android')
      ) t1
          left join
      (
@@ -109,8 +109,8 @@ from (select datasource,
                          test_info,
                          recall_pool
                   from dwd.dwd_vova_log_goods_click_arc
-                  where pt >= '$pre_pt'
-                    and pt <= '$pt'
+                  where pt >= '${pre_pt}'
+                    and pt <= '${pt}'
                     and os_type in('ios','android')
                     and page_code not in ('my_order','my_favorites','recently_View','recently_view')
                   union all
@@ -128,8 +128,8 @@ from (select datasource,
                          test_info,
                          recall_pool
                   from dwd.dwd_vova_log_click_arc
-                  where pt >= '$pre_pt'
-                    and pt <= '$pt'
+                  where pt >= '${pre_pt}'
+                    and pt <= '${pt}'
                     and os_type in('ios','android')
                     and page_code not in ('my_order','my_favorites','recently_View','recently_view')
                     and event_type='goods'
@@ -148,8 +148,8 @@ from (select datasource,
                          test_info,
                          recall_pool
                   from dwd.dwd_vova_log_goods_click
-                  where pt >= '$pre_month'
-                    and pt < '$pre_pt'
+                  where pt >= '${pre_month}'
+                    and pt < '${pre_pt}'
                     and os_type in('ios','android')
                     and page_code not in ('my_order','my_favorites','recently_View','recently_view')
                  ) t
@@ -229,7 +229,7 @@ from (select datasource,
                          test_info,
                          recall_pool
                   from dwd.dwd_vova_log_goods_impression_arc
-                  where pt = '$pt'
+                  where pt = '${pt}'
                    and os_type in('ios','android')
                    and page_code not in ('my_order','my_favorites','recently_View','recently_view')
                    union all
@@ -247,7 +247,7 @@ from (select datasource,
                          test_info,
                          recall_pool
                   from dwd.dwd_vova_log_impressions_arc
-                  where pt = '$pt'
+                  where pt = '${pt}'
                    and os_type in('ios','android')
                    and page_code not in ('my_order','my_favorites','recently_View','recently_view')
                    and event_type='goods'
@@ -257,7 +257,7 @@ from (select datasource,
      ) t2
      on t1.device_id = t2.device_id and t1.virtual_goods_id = t2.virtual_goods_id and t1.datasource = t2.datasource;
 
-insert overwrite table dwd.dwd_vova_fact_order_cause_h PARTITION (pt = '$pt')
+insert overwrite table dwd.dwd_vova_fact_order_cause_h PARTITION (pt = '${pt}')
 select /*+ REPARTITION(1) */
        datasource,
        goods_id,

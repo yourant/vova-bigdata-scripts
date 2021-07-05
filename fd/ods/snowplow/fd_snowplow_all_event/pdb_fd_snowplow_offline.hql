@@ -1,40 +1,22 @@
-create external table if not exists pdb.pdb_fd_snowplow_offline
-(
-    common_struct        struct<app_id :STRING, platform :STRING, project :STRING, platform_type :STRING, collector_ts
-                                :STRING, dvce_created_ts :STRING, dvce_sent_ts :STRING, etl_ts :STRING, derived_ts
-                                :STRING, os_tz
-                                :STRING, event_fingerprint :STRING, name_tracker :STRING, user_id :STRING, domain_userid
-                                :STRING, user_ipaddress :STRING, session_idx :BIGINT, session_id :STRING, useragent
-                                :STRING, dvce_type :STRING, dvce_ismobile :BOOLEAN, os_name :STRING, geo_country
-                                :STRING, geo_region
-                                :STRING, geo_city :STRING, geo_region_name :STRING, geo_timezone :STRING, raw_event_name
-                                :STRING, event_name :STRING, language :STRING, country :STRING, currency :STRING,
-                                page_code
-                                :STRING, user_unique_id :STRING, abtest :STRING, page_url :STRING, referrer_url :STRING,
-                                mkt_medium :STRING, mkt_source :STRING, mkt_term :STRING, mkt_content :STRING,
-                                mkt_campaign
-                                :STRING, mkt_clickid :STRING, mkt_network :STRING, user_fingerprint :STRING, br_name
-                                :STRING, br_lang :STRING, app_version :STRING, device_model :STRING, android_id :STRING,
-                                imei :STRING, idfa :STRING, idfv :STRING, apple_id_fa :STRING, apple_id_fv :STRING,
-                                os_type :STRING, os_version :STRING, network_type :STRING, referrer_page_code :String,url_virtual_goods_id
-                                :bigint,url_route_sn :bigint>,
-    goods_event_struct   array<struct<list_uri : String, list_type : String, virtual_goods_id : String, picture
-                                      : String, page_position : bigint, absolute_position : bigint, page_size : bigint,
-                                      page_no
-                                      : bigint, element_name : String, extra : String>>,
-    element_event_struct array<struct<list_uri : String, list_type : String, element_name : String, element_url
-                                      : String, element_content : String, element_id : String, element_type : String,
-                                      picture : String, absolute_position : BIGINT, extra : String>>,
-    data_event_struct    struct<element_name : String, extra : String>,
-    ecommerce_action     struct<id : String, affiliation : String, option : String, list : String, revenue : Double,
-                                step : BIGINT>,
-    ecommerce_product    array<struct<id : String, name : String, brand : String, category : String, coupon : String,
-                                      position : BIGINT, price : Double, quantity : BIGINT, variant : String>>
-) PARTITIONED BY (
-    `pt` string,
-    `hour` string)
-    ROW FORMAT SERDE 'org.apache.hive.hcatalog.data.JsonSerDe'
-    stored as textfile
-    location 's3://bigdata-offline/warehouse/pdb/fd/snowplow/snowplow_offline';
+CREATE EXTERNAL TABLE if not exists `pdb.pdb_fd_snowplow_offline`(
+  `common_struct` struct<app_id:string,platform:string,project:string,platform_type:string,collector_ts:string,dvce_created_ts:string,dvce_sent_ts:string,etl_ts:string,derived_ts:string,os_tz:string,event_fingerprint:string,name_tracker:string,user_id:string,domain_userid:string,user_ipaddress:string,session_idx:bigint,session_id:string,useragent:string,dvce_type:string,dvce_ismobile:boolean,os_name:string,geo_country:string,geo_region:string,geo_city:string,geo_region_name:string,geo_timezone:string,raw_event_name:string,event_name:string,language:string,country:string,currency:string,page_code:string,user_unique_id:string,abtest:string,page_url:string,referrer_url:string,mkt_medium:string,mkt_source:string,mkt_term:string,mkt_content:string,mkt_campaign:string,mkt_clickid:string,mkt_network:string,user_fingerprint:string,br_name:string,br_lang:string,app_version:string,device_model:string,android_id:string,imei:string,idfa:string,idfv:string,apple_id_fa:string,apple_id_fv:string,os_type:string,os_version:string,network_type:string,referrer_page_code:string,url_virtual_goods_id:bigint,url_route_sn:bigint> COMMENT 'from deserializer',
+  `goods_event_struct` array<struct<list_uri:string,list_type:string,virtual_goods_id:string,picture:string,page_position:bigint,absolute_position:bigint,page_size:bigint,page_no:bigint,element_name:string,picture_group: String,picture_batch: String,extra:string>> COMMENT 'from deserializer',
+  `element_event_struct` array<struct<list_uri:string,list_type:string,types: String,element_name:string,element_url:string,element_content:string,element_id:string,element_type:string,picture:string,absolute_position:bigint,element_batch: String,element_tag: String,extra:string>> COMMENT 'from deserializer',
+  `data_event_struct` struct<element_name:string,extra:string> COMMENT 'from deserializer',
+  `ecommerce_action` struct<id:string,affiliation:string,option:string,list:string,revenue:double,step:bigint> COMMENT 'from deserializer',
+  `ecommerce_product` array<struct<id:string,name:string,brand:string,category:string,coupon:string,position:bigint,price:double,quantity:bigint,variant:string>> COMMENT 'from deserializer')
+PARTITIONED BY (
+  `pt` string,
+  `hour` string)
+ROW FORMAT SERDE
+  'org.apache.hive.hcatalog.data.JsonSerDe'
+STORED AS INPUTFORMAT
+  'org.apache.hadoop.mapred.TextInputFormat'
+OUTPUTFORMAT
+  'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
+LOCATION
+  's3://bigdata-offline/warehouse/pdb/fd/snowplow/snowplow_batch'
+TBLPROPERTIES (
+  'transient_lastDdlTime'='1606900800')
 
 MSCK REPAIR TABLE pdb.pdb_fd_snowplow_offline;
