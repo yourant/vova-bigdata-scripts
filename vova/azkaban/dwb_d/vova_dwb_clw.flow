@@ -38,6 +38,8 @@ nodes:
       - dwb_goods_cat_web_guv
       - dwb_take_photo_for_buy
       - dwb_vova_activity_biz_behave
+      - dwb_vova_nps_comment
+      - dwb_vova_nps_comment_detail
 
   - name: start_flag
     type: command
@@ -502,6 +504,15 @@ nodes:
     dependsOn:
       - start_flag
 
+  - name: judge_ads_vova_nps_email
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_nps_email
+      retries: 30
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
 
 
   - name: dwb_vova_brand
@@ -911,3 +922,23 @@ nodes:
       - judge_ads_vova_activity_no_brand_goods_pool
       - judge_ads_vova_activity_green_health
       - judge_ads_vova_activity_low_price_goods
+
+  - name: dwb_vova_nps_comment
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/nps_comment/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_nps_email
+      - judge_dim_vova_buyers
+      - judge_dwd_vova_log_goods_impression
+
+  - name: dwb_vova_nps_comment_detail
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/nps_comment/update_detail.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_vova_nps_email
