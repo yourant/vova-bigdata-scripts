@@ -36,7 +36,8 @@ WHERE su.rank = 1
 
 drop table if exists tmp.tmp_vova_dwd_web_first_url_data;
 create table tmp.tmp_vova_dwd_web_first_url_data as
-SELECT datasource,
+SELECT /*+ REPARTITION(1) */
+       datasource,
        domain_userid,
        first_page_url,
        first_referrer,
@@ -118,7 +119,8 @@ FROM (
 ;
 
 INSERT OVERWRITE TABLE tmp.tmp_vova_web_main_process_register PARTITION (pt = '${cur_date}')
-SELECT log.datasource,
+SELECT /*+ REPARTITION(1) */
+       log.datasource,
        log.domain_userid,
        min(dvce_created_tstamp) AS min_create_time
 FROM dwd.dwd_vova_log_data log
@@ -131,7 +133,8 @@ GROUP BY log.pt, log.datasource, log.domain_userid
 ;
 
 INSERT OVERWRITE TABLE dim.dim_vova_web_domain_userid
-SELECT t1.datasource,
+SELECT /*+ REPARTITION(10) */
+       t1.datasource,
        t1.domain_userid,
        t2.buyer_id,
        t1.activate_time,

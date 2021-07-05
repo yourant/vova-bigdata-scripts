@@ -71,8 +71,8 @@ with tmp_goods_portrait as
   tmp_expre.expre_uv_1m,
   ord_uv_1w  as pay_uv_1w,
   ord_uv_15d as pay_uv_15d,
-  ord_uv_1m  as pay_uv_1m
-
+  ord_uv_1m  as pay_uv_1m,
+  dg.goods_thumb,dg.first_on_time
 FROM
 dim.dim_vova_goods dg
 left  JOIN
@@ -526,7 +526,7 @@ select
   a.goods_name,
   a.goods_sn,
   a.is_on_sale,
-  if(e.goods_id is null and a.is_on_sale = 1,1,0) is_recommend,
+  if(mct_id = 1 and to_date(a.first_on_time) > '2021-07-01',0,if(e.goods_id is null and a.is_on_sale = 1,1,0)) is_recommend,
   t5.avg_inter_days_3_6w avg_inter_days_3_6w, -- 平均上网天数
   third_cat_id,
   fourth_cat_id,
@@ -537,7 +537,8 @@ select
   pay_uv_15d  , -- 近15天支付UV
   pay_uv_1m   , -- 近一月支付UV
   entry_warehouse_72h_order_goods, -- 72小时入库订单数
-  collection_order_goods -- 商品集运总订单数
+  collection_order_goods, -- 商品集运总订单数
+  a.goods_thumb --商品主图
 from tmp_goods_portrait a
 left join tmp_goods_painting_pt b
   on a.goods_id = b.goods_id

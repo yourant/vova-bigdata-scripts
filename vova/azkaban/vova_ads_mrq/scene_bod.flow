@@ -29,7 +29,7 @@ nodes:
   - name: ads_vova_scene_bod_goods_rank_data
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/scene_bod/update.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/vova_bod/scene_bod/update.sh
       retries: 5
       retry.backoff: 300000
     dependsOn:
@@ -38,7 +38,7 @@ nodes:
   - name: ads_vova_scene_bod_goods_rank_data_export
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/vova/ads/scene_bod/sqoop_export.sh
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/vova_bod/scene_bod/sqoop_export.sh
       retries: 5
       retry.backoff: 300000
     dependsOn:

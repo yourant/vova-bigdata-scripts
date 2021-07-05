@@ -15,7 +15,7 @@ job_name="ads_vova_red_packet_gsn_goods_req8525_chenkai_${cur_date}"
 #
 sql="
 insert overwrite table ads.ads_vova_red_packet_gsn_goods partition(pt='${cur_date}')
-select
+select /*+ REPARTITION(1) */
   dg.goods_id,
   dg.goods_sn
 from

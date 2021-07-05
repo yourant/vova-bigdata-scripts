@@ -2,6 +2,17 @@ order_goods_sn  shipping_tracking_number	goal_warehouse	tracking_number	pay_time
 
 spark-sql --conf "spark.app.name=ethan.zheng" -e "
 select
+'order_goods_sn',
+'shipping_tracking_number',
+'goal_warehouse',
+'tracking_number',
+'pay_time',
+'real_pay',
+'sub_fee'
+
+union all
+
+select
   dog.order_goods_sn,
   ost.shipping_tracking_number,
   case cog.goal_warehouse

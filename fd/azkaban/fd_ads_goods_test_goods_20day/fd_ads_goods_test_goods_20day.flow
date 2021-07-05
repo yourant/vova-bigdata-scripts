@@ -1,0 +1,44 @@
+---
+config:
+  failure.emails: longgu@vova.com.hk
+  retries: 10
+  retry.backoff: 300000
+
+
+nodes:
+  - name: fd_hour_job_start
+    type: noop
+
+  - name: ods_vb_goods_test_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vb --etl_type=INCTIME --inc_column=last_update_time --table_name=goods_test_goods  --partition_num=10 --period_type=hour
+    dependsOn:
+      - fd_hour_job_start
+
+
+  - name: ads_fd_test_goods_temp
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_test_goods_target_20day/ads_fd_test_goods_temp_run.sh
+    dependsOn:
+      - ods_vb_goods_test_goods
+
+  - name: ads_fd_goods_test_goods_target_20day
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_test_goods_target_20day/ads_fd_goods_test_goods_target_20day_insert_run.sh
+    dependsOn:
+      - ads_fd_test_goods_temp
+
+  - name: ads_fd_goods_test_goods_target_20day_sqoop
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_test_goods_target_20day/sqoop.sh
+    dependsOn:
+      - ads_fd_goods_test_goods_target_20day
+
+  - name: fd_hour_job_end
+    type: noop
+    dependsOn:
+      - ads_fd_goods_test_goods_target_20day_sqoop

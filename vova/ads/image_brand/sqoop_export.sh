@@ -63,10 +63,29 @@ select /*+ REPARTITION(1) */
 distinct
   goods_id ,
   brand_id ,
-  is_update
+  0 is_update
 from
-  ads.ads_vova_image_brand_d
-where pt='${pre_date}' and brand_id != -1
+(
+  select
+    rgps.goods_id ,
+    t1.brand_id ,
+    row_number() over(partition by rgps.goods_id order by t1.brand_id desc) row
+  from
+  (
+    select
+      distinct rgps.group_id, aibd.brand_id
+    from
+      ads.ads_vova_image_brand_d aibd
+    left join
+      ods_vova_vbts.ods_vova_rec_gid_pic_similar rgps
+    on aibd.goods_id = rgps.goods_id
+    where pt ='${pre_date}' and brand_id != -1
+  ) t1
+  left join
+    ods_vova_vbts.ods_vova_rec_gid_pic_similar rgps
+  on t1.group_id = rgps.group_id
+)
+where row = 1
 ;
 "
 
