@@ -7,7 +7,7 @@ cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 pre_month=`date -d "1 month ago ${cur_date}" +%Y-%m-%d`
 
-echo "$pre_month"
+echo "${pre_month}"
 
 sql="
 drop table if exists tmp.tmp_dwd_vova_web_fact_order_cause_v2_glk_cause;
@@ -38,7 +38,7 @@ from (
               dog.order_goods_id
       from dim.dim_vova_order_goods dog
                inner join dim.dim_vova_goods dg on dg.goods_id = dog.goods_id
-      where date(dog.order_time) = '$cur_date'
+      where date(dog.order_time) = '${cur_date}'
         AND dog.datasource = 'vova'
         AND dog.from_domain not like '%api%'
      ) t1
@@ -77,8 +77,8 @@ from (
                                  over(partition by log.datasource,domain_userid,virtual_goods_id
                                  order by dvce_created_tstamp desc) as row_num
                   from dwd.dwd_vova_log_goods_click log
-                  where log.pt >= '$pre_month'
-                    and log.pt <= '$cur_date'
+                  where log.pt >= '${pre_month}'
+                    and log.pt <= '${cur_date}'
                     and log.dp = 'vova'
                     and log.datasource = 'vova'
                     and log.platform in('pc','web')
@@ -148,7 +148,7 @@ from (
                          row_number() over(partition by log.datasource,domain_userid,virtual_goods_id
                                       order by dvce_created_tstamp desc) as row_num
                   from dwd.dwd_vova_log_goods_impression log
-                  where log.pt = '$cur_date'
+                  where log.pt = '${cur_date}'
                     and log.platform in('pc','web')
                     and log.dp = 'vova'
                     and log.datasource = 'vova'
@@ -156,7 +156,7 @@ from (
          where t0.row_num = 1
      ) t2
      on t1.domain_userid = t2.domain_userid and t1.virtual_goods_id = t2.virtual_goods_id AND t1.datasource = t2.datasource;
-insert overwrite table dwd.dwd_vova_web_fact_order_cause PARTITION (pt = '$cur_date')
+insert overwrite table dwd.dwd_vova_web_fact_order_cause PARTITION (pt = '${cur_date}')
 select /*+ REPARTITION(1) */
        datasource,
        goods_id,

@@ -7,7 +7,7 @@ cur_date=`date -d "-1 day" +%Y-%m-%d`
 fi
 pre_month=`date -d "2 month ago ${cur_date}" +%Y-%m-%d`
 
-echo "$pre_month"
+echo "${pre_month}"
 
 sql="
 drop table if exists tmp.tmp_vova_fact_order_cause_v2_glk_cause;
@@ -39,7 +39,7 @@ from (select og.datasource,
              og.order_goods_id
       from dim.dim_vova_order_goods og
                left join dim.dim_vova_goods g on g.goods_id = og.goods_id
-      where date(og.order_time) = '$cur_date' and og.platform in('ios','android')
+      where date(og.order_time) = '${cur_date}' and og.platform in('ios','android')
      ) t1
          left join
      (
@@ -80,8 +80,8 @@ from (select og.datasource,
                                  over(partition by datasource,device_id,virtual_goods_id
                                  order by dvce_created_tstamp desc) as row_num
                   from dwd.dwd_vova_log_goods_click
-                  where pt >= '$pre_month'
-                    and pt <= '$cur_date'
+                  where pt >= '${pre_month}'
+                    and pt <= '${cur_date}'
                     and os_type in('ios','android')
                     and page_code not in ('recently_View','recently_view')
                     and !(page_code ='my_order' and list_type ='/order_detail') and !(page_code ='my_favorites' and list_type ='/favorites')
@@ -156,7 +156,7 @@ from (select datasource,
                          row_number() over(partition by datasource,device_id,virtual_goods_id
                                       order by dvce_created_tstamp desc) as row_num
                   from dwd.dwd_vova_log_goods_impression
-                  where pt = '$cur_date'
+                  where pt = '${cur_date}'
                    and os_type in('ios','android')
                     and page_code not in ('recently_View','recently_view')
                     and !(page_code ='my_order' and list_type ='/order_detail') and !(page_code ='my_favorites' and list_type ='/favorites')
@@ -164,7 +164,7 @@ from (select datasource,
          where t0.row_num = 1
      ) t2
      on t1.device_id = t2.device_id and t1.virtual_goods_id = t2.virtual_goods_id and t1.datasource = t2.datasource;
-insert overwrite table dwd.dwd_vova_fact_order_cause_v2 PARTITION (pt = '$cur_date')
+insert overwrite table dwd.dwd_vova_fact_order_cause_v2 PARTITION (pt = '${cur_date}')
 select /*+ REPARTITION(1) */
        datasource,
        goods_id,

@@ -9,9 +9,9 @@ fi
 #依赖的表，ods_vova_vts.ods_vova_product_upload_excel,ods_vova_vts.ods_vova_merchant_login_log
 #增量历史数据
 sql="
-ALTER TABLE dwd.dwd_vova_fact_mbrmct_mct_cd DROP IF EXISTS PARTITION (pt='$pre_date');
+ALTER TABLE dwd.dwd_vova_fact_mbrmct_mct_cd DROP IF EXISTS PARTITION (pt='${pre_date}');
 --md5
-insert into table dwd.dwd_vova_fact_mbrmct_mct_cd partition(pt='$pre_date')
+insert into table dwd.dwd_vova_fact_mbrmct_mct_cd partition(pt='${pre_date}')
 select /*+ REPARTITION(100) */ t1.datasource,t1.mct_id,t1.id,t1.start_dt,t1.end_dt,0,t2.cnt_td,-1,t1.act_type from
 (
 select distinct
@@ -34,8 +34,8 @@ group by merchant_id,checksum
 ) t2
 on t1.mct_id=t2.mct_id and t1.id=t2.id ;
 --商户登录ip
-insert into table dwd.dwd_vova_fact_mbrmct_mct_cd partition(pt='$pre_date')
-select t1.datasource,t1.mct_id,t1.id,t1.start_dt,t1.end_dt,0,t2.cnt_td,-1,t1.act_type from
+insert into table dwd.dwd_vova_fact_mbrmct_mct_cd partition(pt='${pre_date}')
+select /*+ REPARTITION(100) */ t1.datasource,t1.mct_id,t1.id,t1.start_dt,t1.end_dt,0,t2.cnt_td,-1,t1.act_type from
 (
 select distinct
 'vova' datasource,

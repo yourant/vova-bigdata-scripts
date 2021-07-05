@@ -461,6 +461,7 @@ nodes:
           - vova_vteos_category_attributes
           - vova_vteos_goods_attributes
           - vova_backend_test_goods_behave
+          - vova_goods_intercept_keywords
 
 #商品域数据抽取
       - name: warehouse_shipping_order
@@ -744,6 +745,15 @@ nodes:
         dependsOn:
           - themis_goods_start
 
+      - name: vova_goods_intercept_keywords
+        type: command
+        config:
+          command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=goods_intercept_keywords  --etl_type=INIT --period_type=day --partition_num=1
+          retries: 4
+          retry.backoff: 600000
+        dependsOn:
+          - themis_goods_start
+
 # flow: 物流域数据抽取
   - name: themis_lgtcs_flow
     type: flow
@@ -841,6 +851,7 @@ nodes:
           - vova_bonus_card
           - vova_risk_merchant_relation_extra
           - vova_merchant_extra
+          - vova_vvqueue_user_nps
 
 #会员和店铺域数据抽取
       - name: vova_merchant_register_coupon
@@ -876,6 +887,15 @@ nodes:
           retries: 4
           retry.backoff: 600000
           command: sh /mnt/vova-bigdata-scripts/common/sqoop_import_themis_2.sh --db_code=vts --table_name=merchant --etl_type=ALL  --period_type=day --partition_num=3
+        dependsOn:
+          - themis_mbrmct_start
+
+      - name: vova_vvqueue_user_nps
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/vova/ods/vvqueue_user_nps/update.sh
         dependsOn:
           - themis_mbrmct_start
 

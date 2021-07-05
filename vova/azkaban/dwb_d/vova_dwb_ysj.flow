@@ -12,6 +12,8 @@ nodes:
     dependsOn:
       - dwb_vova_goods_current_limiting_email
       - dwb_vova_query_translation_quality_control_email
+      - dwb_vova_refund_monitor_v2
+      - dwb_vova_refund_monitor_system
 
 
   - name: start_flag
@@ -92,6 +94,23 @@ nodes:
     dependsOn:
       - start_flag
 
+
+  - name: judge_ods_vova_refund_audit_txn
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_refund_audit_txn
+    dependsOn:
+      - start_flag
+
+  - name: judge_vova_refund_reason
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_refund_reason
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
   - name: dwb_vova_goods_current_limiting
     type: command
     config:
@@ -135,3 +154,25 @@ nodes:
     dependsOn:
     - dwb_vova_query_translation_quality_control
 
+  - name: dwb_vova_refund_monitor_v2
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/refund_monitor/refund_monitor_v2/update.sh
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+    - judge_dim_vova_order_goods
+    - judge_dim_vova_goods
+    - judge_dwd_vova_fact_refund
+    - judge_ods_vova_refund_audit_txn
+
+  - name: dwb_vova_refund_monitor_system
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/dwb/refund_monitor/refund_monitor_v2/refund_monitor_system.sh
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+    - judge_dim_vova_order_goods
+    - judge_dwd_vova_fact_refund
+    - judge_vova_refund_reason

@@ -25,7 +25,8 @@ where su.pt = '${cur_date}'
 group by lower(su.datasource), su.device_id, su.app_version, su.os_type, su.buyer_id, su.language, su.country, su.geo_country;
 
 insert overwrite table tmp.tmp_vova_css_start_up
-select lower(su.datasource) AS datasource,
+select /*+ REPARTITION(10) */
+       lower(su.datasource) AS datasource,
        su.device_id,
        su.buyer_id,
        su.start_up_date,
