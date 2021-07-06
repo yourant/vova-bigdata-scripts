@@ -84,6 +84,10 @@ from
   left join
     ods_vova_vbts.ods_vova_rec_gid_pic_similar rgps
   on t1.group_id = rgps.group_id
+  left join
+    dim.dim_vova_goods dg
+  on rgps.goods_id = dg.goods_id
+  where dg.brand_id = 0 and dg.is_on_sale = 1
 )
 where row = 1 and goods_id > 0 and brand_id > 0
 ;
