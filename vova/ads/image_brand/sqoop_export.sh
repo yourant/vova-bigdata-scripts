@@ -85,7 +85,7 @@ from
     ods_vova_vbts.ods_vova_rec_gid_pic_similar rgps
   on t1.group_id = rgps.group_id
 )
-where row = 1
+where row = 1 and goods_id > 0 and brand_id > 0
 ;
 "
 
