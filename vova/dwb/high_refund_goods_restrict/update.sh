@@ -16,7 +16,7 @@ job_name="dwb_vova_high_refund_goods_restrict_monitor_req5742_chenkai_${cur_date
 sql="
 -- 当天新增屏蔽商品当天对应的 goods_sn
 insert overwrite table dwb.dwb_vova_goods_gsn partition(pt='${cur_date}')
-select
+select /*+ REPARTITION(1) */
   t1.goods_id,
   dg.goods_sn,
   dg.is_on_sale

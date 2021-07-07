@@ -18,7 +18,7 @@ job_name="dwb_vova_search_no_result_req6212_chenkai_${cur_date}"
 ###逻辑sql
 sql="
 create table if not exists tmp.tmp_search_${table_suffix} as
-  select
+  select /*+ REPARTITION(1) */
     datasource,
     os_type platform,
     lower(trim(regexp_replace(element_id,'\\\\\\\',''))) search_word,
@@ -48,7 +48,7 @@ create table if not exists tmp.tmp_search_${table_suffix} as
 ;
 
 create table if not exists tmp.tmp_brand_word_${table_suffix} as
-  select
+  select /*+ REPARTITION(1) */
     distinct lower(trim(brand_name)) brand_name
   from
   (

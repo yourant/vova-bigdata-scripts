@@ -19,7 +19,7 @@ job_name="dwb_vova_taiwan_first_order_buyer_req4892_chenkai_${cur_date}"
 sql="
 -- 当日用户中未签收过的用户 drop table tmp.tmp_today_order_buyer_${table_suffix}
 create table if not EXISTS tmp.tmp_today_order_buyer_${table_suffix} as
- select
+ select /*+ REPARTITION(1) */
  tmp_flsv.pt pt, -- 日期
  tmp_flsv.os_type platform, -- 设备平台
  tmp_flsv.country region_code, -- 国家
@@ -89,7 +89,7 @@ create table if not EXISTS tmp.tmp_today_order_buyer_${table_suffix} as
 
 -- 当天已支付的活动订单
 create table if not EXISTS tmp.tmp_pay_order_detail_${table_suffix} as
-select
+select /*+ REPARTITION(1) */
 pay_dog.order_goods_id
 from
 (select * -- 当天正在进行的首单
@@ -109,7 +109,7 @@ where dog2.order_goods_id is null
 
 -- tmp 当天已退款的活动订单
 create table if not EXISTS tmp.tmp_refund_order_detail_${table_suffix} as
- select
+ select /*+ REPARTITION(1) */
  refund_dog.order_goods_id
  from
  (select order_goods_id
@@ -131,7 +131,7 @@ create table if not EXISTS tmp.tmp_refund_order_detail_${table_suffix} as
 
 -- 当天签收的活动订单
 create table if not EXISTS tmp.tmp_delivered_order_detail_${table_suffix} as
- select
+ select /*+ REPARTITION(1) */
  delivered_dog.order_goods_id
  from
  (select order_goods_id  -- 当天签收的订单

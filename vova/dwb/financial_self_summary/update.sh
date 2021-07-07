@@ -164,9 +164,9 @@ from
          sum(t2.confirm_mct_shipping_fee) confirm_mct_shipping_fee,
          sum(t2.refund_mct_shipping_fee) refund_mct_shipping_fee,
          sum(t2.mct_cost) mct_cost,
-         sum(t2.last_waybill_fee) + sum(if(t2.order_goods_shipping_status>=8, 1, 0))*2.3/${exchange_rate_202007} + ${storage_fee} carrier_cost,
+         sum(t2.last_waybill_fee) + sum(if(t2.order_goods_shipping_status>=8, 1, 0))*2.3/ ${exchange_rate_202007} + ${storage_fee} carrier_cost,
          sum(t2.last_waybill_fee) last_waybill_fee,
-         sum(if(t2.order_goods_shipping_status>=8, 1, 0))*2.3/${exchange_rate_202007} warehouse_operate_fee,
+         sum(if(t2.order_goods_shipping_status>=8, 1, 0))*2.3/ ${exchange_rate_202007} warehouse_operate_fee,
          ${storage_fee} storage_fee,
          sum(t2.inventory_loss) inventory_loss,
          (sum(t2.confirm_mct_amount) + sum(t2.confirm_mct_shipping_fee)) * 0.145*0.8 platform_service_fee
@@ -188,11 +188,11 @@ from
                  if(tfsf.sku_order_status in (1,2) and fspog.order_goods_shipping_status >=8, nvl(tfsf.shipping_price, 0), 0) confirm_mct_shipping_fee, -- 商家结算价格中的运费价格（发货）
                  if(tfsf.sku_order_status = 2 and fspog.order_goods_shipping_status >=8, nvl(tfsf.shipping_price, 0), 0) refund_mct_shipping_fee, -- 商家结算价格中的运费价格（退货）
                  tfsf.purchase_total_amount purchase_total_amount, -- 商品采购价
-                 if(tfsf.sku_order_status in (1,2) and fspog.order_goods_shipping_status >=8, round(tfsf.purchase_total_amount/${exchange_rate_202007}, 2), 0) mct_cost, -- 减：商品成本
+                 if(tfsf.sku_order_status in (1,2) and fspog.order_goods_shipping_status >=8, round(tfsf.purchase_total_amount/ ${exchange_rate_202007}, 2), 0) mct_cost, -- 减：商品成本
                  fspog.plan_freight, -- 预估运费
-                 if(tfsf.sku_order_status in (1,2) and fspog.order_goods_shipping_status >=8, round(fspog.plan_freight/${exchange_rate_202007}, 2), 0) last_waybill_fee, -- —尾程运费（集运仓-国外）
+                 if(tfsf.sku_order_status in (1,2) and fspog.order_goods_shipping_status >=8, round(fspog.plan_freight/ ${exchange_rate_202007}, 2), 0) last_waybill_fee, -- —尾程运费（集运仓-国外）
                  tfsf.purchase_pay_status purchase_pay_status,
-                 if(tfsf.purchase_pay_status = 1 and tfsf.sku_order_status = 2 and dog.sku_shipping_status=0, round(tfsf.purchase_total_amount/${exchange_rate_202007}, 2), 0) inventory_loss, -- 存货跌价损失
+                 if(tfsf.purchase_pay_status = 1 and tfsf.sku_order_status = 2 and dog.sku_shipping_status=0, round(tfsf.purchase_total_amount/ ${exchange_rate_202007}, 2), 0) inventory_loss, -- 存货跌价损失
                  to_date(dog.order_time) pt
              from dim.dim_vova_order_goods dog
                       left join

@@ -143,7 +143,7 @@ GROUP BY date(dog.confirm_time),dm.mct_name,rt.refund_type
 
 UNION ALL
 
-select
+select /*+ REPARTITION(1) */
 date(dog.confirm_time) as event_date,
 dm.mct_name,
 rt.refund_type,

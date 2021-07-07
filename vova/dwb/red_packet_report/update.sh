@@ -15,7 +15,7 @@ job_name="dwb_vova_red_packet_req8713_chenkai_${cur_date}"
 
 sql="
 create table if not EXISTS tmp.tmp_first_cat_rank_gmv_avg_req8713_${table_suffix} as
-select
+select /*+ REPARTITION(10) */
   first_cat_id,
   rank,
   is_brand,
@@ -61,7 +61,7 @@ from
 ) where first_cat_id != 'all' and rank != 'all'
 ;
 create table if not EXISTS tmp.tmp_mct_gmv_req8713_${table_suffix} as
-select
+select /*+ REPARTITION(10) */
   nvl(mct_id,'all') mct_id,
   nvl(first_cat_id,'all') first_cat_id,
   nvl(is_brand,'all') is_brand,
@@ -95,7 +95,7 @@ group by cube(mct_id,
 )
 ;
 create table if not EXISTS tmp.tmp_coupon_gmv_req8713_${table_suffix} as
-select
+select /*+ REPARTITION(10) */
   nvl(mct_id, 'all') mct_id,
   nvl(first_cat_id, 'all') first_cat_id,
   nvl(is_brand, 'all') is_brand,
