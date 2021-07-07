@@ -18,6 +18,97 @@ from dwd.dwd_vova_log_performance_arc
 where pt= '2021-06-14' and  element_name='startup'
 group by os_type,app_version,geo_country,element_type
 
+-----不包含国家维度-----
+select
+os_type,
+app_version,
+element_type,
+percentile(during) p95_during
+from dwd.dwd_vova_log_performance_arc
+where pt='2021-07-04' and  element_name='startup' and app_version='2.123.0'
+group by os_type,app_version,element_type
+
+
+select
+os_type,
+app_version,
+element_type,
+page,
+op,
+op_cnt,
+tot_cnt,
+op_cnt/tot_cnt slow_rate
+from
+(
+select
+distinct
+os_type,
+app_version,
+element_type,
+page,
+op,
+count(op) over(partition by os_type,app_version,element_type,page,op) op_cnt,
+count(page) over(partition by os_type,app_version,element_type,page) tot_cnt
+from
+(
+select
+os_type,
+app_version,
+element_type,
+page,
+if(during<=3000,'fast','slow') op,
+during
+from dwd.dwd_vova_log_performance_arc
+where pt='2021-06-27' and element_name='operate' and during is not null and app_version='2.123.0'
+) t
+) t where op ='slow'
+
+
+
+select
+os_type,
+app_version,
+element_type,
+page,
+op,
+op_cnt,
+tot_cnt,
+op_cnt/tot_cnt
+from
+(
+select
+distinct
+os_type,
+app_version,
+element_type,
+page,
+op,
+count(op) over(partition by os_type,app_version,element_type,page,op) op_cnt,
+count(page) over(partition by os_type,app_version,element_type,page) tot_cnt
+from
+(
+select
+os_type,
+app_version,
+element_type,
+page,
+if(during<=3000,'fast','slow') op,
+during
+from dwd.dwd_vova_log_performance_arc
+where pt='2021-07-04' and element_name='page' and during is not null and  app_version='2.123.0'
+) t
+) t where op ='slow'
+
+
+
+
+
+
+
+
+
+
+
 
 
 select

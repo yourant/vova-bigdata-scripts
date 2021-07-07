@@ -1,0 +1,94 @@
+---
+config:
+  failure.emails: yzhang13@vova.com.hkt,ed.wan@vova.com.hk
+  retries: 3
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_new_user_analysis_h
+      - ads_vova_order_gmv_analysis_h
+      - ads_vova_funnel_analysis_h
+      - ads_goods_expre_analysis_h
+      - ads_vova_merchant_gmv_analysis_h
+      - ads_vova_user_traffic_analysis_h
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+
+
+  - name: judge_vova_fact_log_v2_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh vova_fact_log_v2_h
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+
+  - name: judge_dwd_vova_fact_pay_h
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_pay_h
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+
+  - name: ads_vova_new_user_analysis_h
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/analysis/new_user_analysis/update.sh
+    dependsOn:
+      - start_flag
+      - judge_dwd_vova_fact_pay_h
+
+  - name: ads_vova_order_gmv_analysis_h
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/analysis/order_gmv_analysis_h/update.sh
+    dependsOn:
+      - start_flag
+      - judge_dwd_vova_fact_pay_h
+
+  - name: ads_vova_funnel_analysis_h
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/analysis/funnel_analysis_h/update.sh
+    dependsOn:
+      - start_flag
+      - judge_vova_fact_log_v2_h
+
+  - name: ads_goods_expre_analysis_h
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/analysis/goods_expre_analysis_h/update.sh
+    dependsOn:
+      - start_flag
+      - judge_vova_fact_log_v2_h
+
+  - name: ads_vova_merchant_gmv_analysis_h
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/analysis/merchant_gmv_analysis_h/update.sh
+    dependsOn:
+      - start_flag
+      - judge_vova_fact_log_v2_h
+
+  - name: ads_vova_user_traffic_analysis_h
+    type: command
+    config:
+      command:  sh /mnt/vova-bigdata-scripts/vova/ads/analysis/user_traffic/update.sh
+    dependsOn:
+      - start_flag
+      - judge_vova_fact_log_v2_h

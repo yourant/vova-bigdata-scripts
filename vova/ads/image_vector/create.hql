@@ -55,6 +55,20 @@ CREATE external TABLE IF NOT EXISTS ads.ads_vova_image_vector_target_his
 PARTITIONED BY ( pt string) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
 
+drop table tmp.ads_vova_image_vector_target_his;
+CREATE external TABLE IF NOT EXISTS tmp.ads_vova_image_vector_target_his
+(
+    vector_id                   bigint COMMENT '商品id',
+    img_id                      bigint COMMENT '图片id',
+    goods_id                    bigint COMMENT '商品id',
+    class_id                    bigint COMMENT 'class_id',
+    event_date                  string COMMENT '日期',
+    is_delete                   bigint COMMENT '向量是否删除',
+    is_on_sale                  bigint COMMENT '商品是否在架',
+    is_update                  bigint COMMENT '是否更新'
+) COMMENT '图片向量历史累计每日状态快照'
+ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
+
 
 
 CREATE TABLE `ads_image_vector_v3` (
