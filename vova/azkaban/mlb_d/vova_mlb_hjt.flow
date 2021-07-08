@@ -21,6 +21,7 @@ nodes:
       - mlb_rec_search_correct_sqoop
       - mlb_vova_category_feat_d
       - mlb_vova_buyer_brand_name
+      - mlb_vova_goods_rate
 
 
   - name: start_flag
@@ -298,3 +299,35 @@ nodes:
       - judge_dwd_vova_fact_order_cause_v2
       - judge_ads_vova_buyer_portrait_brand_likes_exp
       - judge_dwd_vova_fact_start_up
+
+
+  - name: mlb_vova_goods_rate
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/goods_rate/update.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dws_vova_buyer_goods_behave
+      - judge_dim_vova_order_goods
+      - judge_dwd_vova_fact_refund
+      - judge_ads_vova_goods_portrait_v2
+
+
+  - name: judge_dim_vova_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_order_goods
+      retries: 20
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dwd_vova_fact_refund
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_vova_fact_refund
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
