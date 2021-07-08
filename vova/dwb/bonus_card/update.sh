@@ -19,7 +19,7 @@ job_name="dwb_vova_bonus_card_req6571_chenkai_${cur_date}"
 sql="
 -- 表二：优惠券发放与核销
 create table if not exists tmp.tmp_bonus_card_coupon_use_${table_suffix} as
-  select
+  select /*+ REPARTITION(1) */
     fc.order_id order_id,
     sum(dog.shipping_fee+dog.shop_price*dog.goods_number) gmv
   from
@@ -222,7 +222,7 @@ group by cube(region_code, os_type, main_channel, is_new, gmv_stage, is_paid)
 
 -- 表三：月卡用户交易数据
 create table if not exists tmp.tmp_bonus_card_pay_${table_suffix} as
-select
+select /*+ REPARTITION(1) */
   nvl(region_code, 'all') region_code,
   nvl(platform, 'all') os_type,
   nvl(main_channel, 'all') main_channel,
@@ -299,7 +299,7 @@ group by cube(region_code, platform, main_channel, is_new, gmv_stage, is_paid)
 ;
 
 create table if not exists tmp.tmp_bonus_card_gmv_${table_suffix} as
-select
+select /*+ REPARTITION(1) */
   nvl(region_code, 'all') region_code,
   nvl(platform, 'all') os_type,
   nvl(main_channel, 'all') main_channel,
@@ -391,7 +391,7 @@ group by cube(region_code, platform, main_channel, is_new, gmv_stage, is_paid)
 ;
 
 create table if not exists tmp.tmp_bonus_card_screen_view_${table_suffix} as
-select
+select /*+ REPARTITION(1) */
   nvl(pt, 'all') pt,
   nvl(region_code, 'all') region_code,
   nvl(os_type, 'all') os_type,
@@ -786,7 +786,7 @@ group by region_code, os_type, main_channel, is_new, gmv_stage, is_paid
 -- 表四：主页留存数据监控
 -- 已购卡商品列表曝光数pv
 create table if not exists tmp.tmp_paid_goods_impression_pv_${table_suffix} as
-select
+select /*+ REPARTITION(1) */
   nvl(pt, 'all') pt,
   nvl(region_code, 'all') region_code,
   nvl(os_type, 'all') os_type,
@@ -843,7 +843,7 @@ having pt !='all'
 
 -- 已购卡商品列表点击数pv
 create table if not exists tmp.tmp_paid_goods_click_pv_${table_suffix} as
-select
+select /*+ REPARTITION(1) */
   nvl(pt, 'all') pt,
   nvl(region_code, 'all') region_code,
   nvl(os_type, 'all') os_type,
@@ -900,7 +900,7 @@ having pt !='all'
 
 -- 续费按钮点击UV
 create table if not exists tmp.tmp_renew_button_click_uv_${table_suffix} as
-select
+select /*+ REPARTITION(1) */
   nvl(pt, 'all') pt,
   nvl(region_code, 'all') region_code,
   nvl(os_type, 'all') os_type,
@@ -959,7 +959,7 @@ having pt !='all'
 
 -- 会场商品归因GMV
 create table if not exists tmp.tmp_bonus_card_cause_gmv_${table_suffix} as
-select
+select /*+ REPARTITION(1) */
   nvl(pt, 'all') pt,
   nvl(region_code, 'all') region_code,
   nvl(os_type, 'all') os_type,

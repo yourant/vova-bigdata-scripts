@@ -1,1 +1,51 @@
 {"page_url":"/cart/?goods_number\u003d1\u0026showType\u003dshow\u0026sku_number\u003d1\u0026sku_amount\u003d392.53","country":"FR","advertising_id_sp":null,"sys_lang":"zh","app_version":"2.111.0","is_tablet":"0","geo_latitude":"31.045593","language":"en","buyer_id":16818083,"geo_timezone":"Shanghai","test_info":"rec_red_packet_o\u0026rec_me_srg_h1\u0026rec_mp_sort_esmm\u0026rec_banner_o\u0026rec_detail_recall_t\u0026rec_home_sort_esmmV4\u0026rec_search_sort_cross\u0026robot_a\u0026rec_id_id_strategy_a\u0026rec_gcr_a\u0026rec_search_goods_e\u0026rec_home_srg_j\u0026rec_fn_sort_b","idfv":"DAB07E86-19C6-4FC1-85C4-D8C137B0C4F6","organic_idfv":"BBFBAC33-09E5-444F-B835-3AE6749799F2","derived_ts":"2021-04-07T10:41:16.843Z","rt_dvce_created_ts":"2021-04-07 10:41:16","device_id":"9859F244-B385-4569-990E-A6640BF7DDC0","media_source":"","ip":"140.206.96.158","advertising_id":"","dns":"[\"119.29.29.29\",\"210.22.84.3\"]","geo_longitude":"121.39969","view_type":"hide","collector_ts":"2021-04-07T10:41:16.858Z","br_family":"CFNetwork","datasource":"vova","name_tracker":"vova_ios","os_type":"ios","geo_region_name":"Shanghai","event_name":"screen_view","android_idfa":null,"page_code":"cart","gender":"male","device_model":"iPhone9,1","geo_region":"23","derived_tstamp":1617763276843,"dvce_created_tstamp":1617763276686,"rt_derived_ts":"2021-04-07 10:41:16","imsi":"46007","platform":"mob","mac":null,"device_manufacturer":"Apple Inc.","collector_tstamp":1617763276858,"dvce_created_ts":"2021-04-07T10:41:16.686Z","domain_userid":"09D52390077A4F99A62720B5AFC3E9E8","root":"0","geo_city":"Shanghai","account_class":"temp","event_fingerprint":"bb1f8dd5014b6b993c85291ffa8300c1","currency":"EUR","channel_type":null,"email":"","apple_idfv":"BBFBAC33-09E5-444F-B835-3AE6749799F2","rt_collector_ts":"2021-04-07 10:41:16","simulator":null,"os_version":"14.4.2","session_id":"5c36e0f2-4a0e-4f3f-b600-3a8b5c6163d7","landing_page":"","network_technology":"CTRadioAccessTechnologyLTE","referrer":"","br_version":"1220.1","carrier":"涓浗绉诲姩","sys_country":"FR","vpn":"0","apple_idfa":"9859F244-B385-4569-990E-A6640BF7DDC0","geo_country":"CN","app_uri":"/cart/?goods_number\u003d1\u0026showType\u003dshow\u0026sku_number\u003d1\u0026sku_amount\u003d392.53","android_id":"","network_type":"wifi","virtual_goods_id":-1,"latlng":""}
+
+
+
+sqoop export -Dorg.apache.sqoop.export.text.dump_data_on_error=true  -Dmapreduce.job.queuename=default  -Dsqoop.export.records.per.statement=500  --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis?verifyServerCertificate=false&useSSL=true&requireSSL=true  --username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx  --driver org.mariadb.jdbc.Driver  --table ads_vova_sale_goods_m_new_test  --m 1  --columns goods_id,sales_order  --export-dir s3://bigdata-offline/warehouse/ads/ads_vova_sale_goods_3m/pt=2021-06-21/  --fields-terminated-by '\001'
+
+
+
+
+insert overwrite table ods_vova_ext.ods_vova_app_push_logs PARTITION (pt = '2021-06-30') select /*+ REPARTITION(10) */ install_record_id, notice_id        , platform         , user_id          , task_id          , task_config_id   , push_result      , response_id      , switch_on        , push_time from ( SELECT   explode(split(regexp_replace(regexp_replace(data_json, '\\\\[|\\\\]',''),'\\\\}\\\\,\\\\{','\\\\}\\\\;\\\\{'),'\\\\;')) new_json_data from   ods_vova_ext.ods_vova_app_push_logs_raw where   pt = '2021-06-30' ) a lateral view json_tuple(new_json_data, 'install_record_id' ,'notice_id' ,'platform' ,'user_id' ,'task_id' ,'task_config_id' ,'push_result' ,'response_id' ,'switch_on' ,'push_time' ) b as install_record_id ,notice_id ,platform ,user_id ,task_id ,task_config_id ,push_result ,response_id ,switch_on ,push_time ;
+
+
+
+drop table tmp.tmp_rec_gid_pic_similar;
+CREATE TABLE IF NOT EXISTS tmp.tmp_rec_gid_pic_similar
+(
+    goods_id   bigint COMMENT '商品id',
+    group_id   bigint COMMENT '分组id'
+) COMMENT '买家首单信息'
+    ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
+
+
+
+ CREATE TABLE `rec_gid_pic_similar_test` (
+   `id` int(11) NOT NULL AUTO_INCREMENT,
+   `goods_id` int(11) NOT NULL,
+   `group_id` int(11) NOT NULL,
+   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+   PRIMARY KEY (`id`),
+   UNIQUE KEY `ux_goods_id` (`goods_id`),
+   KEY `ix_group_id` (`group_id`)
+ ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+
+ sqoop export \
+ -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
+ -Dmapreduce.job.queuename=default \
+ -Dsqoop.export.records.per.statement=500 \
+ --connect jdbc:mysql://rec-bi.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/themis \
+ --username dwwriter --password wH7NTzzgVpn8rMAccv0J4Hq3zWM1tylx \
+ --update-key "goods_id" \
+ --update-mode allowinsert \
+ --m 1 \
+ --table rec_gid_pic_similar_test \
+ --hcatalog-database tmp \
+ --hcatalog-table tmp_rec_gid_pic_similar \
+ --fields-terminated-by '\001' \
+ --columns "goods_id,group_id"
+
+
+ rename table rec_gid_pic_similar to rec_gid_pic_similar_test_old ,rec_gid_pic_similar_test to rec_gid_pic_similar;

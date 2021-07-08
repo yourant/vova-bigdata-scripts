@@ -70,7 +70,7 @@ nodes:
   - name: vova_image_vector_handle_get
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=vova_image_vector_extract_cv --from=cv --to=data --valid_hour=2
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=vova_image_vector_extract_cv --from=cv --to=data --valid_hour=6
       retries: 20
       retry.backoff: 3600000
     dependsOn:
