@@ -1,0 +1,59 @@
+---
+config:
+  failure.emails: longgu@vova.com.hk
+  retries: 10
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_day_job_start
+    type: noop
+
+
+  - name: dwb_fd_goods_picture_uv
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_picture_uv/run.sh
+    dependsOn:
+      - fd_day_job_start
+
+  - name: ads_fd_goods_picture_test_tmp
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_picture_test/run_tmp.sh
+    dependsOn:
+      - dwb_fd_goods_picture_uv
+
+  - name: dwb_fd_goods_element_uv
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_element_uv/run.sh
+    dependsOn:
+      - fd_day_job_start
+
+  - name: ads_fd_goods_element_test_tmp
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_element_test/run_tmp.sh
+    dependsOn:
+      - dwb_fd_goods_element_uv
+
+  - name: ads_fd_goods_element_test
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_element_test/run.sh
+    dependsOn:
+      - ads_fd_goods_element_test_tmp
+      - ads_fd_goods_picture_test_tmp
+
+  - name: ads_fd_goods_element_test_sqoop
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_goods_element_test/sqoop.sh
+    dependsOn:
+      - ads_fd_goods_element_test
+
+  - name: fd_day_job_end
+    type: noop
+    dependsOn:
+      - ads_fd_goods_element_test_sqoop
+

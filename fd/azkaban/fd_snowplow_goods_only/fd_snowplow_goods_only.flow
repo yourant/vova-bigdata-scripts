@@ -1,0 +1,36 @@
+---
+config:
+  failure.emails: longgu@vova.com.hk
+  retries: 10
+  retry.backoff: 300000
+
+nodes:
+  - name: fd_hour_job_start
+    type: noop
+
+  - name: judge_ods_fd_snowplow_goods_event
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_snowplow_goods_event_hour
+    dependsOn:
+      - fd_hour_job_start
+
+  - name: dwd_fd_goods_snowplow
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwd/dwd_fd_goods_snowplow/run.sh
+    dependsOn:
+      - judge_ods_fd_snowplow_goods_event
+
+  - name: dwb_fd_goods_snowplow_uv
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_goods_snowplow_uv/run.sh
+    dependsOn:
+      - dwd_fd_goods_snowplow
+
+  - name: fd_hour_job_end
+    type: noop
+    dependsOn:
+      - dwb_fd_goods_snowplow_uv
+
