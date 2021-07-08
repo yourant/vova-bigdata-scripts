@@ -41,7 +41,8 @@ from
       ods_vova_vbts.ods_vova_rec_gid_pic_similar rgps
     on rgps.goods_id = dg.goods_id
     where dg.brand_id = 0
-    and dg.is_on_sale = 1
+      and dg.is_on_sale = 1
+      and dg.add_time <= date_sub('${cur_date}', 7)
   )
   where row = 1
 ) t1
@@ -55,7 +56,7 @@ left join
       goods_id
     from
       ads.ads_vova_no_brand_goods_img
-    where pt = '${cur_date}'
+    where pt < '${cur_date}'
   ) t1 
   left join
     ods_vova_vbts.ods_vova_rec_gid_pic_similar rgps
