@@ -32,7 +32,7 @@ where sv.style_name_id=457
 ) t where rank = 1
 )
 insert overwrite table dim.dim_vova_goods_sku
-select
+select /*+ REPARTITION(600) */
 'vova' datasource,
 gs.sku_id,
 gs.sku,
