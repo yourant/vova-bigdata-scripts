@@ -20,7 +20,7 @@ nodes:
       - dwb_vova_homepage_flow_distribution
       - dwb_vova_markdown_order_daily
       - dwb_vova_mct_first_cat_rank_downgrading
-      - dwb_vova_push_click_behavior
+#      - dwb_vova_push_click_behavior
       - dwb_vova_refund_process
       - dwb_vova_refund_report
       - dwb_vova_pay_refund_process
@@ -586,19 +586,19 @@ nodes:
       - judge_dim_vova_merchant
       - judge_ads_vova_traff_control
 
-# 消息中心-推送报表v2
-  - name: dwb_vova_push_click_behavior
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/vova/dwb/push_click_behavior/update_v2.sh
-      retries: 5
-      retry.backoff: 600000
-    dependsOn:
-      - judge_dwd_vova_fact_push_click
-      - judge_dim_vova_order_goods
-      - judge_dim_vova_devices
-      - judge_dwd_vova_log_common_click
-      - judge_dwd_vova_log_goods_impression
+# 消息中心-推送报表v2 已重构
+#  - name: dwb_vova_push_click_behavior
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/vova/dwb/push_click_behavior/update_v2.sh
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - judge_dwd_vova_fact_push_click
+#      - judge_dim_vova_order_goods
+#      - judge_dim_vova_devices
+#      - judge_dwd_vova_log_common_click
+#      - judge_dwd_vova_log_goods_impression
 
 
 # 退款率报表

@@ -19,9 +19,10 @@ job_name="dwb_vova_homepage_total_efficiency_v2_req7445_chenkai_${cur_date}"
 sql="
 -- 获取最近8个app_version 和 'all'
 create table if not EXISTS tmp.tmp_app_version_req7445_${table_suffix} as
-select 'all' as app_version
+select /*+ REPARTITION(1) */
+  'all' as app_version
 union all
-select
+select /*+ REPARTITION(1) */
   app_version
 from
 (
@@ -36,8 +37,7 @@ from
 
 -- 首页入口曝光(theme_activity)
 create table if not EXISTS tmp.tmp_entry_impre_list_type_req7445_${table_suffix} as
-select
-  /*+ REPARTITION(2) */
+select /*+ REPARTITION(2) */
   region_code,
   platform,
   app_version,
@@ -112,8 +112,7 @@ where app_version in (select app_version from tmp.tmp_app_version_req7445_${tabl
 
 -- 入口曝光(非theme_activity)
 create table if not EXISTS tmp.tmp_entry_impre_element_name_req7445_${table_suffix} as
-select
-  /*+ REPARTITION(2) */
+select /*+ REPARTITION(2) */
   region_code,
   platform,
   app_version,
@@ -177,8 +176,7 @@ where app_version in (select app_version from tmp.tmp_app_version_req7445_${tabl
 
 -- 入口点击(theme_activity)
 create table if not EXISTS tmp.tmp_entry_click_list_type_req7445_${table_suffix} as
-select
-  /*+ REPARTITION(2) */
+select /*+ REPARTITION(2) */
   region_code,
   platform,
   app_version,
@@ -253,8 +251,7 @@ where app_version in (select app_version from tmp.tmp_app_version_req7445_${tabl
 
 -- 入口点击(非theme_activity)
 create table if not EXISTS tmp.tmp_entry_click_element_name_req7445_${table_suffix} as
-select
-  /*+ REPARTITION(2) */
+select /*+ REPARTITION(2) */
   region_code,
   platform,
   app_version,
@@ -339,8 +336,7 @@ where app_version in (select app_version from tmp.tmp_app_version_req7445_${tabl
 
 -- 首页点击pv
 create table if not EXISTS tmp.tmp_homepage_clk_req7445_${table_suffix} as
-select
-  /*+ REPARTITION(2) */
+select /*+ REPARTITION(2) */
   region_code,
   platform,
   app_version,
@@ -389,8 +385,7 @@ where app_version in (select app_version from tmp.tmp_app_version_req7445_${tabl
 
 -- list_type: theme_activity 订单归因
 create table if not EXISTS tmp.tmp_theme_activity_order_cause_req7445_${table_suffix} as
-select
-  /*+ REPARTITION(2) */
+select /*+ REPARTITION(2) */
   region_code,
   platform,
   app_version,
@@ -517,8 +512,7 @@ where app_version in (select app_version from tmp.tmp_app_version_req7445_${tabl
 
 -- element_name: 非theme_activity 归因
 create table if not EXISTS tmp.tmp_no_theme_activity_order_cause_req7445_${table_suffix} as
-select
-  /*+ REPARTITION(2) */
+select /*+ REPARTITION(2) */
   region_code,
   platform,
   app_version,
@@ -607,8 +601,7 @@ where app_version in (select app_version from tmp.tmp_app_version_req7445_${tabl
 
 -- 非theme_activity 会场 pv,uv screen_view
 create table if not exists tmp.tmp_no_theme_activity_pv_req7445_${table_suffix} as
-select
-  /*+ REPARTITION(1) */
+select /*+ REPARTITION(1) */
   region_code,
   platform,
   app_version,
@@ -677,8 +670,7 @@ where app_version in (select app_version from tmp.tmp_app_version_req7445_${tabl
 
 -- 非theme_activity 会场 dv page_view
 create table if not exists tmp.tmp_no_theme_activity_dv_req7445_${table_suffix} as
-select
-  /*+ REPARTITION(1) */
+select /*+ REPARTITION(1) */
   region_code,
   platform,
   app_version,
@@ -745,8 +737,7 @@ where app_version in (select app_version from tmp.tmp_app_version_req7445_${tabl
 
 -- 全站销售情况
 create table if not exists tmp.tmp_vova_order_req7445_${table_suffix} as
-select
-/*+ REPARTITION(1) */
+select /*+ REPARTITION(1) */
   region_code,
   platform,
   app_version,
@@ -803,8 +794,7 @@ where app_version in (select app_version from tmp.tmp_app_version_req7445_${tabl
 
 -- 聚合
 insert OVERWRITE TABLE dwb.dwb_vova_homepage_total_efficiency_v2 PARTITION (pt='${cur_date}')
-select
-/*+ REPARTITION(2) */
+select /*+ REPARTITION(2) */
   tmp_impre.region_code,
   tmp_impre.platform,
   tmp_impre.app_version,
@@ -937,17 +927,17 @@ on tmp_impre.region_code = tmp_vova_order.region_code
 ;
 
 
--- drop table if exists tmp.tmp_app_version_req7445_${table_suffix};
--- drop table if exists tmp.tmp_entry_impre_list_type_req7445_${table_suffix};
--- drop table if exists tmp.tmp_entry_impre_element_name_req7445_${table_suffix};
--- drop table if exists tmp.tmp_entry_click_list_type_req7445_${table_suffix};
--- drop table if exists tmp.tmp_entry_click_element_name_req7445_${table_suffix};
--- drop table if exists tmp.tmp_no_theme_activity_pv_req7445_${table_suffix};
--- drop table if exists tmp.tmp_no_theme_activity_dv_req7445_${table_suffix};
--- drop table if exists tmp.tmp_no_theme_activity_order_cause_req7445_${table_suffix};
--- drop table if exists tmp.tmp_theme_activity_order_cause_req7445_${table_suffix};
--- drop table if exists tmp.tmp_homepage_clk_req7445_${table_suffix};
--- drop table if exists tmp.tmp_vova_order_req7445_${table_suffix};
+drop table if exists tmp.tmp_app_version_req7445_${table_suffix};
+drop table if exists tmp.tmp_entry_impre_list_type_req7445_${table_suffix};
+drop table if exists tmp.tmp_entry_impre_element_name_req7445_${table_suffix};
+drop table if exists tmp.tmp_entry_click_list_type_req7445_${table_suffix};
+drop table if exists tmp.tmp_entry_click_element_name_req7445_${table_suffix};
+drop table if exists tmp.tmp_no_theme_activity_pv_req7445_${table_suffix};
+drop table if exists tmp.tmp_no_theme_activity_dv_req7445_${table_suffix};
+drop table if exists tmp.tmp_no_theme_activity_order_cause_req7445_${table_suffix};
+drop table if exists tmp.tmp_theme_activity_order_cause_req7445_${table_suffix};
+drop table if exists tmp.tmp_homepage_clk_req7445_${table_suffix};
+drop table if exists tmp.tmp_vova_order_req7445_${table_suffix};
 "
 
 #如果使用spark-sql运行，则执行spark-sql -e

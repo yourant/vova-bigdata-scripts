@@ -5,7 +5,7 @@ pt=$1
 if [ ! -n "$1" ]; then
   pt=`date -d "-1 hour" "+%Y-%m-%d"`
 fi
-echo "$pt"
+echo "${pt}"
 
 sql="
 insert overwrite table tmp.tmp_vova_fact_cart_cause_h_glk_cause
@@ -67,7 +67,7 @@ from (
                          app_version,
                          test_info
                   from dwd.dwd_vova_log_goods_click_arc
-                  where pt = '$pt'
+                  where pt = '${pt}'
                   and os_type in('ios','android')
                   union all
                   select datasource,
@@ -87,7 +87,7 @@ from (
                          app_version,
                          test_info
                   from dwd.dwd_vova_log_click_arc
-                  where pt = '$pt' and event_type ='goods'
+                  where pt = '${pt}' and event_type ='goods'
                   and os_type in('ios','android')
                   union all
                   select datasource,
@@ -107,7 +107,7 @@ from (
                          null                       app_version,
                          null                       test_info
                   from dwd.dwd_vova_log_common_click_arc
-                  where pt = '$pt'
+                  where pt = '${pt}'
                     and element_name in ('pdAddToCartSuccess')
                     and os_type in('ios','android')
                   union all
@@ -128,7 +128,7 @@ from (
                          null                       app_version,
                          null                       test_info
                   from dwd.dwd_vova_log_click_arc
-                  where pt = '$pt'
+                  where pt = '${pt}'
                     and element_name in ('pdAddToCartSuccess')
                     and event_type='normal'
                     and os_type in('ios','android')
@@ -150,7 +150,7 @@ from (
                          null                       app_version,
                          null                       test_info
                   from dwd.dwd_vova_log_data_arc
-                  where pt = '$pt'
+                  where pt = '${pt}'
                     and element_name in ('pdAddToCartSuccess')
                     and os_type in('ios','android')
               ) t1) t2
@@ -234,7 +234,7 @@ from (
                          app_version,
                          test_info
                   from dwd.dwd_vova_log_goods_impression_arc
-                  where pt = '$pt'
+                  where pt = '${pt}'
                   and os_type in('ios','android')
                   union all
                   select datasource,
@@ -254,7 +254,7 @@ from (
                          app_version,
                          test_info
                   from dwd.dwd_vova_log_impressions_arc
-                  where pt = '$pt'
+                  where pt = '${pt}'
                   and os_type in('ios','android')
                   and event_type='goods'
               ) t1

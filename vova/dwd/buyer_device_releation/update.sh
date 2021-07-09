@@ -27,7 +27,7 @@ app_region_code,
 region_code,
 platform,
 row_number() over (partition by buyer_id,datasource order by pt desc, max_collector_time desc) as rank
-from dwd.dwd_vova_fact_start_up su where su.buyer_id > 0 and pt <= '$cur_date'
+from dwd.dwd_vova_fact_start_up su where su.buyer_id > 0 and pt <= '${cur_date}'
 ) su where su.rank = 1
 "
 #如果使用spark-sql运行，则执行spark-sql -e

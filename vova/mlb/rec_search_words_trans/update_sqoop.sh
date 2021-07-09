@@ -28,11 +28,11 @@ drop table if exists themis.query_translation_new;
 drop table if exists themis.query_translation_pre;
 CREATE TABLE themis.query_translation_new
 (
-    clk_from      varchar(2048) COMMENT 'result',
-    translation_query  varchar(2048) COMMENT 'source',
+    clk_from      varchar(2048) COMMENT 'source',
+    translation_query  varchar(2048) COMMENT 'result',
     update_time TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0)  COMMENT '日期',
-    KEY idx_result (clk_from) USING BTREE,
-    KEY idx_source (translation_query) USING BTREE
+    KEY idx_source (clk_from) USING BTREE,
+    KEY idx_result (translation_query) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='搜索词翻译表';
 EOF
 

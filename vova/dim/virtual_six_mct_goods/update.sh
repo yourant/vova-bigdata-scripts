@@ -8,7 +8,6 @@ fi
 sql="
 insert overwrite table dim.dim_vova_virtual_six_mct_goods
 select /*+ REPARTITION(1) */
-select
 t.goods_id,
 g.virtual_goods_id,
 -1000 mct_id,

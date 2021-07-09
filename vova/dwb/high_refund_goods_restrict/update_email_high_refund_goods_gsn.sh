@@ -15,7 +15,7 @@ job_name="dwb_vova_high_refund_goods_gsn_req8748_chenkai_${cur_date}"
 ###逻辑sql
 sql="
 insert overwrite table dwb.dwb_vova_high_refund_goods_gsn partition(pt='${cur_date}')
-select
+select /*+ REPARTITION(1) */
   goods_sn_new,
   dg.first_cat_name first_cat_name,
   nvl(sum(shipping_fee+shop_price*goods_number), 0) gmv_last_day7

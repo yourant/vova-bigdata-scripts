@@ -13,7 +13,8 @@ job_name="dwb_vova_pay_refund_detail_req_chenkai_${cur_date}"
 ###逻辑sql
 sql="
 insert overwrite table dwb.dwb_vova_pay_refund_detail
-SELECT pay_time,
+SELECT /*+ REPARTITION(10) */
+       pay_time,
        create_time,
        refund_id,
        order_goods_id,
