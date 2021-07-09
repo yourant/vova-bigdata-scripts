@@ -9,7 +9,7 @@ sql="
 with
 kg_data as (
     select goods_id, attr_key key, t1.attr_value v, second_cat_id from (
-        (select * from ads.ads_vova_goods_attribute_merge where pt = '${cur_date}') t1
+        (select * from ads.ads_vova_goods_attribute_merge where pt = '${cur_date}' and second_cat_id is not null) t1
         inner join
         (select * from ads.ads_vova_usable_value) t2
         on t1.attr_value = t2.attr_value
