@@ -20,7 +20,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS tmp.tmp_dwb_fd_ad_est
     est_gmv_7d        decimal(20, 2) COMMENT '预估广告花费'
 ) COMMENT 'dwb_fd_ads_cost' STORED AS PARQUETFILE;
 
-CREATE EXTERNAL TABLE IF NOT EXISTS tmp.dwb_fd_ads_cost
+CREATE EXTERNAL TABLE IF NOT EXISTS
 (
     event_date      date COMMENT 'event_date',
     project_name      string COMMENT 'datasource',

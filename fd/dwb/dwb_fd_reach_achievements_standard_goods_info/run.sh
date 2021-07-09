@@ -10,7 +10,7 @@ else
   echo $1 | grep -Eq "[0-9]{4}-[0-9]{2}-[0-9]{2}" && date -d "$1" +"%Y-%m-%d" >/dev/null
   if [[ $? -ne 0 ]]; then
     echo "接收的时间格式${1}不符合:%Y-%m-%d，请输入正确的格式!"
-    exit
+    exitgoods_display_order_artemis_country
   fi
   pt=$1
 fi

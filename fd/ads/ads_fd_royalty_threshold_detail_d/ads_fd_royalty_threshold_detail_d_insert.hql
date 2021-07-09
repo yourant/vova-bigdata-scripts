@@ -1,5 +1,6 @@
 insert overwrite table ads.ads_fd_royalty_threshold_detail_d partition (pt = '${pt}')
-select  
+select
+    /*+ REPARTITION(1) */
     project_name,
     cat_id,
     region_code,
@@ -20,7 +21,7 @@ from
             cat_id,
             '0' as region_code,
             goods_id,
-            sum( shop_price*goods_number )/31 as avg_goods_amount,
+            sum( shop_price*goods_number )/datediff('${pt}',add_months('${pt}',-1)) as avg_goods_amount,
             sum( goods_number ) as goods_number
         from
             dwd.dwd_fd_order_goods
@@ -51,7 +52,7 @@ union all
             cat_id,
             'US' as region_code,
             goods_id,
-            sum( shop_price*goods_number )/31 as avg_goods_amount,
+            sum( shop_price*goods_number )/datediff('${pt}',add_months('${pt}',-1)) as avg_goods_amount,
             sum( goods_number ) as goods_number
         from
             dwd.dwd_fd_order_goods

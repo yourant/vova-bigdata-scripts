@@ -1,0 +1,107 @@
+---
+config:
+  failure.emails: bob.zhu@i9i8.com
+  retries: 10
+  retry.backoff: 600000
+
+nodes:
+  - name: fd_performance_appraisal_start
+    type: noop
+
+  - name: judge_dwd_fd_order_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dwd_fd_order_goods
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - fd_performance_appraisal_start
+
+  - name: judge_ods_fd_vb_goods_test_goods_report
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ods_fd_vb_goods_test_goods_report
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - fd_performance_appraisal_start
+
+  - name: judge_dim_fd_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_fd_goods
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - fd_performance_appraisal_start
+
+  - name: dwb_fd_achievements_basic
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_achievements_basic/run.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_fd_order_goods
+      - judge_ods_fd_vb_goods_test_goods_report
+      - judge_dim_fd_goods
+
+  - name: ads_fd_royalty_threshold_detail_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/ads/ads_fd_royalty_threshold_detail_d/run.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_dwd_fd_order_goods
+
+  - name: ads_fd_royalty_threshold_detail_d_message_put
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=ads_fd_royalty_threshold_detail_d --from=data --to=java_server --jtype=1D --retry=0
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - ads_fd_royalty_threshold_detail_d
+
+  - name: judge_ads_fd_royalty_threshold_d_message_get
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=ads_fd_royalty_threshold_d --from=mlb --to=data --valid_hour=5
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - ads_fd_royalty_threshold_detail_d_message_put
+
+  - name: dwb_fd_commission_standard
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_commission_standard/run.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_ads_fd_royalty_threshold_d_message_get
+      - dwb_fd_achievements_basic
+
+  - name: dwb_fd_reach_standard_order_goods_info
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_reach_standard_order_goods_info/run.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - dwb_fd_commission_standard
+
+  - name: dwb_fd_commission_summary
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/fd/dwb/dwb_fd_commission_summary/run.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - dwb_fd_reach_standard_order_goods_info
+
+  - name: fd_performance_appraisal_end
+    type: noop
+    dependsOn:
+      - dwb_fd_commission_summary

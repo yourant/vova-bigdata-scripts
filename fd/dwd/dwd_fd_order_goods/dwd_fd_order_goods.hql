@@ -138,7 +138,7 @@ LEFT JOIN (
         coupon_config_value,
         coupon_config_coupon_type,
         from_domain,
-        project_name,
+        project_name,pay_time
         user_agent_id
     from ods_fd_vb.ods_fd_order_info
     where email not regexp '@tetx.com|@qq.com|@163.com|@vova.com.hk|@i9i8.com|@airydress.com'

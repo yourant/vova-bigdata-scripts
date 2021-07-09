@@ -141,6 +141,8 @@ from ods_fd_ar.ods_fd_ads_adgroup_daily_flat_report a
 where a.ads_site_code = 'AD' and from_unixtime(unix_timestamp(a.date), 'yyyy-MM') =
                                  from_unixtime(unix_timestamp(to_date('${cur_date}')), 'yyyy-MM')
 ;
+
+
 insert overwrite table dwb.dwb_ad_income_order PARTITION (pt = '${cur_date}')
 select
 '总订单数',tmp1.day_order_cnt,'',tmp1.mon_order_cnt,'',1
@@ -470,6 +472,8 @@ where t.currency_rn = 1) i on 1 = 1
 left join dwd.dwd_fd_ecs_order_info_shipping k on a.order_id = k.ecs_order_id
     where c.order_id is null
 ;
+
+
 insert overwrite table dwb.dwb_ad_income_out_stock PARTITION (pt = '${cur_date}')
 select
 '总订单数',tmp1.day_order_cnt,'',tmp1.mon_order_cnt,'',1

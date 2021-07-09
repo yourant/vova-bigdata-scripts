@@ -1,11 +1,12 @@
 set hive.exec.dynamic.partition.mode=nonstrict;
 insert overwrite table dwb.dwb_fd_income_cost partition (pt)
-select /*+ REPARTITION(1) */t.project
+select /*+ REPARTITION(1) */
+       t.project
      , t.country_code
-     ,CASE
+     , CASE
            WHEN t.country_code in ('All')  THEN  'All'
            WHEN t.country_code in ('others') THEN  'others'
-      ELSE r.region_name end as country_name
+       ELSE r.region_name end as country_name
      , t.dimension_type
      , t.pt_date
 

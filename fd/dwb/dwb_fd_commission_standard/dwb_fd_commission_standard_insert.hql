@@ -1,3 +1,4 @@
+msck repair table ads.ads_fd_royalty_threshold_d;
 insert overwrite table dwb.dwb_fd_commission_standard partition( pt = '${pt}')
 select
     project_name,
