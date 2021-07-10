@@ -1452,7 +1452,7 @@ group by t.goods_id
 
 
 INSERT OVERWRITE TABLE mlb.mlb_vova_goods_rate partition (pt = '${cur_date}')
-select
+select   /*+ REPARTITION(100) */
 a.goods_id,
 datediff('${cur_date}',to_date(a.first_on_time)) onsale_days,
 a.first_cat_id,
