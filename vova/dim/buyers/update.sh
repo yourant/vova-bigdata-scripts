@@ -30,8 +30,7 @@ FROM ods_vova_vts.ods_vova_refund_reason rr
          INNER JOIN ods_vova_vts.ods_vova_order_info oi ON oi.order_id = og.order_id
 GROUP BY oi.user_id;
 
-drop table if exists tmp.tmp_vova_buyer_app_version;
-create table tmp.tmp_vova_buyer_app_version as
+insert overwrite table tmp.tmp_vova_buyer_app_version
 select /*+ REPARTITION(60) */
        datasource,
        buyer_id,

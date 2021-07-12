@@ -21,6 +21,17 @@ CREATE TABLE IF NOT EXISTS tmp.tmp_vova_buyer_first_refund
     ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
 
+drop table tmp.tmp_vova_buyer_app_version;
+CREATE TABLE IF NOT EXISTS tmp.tmp_vova_buyer_app_version
+(
+    datasource       string comment '数据平台',
+    buyer_id         bigint COMMENT '买家ID',
+    device_id        string COMMENT '设备号',
+    app_version      string COMMENT 'app版本号',
+    last_start_up_date DATE COMMENT '最后启动日期'
+) COMMENT '买家app启动信息'
+    ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
+
 
 drop table dim.dim_vova_buyers;
 CREATE EXTERNAL TABLE IF NOT EXISTS dim.dim_vova_buyers

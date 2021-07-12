@@ -196,6 +196,7 @@ nodes:
       retry.backoff: 1800000
     dependsOn:
       - start_flag
+      - mlb_vova_rec_goods_scorebase_data_d_job_message_put
 
   - name: judge_ads_vova_goods_pre_attribute_data
     type: command

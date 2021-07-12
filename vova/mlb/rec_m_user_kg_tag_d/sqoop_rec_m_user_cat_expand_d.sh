@@ -36,7 +36,7 @@ buyer_id            bigint        NOT NULL COMMENT '用户id',
 subcategory_list    text  NOT NULL COMMENT '子品类列表',
 score_list          text  NOT NULL COMMENT '得分列表',
 PRIMARY KEY (id) USING BTREE,
-KEY buyer_id (buyer_id) USING BTREE
+UNIQUE KEY buyer_id (buyer_id) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='用户对子品类偏好召回结果表';
 
 create table if not exists rec_recall.mlb_vova_rec_m_user_cat_expand_d (
@@ -45,7 +45,7 @@ buyer_id            bigint        NOT NULL COMMENT '用户id',
 subcategory_list    text  NOT NULL COMMENT '子品类列表',
 score_list          text  NOT NULL COMMENT '得分列表',
 PRIMARY KEY (id) USING BTREE,
-KEY buyer_id (buyer_id) USING BTREE
+UNIQUE KEY buyer_id (buyer_id) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='用户对子品类偏好召回结果表';
 "
 mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwrecallwriter -pTsLdpZumzovrAvttIqnePCJhIVxZZ7bd -e "${sql}"

@@ -49,7 +49,7 @@ group by t1.datasource,t1.buyer_id,t2.first_cat_id,t1.day_type;
 
 --category近一周一级类目偏好结果表，取top10
 INSERT OVERWRITE TABLE tmp.tmp_vova_dws_buyer_portrait_cat7_result
-select datasource,buyer_id,collect_list(first_cat_id) first_cat_prefer_1w from
+select /*+ REPARTITION(20) */ datasource,buyer_id,collect_list(first_cat_id) first_cat_prefer_1w from
 (
 select datasource,buyer_id,first_cat_id, row_number() over(partition by datasource,buyer_id order by cnt desc ) rank from
 tmp.tmp_vova_dws_buyer_portrait_first_cat where day_type=7
@@ -58,7 +58,7 @@ tmp.tmp_vova_dws_buyer_portrait_first_cat where day_type=7
 
 --category近一月一级类目偏好结果表，取top10
 INSERT OVERWRITE TABLE tmp.tmp_vova_dws_buyer_portrait_cat30_result
-select datasource,buyer_id,collect_list(first_cat_id) first_cat_prefer_1m from
+select /*+ REPARTITION(20) */ datasource,buyer_id,collect_list(first_cat_id) first_cat_prefer_1m from
 (
 select datasource,buyer_id,first_cat_id, row_number() over(partition by datasource,buyer_id order by cnt desc ) rank from
 tmp.tmp_vova_dws_buyer_portrait_first_cat where day_type in(7,30)
@@ -67,7 +67,7 @@ tmp.tmp_vova_dws_buyer_portrait_first_cat where day_type in(7,30)
 
 --category历史一级类目偏好结果表
 INSERT OVERWRITE TABLE tmp.tmp_vova_dws_buyer_portrait_first_cat_his_result
-select datasource,buyer_id,collect_list(first_cat_id) first_cat_prefer_his from
+select /*+ REPARTITION(20) */ datasource,buyer_id,collect_list(first_cat_id) first_cat_prefer_his from
 (
 select datasource,buyer_id,first_cat_id, row_number() over(partition by datasource,buyer_id order by his_cnt desc ) rank from
 tmp.tmp_vova_dws_buyer_portrait_first_cat
@@ -94,7 +94,7 @@ group by t1.datasource,t1.buyer_id,if(t2.second_cat_id is null,t2.first_cat_id,t
 
 --category近一周二级类目偏好结果表，取top10
 INSERT OVERWRITE TABLE tmp.tmp_vova_dws_buyer_portrait_second_cat7_result
-select datasource,buyer_id,collect_list(second_cat_id) second_cat_prefer_1w from
+select /*+ REPARTITION(20) */ datasource,buyer_id,collect_list(second_cat_id) second_cat_prefer_1w from
 (
 select datasource,buyer_id,second_cat_id, row_number() over(partition by datasource,buyer_id order by cnt desc ) rank from
 tmp.tmp_vova_dws_buyer_portrait_second_cat where day_type = 7
@@ -102,7 +102,7 @@ tmp.tmp_vova_dws_buyer_portrait_second_cat where day_type = 7
 
 --category近一月二级类目偏好结果表，取top10
 INSERT OVERWRITE TABLE tmp.tmp_vova_dws_buyer_portrait_second_cat30_result
-select datasource,buyer_id,collect_list(second_cat_id) second_cat_prefer_1m from
+select /*+ REPARTITION(20) */ datasource,buyer_id,collect_list(second_cat_id) second_cat_prefer_1m from
 (
 select datasource,buyer_id,second_cat_id, row_number() over(partition by datasource,buyer_id order by cnt desc ) rank from
 tmp.tmp_vova_dws_buyer_portrait_second_cat where day_type in(7,30)
@@ -121,7 +121,7 @@ tmp.tmp_vova_dws_buyer_portrait_second_cat
 --月最多二级品类ID临时表
 drop table if exists tmp.tmp_vova_dws_buyer_portrait_second_cat_max30;
 create table tmp.tmp_vova_dws_buyer_portrait_second_cat_max30 STORED AS PARQUETFILE as
-select f1.datasource,
+select /*+ REPARTITION(20) */ f1.datasource,
 f1.buyer_id,
 if(t2.second_cat_id is null,t2.first_cat_id,t2.second_cat_id) second_cat_id,
 act_type_id,
@@ -138,7 +138,7 @@ act_type_id;
 --月点击最多二级品类ID
 drop table if exists tmp.tmp_vova_dws_buyer_portrait_second_cat_max30_click_result;
 create table tmp.tmp_vova_dws_buyer_portrait_second_cat_max30_click_result STORED AS PARQUETFILE as
-select datasource,buyer_id,second_cat_id second_cat_max_click_1m from
+select /*+ REPARTITION(20) */ datasource,buyer_id,second_cat_id second_cat_max_click_1m from
 (
 select datasource,buyer_id,second_cat_id, row_number() over(partition by datasource,buyer_id order by cnt desc ) rank from
 tmp.tmp_vova_dws_buyer_portrait_second_cat_max30 where act_type_id=2
@@ -146,7 +146,7 @@ tmp.tmp_vova_dws_buyer_portrait_second_cat_max30 where act_type_id=2
 --月收藏最多二级品类ID
 drop table if exists tmp.tmp_vova_dws_buyer_portrait_second_cat_max30_collect_result;
 create table tmp.tmp_vova_dws_buyer_portrait_second_cat_max30_collect_result STORED AS PARQUETFILE as
-select datasource,buyer_id,second_cat_id second_cat_max_collect_1m from
+select /*+ REPARTITION(20) */ datasource,buyer_id,second_cat_id second_cat_max_collect_1m from
 (
 select datasource,buyer_id,second_cat_id, row_number() over(partition by datasource,buyer_id order by cnt desc ) rank from
 tmp.tmp_vova_dws_buyer_portrait_second_cat_max30 where act_type_id=4
@@ -154,7 +154,7 @@ tmp.tmp_vova_dws_buyer_portrait_second_cat_max30 where act_type_id=4
 --月加购最多二级品类ID
 drop table if exists tmp.tmp_vova_dws_buyer_portrait_second_cat_max30_cart_result;
 create table tmp.tmp_vova_dws_buyer_portrait_second_cat_max30_cart_result STORED AS PARQUETFILE as
-select datasource,buyer_id,second_cat_id second_cat_max_cart_1m from
+select /*+ REPARTITION(20) */ datasource,buyer_id,second_cat_id second_cat_max_cart_1m from
 (
 select datasource,buyer_id,second_cat_id, row_number() over(partition by datasource,buyer_id order by cnt desc ) rank from
 tmp.tmp_vova_dws_buyer_portrait_second_cat_max30 where act_type_id=6
@@ -162,7 +162,7 @@ tmp.tmp_vova_dws_buyer_portrait_second_cat_max30 where act_type_id=6
 --月下单最多二级品类ID
 drop table if exists tmp.tmp_vova_dws_buyer_portrait_second_cat_max30_order_result;
 create table tmp.tmp_vova_dws_buyer_portrait_second_cat_max30_order_result STORED AS PARQUETFILE as
-select datasource,buyer_id,second_cat_id second_cat_max_order_1m from
+select /*+ REPARTITION(20) */ datasource,buyer_id,second_cat_id second_cat_max_order_1m from
 (
 select datasource,buyer_id,second_cat_id, row_number() over(partition by datasource,buyer_id order by cnt desc ) rank from
 tmp.tmp_vova_dws_buyer_portrait_second_cat_max30 where act_type_id=1
@@ -208,7 +208,7 @@ group by t1.datasource,t1.buyer_id,t2.brand_id,t1.day_type;
 
 --近一周品牌偏好结果表，取top10
 INSERT OVERWRITE TABLE tmp.tmp_vova_dws_buyer_portrait_brand7_result
-select datasource,buyer_id,collect_list(brand_id) brand_prefer_1w from
+select /*+ REPARTITION(20) */ datasource,buyer_id,collect_list(brand_id) brand_prefer_1w from
 (
 select datasource,buyer_id,brand_id, row_number() over(partition by datasource,buyer_id order by cnt desc ) rank from
 tmp.tmp_vova_dws_buyer_portrait_brand_tmp where day_type=7
@@ -216,7 +216,7 @@ tmp.tmp_vova_dws_buyer_portrait_brand_tmp where day_type=7
 
 --近一月品牌偏好结果表，取top10
 INSERT OVERWRITE TABLE tmp.tmp_vova_dws_buyer_portrait_brand30_result
-select datasource,buyer_id,collect_list(brand_id) brand_prefer_1m from
+select /*+ REPARTITION(20) */ datasource,buyer_id,collect_list(brand_id) brand_prefer_1m from
 (
 select datasource,buyer_id,brand_id, row_number() over(partition by datasource,buyer_id order by cnt desc ) rank from
 tmp.tmp_vova_dws_buyer_portrait_brand_tmp where day_type in (7,30)
@@ -235,7 +235,7 @@ tmp.tmp_vova_dws_buyer_portrait_brand_tmp
 --月最多品牌临时表
 drop table if exists tmp.tmp_vova_dws_buyer_portrait_brand_max30;
 create table tmp.tmp_vova_dws_buyer_portrait_brand_max30 STORED AS PARQUETFILE as
-select f1.datasource,
+select /*+ REPARTITION(20) */ f1.datasource,
 f1.buyer_id,
 t2.brand_id,
 act_type_id,
@@ -252,7 +252,7 @@ act_type_id;
 --月点击最多品牌
 drop table if exists tmp.tmp_vova_dws_buyer_portrait_brand_max30_click_result;
 create table tmp.tmp_vova_dws_buyer_portrait_brand_max30_click_result STORED AS PARQUETFILE as
-select datasource,buyer_id,brand_id brand_max_click_1m from
+select /*+ REPARTITION(20) */ datasource,buyer_id,brand_id brand_max_click_1m from
 (
 select datasource,buyer_id,brand_id, row_number() over(partition by datasource,buyer_id order by cnt desc ) rank from
 tmp.tmp_vova_dws_buyer_portrait_brand_max30 where act_type_id=2
@@ -260,7 +260,7 @@ tmp.tmp_vova_dws_buyer_portrait_brand_max30 where act_type_id=2
 --月收藏最多品牌
 drop table if exists tmp.tmp_vova_dws_buyer_portrait_brand_max30_collect_result;
 create table tmp.tmp_vova_dws_buyer_portrait_brand_max30_collect_result STORED AS PARQUETFILE as
-select datasource,buyer_id,brand_id brand_max_collect_1m from
+select /*+ REPARTITION(20) */ datasource,buyer_id,brand_id brand_max_collect_1m from
 (
 select datasource,buyer_id,brand_id, row_number() over(partition by datasource,buyer_id order by cnt desc ) rank from
 tmp.tmp_vova_dws_buyer_portrait_brand_max30 where act_type_id=4
@@ -268,7 +268,7 @@ tmp.tmp_vova_dws_buyer_portrait_brand_max30 where act_type_id=4
 --月加购最多品牌
 drop table if exists tmp.tmp_vova_dws_buyer_portrait_brand_max30_cart_result;
 create table tmp.tmp_vova_dws_buyer_portrait_brand_max30_cart_result STORED AS PARQUETFILE as
-select datasource,buyer_id,brand_id brand_max_cart_1m from
+select /*+ REPARTITION(20) */ datasource,buyer_id,brand_id brand_max_cart_1m from
 (
 select datasource,buyer_id,brand_id, row_number() over(partition by datasource,buyer_id order by cnt desc ) rank from
 tmp.tmp_vova_dws_buyer_portrait_brand_max30 where act_type_id=6
@@ -276,7 +276,7 @@ tmp.tmp_vova_dws_buyer_portrait_brand_max30 where act_type_id=6
 --月下单最多品牌
 drop table if exists tmp.tmp_vova_dws_buyer_portrait_brand_max30_order_result;
 create table tmp.tmp_vova_dws_buyer_portrait_brand_max30_order_result STORED AS PARQUETFILE as
-select datasource,buyer_id,brand_id brand_max_order_1m from
+select /*+ REPARTITION(20) */ datasource,buyer_id,brand_id brand_max_order_1m from
 (
 select datasource,buyer_id,brand_id, row_number() over(partition by datasource,buyer_id order by cnt desc ) rank from
 tmp.tmp_vova_dws_buyer_portrait_brand_max30 where act_type_id=1
@@ -286,7 +286,7 @@ tmp.tmp_vova_dws_buyer_portrait_brand_max30 where act_type_id=1
 --每日活跃时段
 drop table if exists tmp.tmp_vova_dws_buyer_portrait_active_day_result;
 create table tmp.tmp_vova_dws_buyer_portrait_active_day_result STORED AS PARQUETFILE as
-select datasource,buyer_id,tag_id active_day_1m from
+select /*+ REPARTITION(20) */ datasource,buyer_id,tag_id active_day_1m from
 (
 select datasource,buyer_id,tag_id,row_number() over(partition by datasource,buyer_id order by cnt desc ) rank from
 (
@@ -299,7 +299,7 @@ group by datasource,buyer_id,tag_id
 --按周的活跃日期
 drop table if exists tmp.tmp_vova_dws_buyer_portrait_active_week_result;
 create table tmp.tmp_vova_dws_buyer_portrait_active_week_result STORED AS PARQUETFILE as
-select datasource,buyer_id,tag_id active_week_his from
+select /*+ REPARTITION(20) */ datasource,buyer_id,tag_id active_week_his from
 (
 select datasource,buyer_id,tag_id,row_number() over(partition by datasource,buyer_id order by cnt desc ) rank from
 (
@@ -313,7 +313,7 @@ group by datasource,buyer_id,tag_id
 --按月的活跃日期
 drop table if exists tmp.tmp_vova_dws_buyer_portrait_active_month_result;
 create table tmp.tmp_vova_dws_buyer_portrait_active_month_result STORED AS PARQUETFILE as
-select datasource,buyer_id,tag_id active_month_his from
+select /*+ REPARTITION(20) */ datasource,buyer_id,tag_id active_month_his from
 (
 select datasource,buyer_id,tag_id,row_number() over(partition by datasource,buyer_id order by cnt desc ) rank from
 (
@@ -328,7 +328,7 @@ group by datasource,buyer_id,tag_id
 --价格偏好基础表
 drop table if exists tmp.tmp_vova_dws_buyer_portrait_price;
 create table tmp.tmp_vova_dws_buyer_portrait_price STORED AS PARQUETFILE as
-select f1.datasource,f1.buyer_id,
+select /*+ REPARTITION(20) */ f1.datasource,f1.buyer_id,
 case when t2.shop_price >0 and  t2.shop_price<=5 then '0-5'
 when t2.shop_price >5 and  t2.shop_price<=10 then '5-10'
 when t2.shop_price >10 and  t2.shop_price<=20 then '10-20'
@@ -357,7 +357,7 @@ end;
 --价格偏好结果表
 drop table if exists tmp.tmp_vova_dws_buyer_portrait_price_result;
 create table tmp.tmp_vova_dws_buyer_portrait_price_result STORED AS PARQUETFILE as
-select datasource,buyer_id,price_range price_prefer_1w from
+select /*+ REPARTITION(20) */ datasource,buyer_id,price_range price_prefer_1w from
 (
 select datasource,buyer_id,price_range,row_number() over(partition by datasource,buyer_id order by cnt desc ) rank from
 tmp.tmp_vova_dws_buyer_portrait_price
@@ -367,6 +367,7 @@ tmp.tmp_vova_dws_buyer_portrait_price
 drop table if exists tmp.tmp_vova_dws_buyer_portrait_pay_order;
 create table tmp.tmp_vova_dws_buyer_portrait_pay_order STORED AS PARQUETFILE as
 select
+/*+ REPARTITION(20) */
 datasource,
 buyer_id,
 count(distinct order_id) pay_cnt_his
@@ -376,6 +377,7 @@ from dwd.dwd_vova_fact_pay group by datasource,buyer_id;
 drop table if exists tmp.tmp_vova_dws_buyer_portrait_ship;
 create table tmp.tmp_vova_dws_buyer_portrait_ship STORED AS PARQUETFILE as
 select
+/*+ REPARTITION(20) */
 datasource,
 buyer_id,
 count(distinct order_id) ship_cnt_his
@@ -387,6 +389,7 @@ group by datasource,buyer_id;
 drop table if exists tmp.tmp_vova_buyer_max_visits_cw;
 create table tmp.tmp_vova_buyer_max_visits_cw STORED AS PARQUETFILE as
 select
+/*+ REPARTITION(20) */
 datasource,
 buyer_id,
 max(cnt) max_visits_cnt_cw
@@ -404,7 +407,7 @@ buyer_id,
 count(distinct pt) cnt
 from
 dwd.dwd_vova_log_screen_view
-where year(pt) = year('$pre_date') and weekofyear(pt) = weekofyear('$pre_date')
+where year(pt) = year('${pre_date}') and weekofyear(pt) = weekofyear('${pre_date}')
 group by datasource,buyer_id
 ) t1
 group by datasource,buyer_id;

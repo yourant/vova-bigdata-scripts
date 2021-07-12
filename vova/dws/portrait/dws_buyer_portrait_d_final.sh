@@ -9,7 +9,7 @@ fi
 ###逻辑sql
 #依赖的表,dwd.dwd_vova_fact_buyer_portrait_base，dim.dim_vova_category，dim.dim_vova_goods
 sql="
-insert overwrite table dws.dws_vova_buyer_portrait partition(pt='$pre_date')
+insert overwrite table dws.dws_vova_buyer_portrait partition(pt='${pre_date}')
 select
 /*+ REPARTITION(30) */
 t1.datasource,

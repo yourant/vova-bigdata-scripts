@@ -8,6 +8,7 @@ fi
 sql="
 insert overwrite table dws.dws_vova_goods_core_feature_his partition(pt='${pre_date}')
 select
+/*+ REPARTITION(2) */
  dg.goods_id as gs_id,
  nvl(tmp_expre.expre_cnt,0) as expre_cnt,
  nvl(nvl(tmp_ord.pay_dau,0)/nvl(tmp_expre.dau,0)*100,0) as cr,

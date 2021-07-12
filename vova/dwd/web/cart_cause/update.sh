@@ -67,7 +67,7 @@ from (
                          app_version,
                          test_info,recall_pool
                   from dwd.dwd_vova_log_goods_click log
-                  where log.pt = '$cur_date'
+                  where log.pt = '${cur_date}'
                     and log.platform in('pc','web')
                     and log.dp = 'vova'
                     and log.datasource = 'vova'
@@ -89,7 +89,7 @@ from (
                          null                       test_info,
                          null                       recall_pool
                   from dwd.dwd_vova_log_data log
-                  where log.pt = '$cur_date'
+                  where log.pt = '${cur_date}'
                     and log.platform in('pc','web')
                     and log.dp = 'vova'
                     and log.datasource = 'vova'
@@ -177,7 +177,7 @@ from (
                          app_version,
                          test_info,recall_pool
                   from dwd.dwd_vova_log_goods_impression log
-                  where log.pt = '$cur_date'
+                  where log.pt = '${cur_date}'
                     and log.platform in('pc','web')
                     and log.dp = 'vova'
                     and log.datasource = 'vova'

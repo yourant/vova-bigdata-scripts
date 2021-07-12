@@ -191,6 +191,7 @@ group by              project,
 
 spark-sql \
 --conf "spark.app.name=dwb_fd_rpt_prc_abtest_funnel_yjzhang"   \
+--conf "spark.dynamicAllocation.maxExecutors=150"  \
 -d pt=$pt \
 -e "$sql"
 

@@ -35,6 +35,7 @@ echo "m_price_pt=$m_price_pt"
 
 spark-submit --master yarn \
 --deploy-mode client  \
+--executor-memory 10G \
 --name GoodsImgVector \
 --conf spark.dynamicAllocation.maxExecutors=100 \
 --class com.vova.bigdata.sparkbatch.dataprocess.ads.GoodsImgVector \
