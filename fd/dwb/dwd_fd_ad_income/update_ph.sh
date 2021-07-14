@@ -7,31 +7,31 @@ fi
 echo $cur_date
 
 #退货/退款订单数 退款金额
-refund_order_cnt_rate=0.1950
-refund_order_cnt_rate_send=0.1120
+refund_order_cnt_rate=0.1146
+refund_order_cnt_rate_send=0.0858
 #退货红包金额
-refund_amount_rate=0.0691
-refund_amount_rate_send=0.0691
+refund_amount_rate=0.0671
+refund_amount_rate_send=0.0671
 #代付快递费
-pay_express_rate=0.2065
+pay_express_rate=0.1157
 #支付手续费
-pay_free_rate_1=0.0163
-pay_free_rate_2=0.33
+pay_free_rate_1=0.0084
+pay_free_rate_2=0.0
 
-pay_free_rate_1_send=0.0220
-pay_free_rate_2_send=0.36
+pay_free_rate_1_send=0.0104
+pay_free_rate_2_send=0.0
 #人员工资
-employee_money_order=0.0501
-employee_money_send=0.0571
+employee_money_order=0.0544
+employee_money_send=0.0593
 #仓储费
-stock_order=0.0186
-stock_send=0.0205
+stock_order=0.0023
+stock_send=0.0024
 #房租
-house_amount=3985
+house_amount=633
 #服务器费用
-computer_amount=5894
+computer_amount=577
 
-spark-sql   --conf "spark.app.name=dwb_fd_income_order" \
+spark-sql   --conf "spark.app.name=dwb_ph_income_order" \
   --conf "spark.sql.crossJoin.enabled=true" \
   --driver-memory 10G \
   --executor-memory 8G \
@@ -39,7 +39,7 @@ spark-sql   --conf "spark.app.name=dwb_fd_income_order" \
   --conf "spark.dynamicAllocation.maxExecutors=120"  \
   -e "
 
-insert overwrite table tmp.tmp_fd_income_01
+insert overwrite table tmp.tmp_ph_income_01
     select count(distinct if(to_date(a.order_time) = '${cur_date}' and d.order_id is null, a.order_id,
                              null))                                           day_order_cnt,    --总订单数 天
            sum(if(to_date(a.order_time) = '${cur_date}', a.goods_amount, 0))   day_gmv,          --商品销售总金额 天
@@ -86,7 +86,7 @@ insert overwrite table tmp.tmp_fd_income_01
                          from_unixtime(unix_timestamp(cast (add_months('${cur_date}',-1) as date)), 'yyyy-MM')
                ) eoi
           where currency_rn = 1) a
-             join ods_fd_romeo.ods_fd_party b on a.party_id = b.party_id and b.name = 'floryday'
+             join ods_fd_romeo.ods_fd_party b on a.party_id = b.party_id and b.name = 'poprhine'
              left join (select order_id
                         from ods_fd_ecshop.ods_fd_order_attribute
                         where attr_name = 'middle_order_type'
@@ -133,41 +133,42 @@ group by order_id) h on a.order_id = h.order_id
 left join dwd.dwd_fd_ecs_order_info_shipping l on a.order_id = l.ecs_order_id
     where c.order_id is null
 ;
-insert overwrite table tmp.tmp_fd_income_02
+insert overwrite table tmp.tmp_ph_income_02
     select
 sum(if(to_date(a.date) = '${cur_date}', a.cost, 0)) ad_cost_day,
 sum(if(to_date(a.date) <= '${cur_date}', a.cost, 0)) ad_cost_month
 from ods_fd_ar.ods_fd_ads_adgroup_daily_flat_report a
-where a.ads_site_code = 'FD' and from_unixtime(unix_timestamp(a.date), 'yyyy-MM') =
+where a.ads_site_code in ('PR','BY','TY','HC','BR','SN','MC','BS','EC','CC','CB','CL','CH','JC','JD','YJ','JE','CD','VV','VC','PH','ZD','SG','MT','SZ')
+ and from_unixtime(unix_timestamp(a.date), 'yyyy-MM') =
                                  from_unixtime(unix_timestamp(to_date('${cur_date}')), 'yyyy-MM')
 ;
-insert overwrite table dwb.dwb_fd_income_order PARTITION (pt = '${cur_date}')
+insert overwrite table dwb.dwb_ph_income_order PARTITION (pt = '${cur_date}')
 select
 '总订单数',tmp1.day_order_cnt,'',tmp1.mon_order_cnt,'',1
-from tmp.tmp_fd_income_01 tmp1
+from tmp.tmp_ph_income_01 tmp1
 union all
 select
 '退货/退款订单数',cast(round(tmp1.day_order_cnt * ${refund_order_cnt_rate},0) as int),'',cast(round(tmp1.mon_order_cnt * ${refund_order_cnt_rate},0) as int),'',2
-from tmp.tmp_fd_income_01 tmp1
+from tmp.tmp_ph_income_01 tmp1
 union all
 select
 '净销售订单数',cast(round(tmp1.day_order_cnt * (1- ${refund_order_cnt_rate}),0) as int),'',cast(round(tmp1.mon_order_cnt * (1- ${refund_order_cnt_rate}),0) as int),'',3
-from tmp.tmp_fd_income_01 tmp1
+from tmp.tmp_ph_income_01 tmp1
 union all
 select
 '商品销售总金额',round(tmp1.day_gmv,2),'100%',round(tmp1.mon_gmv,2),'100%',4
-from tmp.tmp_fd_income_01 tmp1
+from tmp.tmp_ph_income_01 tmp1
 union all
 select
 '退款金额',round(tmp1.day_gmv * ${refund_order_cnt_rate},2),
 concat(round(tmp1.day_gmv * ${refund_order_cnt_rate} / tmp1.day_gmv * 100,2),'%'),
 round(tmp1.mon_gmv * ${refund_order_cnt_rate},2),
 concat(round(tmp1.mon_gmv * ${refund_order_cnt_rate} / tmp1.mon_gmv * 100,2),'%'),5
-from tmp.tmp_fd_income_01 tmp1
+from tmp.tmp_ph_income_01 tmp1
 union all
 select
 '商品销售净收入',round(tmp1.day_gmv * (1 - ${refund_order_cnt_rate}),2),'',round(tmp1.mon_gmv * (1 - ${refund_order_cnt_rate}),2),'',6
-from tmp.tmp_fd_income_01 tmp1
+from tmp.tmp_ph_income_01 tmp1
 union all
 select
 '红包消耗总金额',
@@ -175,7 +176,7 @@ round(tmp1.day_bonus * (1 - ${refund_amount_rate}),2),
 concat(round(abs(tmp1.day_bonus * (1 - ${refund_amount_rate}) / tmp1.day_gmv) * 100,2),'%'),
 round(tmp1.mon_bonus * (1 - ${refund_amount_rate}),2),
 concat(round(abs(tmp1.mon_bonus * (1 - ${refund_amount_rate}) / tmp1.mon_gmv) * 100,2),'%'),7
-from tmp.tmp_fd_income_01 tmp1
+from tmp.tmp_ph_income_01 tmp1
 union all
 select
 '发货红包金额',
@@ -183,7 +184,7 @@ round(tmp1.day_bonus,2),
 concat(round(abs(tmp1.day_bonus / tmp1.day_gmv) * 100,2),'%'),
 round(tmp1.mon_bonus,2),
 concat(round(abs(tmp1.mon_bonus / tmp1.mon_gmv) * 100,2),'%'),8
-from tmp.tmp_fd_income_01 tmp1
+from tmp.tmp_ph_income_01 tmp1
 union all
 select
 '退货红包金额',
@@ -191,7 +192,7 @@ round(tmp1.day_bonus * -${refund_amount_rate},2),
 concat(round(abs(tmp1.day_bonus * ${refund_amount_rate} / tmp1.day_gmv) * 100,2),'%'),
 round(tmp1.mon_bonus * -${refund_amount_rate},2),
 concat(round(abs(tmp1.mon_bonus * ${refund_amount_rate} / tmp1.mon_gmv) * 100,2),'%'),9
-from tmp.tmp_fd_income_01 tmp1
+from tmp.tmp_ph_income_01 tmp1
 union all
 select
 '物流费盈亏',
@@ -199,7 +200,7 @@ round(tmp1.day_shou_express - ${pay_express_rate} * tmp1.day_gmv,2),
 concat(round(abs((tmp1.day_shou_express - ${pay_express_rate} * tmp1.day_gmv) / tmp1.day_gmv) * 100,2),'%'),
 round(tmp1.mon_shou_express - ${pay_express_rate} * tmp1.mon_gmv,2),
 concat(round(abs((tmp1.mon_shou_express - ${pay_express_rate} * tmp1.mon_gmv) / tmp1.mon_gmv) * 100,2),'%'),10
-from tmp.tmp_fd_income_01 tmp1
+from tmp.tmp_ph_income_01 tmp1
 union all
 select
 '代收快递费',
@@ -207,7 +208,7 @@ round(tmp1.day_shou_express,2),
 concat(round(abs(tmp1.day_shou_express / (tmp1.day_gmv)) * 100,2),'%'),
 round(tmp1.mon_shou_express,2),
 concat(round(abs(tmp1.mon_shou_express / (tmp1.mon_gmv)) * 100,2),'%'),11
-from tmp.tmp_fd_income_01 tmp1
+from tmp.tmp_ph_income_01 tmp1
 union all
 select
 '代付快递费',
@@ -215,7 +216,7 @@ round(0 - ${pay_express_rate} * tmp1.day_gmv,2),
 concat(round(abs(${pay_express_rate} * tmp1.day_gmv / (tmp1.day_gmv)) * 100,2),'%'),
 round(0 - ${pay_express_rate} * tmp1.mon_gmv,2),
 concat(round(abs(${pay_express_rate} * tmp1.mon_gmv / (tmp1.mon_gmv)) * 100,2),'%'),12
-from tmp.tmp_fd_income_01 tmp1
+from tmp.tmp_ph_income_01 tmp1
 union all
 select
 '商品采购成本',
@@ -223,7 +224,7 @@ round(tmp1.union_cost_day,2),
 concat(round(abs(tmp1.union_cost_day / (tmp1.day_gmv)) * 100,2),'%'),
 round(tmp1.unit_cost_month,2),
 concat(round(abs(tmp1.unit_cost_month / (tmp1.mon_gmv)) * 100,2),'%'),13
-from tmp.tmp_fd_income_01 tmp1
+from tmp.tmp_ph_income_01 tmp1
 union all
 select
 '广告费',
@@ -231,8 +232,8 @@ round(tmp4.ad_cost_day,2),
 concat(round(abs(tmp4.ad_cost_day / (tmp1.day_gmv)) * 100,2),'%'),
 round(tmp4.ad_cost_month,2),
 concat(round(abs(tmp4.ad_cost_month / (tmp1.mon_gmv)) * 100,2),'%'),14
-from tmp.tmp_fd_income_02 tmp4
-join tmp.tmp_fd_income_01 tmp1 on 1 = 1
+from tmp.tmp_ph_income_02 tmp4
+join tmp.tmp_ph_income_01 tmp1 on 1 = 1
 union all
 select
 '支付手续费',
@@ -240,7 +241,7 @@ round(tmp1.order_amount_day * ${pay_free_rate_1} + tmp1.day_order_cnt * ${pay_fr
 concat(round(abs((tmp1.order_amount_day * ${pay_free_rate_1} + tmp1.day_order_cnt * ${pay_free_rate_2}) / (tmp1.day_gmv)) * 100,2),'%'),
 round(tmp1.order_amount_month * ${pay_free_rate_1} + tmp1.mon_order_cnt * ${pay_free_rate_2},2),
 concat(round(abs((tmp1.order_amount_month * ${pay_free_rate_1} + tmp1.mon_order_cnt * ${pay_free_rate_2}) / (tmp1.mon_gmv)) * 100,2),'%'),15
-from tmp.tmp_fd_income_01 tmp1
+from tmp.tmp_ph_income_01 tmp1
 union all
 select
 '毛利',
@@ -248,8 +249,8 @@ round(tmp1.day_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.day_bonus * (1 - ${re
 '',
 round(tmp1.mon_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.mon_bonus * (1 - ${refund_amount_rate}) + tmp1.mon_shou_express - ${pay_express_rate} * tmp1.mon_gmv - (tmp1.unit_cost_month + tmp4.ad_cost_month + tmp1.order_amount_month * ${pay_free_rate_1} + tmp1.mon_order_cnt * ${pay_free_rate_2}),2),
 '',16
-from tmp.tmp_fd_income_01 tmp1
-join tmp.tmp_fd_income_02 tmp4 on 1 = 1
+from tmp.tmp_ph_income_01 tmp1
+join tmp.tmp_ph_income_02 tmp4 on 1 = 1
 union all
 select
 '毛利率%',
@@ -257,8 +258,8 @@ concat(round(abs((tmp1.day_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.day_bonus
 '',
 concat(round(abs((tmp1.mon_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.mon_bonus * (1 - ${refund_amount_rate}) + tmp1.mon_shou_express - ${pay_express_rate} * tmp1.mon_gmv - (tmp1.unit_cost_month + tmp4.ad_cost_month + tmp1.order_amount_month * ${pay_free_rate_1} + tmp1.mon_order_cnt * ${pay_free_rate_2})) / (tmp1.mon_gmv)) * 100,2),'%'),
 '',17
-from tmp.tmp_fd_income_01 tmp1
-join tmp.tmp_fd_income_02 tmp4 on 1 = 1
+from tmp.tmp_ph_income_01 tmp1
+join tmp.tmp_ph_income_02 tmp4 on 1 = 1
 union all
 select
 '总费用',
@@ -266,7 +267,7 @@ round(tmp1.day_gmv * ${employee_money_order} + tmp1.day_gmv * ${stock_order} + $
 concat(round(abs((tmp1.day_gmv * ${employee_money_order} + tmp1.day_gmv * ${stock_order} + ${house_amount} + ${computer_amount}) / (tmp1.day_gmv)) * 100,2),'%'),
 round(tmp1.mon_gmv * ${employee_money_order} + tmp1.mon_gmv * ${stock_order} + day('${cur_date}') * ${house_amount} + day('${cur_date}') * ${computer_amount},2),
 concat(round(abs((tmp1.mon_gmv * ${employee_money_order} + tmp1.mon_gmv * ${stock_order} + day('${cur_date}') * ${house_amount} + day('${cur_date}') * ${computer_amount}) / (tmp1.mon_gmv)) * 100,2),'%'),18
-from tmp.tmp_fd_income_01 tmp1
+from tmp.tmp_ph_income_01 tmp1
 union all
 select
 '人员工资',
@@ -274,7 +275,7 @@ round(tmp1.day_gmv * ${employee_money_order},2),
 concat(round(abs(tmp1.day_gmv * ${employee_money_order} / (tmp1.day_gmv)) * 100,2),'%'),
 round(tmp1.mon_gmv * ${employee_money_order},2),
 concat(round(abs(tmp1.mon_gmv * ${employee_money_order} / (tmp1.mon_gmv)) * 100,2),'%'),19
-from tmp.tmp_fd_income_01 tmp1
+from tmp.tmp_ph_income_01 tmp1
 union all
 select
 '仓储费',
@@ -282,7 +283,7 @@ round(tmp1.day_gmv * ${stock_order},2),
 concat(round(abs(tmp1.day_gmv * ${stock_order} / (tmp1.day_gmv)) * 100,2),'%'),
 round(tmp1.mon_gmv * ${stock_order},2),
 concat(round(abs(tmp1.mon_gmv * ${stock_order} / (tmp1.mon_gmv)) * 100,2),'%'),20
-from tmp.tmp_fd_income_01 tmp1
+from tmp.tmp_ph_income_01 tmp1
 union all
 select
 '房租',
@@ -290,7 +291,7 @@ ${house_amount},
 concat(round(abs(${house_amount} / (tmp1.day_gmv)) * 100,2),'%'),
 day('${cur_date}') * ${house_amount},
 concat(round(abs(day('${cur_date}') * ${house_amount} / (tmp1.mon_gmv)) * 100,2),'%'),21
-from tmp.tmp_fd_income_01 tmp1
+from tmp.tmp_ph_income_01 tmp1
 union all
 select
 '服务器费用',
@@ -298,7 +299,7 @@ ${computer_amount},
 concat(round(abs(${computer_amount} / (tmp1.day_gmv)) * 100,2),'%'),
 day('${cur_date}') * ${computer_amount},
 concat(abs(round(day('${cur_date}') * ${computer_amount} / (tmp1.mon_gmv) * 100,2)),'%'),22
-from tmp.tmp_fd_income_01 tmp1
+from tmp.tmp_ph_income_01 tmp1
 union all
 select
 '净利润',
@@ -308,8 +309,8 @@ round(tmp1.day_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.day_bonus * (1 - ${re
 round(tmp1.mon_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.mon_bonus * (1 - ${refund_amount_rate}) + tmp1.mon_shou_express - ${pay_express_rate} * tmp1.mon_gmv - (tmp1.unit_cost_month + tmp4.ad_cost_month + tmp1.order_amount_month * ${pay_free_rate_1} + tmp1.mon_order_cnt * ${pay_free_rate_2}) -
 (tmp1.mon_gmv * ${employee_money_order} + tmp1.mon_gmv * ${stock_order} + day('${cur_date}') * ${house_amount} + day('${cur_date}') * ${computer_amount}),2),
 '',23
-from tmp.tmp_fd_income_01 tmp1
-join tmp.tmp_fd_income_02 tmp4 on 1 = 1
+from tmp.tmp_ph_income_01 tmp1
+join tmp.tmp_ph_income_02 tmp4 on 1 = 1
 union all
 select
 '净利率',
@@ -319,8 +320,8 @@ concat(round(((tmp1.day_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.day_bonus * 
 concat(round(((tmp1.mon_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.mon_bonus * (1 - ${refund_amount_rate}) + tmp1.mon_shou_express - ${pay_express_rate} * tmp1.mon_gmv - (tmp1.unit_cost_month + tmp4.ad_cost_month + tmp1.order_amount_month * ${pay_free_rate_1} + tmp1.mon_order_cnt * ${pay_free_rate_2})) -
              (tmp1.mon_gmv * ${employee_money_order} + tmp1.mon_gmv * ${stock_order} + day('${cur_date}') * ${house_amount} + day('${cur_date}') * ${computer_amount}))  * 100 /
              tmp1.mon_gmv,2),'%'),'',24
-from tmp.tmp_fd_income_01 tmp1
-join tmp.tmp_fd_income_02 tmp4 on 1 = 1
+from tmp.tmp_ph_income_01 tmp1
+join tmp.tmp_ph_income_02 tmp4 on 1 = 1
 ;
 
 
@@ -334,7 +335,7 @@ join tmp.tmp_fd_income_02 tmp4 on 1 = 1
 
 
 
-insert overwrite table tmp.tmp_fd_income_03
+insert overwrite table tmp.tmp_ph_income_03
     select count(distinct if(to_date(a.order_time) = '${cur_date}', a.order_id,
                              null))                                           day_order_cnt,    --总订单数 天
            sum(if(to_date(a.order_time) = '${cur_date}', a.goods_amount, 0))   day_gmv,          --商品销售总金额 天
@@ -390,7 +391,7 @@ insert overwrite table tmp.tmp_fd_income_03
              left join (select count(distinct if(to_date(from_unixtime(eoi.shipping_time,'yyyy-MM-dd HH:mm:ss')) = '${cur_date}', eoi.order_id,null)) order_cnt_day,count(1) order_cnt_month
                         from ods_fd_ecshop.ods_fd_ecs_order_info eoi where eoi.order_type_id = 'SALE' and
                  from_unixtime(unix_timestamp(from_unixtime(eoi.shipping_time,'yyyy-MM-dd HH:mm:ss')), 'yyyy-MM') = from_unixtime(unix_timestamp(to_date('${cur_date}')), 'yyyy-MM')  and to_date(from_unixtime(eoi.shipping_time,'yyyy-MM-dd HH:mm:ss')) <= '${cur_date}') j on 1 =1
-             join ods_fd_romeo.ods_fd_party b on a.party_id = b.party_id and b.name = 'floryday'
+             join ods_fd_romeo.ods_fd_party b on a.party_id = b.party_id and b.name = 'poprhine'
              left join (select order_id
                         from ods_fd_ecshop.ods_fd_order_attribute
                         where attr_name = 'middle_order_type'
@@ -445,7 +446,7 @@ FROM ods_fd_ecshop.ods_fd_ecs_order_info eoi
 INNER JOIN ods_fd_romeo.ods_fd_order_shipment os ON eoi.order_id = os.order_id
 INNER JOIN ods_fd_romeo.ods_fd_shipment s ON os.shipment_id = s.shipment_id
 LEFT JOIN ods_fd_ecshop.ods_fd_sync_flyfish_queue sfq ON s.shipment_id = sfq.relevance_key AND sfq.type = 'SP'
-WHERE eoi.party_id in ('65588')
+WHERE eoi.party_id in ('68606')
 AND eoi.order_type_id IN ('SALE', 'TRANSFER')
 AND eoi.email not regexp '@tetx.com|@i9i8.com'
 AND s.shipment_status >= '155'
@@ -470,22 +471,22 @@ where t.currency_rn = 1) i on 1 = 1
 left join dwd.dwd_fd_ecs_order_info_shipping k on a.order_id = k.ecs_order_id
     where c.order_id is null
 ;
-insert overwrite table dwb.dwb_fd_income_out_stock PARTITION (pt = '${cur_date}')
+insert overwrite table dwb.dwb_ph_income_out_stock PARTITION (pt = '${cur_date}')
 select
 '总订单数',tmp1.day_order_cnt,'',tmp1.mon_order_cnt,'',1
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '退货/退款订单数',cast(round(tmp1.day_order_cnt * ${refund_order_cnt_rate_send},0) as int),'',cast(round(tmp1.mon_order_cnt * ${refund_order_cnt_rate_send},0) as int),'',2
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '净销售订单数',cast(round(tmp1.day_order_cnt * (1- ${refund_order_cnt_rate_send}),0) as int),'',cast(round(tmp1.mon_order_cnt * (1- ${refund_order_cnt_rate_send}),0) as int),'',3
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '商品销售总金额',round(tmp1.day_gmv,2),'100%',round(tmp1.mon_gmv,2),'100%',4
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '退款金额',
@@ -493,11 +494,11 @@ round(tmp1.day_gmv * ${refund_order_cnt_rate_send},2),
 concat(round(tmp1.day_gmv * ${refund_order_cnt_rate_send} / tmp1.day_gmv * 100,2),'%'),
 round(tmp1.mon_gmv * ${refund_order_cnt_rate_send},2),
 concat(round(tmp1.mon_gmv * ${refund_order_cnt_rate_send} / tmp1.mon_gmv * 100,2),'%'),5
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '商品销售净收入',round(tmp1.day_gmv * (1 - ${refund_order_cnt_rate_send}),2),'',round(tmp1.mon_gmv * (1 - ${refund_order_cnt_rate_send}),2),'',6
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '红包消耗总金额',
@@ -505,7 +506,7 @@ round(tmp1.day_bonus * (1 - ${refund_amount_rate_send}),2),
 concat(round(abs(tmp1.day_bonus * (1 - ${refund_amount_rate_send}) / (tmp1.day_gmv)) * 100,2),'%'),
 round(tmp1.mon_bonus * (1 - ${refund_amount_rate_send}),2),
 concat(round(abs(tmp1.mon_bonus * (1 - ${refund_amount_rate_send}) / (tmp1.mon_gmv)) * 100,2),'%'),7
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '发货红包金额',
@@ -513,7 +514,7 @@ round(tmp1.day_bonus,2),
 concat(round(abs(tmp1.day_bonus / (tmp1.day_gmv)) * 100,2),'%'),
 round(tmp1.mon_bonus,2),
 concat(round(abs(tmp1.mon_bonus / (tmp1.mon_gmv)) * 100,2),'%'),8
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '退货红包金额',
@@ -521,7 +522,7 @@ round(tmp1.day_bonus * -${refund_amount_rate_send},2),
 concat(round(abs(tmp1.day_bonus * ${refund_amount_rate_send} / (tmp1.day_gmv)) * 100,2),'%'),
 round(tmp1.mon_bonus * -${refund_amount_rate_send},2),
 concat(round(abs(tmp1.mon_bonus * ${refund_amount_rate_send} / (tmp1.mon_gmv)) * 100,2),'%'),9
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '物流费盈亏',
@@ -529,7 +530,7 @@ round(tmp1.day_shou_express - tmp1.should_express_amount_day,2),
 concat(round(abs((tmp1.day_shou_express - tmp1.should_express_amount_day) / (tmp1.day_gmv)) * 100,2),'%'),
 round(tmp1.mon_shou_express -tmp1.should_express_amount_month,2),
 concat(round(abs((tmp1.mon_shou_express -tmp1.should_express_amount_month) / (tmp1.mon_gmv)) * 100,2),'%'),10
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '代收快递费',
@@ -537,7 +538,7 @@ round(tmp1.day_shou_express,2),
 concat(round(abs(tmp1.day_shou_express / (tmp1.day_gmv)) * 100,2),'%'),
 round(tmp1.mon_shou_express,2),
 concat(round(abs(tmp1.mon_shou_express / (tmp1.mon_gmv)) * 100,2),'%'),11
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '代付快递费',
@@ -545,7 +546,7 @@ round(0 - tmp1.should_express_amount_day,2),
 concat(round(abs(tmp1.should_express_amount_day / (tmp1.day_gmv)) * 100,2),'%'),
 round(0 - tmp1.should_express_amount_month,2),
 concat(round(abs(tmp1.should_express_amount_month / (tmp1.mon_gmv)) * 100,2),'%'),12
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '商品采购成本',
@@ -553,7 +554,7 @@ round(tmp1.union_cost_day,2),
 concat(round(abs(tmp1.union_cost_day / (tmp1.day_gmv)) * 100,2),'%'),
 round(tmp1.unit_cost_month,2),
 concat(round(abs(tmp1.unit_cost_month / (tmp1.mon_gmv)) * 100,2),'%'),13
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '广告费',
@@ -561,7 +562,7 @@ round(tmp1.ad_cost_day,2),
 concat(round(abs((tmp1.ad_cost_day) / (tmp1.day_gmv)) * 100,2),'%'),
 round(tmp1.ad_cost_month,2),
 concat(round(abs((tmp1.ad_cost_month) / (tmp1.mon_gmv)) * 100,2),'%'),14
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '支付手续费',
@@ -569,7 +570,7 @@ round(tmp1.order_amount_day * ${pay_free_rate_1_send} + tmp1.day_order_cnt * ${p
 concat(round(abs((tmp1.order_amount_day * ${pay_free_rate_1_send} + tmp1.day_order_cnt * ${pay_free_rate_2_send}) / (tmp1.day_gmv)) * 100,2),'%'),
 round(tmp1.order_amount_month * ${pay_free_rate_1_send} + tmp1.mon_order_cnt * ${pay_free_rate_2_send},2),
 concat(round(abs((tmp1.order_amount_month * ${pay_free_rate_1_send} + tmp1.mon_order_cnt * ${pay_free_rate_2_send}) / (tmp1.mon_gmv)) * 100,2),'%'),15
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '毛利',
@@ -577,7 +578,7 @@ round(tmp1.day_gmv * (1 - ${refund_order_cnt_rate_send}) + tmp1.day_bonus * (1 -
 '',
 round(tmp1.mon_gmv * (1 - ${refund_order_cnt_rate_send}) + tmp1.mon_bonus * (1 - ${refund_amount_rate_send}) + tmp1.mon_shou_express -tmp1.should_express_amount_month - (tmp1.unit_cost_month + (tmp1.ad_cost_month) + tmp1.order_amount_month * ${pay_free_rate_1_send} + tmp1.mon_order_cnt * ${pay_free_rate_2_send}),2),
 '',16
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '毛利率%',
@@ -585,7 +586,7 @@ concat(round(abs((tmp1.day_gmv * (1 - ${refund_order_cnt_rate_send}) + tmp1.day_
 '',
 concat(round(abs((tmp1.mon_gmv * (1 - ${refund_order_cnt_rate_send}) + tmp1.mon_bonus * (1 - ${refund_amount_rate_send}) + tmp1.mon_shou_express -tmp1.should_express_amount_month - (tmp1.unit_cost_month + (tmp1.ad_cost_month) + tmp1.order_amount_month * ${pay_free_rate_1_send} + tmp1.mon_order_cnt * ${pay_free_rate_2_send})) / (tmp1.mon_gmv)) * 100,2),'%'),
 '',17
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '总费用',
@@ -593,7 +594,7 @@ round(tmp1.day_gmv * ${employee_money_send} + tmp1.day_gmv * ${stock_send} + ${h
 concat(round(abs((tmp1.day_gmv * ${employee_money_send} + tmp1.day_gmv * ${stock_send} + ${house_amount} + ${computer_amount}) / (tmp1.day_gmv)) * 100,2),'%'),
 round(tmp1.mon_gmv * ${employee_money_send} + tmp1.mon_gmv * ${stock_send} + day('${cur_date}') * ${house_amount} + day('${cur_date}') * ${computer_amount},2),
 concat(round(abs((tmp1.mon_gmv * ${employee_money_send} + tmp1.mon_gmv * ${stock_send} + day('${cur_date}') * ${house_amount} + day('${cur_date}') * ${computer_amount}) / (tmp1.mon_gmv)) * 100,2),'%'),18
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '人员工资',
@@ -601,7 +602,7 @@ round(tmp1.day_gmv * ${employee_money_send},2),
 concat(round(abs(tmp1.day_gmv * ${employee_money_send} / (tmp1.day_gmv)) * 100,2),'%'),
 round(tmp1.mon_gmv * ${employee_money_send},2),
 concat(round(abs(tmp1.mon_gmv * ${employee_money_send} / (tmp1.mon_gmv)) * 100,2),'%'),19
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '仓储费',
@@ -609,7 +610,7 @@ round(tmp1.day_gmv * ${stock_send},2),
 concat(round(abs(tmp1.day_gmv * ${stock_send} / (tmp1.day_gmv)) * 100,2),'%'),
 round(tmp1.mon_gmv * ${stock_send},2),
 concat(round(abs(tmp1.mon_gmv * ${stock_send} / (tmp1.mon_gmv)) * 100,2),'%'),20
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '房租',
@@ -617,7 +618,7 @@ ${house_amount},
 concat(round(abs(${house_amount} / (tmp1.day_gmv)) * 100,2),'%'),
 day('${cur_date}') * ${house_amount},
 concat(round(abs(day('${cur_date}') * ${house_amount} / (tmp1.mon_gmv)) * 100,2),'%'),21
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '服务器费用',
@@ -625,7 +626,7 @@ ${computer_amount},
 concat(round(abs(${computer_amount} / (tmp1.day_gmv)) * 100,2),'%'),
 day('${cur_date}') * ${computer_amount},
 concat(abs(round(day('${cur_date}') * ${computer_amount} / (tmp1.mon_gmv) * 100,2)),'%'),22
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '净利润',
@@ -635,7 +636,7 @@ round(tmp1.day_gmv * (1 - ${refund_order_cnt_rate_send}) + tmp1.day_bonus * (1 -
 round(tmp1.mon_gmv * (1 - ${refund_order_cnt_rate_send}) + tmp1.mon_bonus * (1 - ${refund_amount_rate_send}) + tmp1.mon_shou_express -tmp1.should_express_amount_month - (tmp1.unit_cost_month + (tmp1.ad_cost_month) + tmp1.order_amount_month * ${pay_free_rate_1_send} + tmp1.mon_order_cnt * ${pay_free_rate_2_send}) -
 (tmp1.mon_gmv * ${employee_money_send} + tmp1.mon_gmv * ${stock_send} + day('${cur_date}') * ${house_amount} + day('${cur_date}') * ${computer_amount}),2),
 '',23
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 union all
 select
 '净利率',
@@ -643,7 +644,7 @@ concat(round(((tmp1.day_gmv * (1 - ${refund_order_cnt_rate_send}) + tmp1.day_bon
 (tmp1.day_gmv * ${employee_money_send} + tmp1.day_gmv * ${stock_send} + ${house_amount} + ${computer_amount})) / (tmp1.day_gmv)) * 100,2),'%'),'',
 concat((round((tmp1.mon_gmv * (1 - ${refund_order_cnt_rate_send}) + tmp1.mon_bonus * (1 - ${refund_amount_rate_send}) + tmp1.mon_shou_express -tmp1.should_express_amount_month - (tmp1.unit_cost_month + (tmp1.ad_cost_month) + tmp1.order_amount_month * ${pay_free_rate_1_send} + tmp1.mon_order_cnt * ${pay_free_rate_2_send}) -
 (tmp1.mon_gmv * ${employee_money_send} + tmp1.mon_gmv * ${stock_send} + day('${cur_date}') * ${house_amount} + day('${cur_date}') * ${computer_amount})) / (tmp1.mon_gmv) * 100,2)),'%'),'',24
-from tmp.tmp_fd_income_03 tmp1
+from tmp.tmp_ph_income_03 tmp1
 "
 
 #如果脚本失败，则报错
@@ -669,8 +670,8 @@ spark-submit \
 --conf spark.eventLog.enabled=false \
 --driver-java-options "-Dlog4j.configuration=hdfs:/conf/log4j.properties" \
 --conf spark.executor.extraJavaOptions="-Dlog4j.configuration=hdfs:/conf/log4j.properties" \
---class com.vova.bigdata.sparkbatch.dataprocess.ads.FdMoney s3://vomkt-emr-rec/jar/vova-bigdata-FdMoney.jar \
---pt ${cur_date} --spark.sparkMaster yarn
+--class com.vova.bigdata.sparkbatch.dataprocess.ads.PhMoney s3://vomkt-emr-rec/hjt/vova-bigdata-sparkbatch-1.0-SNAPSHOT.jar \
+--pt ${cur_date}  --spark.sparkMaster yarn
 
 echo '开始发邮件'
 
@@ -681,17 +682,17 @@ fi
 
 spark-submit \
 --deploy-mode client \
---name 'dwb_fd_income_order_email' \
+--name 'dwb_ad_income_order_email' \
 --master yarn  \
 --conf spark.executor.memory=4g \
 --conf spark.dynamicAllocation.maxExecutors=50 \
 --conf spark.executor.memoryOverhead=2048 \
 --class com.vova.utils.EmailUtil s3://vomkt-emr-rec/jar/vova-bd/dataprocess/new/vova-db-dataprocess-1.0-SNAPSHOT.jar \
 --env prod \
--sql "select cat_name,day_value,day_rate,month_value,month_rate from dwb.dwb_fd_income_order_1 where pt = '${cur_date}' order by rn"  \
+-sql "select cat_name,day_value,day_rate,month_value,month_rate from dwb.dwb_ph_income_order_1 where pt = '${cur_date}' order by rn"  \
 -head "科目,${cur_date},占比（取绝对值）,本月截止昨日累计,占比（取绝对值）"  \
 -receiver "juntao@vova.com.hk,cici.liu@i9i8.com,sol.ji@vova.com.hk,qi.zhong@gmail.com,qzhong@i9i8.com,ychen@i9i8.com,yfli@i9i8.com,ytang@i9i8.com,ruth.li@i9i8.com,muqie@i9i8.com,john.wang@i9i8.com,mixian@i9i8.com" \
--title "FD利润报表(订单维度,${cur_date})"
+-title "PH利润报表(订单维度,${cur_date})"
 
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
@@ -700,17 +701,17 @@ fi
 
 spark-submit \
 --deploy-mode client \
---name 'dwb_fd_income_out_stock_email' \
+--name 'dwb_ph_income_out_stock_email' \
 --master yarn  \
 --conf spark.executor.memory=4g \
 --conf spark.dynamicAllocation.maxExecutors=50 \
 --conf spark.executor.memoryOverhead=2048 \
 --class com.vova.utils.EmailUtil s3://vomkt-emr-rec/jar/vova-bd/dataprocess/new/vova-db-dataprocess-1.0-SNAPSHOT.jar \
 --env prod \
--sql "select cat_name,day_value,day_rate,month_value,month_rate from dwb.dwb_fd_income_out_stock_1 where pt = '${cur_date}' order by rn"  \
+-sql "select cat_name,day_value,day_rate,month_value,month_rate from dwb.dwb_ph_income_out_stock_1 where pt = '${cur_date}' order by rn"  \
 -head "科目,${cur_date},占比（取绝对值）,本月截止昨日累计,占比（取绝对值）"  \
 -receiver "juntao@vova.com.hk,cici.liu@i9i8.com,sol.ji@vova.com.hk,qi.zhong@gmail.com,qzhong@i9i8.com,ychen@i9i8.com,yfli@i9i8.com,ytang@i9i8.com,ruth.li@i9i8.com,muqie@i9i8.com,john.wang@i9i8.com,mixian@i9i8.com" \
--title "FD利润报表(出库维度,${cur_date})"
+-title "PH利润报表(出库维度,${cur_date})"
 
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
