@@ -179,7 +179,7 @@ round(tmp1.mon_bonus * (1 - ${refund_amount_rate}),2),
 concat(round(abs(tmp1.mon_bonus * (1 - ${refund_amount_rate}) / tmp1.mon_gmv) * 100,2),'%'),7
 from tmp.tmp_ad_income_01 tmp1
 union all
-select
+selectytui
 '发货红包金额',
 round(tmp1.day_bonus,2),
 concat(round(abs(tmp1.day_bonus / tmp1.day_gmv) * 100,2),'%'),

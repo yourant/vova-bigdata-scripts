@@ -447,7 +447,7 @@ INNER JOIN ods_fd_romeo.ods_fd_shipment s ON os.shipment_id = s.shipment_id
 LEFT JOIN ods_fd_ecshop.ods_fd_sync_flyfish_queue sfq ON s.shipment_id = sfq.relevance_key AND sfq.type = 'SP'
 WHERE eoi.party_id in ('65588')
 AND eoi.order_type_id IN ('SALE', 'TRANSFER')
-AND eoi.email not regexp '@tetx.com|@i9i8.com'
+AND eoi.email not regexp '@tetx.com|@i9i8.com'dwb_fd_order_detail
 AND s.shipment_status >= '155'
 AND  from_unixtime(unix_timestamp(s.shipping_date), 'yyyy-MM') =
 from_unixtime(unix_timestamp(to_date('${cur_date}')), 'yyyy-MM')
@@ -470,6 +470,7 @@ where t.currency_rn = 1) i on 1 = 1
 left join dwd.dwd_fd_ecs_order_info_shipping k on a.order_id = k.ecs_order_id
     where c.order_id is null
 ;
+
 insert overwrite table dwb.dwb_fd_income_out_stock PARTITION (pt = '${cur_date}')
 select
 '总订单数',tmp1.day_order_cnt,'',tmp1.mon_order_cnt,'',1
