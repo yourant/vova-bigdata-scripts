@@ -16,14 +16,17 @@ to_date(og.order_time) as order_time,
 nvl(og.region_code,'all') region_code,
 count(*) orde_cnt, --确认订单数
 count(if(og.sku_shipping_status in (1,2),og.order_goods_id,null)) mark_suces_orde_cnt, --标记发货订单数
-count(if(og.sku_shipping_status in (1,2) and fr.order_goods_id is null,og.order_goods_id,null)) suces_orde_cnt, --成功发货订单数
-sum(if(og.sku_shipping_status in (1,2) and fr.order_goods_id is null,(dg.shop_price + dg.shipping_fee),null)) suces_orde_money --成功发货订单额
+count(if(og.sku_shipping_status in (1,2) and fr.order_goods_id is not null,og.order_goods_id,null)) suces_orde_cnt, --成功发货订单数
+sum(if(og.sku_shipping_status in (1,2) and fr.order_goods_id is not null,(dg.shop_price + dg.shipping_fee),null)) suces_orde_money --成功发货订单额
 from dim.dim_vova_order_goods og
 join dim.dim_vova_goods dg
 on og.goods_id = dg.goods_id
-left join (select * from dwd.dwd_vova_fact_refund where refund_type_id in (3,4,8,9,10,11,13,14)) fr on og.order_goods_id=fr.order_goods_id
+left join (select distinct order_goods_id
+from dwd.dwd_vova_fact_logistics
+where year(to_date(valid_tracking_date)) > 1971) fr on og.order_goods_id=fr.order_goods_id
 where datediff('${cur_date}',to_date(og.order_time)) >= 58
 and datediff('${cur_date}',to_date(og.order_time)) < 88
+and dog.region_code is not null
 group by
 to_date(og.order_time),
 og.region_code
@@ -39,14 +42,14 @@ select
 to_date(fr.create_time) as create_time,
 nvl(og.region_code,'all') region_code,
 nvl(fr.refund_reason,'all') refund_reason,
-count(distinct fr.order_goods_id)  refund_cnt, --退款申请次数
-count(distinct if(fr.sku_pay_status in (3,4) and fr.refund_type_id = 2,fr.order_goods_id,null)) refund_pass_cnt, --退款通过次数
-count(distinct if(fr.sku_pay_status in (3,4) and fr.refund_type_id = 2,if(vrat.order_goods_id = null, fr.order_goods_id, vrat_1.order_goods_id),null)) refund_cnt_1, --1次通过
-count(distinct if(fr.sku_pay_status in (3,4) and fr.refund_type_id = 2,vrat_2.order_goods_id,null)) refund_cnt_2, --2次通过
-count(distinct if(fr.sku_pay_status in (3,4) and fr.refund_type_id = 2,vrat_3.order_goods_id,null)) refund_cnt_3, --3次通过
-count(distinct if(fr.sku_pay_status in (3,4) and fr.refund_type_id = 2,vrat_4.order_goods_id,null)) refund_cnt_4, --4次通过
-count(distinct if(vrat.recheck_type = 2,fr.order_goods_id,null)) appeal_rate, --申诉次数
-count(distinct if(vrat.audit_status = 'audit_passed' and vrat.recheck_type = 2,fr.order_goods_id,null)) appeal_pass_rate --申诉成功次数
+count(distinct if(fr.refund_type_id = 2,fr.order_goods_id,null))  refund_cnt, --退款申请次数
+count(distinct if(fr.sku_pay_status = 4 and fr.refund_type_id = 2,fr.order_goods_id,null)) refund_pass_cnt, --退款通过次数
+count(distinct if(fr.sku_pay_status = 4 and fr.refund_type_id = 2,if(vrat.order_goods_id = null, fr.order_goods_id, vrat_1.order_goods_id),null)) refund_cnt_1, --1次通过
+count(distinct if(fr.sku_pay_status = 4 and fr.refund_type_id = 2,vrat_2.order_goods_id,null)) refund_cnt_2, --2次通过
+count(distinct if(fr.sku_pay_status = 4 and fr.refund_type_id = 2,vrat_3.order_goods_id,null)) refund_cnt_3, --3次通过
+count(distinct if(fr.sku_pay_status = 4 and fr.refund_type_id = 2,vrat_4.order_goods_id,null)) refund_cnt_4, --4次通过
+count(distinct if(fr.refund_type_id = 2 and vrat.recheck_type = 2,fr.order_goods_id,null)) appeal_rate, --申诉次数
+count(distinct if(fr.refund_type_id = 2 and vrat.audit_status = 'audit_passed' and vrat.recheck_type = 2,fr.order_goods_id,null)) appeal_pass_rate --申诉成功次数
 from dwd.dwd_vova_fact_refund fr
 join dim.dim_vova_order_goods og
 on fr.order_goods_id=og.order_goods_id
@@ -63,6 +66,7 @@ on fr.order_goods_id=vrat_4.order_goods_id
 where datediff('${cur_date}',to_date(fr.create_time)) >= 58
 and datediff('${cur_date}',to_date(fr.create_time)) < 88
 and fr.refund_reason is not null and fr.refund_reason != 'NULL'
+and dog.region_code is not null
 group by to_date(fr.create_time),og.region_code,fr.refund_reason
 grouping sets(
 (to_date(fr.create_time)),

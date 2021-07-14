@@ -9,7 +9,7 @@ echo "start_time:" $(date +"%Y-%m-%d %H:%M:%S" -d "8 hour")
 #ads.ads_vova_goods_attribute_merge
 #ads.ads_vova_usable_value
 #ads.ads_vova_bod
-#ads.ads_vova_scene_bod_original_data_all
+#ads.ads.ads_vova_scene_bod_original_explode_data
 #ads.ads_vova_knowledge_graph_bod_goods_rank_data
 #ads.ads_vova_scene_bod_goods_rank_data
 #dim.dim_vova_buyers
@@ -17,7 +17,6 @@ spark-submit \
 --master yarn \
 --deploy-mode cluster \
 --executor-cores 1 \
---executor-memory 10G \
 --conf spark.dynamicAllocation.maxExecutors=120 \
 --name mlb_vova_kg_d_gongrui_murenqing \
 --class com.vova.rec.model.knowledge_graph.kg \
