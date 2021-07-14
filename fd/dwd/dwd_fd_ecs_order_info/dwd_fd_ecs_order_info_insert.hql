@@ -136,7 +136,9 @@ ecs_order_info_paid as (
                      WHEN ads_site_code = 'AD' THEN 'airydress'
                      WHEN ads_site_code = 'TD' THEN 'tendaisy'
                      WHEN ads_site_code = 'SD' THEN 'sisdress'
-                     ELSE 'others' END as project
+                     WHEN ads_site_code IN ('PR','BY','TY','HC','BR','SN','MC','BS','EC','CC','CB','CL','CH','JC','JD','YJ','JE','CD','VV','VC','PH','ZD','SG','MT','SZ') THEN 'poprhine'
+                     ELSE 'others'
+                      END as project
                   ,
                  `cost`
           FROM ods_fd_ar.ods_fd_ads_adgroup_daily_flat_report ads
