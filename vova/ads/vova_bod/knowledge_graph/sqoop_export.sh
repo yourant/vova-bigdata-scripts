@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS \`rec_recall\`.\`mlb_vova_kg_no_user_d_new\` (
 \`score_list\` mediumtext NOT NULL COMMENT '分数列表',
 \`update_time\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 PRIMARY KEY (\`id\`) USING BTREE,
-KEY \`union_index\` (\`region_id\`,\`gender\`,\`user_age_group\`)
+UNIQUE KEY \`unique_index\` (\`region_id\`,\`gender\`,\`user_age_group\`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='知识图谱-偏好召回';
 CREATE TABLE IF NOT EXISTS \`rec_recall\`.\`mlb_vova_kg_no_user_d\` (
 \`id\` int(11) NOT NULL AUTO_INCREMENT,
@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS \`rec_recall\`.\`mlb_vova_kg_no_user_d\` (
 \`score_list\` mediumtext NOT NULL COMMENT '分数列表',
 \`update_time\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 PRIMARY KEY (\`id\`) USING BTREE,
-KEY \`union_index\` (\`region_id\`,\`gender\`,\`user_age_group\`)
+UNIQUE KEY \`unique_index\` (\`region_id\`,\`gender\`,\`user_age_group\`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='知识图谱-偏好召回';
 "
 mysql -h rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com -u dwrecallwriter -pTsLdpZumzovrAvttIqnePCJhIVxZZ7bd -e "${sql}"
