@@ -246,7 +246,7 @@ select
 '毛利',
 round(tmp1.day_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.day_bonus * (1 - ${refund_amount_rate}) + tmp1.day_shou_express - ${pay_express_rate} * tmp1.day_gmv - (tmp1.union_cost_day + tmp4.ad_cost_day + tmp1.order_amount_day * ${pay_free_rate_1} + tmp1.day_order_cnt * ${pay_free_rate_2}),2),
 '',
-round(tmp1.mon_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.mon_bonus * (1 - ${refund_amount_rate}) + tmp1.mon_shou_express - ${pay_express_rate} * tmp1.mon_gmv - (tmp1.unit_cost_month + tmp4.ad_cost_month + tmp1.mon_gmv * ${pay_free_rate_1} + tmp1.mon_order_cnt * ${pay_free_rate_2}),2),
+round(tmp1.mon_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.mon_bonus * (1 - ${refund_amount_rate}) + tmp1.mon_shou_express - ${pay_express_rate} * tmp1.mon_gmv - (tmp1.unit_cost_month + tmp4.ad_cost_month + tmp1.order_amount_month * ${pay_free_rate_1} + tmp1.mon_order_cnt * ${pay_free_rate_2}),2),
 '',16
 from tmp.tmp_fd_income_01 tmp1
 join tmp.tmp_fd_income_02 tmp4 on 1 = 1
@@ -255,7 +255,7 @@ select
 '毛利率%',
 concat(round(abs((tmp1.day_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.day_bonus * (1 - ${refund_amount_rate}) + tmp1.day_shou_express - ${pay_express_rate} * tmp1.day_gmv - (tmp1.union_cost_day + tmp4.ad_cost_day + tmp1.order_amount_day * ${pay_free_rate_1} + tmp1.day_order_cnt * ${pay_free_rate_2})) / (tmp1.day_gmv)) * 100,2),'%'),
 '',
-concat(round(abs((tmp1.mon_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.mon_bonus * (1 - ${refund_amount_rate}) + tmp1.mon_shou_express - ${pay_express_rate} * tmp1.mon_gmv - (tmp1.unit_cost_month + tmp4.ad_cost_month + tmp1.mon_gmv * ${pay_free_rate_1} + tmp1.mon_order_cnt * ${pay_free_rate_2})) / (tmp1.mon_gmv)) * 100,2),'%'),
+concat(round(abs((tmp1.mon_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.mon_bonus * (1 - ${refund_amount_rate}) + tmp1.mon_shou_express - ${pay_express_rate} * tmp1.mon_gmv - (tmp1.unit_cost_month + tmp4.ad_cost_month + tmp1.order_amount_month * ${pay_free_rate_1} + tmp1.mon_order_cnt * ${pay_free_rate_2})) / (tmp1.mon_gmv)) * 100,2),'%'),
 '',17
 from tmp.tmp_fd_income_01 tmp1
 join tmp.tmp_fd_income_02 tmp4 on 1 = 1
@@ -305,7 +305,7 @@ select
 round(tmp1.day_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.day_bonus * (1 - ${refund_amount_rate}) + tmp1.day_shou_express - ${pay_express_rate} * tmp1.day_gmv - (tmp1.union_cost_day + tmp4.ad_cost_day + tmp1.order_amount_day * ${pay_free_rate_1} + tmp1.day_order_cnt * ${pay_free_rate_2}) -
 (tmp1.day_gmv * ${employee_money_order} + tmp1.day_gmv * ${stock_order} + ${house_amount} + ${computer_amount}),2),
 '',
-round(tmp1.mon_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.mon_bonus * (1 - ${refund_amount_rate}) + tmp1.mon_shou_express - ${pay_express_rate} * tmp1.mon_gmv - (tmp1.unit_cost_month + tmp4.ad_cost_month + tmp1.mon_gmv * ${pay_free_rate_1} + tmp1.mon_order_cnt * ${pay_free_rate_2}) -
+round(tmp1.mon_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.mon_bonus * (1 - ${refund_amount_rate}) + tmp1.mon_shou_express - ${pay_express_rate} * tmp1.mon_gmv - (tmp1.unit_cost_month + tmp4.ad_cost_month + tmp1.order_amount_month * ${pay_free_rate_1} + tmp1.mon_order_cnt * ${pay_free_rate_2}) -
 (tmp1.mon_gmv * ${employee_money_order} + tmp1.mon_gmv * ${stock_order} + day('${cur_date}') * ${house_amount} + day('${cur_date}') * ${computer_amount}),2),
 '',23
 from tmp.tmp_fd_income_01 tmp1
@@ -316,7 +316,7 @@ select
 concat(round(((tmp1.day_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.day_bonus * (1 - ${refund_amount_rate}) + tmp1.day_shou_express - ${pay_express_rate} * tmp1.day_gmv - (tmp1.union_cost_day + tmp4.ad_cost_day + tmp1.order_amount_day * ${pay_free_rate_1} + tmp1.day_order_cnt * ${pay_free_rate_2})) -
               (tmp1.day_gmv * ${employee_money_order} + tmp1.day_gmv * ${stock_order} + ${house_amount} + ${computer_amount}))  * 100 /
              tmp1.day_gmv,2),'%'),'',
-concat(round(((tmp1.mon_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.mon_bonus * (1 - ${refund_amount_rate}) + tmp1.mon_shou_express - ${pay_express_rate} * tmp1.mon_gmv - (tmp1.unit_cost_month + tmp4.ad_cost_month + tmp1.mon_gmv * ${pay_free_rate_1} + tmp1.mon_order_cnt * ${pay_free_rate_2})) -
+concat(round(((tmp1.mon_gmv * (1 - ${refund_order_cnt_rate}) + tmp1.mon_bonus * (1 - ${refund_amount_rate}) + tmp1.mon_shou_express - ${pay_express_rate} * tmp1.mon_gmv - (tmp1.unit_cost_month + tmp4.ad_cost_month + tmp1.order_amount_month * ${pay_free_rate_1} + tmp1.mon_order_cnt * ${pay_free_rate_2})) -
              (tmp1.mon_gmv * ${employee_money_order} + tmp1.mon_gmv * ${stock_order} + day('${cur_date}') * ${house_amount} + day('${cur_date}') * ${computer_amount}))  * 100 /
              tmp1.mon_gmv,2),'%'),'',24
 from tmp.tmp_fd_income_01 tmp1
