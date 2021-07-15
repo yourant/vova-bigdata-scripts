@@ -475,6 +475,7 @@ nodes:
           - vova_activity_coupon
           - vova_shopping_cart
           - vova_stay_coupon
+          - vova_shopping_cart_binlog
 
 #营销活动域数据抽取
       - name: vova_activity_valid_goods_record
@@ -1320,6 +1321,15 @@ nodes:
           retries: 4
           retry.backoff: 600000
           command: sh /mnt/vova-bigdata-scripts/vova/ods/shopping_cart/update.sh
+        dependsOn:
+          - themis_mktcpn_start
+
+      - name: vova_shopping_cart_binlog
+        type: command
+        config:
+          retries: 4
+          retry.backoff: 600000
+          command: sh /mnt/vova-bigdata-scripts/vova/ods/shopping_cart/binlog.sh
         dependsOn:
           - themis_mktcpn_start
 
