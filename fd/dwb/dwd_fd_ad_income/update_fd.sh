@@ -669,15 +669,17 @@ spark-submit \
 --conf spark.eventLog.enabled=false \
 --driver-java-options "-Dlog4j.configuration=hdfs:/conf/log4j.properties" \
 --conf spark.executor.extraJavaOptions="-Dlog4j.configuration=hdfs:/conf/log4j.properties" \
---class com.vova.bigdata.sparkbatch.dataprocess.ads.FdMoney s3://vomkt-emr-rec/jar/vova-bigdata-FdMoney.jar \
---pt ${cur_date} --spark.sparkMaster yarn
+--class com.vova.bigdata.sparkbatch.dataprocess.ads.FdMoney s3://vomkt-emr-rec/jar/vova-bigdata/vova-bigdata-sparkbatch/vova-bigdata-sparkbatch-1.0-SNAPSHOT.jar \
+--pt ${cur_date} --spark.sparkMaster yarn --rate 0.5
 
-echo '开始发邮件'
+
 
 #如果脚本失败，则报错
 if [ $? -ne 0 ];then
   exit 1
 fi
+
+echo '开始发邮件'
 
 spark-submit \
 --deploy-mode client \
