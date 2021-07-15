@@ -15,10 +15,10 @@ refund_amount_rate_send=0.0671
 #代付快递费
 pay_express_rate=0.1157
 #支付手续费
-pay_free_rate_1=0.0084
+pay_free_rate_1=0.02
 pay_free_rate_2=0.0
 
-pay_free_rate_1_send=0.0104
+pay_free_rate_1_send=0.0242
 pay_free_rate_2_send=0.0
 #人员工资
 employee_money_order=0.0544
