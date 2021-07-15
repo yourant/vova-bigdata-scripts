@@ -1,0 +1,27 @@
+---
+config:
+  failure.emails: kaicheng@vova.com.hk
+  retries: 5
+  retry.backoff: 600000
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - mlb_vova_rec_goods_order_probscore_d
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: mlb_vova_rec_goods_order_probscore_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_goods_order_probscore_d/sqoop_export.sh
+      retries: 5
+      retry.backoff: 1200000
+    dependsOn:
+      - start_flag
