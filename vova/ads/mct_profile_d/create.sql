@@ -136,3 +136,9 @@ alter table ads.ads_vova_mct_profile add columns(rating_sum               bigint
 alter table ads.ads_vova_mct_profile add columns(order_goods_cnt_58d      bigint comment '58天前再往前一个月的确认子订单数') cascade;
 alter table ads.ads_vova_mct_profile add columns(mar_order_goods_cnt      bigint comment '商家驳回申诉子订单数') cascade;
 
+##############################
+alter table ads.ads_vova_mct_profile add columns(bs_in_collection_7d_rate    double comment '7天入库率(bayes)') cascade;
+alter table ads.ads_vova_mct_profile add columns(bs_dsr_logistics_rate       double comment 'DSR物流评分(bayes)') cascade;
+alter table ads.ads_vova_mct_profile add columns(bs_dsr_goods_rate           double comment 'DSR商品评分(bayes)') cascade;
+
+
