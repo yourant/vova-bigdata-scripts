@@ -1,0 +1,85 @@
+---
+config:
+  retries: 5
+  retry.backoff: 600000
+  failure.emails: ted.wan@vova.com.hk,yzhang13@vova.com.hk,kaicheng@vova.com.hk
+
+nodes:
+  - name: end_flag
+    type: command
+    config:
+      command: echo "stop job"
+    dependsOn:
+      - ads_vova_result_page_keyword_rank_data_export
+
+  - name: start_flag
+    type: command
+    config:
+      command: echo "start job"
+
+  - name: judge_mlb_vova_rec_b_goods_score_d_message_get
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_rec_goods_score_update
+      retries: 5
+      retry.backoff: 1200000
+    dependsOn:
+      - start_flag
+
+  - name: judge_ads_vova_goods_attribute_merge
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh ads_vova_goods_attribute_merge
+      retries: 10
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_goods
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_goods
+      retries: 15
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: judge_dim_vova_category
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh dim_vova_category
+      retries: 10
+      retry.backoff: 300000
+    dependsOn:
+      - start_flag
+
+  - name: judge_mlb_rec_highfreq_query
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_rec_highfreq_query
+      retries: 20
+      retry.backoff: 600000
+    dependsOn:
+      - start_flag
+
+  - name: ads_vova_result_page_keyword_rank_data
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/vova_keyword/update.sh
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+      - judge_dim_vova_category
+      - judge_dim_vova_goods
+      - judge_ads_vova_goods_attribute_merge
+      - judge_mlb_vova_rec_b_goods_score_d_message_get
+      - judge_mlb_rec_highfreq_query
+
+  - name: ads_vova_result_page_keyword_rank_data_export
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/ads/vova_keyword/update.sh
+      retries: 5
+      retry.backoff: 300000
+    dependsOn:
+      - ads_vova_result_page_keyword_rank_data
