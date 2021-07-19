@@ -137,7 +137,7 @@ echo "sqoop 导出数据到mysql"
 # --hcatalog-partition-values ${pre_date} \
 sqoop export \
 -Dorg.apache.sqoop.export.text.dump_data_on_error=true \
--Dmapreduce.map.memory.mb=8096 \
+-Dmapreduce.map.memory.mb=10240 \
 -Dsqoop.export.records.per.statement=500 \
 --connect jdbc:mysql://rec-recall.cluster-cznqgcwo1pjt.us-east-1.rds.amazonaws.com:3306/rec_recall \
 --username dwrecallwriter --password TsLdpZumzovrAvttIqnePCJhIVxZZ7bd \

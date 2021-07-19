@@ -20,7 +20,7 @@ nodes:
       - mlb_vova_algo_mct_group_d
       - mlb_vova_country_detect_d
 #      - mlb_vova_rec_b_g_base_d_job_message_put
-      - mlb_vova_rec_goods_scorebase_data_d_job_message_put
+#      - mlb_vova_rec_goods_scorebase_data_d_job_message_put
 #      - mlb_vova_new_user_reg_rec_out_data
       - mlb_rec_m_tagcombine_d
       - mlb_rec_m_taglike_d
@@ -188,16 +188,6 @@ nodes:
     dependsOn:
       - start_flag
 
-  - name: judge_mlb_vova_rec_b_goods_score_d_message_get
-    type: command
-    config:
-      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=mlb_goods_score_vova --from=mlb --to=data --valid_hour=3
-      retries: 20
-      retry.backoff: 1800000
-    dependsOn:
-      - start_flag
-      - mlb_vova_rec_goods_scorebase_data_d_job_message_put
-
   - name: judge_ads_vova_goods_pre_attribute_data
     type: command
     config:
@@ -251,14 +241,34 @@ nodes:
       - judge_ads_vova_goods_portrait
       - judge_ads_vova_traff_control
 
-  - name: mlb_vova_rec_goods_scorebase_data_d_job_message_put
+#  - name: mlb_vova_rec_goods_scorebase_data_d_job_message_put
+#    type: command
+#    config:
+#      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=ads_rec_goods_scorebase_data_d --from=data --to=java_server --jtype=1D --retry=0
+#      retries: 5
+#      retry.backoff: 600000
+#    dependsOn:
+#      - mlb_vova_rec_goods_scorebase_data_d
+# 取数完成后不再发消息，直接执行jar
+  - name: mlb_vova_rec_goods_score_update
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/job_message_put.sh --jname=ads_rec_goods_scorebase_data_d --from=data --to=java_server --jtype=1D --retry=0
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_b_goods_score/update.sh
       retries: 5
       retry.backoff: 600000
     dependsOn:
       - mlb_vova_rec_goods_scorebase_data_d
+
+  # 原python代码 重构为 scala,  spark 执行， 消息不用再发了，为避免依赖任务修改， 修改内容，不改 judge 名
+  - name: judge_mlb_vova_rec_b_goods_score_d_message_get
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_rec_goods_score_update
+      retries: 20
+      retry.backoff: 1800000
+    dependsOn:
+      - start_flag
+      - mlb_vova_rec_goods_score_update
 
 # 推荐基础商品数据取数与商品标题embedding调度
   - name: mlb_vova_rec_b_g_base_d
@@ -418,7 +428,6 @@ nodes:
     dependsOn:
       - judge_mlb_vova_user_behave_link_d
       - judge_mlb_vova_rec_b_goods_score_d_message_get
-      - mlb_vova_rec_goods_scorebase_data_d_job_message_put
 
 ## mlb_rec_m_tagcombine_d 依赖的表：mlb.mlb_vova_user_behave_link_d, ads.ads_vova_goods_attribute_label_data
 
@@ -455,7 +464,6 @@ nodes:
     dependsOn:
       - judge_mlb_vova_user_behave_link_d
       - judge_mlb_vova_rec_b_goods_score_d_message_get
-      - mlb_vova_rec_goods_scorebase_data_d_job_message_put
 
 # [9404]lightgcn取数调度：依赖的表：dim.dim_vova_goods, dim.dim_vova_buyers, dws.dws_vova_buyer_goods_behave, ads.ads_vova_goods_portrait
 
