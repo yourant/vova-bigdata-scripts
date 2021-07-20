@@ -16,7 +16,7 @@ echo "table_suffix: ${table_suffix}"
 job_name="ods_vova_shopping_cart_log_chenkai_${cur_date}"
 
 ###逻辑sql
-sql="
+sql="pdb_fd_order_marketing_data
 msck repair table ods_vova_vts.ods_vova_shopping_cart_log_src;
 
 insert overwrite table ods_vova_vts.ods_vova_shopping_cart_log partition(pt='${cur_date}')

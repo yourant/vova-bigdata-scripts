@@ -332,10 +332,6 @@ join tmp.tmp_ad_income_02 tmp4 on 1 = 1
 
 
 
-
-
-
-
 insert overwrite table tmp.tmp_ad_income_03
     select count(distinct if(to_date(a.order_time) = '${cur_date}', a.order_id,
                              null))                                           day_order_cnt,    --总订单数 天

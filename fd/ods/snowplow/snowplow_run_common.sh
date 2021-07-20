@@ -10,7 +10,6 @@ hour_range=1
 
 ts=$(date -d "$1" +"%Y-%m-%d %H")
 
-
 if [ "$#" -ne 3 ]; then
   pt=$(date -d "$ts -1 hours" +"%Y-%m-%d")
   hour=$(date -d "$ts -1 hours" +"%H")
