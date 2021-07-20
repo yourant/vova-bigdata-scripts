@@ -203,9 +203,10 @@ job_name="mlb_vova_rec_m_nurecall_d_req7461_chenkai"
 sql="
 -- 非brand
 insert overwrite TABLE mlb.mlb_vova_rec_m_nurecall_nb_d PARTITION (pt = '${cur_date}')
-SELECT  cluster_key
-       ,goods_id
-       ,rank_num
+SELECT /*+ REPARTITION(5) */
+  cluster_key
+  ,goods_id
+  ,rank_num
 FROM
 (
     SELECT  *
@@ -247,9 +248,10 @@ AND group_cnt >= 8
 
 -- 不区分 brand
 insert overwrite TABLE mlb.mlb_vova_rec_m_nurecall_d PARTITION (pt = '${cur_date}')
-SELECT  cluster_key
-       ,goods_id
-       ,rank_num
+SELECT /*+ REPARTITION(5) */
+  cluster_key
+  ,goods_id
+  ,rank_num
 FROM
 (
     SELECT  *

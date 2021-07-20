@@ -9,7 +9,7 @@ s3path=`date -d "${pre_date} 00:00:00" +%Y/%m/%d`
 pre_month=`date -d "1 month ago ${pre_date}" +%Y-%m-%d`
 echo "pre_month=${pre_month}"
 
-pre_month_start==`date -d "1 month ago ${pre_date}" +%Y-%m-01`
+pre_month_start=`date -d "1 month ago ${pre_date}" +%Y-%m-01`
 echo "pre_month_start=${pre_month_start}"
 
 pre_2_month=`date -d "2 month ago ${pre_date}" +%Y-%m-%d`
@@ -27,7 +27,7 @@ g.merchant_id,
 c.first_cat_id
 from ods_vova_vts.ods_vova_goods_arc g
 inner join dim.dim_vova_category c on c.cat_id = g.cat_id
-where g.pt ='$pre_date' and g.is_on_sale=1 and g.is_display=1 and g.is_delete=0;
+where g.pt ='${pre_date}' and g.is_on_sale=1 and g.is_display=1 and g.is_delete=0;
 
 insert overwrite table ads.ads_vova_mct_profile PARTITION (pt = '${pre_date}')
 --step1 商家信息
@@ -69,7 +69,37 @@ t4.payed_uv_1m,
 nvl(t4.sell_goods_cnt_1m,0) as sell_goods_cnt_1m,
 nvl(t14.on_sale_goods_cnt_1m,0) as on_sale_goods_cnt_1m,
 nvl(t4.sell_goods_cnt_1m / t14.on_sale_goods_cnt_1m,0)  as turnover_rate_1m,
-(nvl(t4.sell_goods_cnt_1m,0)+0.1*100)/(nvl(t14.on_sale_goods_cnt_1m,0)+100)  as bs_turnover_rate_1m
+(nvl(t4.sell_goods_cnt_1m,0)+0.1*100)/(nvl(t14.on_sale_goods_cnt_1m,0)+100)  as bs_turnover_rate_1m,
+
+t15.mct_cancel_rate, -- 商家取消率
+t15.bs_mct_cancel_rate, -- 商家取消率(平滑)
+t16.inter_rate_5d_rate, -- 5天上网率
+nvl(t16.bs_inter_rate_5d_rate, 7.0 / 10) bs_inter_rate_5d_rate, -- 5天上网率(平滑)
+
+nvl(t17.in_collection_72hour_order_cnt / t17.collection_order_goods_cnt, 0) in_collection_7d_rate, -- 7天入库率
+
+nvl(t18.logistics_rating_sum / t18.logistics_comment_order_goods_cnt, 0) dsr_logistics_rate, -- DSR物流评分
+nvl(t18.rating_sum / t18.comment_order_goods_cnt, 0) dsr_goods_rate, -- DSR商品评分
+
+nvl(t19.mar_order_goods_cnt / t19.order_goods_cnt_58d, 0) mct_audit_rejected_rate, -- 商家驳回申诉率
+
+mct_cancel_order_cnt ,
+confirm_order_cnt_14d,
+inter_order_cnt_5d   ,
+confirm_order_cnt_5d ,
+collection_order_goods_cnt       ,
+in_collection_72hour_order_cnt   ,
+logistics_comment_order_goods_cnt,
+comment_order_goods_cnt,
+logistics_rating_sum   ,
+rating_sum             ,
+order_goods_cnt_58d    ,
+mar_order_goods_cnt    ,
+
+(nvl(t17.in_collection_72hour_order_cnt, 0) + 8) / (nvl(t17.collection_order_goods_cnt, 0) + 10) bs_in_collection_7d_rate, -- 7天入库率(bayes)
+(nvl(t18.logistics_rating_sum, 0) + 20) / (nvl(t18.logistics_comment_order_goods_cnt, 0) + 5) bs_dsr_logistics_rate, -- DSR物流评分(bayes)
+(nvl(t18.rating_sum, 0) + 20) / (nvl(t18.comment_order_goods_cnt, 0) + 5) bs_dsr_goods_rate -- DSR商品评分(bayes)
+
 from
 (
 select
@@ -215,7 +245,7 @@ left join
 select
 distinct device_id as device_id_1
 from dwd.dwd_vova_fact_start_up
-where pt>='$pre_month_start' and year(start_up_date)=year('${pre_month}') and month(start_up_date)= month('${pre_month}')
+where pt>='${pre_month_start}' and year(start_up_date)=year('${pre_month}') and month(start_up_date)= month('${pre_month}')
 ) t2 on t1.device_id=t2.device_id_1
 group by t1.mct_id,t1.first_cat_id
 ) t7 on t0.mct_id=t7.mct_id and t0.first_cat_id = t7.first_cat_id
@@ -354,9 +384,133 @@ mct_id,
 first_cat_id,
 count(distinct goods_id) as on_sale_goods_cnt_1m
 from ads.ads_vova_on_sale_goods_d
-where pt >='$pre_month' and pt <='$pre_date'
+where pt >='${pre_month}' and pt <='${pre_date}'
 group by mct_id,first_cat_id
 ) t14 on t0.mct_id= t14.mct_id and t0.first_cat_id = t14.first_cat_id
+left join
+(
+  -- 商家取消率 分母中商家退款的子订单数/14天前再往前一个月的确认子订单数
+  select
+    t1.mct_id,
+    t1.first_cat_id,
+    sum(t1.mct_cancel_order_cnt) mct_cancel_order_cnt, -- 商家退款的子订单数
+    count(t1.order_goods_id) confirm_order_cnt_14d, -- 14天前再往前一个月的确认子订单数
+    sum(t1.mct_cancel_order_cnt)/count(t1.order_goods_id) as mct_cancel_rate,
+    nvl((sum(t1.mct_cancel_order_cnt)+0.1*5)/(count(t1.order_goods_id)+5), 0.1*5 / 5) as bs_mct_cancel_rate
+  from
+  (
+    select
+      og.mct_id,
+      c.first_cat_id,
+      og.order_goods_id,
+      case when fr.refund_reason_type_id in (5,6,11,14) and fr.refund_type_id=2
+        and og.sku_pay_status>1 and fr.rr_audit_status='audit_passed' then 1 else 0
+        end mct_cancel_order_cnt
+    from dim.dim_vova_order_goods og
+    left join dwd.dwd_vova_fact_refund fr on fr.order_goods_id=og.order_goods_id
+    left join dim.dim_vova_category c on og.cat_id = c.cat_id
+    where datediff('2021-07-09', date(og.confirm_time)) between 13 and 43
+  ) t1
+  group by t1.mct_id,t1.first_cat_id
+) t15
+on t0.mct_id= t15.mct_id and t0.first_cat_id = t15.first_cat_id
+left join
+(
+-- 5天上网率 分母中（上网时间-确认时间）在5天内的子订单数/5天前再往前一个月的确认子订单数
+  select
+    t1.mct_id,
+    t1.first_cat_id,
+    sum(t1.so_order_cnt_5d) inter_order_cnt_5d, -- 5天前再往前一个月的确认子订单中5天内上网的子订单数
+    count(t1.order_goods_id) confirm_order_cnt_5d, -- 5天前再往前一个月的确认子订单数
+    sum(t1.so_order_cnt_5d)/count(t1.order_goods_id) as inter_rate_5d_rate,
+    (sum(t1.so_order_cnt_5d) + 7) / (count(t1.order_goods_id) + 10) as bs_inter_rate_5d_rate
+  from
+  (
+    select
+      og.mct_id,
+      c.first_cat_id,
+      og.order_goods_id,
+      case when datediff(fl.valid_tracking_date,og.confirm_time)<5 and datediff(fl.valid_tracking_date,og.confirm_time) >= 0
+        and og.sku_pay_status>1 then 1 else 0
+        end so_order_cnt_5d
+    from dim.dim_vova_order_goods og
+    left join dwd.dwd_vova_fact_logistics fl on fl.order_goods_id=og.order_goods_id
+    left join dim.dim_vova_category c on og.cat_id = c.cat_id
+    where datediff('2021-07-09', date(og.confirm_time)) between 4 and 34 and (date(og.confirm_time)< '2021-02-04' or date(og.confirm_time)>'2021-02-19') -- 春节过滤
+  ) t1
+  group by t1.mct_id,t1.first_cat_id
+) t16
+on t0.mct_id= t16.mct_id and t0.first_cat_id = t16.first_cat_id
+left join
+(
+-- 7天入库率 （仅集运订单有）in_collection_7d_rate   分母中入库时间减订单确认的时间小于7天的子订单数/7天前再往前一个月的集运确认子订单数
+  select
+    og.mct_id,
+    c.first_cat_id,
+    count(distinct og.order_goods_id) collection_order_goods_cnt, -- 商品集运总订单数
+    count(distinct(if(to_date(ocog.in_warehouse_time)>='2000-01-01'
+      and (unix_timestamp(ocog.in_warehouse_time) - unix_timestamp(og.confirm_time)) / 3600 <= 24*7
+      and (unix_timestamp(ocog.in_warehouse_time) - unix_timestamp(og.confirm_time)) / 3600 > 0, og.order_goods_id, null))) in_collection_72hour_order_cnt -- 72小时入库订单数
+  from
+    dim.dim_vova_order_goods og
+  left join
+    dwd.dwd_vova_fact_logistics fl
+  on og.order_goods_id = fl.order_goods_id
+  left join
+    ods_vova_vts.ods_vova_collection_order_goods ocog
+  on og.order_goods_id = ocog.order_goods_id
+  left join
+    dim.dim_vova_category c
+  on og.cat_id = c.cat_id
+  where datediff('2021-07-09', date(og.confirm_time)) between 6 and 36
+    and fl.collection_plan_id=2 and og.sku_pay_status>1
+  group by og.mct_id,c.first_cat_id
+) t17
+on t0.mct_id= t17.mct_id and t0.first_cat_id = t17.first_cat_id
+left join
+(
+-- DSR物流评分 分母中的物流评分总和/2021.3.15之后有物流评分订单数  goods_comment.logistics_transportation_rating
+-- DSR商品评分 分母中的商品评分总和/2021.3.15之后有商品评分订单数  goods_comment.rating
+  select
+    fp.mct_id,
+    fp.first_cat_id,
+    count(distinct(if(fc.logistics_rating > 0, fp.order_goods_id, null))) logistics_comment_order_goods_cnt, -- 2021.3.15之后有物流评分订单数
+    count(distinct(if(fc.rating > 0, fp.order_goods_id, null))) comment_order_goods_cnt, -- 2021.3.15之后有商品评分订单数
+    sum(if(fc.logistics_rating > 0, fc.logistics_rating, 0)) logistics_rating_sum,
+    sum(if(fc.rating > 0, fc.rating, 0)) rating_sum
+  from
+    dwd.dwd_vova_fact_pay fp
+  inner join
+    dwd.dwd_vova_fact_comment fc
+  on fp.order_goods_id = fc.order_goods_id
+  where to_date(fp.order_time) >= '2021-03-15'
+  group by fp.mct_id, fp.first_cat_id
+) t18
+on t0.mct_id= t18.mct_id and t0.first_cat_id = t18.first_cat_id
+left join
+(
+-- 商家驳回申诉率 分母中商家驳回申诉子订单数/58天前再往前一个月的确认子订单数
+  SELECT
+    og.mct_id,
+    c.first_cat_id,
+    count(distinct og.order_goods_id) order_goods_cnt_58d,
+    count(distinct(if(rat1.audit_status = 'mct_audit_rejected' and rat2.recheck_type = 2, og.order_goods_id, null))) mar_order_goods_cnt
+  FROM
+    dim.dim_vova_order_goods og
+  left join
+    dim.dim_vova_category c
+  on og.cat_id = c.cat_id
+  left join
+    ods_vova_vts.ods_vova_refund_audit_txn rat1
+  on og.order_goods_id = rat1.order_goods_id
+  left join
+    ods_vova_vts.ods_vova_refund_audit_txn rat2
+  on og.order_goods_id = rat2.order_goods_id
+  where datediff('2021-07-09', date(og.confirm_time)) between 57 and 87
+    and og.sku_pay_status>1
+  group by og.mct_id, c.first_cat_id
+) t19
+on t0.mct_id= t19.mct_id and t0.first_cat_id = t19.first_cat_id
 "
 spark-sql --executor-memory 6G --conf "spark.app.name=ads_vova_mct_profile_d_zhangyin" --conf "spark.dynamicAllocation.maxExecutors=150"  -e "$sql"
 #如果脚本失败，则报错

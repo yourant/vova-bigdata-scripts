@@ -13,11 +13,14 @@ echo "cur_date: ${cur_date}"
 table_suffix=`date -d "${cur_date}" +%Y%m%d`
 echo "table_suffix: ${table_suffix}"
 
+partition_pt=`date -d "${cur_date:0:10} -7day" +%Y-%m-%d`
+echo "partition_pt: ${partition_pt}"
+
 job_name="mlb_vova_goods_second_cat_req8721_chenkai_${cur_date}"
 
 ###逻辑sql
 sql="
-ALTER TABLE mlb.mlb_vova_goods_second_cat DROP if exists partition(pt = '$(date -d "${cur_date:0:10} -5day" +%Y-%m-%d)');
+ALTER TABLE mlb.mlb_vova_goods_second_cat DROP if exists partition(pt = '${partition_pt}');
 
 insert overwrite table mlb.mlb_vova_goods_second_cat partition(pt='${cur_date}')
 select /*+ REPARTITION(5) */

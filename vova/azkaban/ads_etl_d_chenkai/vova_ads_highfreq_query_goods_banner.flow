@@ -71,8 +71,8 @@ nodes:
   - name: judge_mlb_vova_rec_b_goods_score_d_message_get
     type: command
     config:
-      command: sh /mnt/vova-bigdata-scripts/common/job_message_get.sh --jname=mlb_goods_score_vova --from=mlb --to=data --valid_hour=6
-      retries: 45
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_rec_goods_score_update
+      retries: 5
       retry.backoff: 1200000
     dependsOn:
       - start_flag

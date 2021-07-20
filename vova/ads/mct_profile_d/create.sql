@@ -81,3 +81,64 @@ loc_ratio double
 ) COMMENT '商家总分表'
 PARTITIONED BY (pt string) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001' STORED AS PARQUETFILE;
 
+
+###################################################################################
+# [10086] 商家分级增加商品、履约、售后等相关指标
+任务描述
+需求背景：
+完善商家分级维度，增加商品、履约、售后等相关指标。
+
+需求描述：
+（1）在商家分级中增加商家取消率、5天上网率（取代原7天上网率）、7天入库率、DSR物流评分、DSR商品评分、商家驳回申诉率指标，完善商家分级体系。（详细描述参见附件。）
+（2）先取数进行调研，取数维度为商家+品类，详细见：https://docs.google.com/spreadsheets/d/1oXwqE6se-zBq3dHRXUms8i-Nj503ZsuLPbmHYghjX1k/edit#gid=0
+（3）等到取数分析完后，将这些特征加到当前商家分级算法里。
+新增指标名称  口径  所在表及字段
+商家取消率   分母中商家退款的子订单数/14天前再往前一个月的确认子订单数  "退款原因为商家退款
+Merchant Auto Cancel Order
+Merchant Cancel Order
+Merchant Cancel Shipped Order
+对应的ID是5、6、11、14"
+5天上网率   分母中（上网时间-确认时间）在5天内的子订单数/5天前再往前一个月的确认子订单数
+7天入库率（仅集运订单有）   分母中入库时间减订单确认的时间小于7天的子订单数/7天前再往前一个月的集运确认子订单数 ods_vova_vts.ods_vova_collection_order_goods 的 in_warehouse_time
+DSR物流评分 分母中的物流评分总和/2021.3.15之后有物流评分订单数  goods_comment.logistics_transportation_rating
+DSR商品评分 分母中的商品评分总和/2021.3.15之后有商品评分订单数  goods_comment.rating
+商家驳回申诉率 分母中商家驳回申诉子订单数/58天前再往前一个月的确认子订单数
+"SELECT
+(SELECT 1 FROM refund_audit_txn rat WHERE rat.order_goods_id=rr.order_goods_id AND audit_status='mct_audit_rejected' LIMIT 1 ) as mct_audit_rejected
+(SELECT 1 FROM refund_audit_txn rat WHERE rat.order_goods_id=rr.order_goods_id AND recheck_type=2 LIMIT 1 ) as recheck_type
+FROM refund_reason rr
+HAVING mct_audit_rejected=1 AND recheck_type=1"
+
+
+# 商家取消率、5天上网率（取代原7天上网率）、7天入库率、DSR物流评分、DSR商品评分、商家驳回申诉率
+alter table ads.ads_vova_mct_profile add columns(mct_cancel_rate          double comment '商家取消率') cascade;
+alter table ads.ads_vova_mct_profile add columns(bs_mct_cancel_rate       double comment '商家取消率') cascade;
+
+alter table ads.ads_vova_mct_profile add columns(inter_rate_5d_rate       double comment '5天上网率') cascade;
+alter table ads.ads_vova_mct_profile add columns(bs_inter_rate_5d_rate    double comment '5天上网率') cascade;
+
+alter table ads.ads_vova_mct_profile add columns(in_collection_7d_rate    double comment '7天入库率') cascade;
+alter table ads.ads_vova_mct_profile add columns(dsr_logistics_rate       double comment 'DSR物流评分') cascade;
+alter table ads.ads_vova_mct_profile add columns(dsr_goods_rate           double comment 'DSR商品评分') cascade;
+alter table ads.ads_vova_mct_profile add columns(mct_audit_rejected_rate  double comment '商家驳回申诉率') cascade;
+####### 分子 分母
+alter table ads.ads_vova_mct_profile add columns(mct_cancel_order_cnt     bigint comment '商家退款的子订单数') cascade;
+alter table ads.ads_vova_mct_profile add columns(confirm_order_cnt_14d    bigint comment '14天前再往前一个月的确认子订单数') cascade;
+alter table ads.ads_vova_mct_profile add columns(inter_order_cnt_5d       bigint comment '5天内上网的子订单数') cascade;
+alter table ads.ads_vova_mct_profile add columns(confirm_order_cnt_5d     bigint comment '5天前再往前一个月的确认子订单数') cascade;
+
+alter table ads.ads_vova_mct_profile add columns(collection_order_goods_cnt        bigint comment '商品集运总订单数') cascade;
+alter table ads.ads_vova_mct_profile add columns(in_collection_72hour_order_cnt    bigint comment '72小时入库订单数') cascade;
+alter table ads.ads_vova_mct_profile add columns(logistics_comment_order_goods_cnt bigint comment '2021.3.15之后有物流评分订单数') cascade;
+alter table ads.ads_vova_mct_profile add columns(comment_order_goods_cnt  bigint comment '2021.3.15之后有商品评分订单数') cascade;
+alter table ads.ads_vova_mct_profile add columns(logistics_rating_sum     bigint comment '物流评分总和') cascade;
+alter table ads.ads_vova_mct_profile add columns(rating_sum               bigint comment '商品评分总和') cascade;
+alter table ads.ads_vova_mct_profile add columns(order_goods_cnt_58d      bigint comment '58天前再往前一个月的确认子订单数') cascade;
+alter table ads.ads_vova_mct_profile add columns(mar_order_goods_cnt      bigint comment '商家驳回申诉子订单数') cascade;
+
+##############################
+alter table ads.ads_vova_mct_profile add columns(bs_in_collection_7d_rate    double comment '7天入库率(bayes)') cascade;
+alter table ads.ads_vova_mct_profile add columns(bs_dsr_logistics_rate       double comment 'DSR物流评分(bayes)') cascade;
+alter table ads.ads_vova_mct_profile add columns(bs_dsr_goods_rate           double comment 'DSR商品评分(bayes)') cascade;
+
+

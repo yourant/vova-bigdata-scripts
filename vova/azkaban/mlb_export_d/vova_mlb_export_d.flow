@@ -288,3 +288,50 @@ nodes:
     dependsOn:
       - start_flag
       - judge_mlb_vova_buyer_cat_rating_offline
+
+# 商品评分
+  - name: judge_mlb_vova_rec_b_goods_score_d_message_get
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/common/judge_check.sh mlb_vova_rec_goods_score_update
+      retries: 5
+      retry.backoff: 1200000
+    dependsOn:
+      - start_flag
+
+# req8229 导数任务：两张表
+  - name: sqoop_mlb_vova_rec_b_goods_score_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_b_goods_score/sqoop_export_goods_score.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_rec_b_goods_score_d_message_get
+
+  - name: sqoop_mlb_vova_rec_b_catgoods_score_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_b_goods_score/sqoop_export_catgoods_score.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_rec_b_goods_score_d_message_get
+
+# [9217]推荐管理平台新增--商品评分查询模块(合并五张表导数到ES)
+  - name: mlb_vova_rec_b_goods_score_all_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/mlb/rec_b_goods_score/update_b_goods_score_all_d.sh
+      retries: 5
+      retry.backoff: 600000
+    dependsOn:
+      - judge_mlb_vova_rec_b_goods_score_d_message_get
+
+  - name: export_es_mlb_vova_rec_b_goods_score_all_d
+    type: command
+    config:
+      command: sh /mnt/vova-bigdata-scripts/vova/es_export/mlb_vova_rec_b_goods_score_all_d/update.sh
+      retries: 5
+    dependsOn:
+      - mlb_vova_rec_b_goods_score_all_d
