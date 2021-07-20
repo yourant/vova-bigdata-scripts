@@ -97,8 +97,8 @@ order_goods_cnt_58d    ,
 mar_order_goods_cnt    ,
 
 (nvl(t17.in_collection_72hour_order_cnt, 0) + 8) / (nvl(t17.collection_order_goods_cnt, 0) + 10) bs_in_collection_7d_rate, -- 7天入库率(bayes)
-(nvl(t18.logistics_rating_sum, 0) + 5) / (nvl(t18.logistics_comment_order_goods_cnt, 0) + 20) bs_dsr_logistics_rate, -- DSR物流评分(bayes)
-(nvl(t18.rating_sum, 0) + 5) / (nvl(t18.comment_order_goods_cnt, 0) + 20) bs_dsr_goods_rate -- DSR商品评分(bayes)
+(nvl(t18.logistics_rating_sum, 0) + 20) / (nvl(t18.logistics_comment_order_goods_cnt, 0) + 5) bs_dsr_logistics_rate, -- DSR物流评分(bayes)
+(nvl(t18.rating_sum, 0) + 20) / (nvl(t18.comment_order_goods_cnt, 0) + 5) bs_dsr_goods_rate -- DSR商品评分(bayes)
 
 from
 (
